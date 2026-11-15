@@ -1,0 +1,13 @@
+{
+  "last_character": "222",
+  "view_options": {
+    "show_sources": true,
+    "show_maneuver": true,
+    "show_basics": true,
+    "show_mastery": true,
+    "show_tier": true,
+    "show_saves_breakdown": true,
+    "show_buffs_tags": true,
+    "show_ignore_marks": true
+  }
+}
