@@ -1,0 +1,970 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wipefinder.local/schema/character.v1.json",
+  "title": "WIPEFINDER Character",
+  "description": "Схема файла персонажа. Версия схемы — в поле _schema_version. Ключи, начинающиеся с '_', вычисляемые/GUI-only, не редактируются вручную.",
+  "type": "object",
+  "version": 1,
+
+  "required": [
+    "name", "class_display", "abilities", "ability_damage",
+    "combat", "items", "attacks", "settings"
+  ],
+
+  "properties": {
+
+    "_schema_version": {
+      "type": "integer", "const": 2,
+      "description": "Версия этой схемы. Сверять при миграциях. v2: show_portrait → hide_portrait (инверсия смысла)."
+    },
+
+    "name":            { "type": "string", "minLength": 1 },
+    "class_display":   { "type": "string", "minLength": 1 },
+
+    "hp":            { "type": "string", "pattern": "^\\d+\\/\\d+$", "description": "LEGACY display-only. Источник правды: combat.hp_current + _hp_max_cap." },
+    "pain_threshold":{ "type": "string", "pattern": "^\\d+\\/\\d+$", "description": "LEGACY display-only. Источник: _pain_threshold_data." },
+    "balance":       { "type": "string", "pattern": "^\\d+\\/\\d+$", "description": "LEGACY display-only. Источник: _balance_data." },
+    "spirit":        { "type": "string", "pattern": "^\\d+\\/\\d+$", "description": "LEGACY display-only. Источник: _spirit_data." },
+    "mana":          { "type": "string", "pattern": "^\\d+\\/\\d+$", "description": "LEGACY display-only. Источник: _mana_data.current/max." },
+    "ac":            { "type": "integer", "description": "LEGACY display-only. Источник: combat.ac." },
+    "parrying":      { "type": "integer", "description": "Парирование. Отдельное поле (не алиас combat.cmd). Источник правды для AC (парирование)." },    "bab":           { "type": "integer", "description": "LEGACY display-only. Источник: combat.bab." },
+
+    "injury_points": { "type": "integer", "minimum": 0 },
+    "morale":        { "type": "integer" },
+    "ignore_pain":            { "type": "boolean" },
+    "ignore_negative_morale": { "type": "boolean" },
+    "overload":         { "type": "integer", "minimum": 0 },
+    "overload_enabled": { "type": "boolean" },
+    "auto_balance_on_tick": { "type": "boolean" },
+
+    "save_fort": { "type": "integer", "description": "LEGACY display-only. Источник: combat.saves.fort." },
+    "save_ref":  { "type": "integer", "description": "LEGACY display-only. Источник: combat.saves.ref." },
+    "save_will": { "type": "integer", "description": "LEGACY display-only. Источник: combat.saves.will." },
+
+    "xp":           { "type": "integer", "minimum": 0 },
+    "xp_threshold": { "type": "integer", "minimum": 1 },
+
+    "portrait":     { "type": "string" },
+    "portrait_b64": { "type": "string" },
+    "background_image": { "type": "string" },
+    "background_b64":   { "type": "string" },
+    "music_url":    { "type": "string" },
+
+    "situational_bonuses": {
+      "type": "array",
+      "description": "Бафы/дебафы. Эффекты — либо постоянные (effects[]), либо разовые при активации (on_activate_effects[]). value может быть числом или формулой ('2*lvl', 'd4+1', 'con_mod').",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name":             { "type": "string" },
+          "desc":             { "type": "string" },
+          "duration_rounds":  { "type": "integer", "minimum": 0 },
+          "duration_current": { "type": "integer", "minimum": 0 },
+          "charges_max":      { "type": "integer", "minimum": 0 },
+          "charges_current":  { "type": "integer", "minimum": 0 },
+          "tick_on_initiative": { "type": "boolean" },
+          "charges_tick_mode": {
+            "type": "string",
+            "enum": ["none", "decrement", "increment"],
+            "default": "none",
+            "description": "T34.1: тик зарядов на инициативе. none = не тикают, decrement = -1, increment = +1."
+          },
+          "effects": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/Effect" },
+            "description": "Постоянные эффекты бафа. См. $defs.Effect (value: число|формула, bonus_type)."
+          },
+          "blocks": {
+  "type": "array",
+  "items": { "type": "string" },
+  "description": "T-BLOCKS-EXPANDED (v18.5): запреты. Префиксы: do:* (действия, напр. do:balance_restore), deny:* (запрет бонусов к целям: deny:ac, deny:attack, deny:skill), res:* (запрет восстановления: res:restore_hp, res:restore_mana)."
+},
+          "permanent":    { "type": "boolean", "default": true,
+            "description": "Вечный баф: без +/- и без тика, удаляется только крестиком." },
+          "keep_at_zero": { "type": "boolean", "default": true,
+            "description": "Не удалять автоматически при duration_current == 0 на след. тике." },
+          "allow_toggle": { "type": "boolean", "default": true,
+            "description": "T-EFFECTS-UI: кнопка ON/OFF в чипе." },
+          "enabled": { "type": "boolean", "default": true,
+            "description": "T-EFFECTS-UI: эффект активен (если allow_toggle)." }
+        }
+      }
+    },
+
+    "char_class": { "$ref": "#/$defs/ClassDef" },
+    "race":       { "$ref": "#/$defs/RaceDef" },
+
+    "abilities": {
+      "type": "object",
+      "required": ["str","dex","con","int","wis","cha"],
+      "properties": {
+        "str": { "type": "integer" }, "dex": { "type": "integer" },
+        "con": { "type": "integer" }, "int": { "type": "integer" },
+        "wis": { "type": "integer" }, "cha": { "type": "integer" }
+      }
+    },
+
+    "ability_damage": {
+      "type": "object",
+      "description": "Штраф/урон по характеристикам (не путать с abilities).",
+      "properties": {
+        "str": { "type": "integer" }, "dex": { "type": "integer" },
+        "con": { "type": "integer" }, "int": { "type": "integer" },
+        "wis": { "type": "integer" }, "cha": { "type": "integer" }
+      }
+    },
+
+    "combat": { "$ref": "#/$defs/Combat" },
+    "equipment": { "$ref": "#/$defs/Equipment" },
+
+    "natural_armor": { "type": "integer" },
+    "ac_bonus":      { "type": "integer" },
+    "ac_misc":       { "type": "integer" },
+
+    "cmb_mods": { "type": "array", "items": { "$ref": "#/$defs/Mod" } },
+    "cmd_mods": { "type": "array", "items": { "$ref": "#/$defs/Mod" } },
+
+    "items": {
+      "type": "object",
+      "description": "Словарь UUID -> Item. Ключ обязан совпадать с item.id.",
+      "additionalProperties": { "$ref": "#/$defs/Item" }
+    },
+
+    "attacks":  { "type": "array", "items": { "$ref": "#/$defs/Attack" } },
+    "spells":   { "type": "array", "items": { "$ref": "#/$defs/Spell" } },
+    "spell_slots": { "type": "object", "additionalProperties": { "type": "integer" } },
+    "spell_slots_enabled": { "type": "boolean" },
+    "class_resources": { "type": "array", "items": { "type": "object" } },
+
+    "proficiencies": { "$ref": "#/$defs/Proficiencies" },
+    "armor_invested":  { "type": "integer", "minimum": 0 },
+    "shield_invested": { "type": "integer", "minimum": 0 },
+
+    "training": { "$ref": "#/$defs/Training" },
+    "skills":   { "type": "array", "items": { "$ref": "#/$defs/Skill" } },
+    "feats":    { "type": "array", "items": { "$ref": "#/$defs/Feat" } },
+    "quirks":   { "type": "array", "items": { "$ref": "#/$defs/Quirk" } },
+    "languages":{ "type": "array", "items": { "$ref": "#/$defs/Language" } },
+    "templates":{ "type": "array", "items": { "type": "object" } },
+    "wiki_links": { "type": "array", "items": { "type": "object" } },
+    "lenses": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Lens" }
+    },
+
+    "drives": {
+      "type": "object",
+      "properties": {
+        "idealism": { "type": "integer" }, "growth": { "type": "integer" },
+        "knowledge":{ "type": "integer" }, "autonomy": { "type": "integer" },
+        "pleasure": { "type": "integer" }, "material": { "type": "integer" },
+        "triumph":  { "type": "integer" }, "success":  { "type": "integer" },
+        "society":  { "type": "integer" }, "decadence":{ "type": "integer" }
+      }
+    },
+    "drive_principles": { "type": "array", "items": { "type": "object" } },
+    "courts":       { "type": "array", "items": { "type": "object" } },
+    "court_quests": { "type": "array", "items": { "type": "object" } },
+    "seeds":        { "type": "array", "items": { "type": "object" } },
+
+    "downtime": { "$ref": "#/$defs/Downtime" },
+
+    "bag_dropped": { "type": "boolean" },
+    "injuries":    { "type": "array", "items": { "$ref": "#/$defs/Injury" } },
+    "reactions":         { "type": "integer", "minimum": 0 },
+    "reactions_invested":{ "type": "integer", "minimum": 0 },
+
+    "active_stance": { "type": ["string","null"], "default": null,
+      "description": "T-STANCE: имя активной стойки (FK на feats[].name, is_stance=true) или null = «Обычная». Меняется сколько угодно, не тикает." },
+
+    "action_log": {
+      "type": "array",
+      "maxItems": 20,
+      "description": "T-LOG: журнал трат (append-only, 20 последних). Только расход. Реверс — через before/after.",
+      "items": {
+        "type": "object",
+        "required": ["ts","kind","summary"],
+        "properties": {
+          "ts":      { "type": "string" },
+          "kind":    { "type": "string", "enum": ["hp","balance","spirit","mana","slot","charge","ability","stat","training","spell","item","buff","initiative_tick","other"] },
+          "summary": { "type": "string" },
+          "before":  { "type": "object" },
+          "after":   { "type": "object" },
+          "rev":     { "type": "boolean", "default": true }
+        }
+      }
+    },
+    
+    "parry_ranged_current": { "type": "integer", "minimum": 0 },
+    "parry_ranged_max":     { "type": "integer", "minimum": 0 },
+    "master_reroll_current": { "type": "integer", "minimum": 0 },
+    "master_reroll_max":     { "type": "integer", "minimum": 0 },
+    "master_no_attack_tag_current": { "type": "integer", "minimum": 0 },
+    "master_no_attack_tag_max":     { "type": "integer", "minimum": 0 },
+    "master_full_balance_current": { "type": "integer", "minimum": 0 },
+    "master_full_balance_max":     { "type": "integer", "minimum": 0 },
+
+    "Lens": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name":  { "type": "string" },
+        "desc":  { "type": "string" },
+        "current": { "type": "integer", "minimum": 0, "default": 0 },
+        "max":     { "type": "integer", "minimum": 0, "default": 0 },
+        "show_on_panel": { "type": "boolean", "default": false }
+      }
+    },
+
+
+    "base": { "$ref": "#/$defs/Base" },
+    "base_invested": { "type": "integer", "minimum": 0 },
+
+    "comfort":   { "$ref": "#/$defs/CurrentMax" },
+    "attention": { "$ref": "#/$defs/CurrentMax" },
+
+    "pain_threshold_bonus": { "type": "integer" },
+    "pain_extra":       { "type": "integer" },
+    "pain_extra_temp":  { "type": "integer" },
+    "pain_max":         { "type": "integer", "minimum": 0 },
+    "regen_modifier":   { "type": "string" },
+
+    "balance_bonus":         { "type": "integer" },
+    "balance_restore_bonus": { "type": "integer" },
+    "spirit_bonus":          { "type": "integer" },
+    "hp_bonus":              { "type": "integer" },
+
+    "_hp_max_cap":          { "type": "integer", "minimum": 1, "description": "Вычисляемый потолок HP. Только чтение для ботов." },
+    "_pain_threshold_data": { "$ref": "#/$defs/CurrentMax" },
+    "_balance_data":        { "$ref": "#/$defs/CurrentMax" },
+    "_spirit_data":         { "$ref": "#/$defs/CurrentMax" },
+    "_mana_data":           { "$ref": "#/$defs/ManaData" },
+
+    "settings": { "$ref": "#/$defs/Settings" },
+    "notes":    { "type": "string" }
+  },
+
+  "$defs": {
+
+    "CurrentMax": {
+      "type": "object",
+      "required": ["current","max"],
+      "properties": {
+        "current": { "type": "integer" },
+        "max":     { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "Mod": {
+      "type": "object",
+      "required": ["source","value"],
+      "properties": {
+        "source": { "type": "string" },
+        "value":  { "type": "number" }
+      }
+    },
+
+    "ClassDef": {
+      "type": "object",
+      "required": ["name","level"],
+      "properties": {
+        "name":        { "type": "string" },
+        "level":       { "type": "integer", "minimum": 1 },
+        "hp_die":      { "type": "integer", "minimum": 1 },
+        "hp_rolls":    { "type": "array", "items": { "type": "integer" } },
+        "abilities":   { "type": "array", "items": { "$ref": "#/$defs/AbilityDef" } },
+        "has_spellbook": { "type": "boolean" },
+        "spell_discount_extra": { "type": "integer" },
+        "bab_type":    { "type": "string", "enum": ["poor","medium","good"] },
+        "good_saves":  { "type": "array", "items": { "type": "string", "enum": ["fort","ref","will"] } }
+      }
+    },
+
+    "RaceDef": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name":      { "type": "string" },
+        "type":      { "type": "string" },
+        "speed":     { "type": "integer" },
+        "abilities": { "type": "array", "items": { "$ref": "#/$defs/AbilityDef" } }
+      }
+    },
+
+    "AbilityDef": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name":  { "type": "string" },
+        "desc":  { "type": "string" },
+        "uses":  { "type": "boolean" },
+        "uses_current": { "type": "integer", "minimum": 0 },
+        "uses_max":     { "type": "integer", "minimum": 0 },
+        "show_on_panel": { "type": "boolean", "default": true },
+        "tick_mode":    { "type": "string", "enum": ["none","restore","spend","initiative"] },
+        "cooldown_rounds":  { "type": "integer", "minimum": 0 },
+        "cooldown_current": { "type": "integer", "minimum": 0 },
+        "tick_on_initiative": { "type": "boolean", "default": true },
+        "charges_tick_mode": {
+          "type": "string",
+          "enum": ["none", "decrement", "increment"],
+          "default": "none"
+        },
+        "is_buff":       { "type": "boolean", "default": true,
+          "description": "T48: способность — это баф/дебаф (шаблон = situational_bonuses)." },
+        "source": { "type": "string", "enum": ["training","loot","race","class","quirk"],
+          "default": "race",
+          "description": "T-RACE: откуда способность. 'race'/'class' = бесплатная, 'training' = куплена за тренировки." },
+        "invested": { "type": "integer", "minimum": 0, "default": 0,
+          "description": "T-RACE: сколько тренировок вложено (0 = бесплатная). >0 → в UI метка «куплено (N)»." },
+        "duration_rounds":  { "type": "integer", "minimum": 0 },
+        "duration_current": { "type": "integer", "minimum": 0 },
+        "charges_max":      { "type": "integer", "minimum": 0 },
+        "charges_current":  { "type": "integer", "minimum": 0 },
+        "effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Effect" }
+        },
+        "on_activate_effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Effect" },
+          "description": "T48: разовые эффекты при активации бафа-способности."
+        },
+        "permanent":    { "type": "boolean", "default": true },
+        "keep_at_zero": { "type": "boolean", "default": true },
+        "allow_toggle": { "type": "boolean", "default": true },
+        "enabled":      { "type": "boolean", "default": true },
+        "blocks":       {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "T-BLOCKS-EXPANDED: список имён блокируемых функций (реестр BLOCKABLE в character.py). См. situational_bonuses.blocks."
+        },
+        "is_stance":    { "type": "boolean", "default": true }
+      }
+    },
+
+    "Combat": {
+      "type": "object",
+      "properties": {
+        "hp_current": { "type": "integer" },
+        "hp_bought":  { "type": "integer" },
+        "hp_temp":    { "type": "integer", "minimum": 0 },
+        "ac":         { "type": "integer" },
+        "initiative": { "type": "integer" },
+        "speed":      { "type": "integer" },
+        "bab":        { "type": "integer" },
+        "cmb":        { "type": "integer" },
+        "cmd":        { "type": "integer" },
+        "size":       { "type": "string", "enum": ["Fine","Diminutive","Tiny","Small","Medium","Large","Huge","Gargantuan","Colossal"] },
+        "saves": {
+          "type": "object",
+          "properties": {
+            "fort": { "$ref": "#/$defs/Save" },
+            "ref":  { "$ref": "#/$defs/Save" },
+            "will": { "$ref": "#/$defs/Save" }
+          }
+        }
+      }
+    },
+
+    "Save": {
+      "type": "object",
+      "properties": {
+        "base": { "type": "integer" },
+        "mods": { "type": "array", "items": { "$ref": "#/$defs/Mod" } }
+      }
+    },
+
+    "Equipment": {
+      "type": "object",
+      "properties": {
+        "armor_ac":  { "type": "integer" },
+        "shield_ac": { "type": "integer" },
+        "add_shield_ac_to_balance": { "type": "boolean" }
+      }
+    },
+
+    "Item": {
+      "type": "object",
+      "required": ["id","name","category","location"],
+      "properties": {
+        "id":   { "type": "string", "description": "UUID. Должен совпадать с ключом в items{}." },
+        "name": { "type": "string" },
+        "category": {
+          "type": "string",
+          "enum": ["armor","shield","weapon","belt","body","chest","eyes","gloves","head","neck","ring","back","shoulders","legs","feet","companion","pet","modifier","tools_craft","tools_travel","components","holy_symbol","unload","consumable","misc"]
+        },
+        "location": { "type": "string", "enum": ["equipped","unload","bag","base"] },
+        "slot": {
+          "type": ["string","null"],
+          "enum": ["armor","belt","body","chest","eyes","gloves","head","neck","ring1","ring2","back","shoulders","legs","feet","weapon_main","weapon_off","shield","companion","pet","modifier","tools_craft","tools_travel","components","holy_symbol","unload",null]
+        },
+        "order":    { "type": "integer" },
+        "qty":      { "type": "integer", "minimum": 0 },
+        "desc":     { "type": "string" },
+        "icon_b64": { "type": "string" },
+        "weight":      { "type": "number", "minimum": 0 },
+        "weight_type": { "type": "string" },
+        "price":       { "type": "integer", "minimum": 0 },
+        "pack":        { "type": "string", "description": "T-CAT: имя файла-источника (без .json). Ставится load_catalogs для элементов из каталога." },
+        "armor_type":   { "type": ["string","null"], "enum": ["Light","Medium","Heavy",null] },
+        "ac_bonus":     { "type": "integer" },
+        "ac_type":      { "type": "string", "enum": ["armor","shield","natural","deflection","misc"] },
+        "ac_max_dex":   { "type": ["integer","null"] },
+        "speed_penalty":{ "type": "integer" },
+        "skill_penalty":{ "type": "integer" },
+        "arcane_failure": { "type": "integer" },
+        "mana_penalty":   { "type": "integer" },
+        "unprof_penalty": { "type": "integer" },
+
+        "damage":        { "type": "string", "description": "КАНОН для оружия (как в инвентаре). Пример: '6d6', 'd3+5'." },
+        "damage_sml":    { "type": "string", "description": "LEGACY/резерв. Пусто в текущих сейвах. Не канон." },
+        "damage_med":    { "type": "string", "description": "LEGACY/резерв." },
+        "damage_type":   { "type": "string", "description": "LEGACY/резерв." },
+        "hands":         { "type": "string", "description": "LEGACY/резерв." },
+
+        "crit_threshold": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "crit_mult":      { "type": "integer", "minimum": 1 },
+        "lucky_threshold": { "type": "integer", "minimum": 2, "maximum": 20, "description": "Порог счастливой атаки. По умолчанию 20." },
+        "weapon_group":   { "type": "string" },
+        "attack_bonus":   { "type": "integer" },
+        "damage_bonus":   { "type": "integer" },
+
+        "finesse":     { "type": "boolean" },
+        "two_handed":  { "type": "boolean" },
+        "ranged":      { "type": "boolean" },
+        "thrown":      { "type": "boolean" },
+        "range_ft":    { "type": "integer", "minimum": 0 },
+        "required_level": { "type": "integer", "minimum": 0 },
+
+        "uses":         { "type": "boolean" },
+        "uses_max":     { "type": "integer", "minimum": 0 },
+        "uses_current": { "type": "integer", "minimum": 0 },
+        "show_on_panel":{ "type": "boolean" },
+
+        "hp":     { "type": "integer", "minimum": 0 },
+        "max_hp": { "type": "integer", "minimum": 0 },
+        "hardness": { "type": "integer", "minimum": 0 },
+
+        "passive_bonuses": { "type": "array", "items": { "$ref": "#/$defs/Mod" } },
+        "activatable":  { "type": "boolean" },
+        "activation_cost_spirit": { "type": "integer" },
+        "activation_effects": { "type": "array", "items": { "$ref": "#/$defs/Effect" } },
+        "activation_duration": { "type": "integer", "minimum": 0 },
+        "activated":    { "type": "boolean" },
+
+        "base_slots":   { "type": "integer", "minimum": 0 },
+        "gray":         { "type": "boolean" },
+        "enchants":     { "type": "array", "items": { "type": "object" } },
+        "unload_bonus": { "type": "integer" },
+
+        "tick_mode":       { "type": "string", "enum": ["none","restore","spend","initiative"] },
+        "cooldown_rounds": { "type": "integer", "minimum": 0 },
+        "cooldown_current":{ "type": "integer", "minimum": 0 },
+        "tick_on_initiative": { "type": "boolean" }
+      }
+    },
+
+    "Effect": {
+      "type": "object",
+      "required": ["target","value"],
+      "properties": {
+        "target": { "type": "string", "description": "str|dex|con|int|wis|cha|will|attack|damage|ac|ref|fort|cmd|cmb|initiative|speed|skill|lucky|hp_temp|restore_hp|restore_mana|restore_spirit|restore_balance|restore_resource|self_damage_per_tick (см. GLOSSARY §11). speed_mult — [DEPRECATED], код не применяет (T-REMOVE-SPEED-MULT)." },
+        "value":  { "type": ["number","string"], "description": "Число или формула: 'lvl', '2*lvl', 'lvl+3', 'd4+1', '2d6', 'str_mod'…'cha_mod', арифметика + - * / и скобки. Парсер — Character._eval_effect_value. random — Mersenne Twister (для d20 достаточно)." },
+        "bonus_type": {
+          "type": "string",
+          "enum": [
+            "flat", "alchemical", "armor", "circumstance", "competence",
+            "deflection", "dodge", "enhancement", "inherent", "insight",
+            "luck", "morale", "natural", "profane", "racial",
+            "resistance", "sacred", "shield", "size", "trait"
+          ],
+          "default": "flat",
+          "description": "Тип бонуса PF1. flat/'' = складывается всегда. Остальные: побеждает больший по модулю (бонус vs штраф одного типа). См. DND/modifiers.py."
+        },
+        "skill_name": { "type": "string", "description": "Обязательно, если target='skill'. Имя навыка из character.skills." },
+        "resource_name": { "type": "string", "description": "Обязательно, если target='restore_resource'. Имя ресурса из class_resources." }
+      }
+    },
+
+    "Attack": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name":       { "type": "string" },
+        "use_bab":    { "type": "boolean" },
+        "stat":       { "type": "string", "enum": ["str","dex","con","int","wis","cha"] },
+        "extra_bonus":{ "type": "integer" },
+        "manual_bonus":{ "type": "integer" },
+
+        "damage_dice":  { "type": "string", "description": "КАНОН для атаки. Пример: '6d6', 'd3+5'." },
+        "crit_threshold": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "crit_mult":      { "type": "integer", "minimum": 1 },
+        "lucky_threshold": { "type": "integer", "minimum": 2, "maximum": 20, "description": "Порог счастливой атаки для этой атаки. Обычно = item.lucky_threshold." },
+        "desc":           { "type": "string" },
+        "source":         { "type": "string", "enum": ["training","loot","race","class","quirk","manual"] },
+        "is_maneuver":    { "type": "boolean" },
+
+        "damage_stat":      { "type": "string", "enum": ["str","dex","con","int","wis","cha"] },
+        "damage_mult":      { "type": "number", "minimum": 0 },
+        "damage_stat_auto": { "type": "boolean" },
+
+        "finesse":     { "type": "boolean" },
+        "two_handed":  { "type": "boolean" },
+        "ranged":      { "type": "boolean" },
+        "thrown":      { "type": "boolean" },
+
+        "from_item":   { "type": ["string","null"], "description": "FK: UUID из items{}. null — ручная атака." },
+        "proficiency": { "type": "string" },
+        "master_ability":    { "type": "boolean" },
+        "master_ability_id": { "type": "string", "enum": ["","master_reroll","master_no_attack_tag","master_full_balance"] },
+
+        "show_on_panel": { "type": "boolean" },
+        "uses":         { "type": "boolean" },
+        "uses_max":     { "type": "integer", "minimum": 0 },
+        "uses_current": { "type": "integer", "minimum": 0 },
+        "tick_on_initiative": { "type": "boolean" },
+        "tick_mode":     { "type": "string", "enum": ["none","restore","spend","initiative"] },
+        "cooldown_rounds":  { "type": "integer", "minimum": 0 },
+        "cooldown_current": { "type": "integer", "minimum": 0 },
+        "order": { "type": "integer" }
+      }
+    },
+
+    "Spell": {
+      "type": "object",
+      "required": ["name","circle"],
+      "properties": {
+        "name":   { "type": "string" },
+        "circle": { "type": "integer", "minimum": 0 },
+        "desc":   { "type": "string" },
+        "link":   { "type": "string" },
+        "mastery":{ "type": "boolean" },
+        "source": { "type": "string" },
+        "invested": { "type": "integer", "minimum": 0 },
+        "mastery_level":    { "type": "integer", "minimum": 0 },
+        "mastery_invested": { "type": "integer", "minimum": 0 },
+        "masteries": { "type": "array", "items": { "type": "object" } },
+
+        "attack_type": {
+          "type": "string",
+          "enum": ["", "ranged", "ranged_touch", "melee", "melee_finesse"],
+          "default": "",
+          "description": "Тип атаки заклинания. Пусто = не требует атаки."
+        },
+        "range_type": {
+          "type": "string",
+          "enum": ["short", "medium", "long", "custom"],
+          "default": "long",
+          "description": "Тип дистанции. short/medium/long — формулы PF1, custom — range_custom."
+        },
+        "range_custom": {
+          "type": ["integer", "string"],
+          "default": 0,
+          "description": "Дистанция для custom: число или формула ('25+5*lvl')."
+        },
+        "is_aoe": { "type": "boolean", "default": false },
+        "aoe_shape": {
+          "type": "string",
+          "enum": ["", "burst", "cone", "cylinder", "emanation", "line", "sphere", "spread"],
+          "default": ""
+        },
+        "aoe_size": {
+          "type": ["integer", "string"],
+          "default": "",
+          "description": "Размер АоЕ: число (фт) или формула."
+        },
+
+        "casting_time": {
+          "type": "string",
+          "enum": ["swift", "immediate", "move", "standard", "full_round", "one_round"],
+          "default": "standard",
+          "description": "Время сотворения. swift/immediate = 0 действий (без перегрузки)."
+        },
+        "mana_cost": {
+          "type": "integer", "minimum": 0, "default": 0,
+          "description": "Стоимость маны. Авто из circle, можно переопределить."
+        },
+        "balance_cost": {
+          "type": "integer", "minimum": 0, "default": 0,
+          "description": "Стоимость баланса. Авто из circle, можно переопределить."
+        },
+        "overload": {
+          "type": "integer", "minimum": 0, "default": 0,
+          "description": "Перегрузка (раундов). Авто: actions * (2 если без маны, иначе 1). Можно переопределить."
+        },
+        "slot_circle": {
+          "type": "integer", "minimum": 0, "default": 0,
+          "description": "Какой круг слота тратится. По умолчанию = circle."
+        },
+        "show_on_panel": {
+          "type": "boolean", "default": false,
+          "description": "Показывать чип заклинания на панели."
+        }
+      }
+    },
+
+    "Proficiencies": {
+      "type": "object",
+      "properties": {
+        "armor":   { "type": "string" },
+        "shields": { "type": "string" },
+        "weapons": { "type": "array", "items": { "$ref": "#/$defs/WeaponProficiency" } }
+      }
+    },
+
+    "WeaponProficiency": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name":       { "type": "string" },
+        "level":      { "type": "integer", "minimum": 0 },
+        "difficulty": { "type": "integer" },
+        "scale":      { "type": "integer" },
+        "desc":       { "type": "string" },
+        "source":     { "type": "string" },
+        "invested":   { "type": "integer", "minimum": 0 },
+        "basics":     { "type": "boolean" },
+        "bump_applied": { "type": "integer" },
+        "basics_invested": { "type": "integer", "minimum": 0 },
+        "specialist_bonuses": { "type": "array", "items": { "type": "object" } },
+        "expert_bonuses":     { "type": "array", "items": { "type": "object" } },
+        "master_bonuses":     { "type": "array", "items": { "type": "object" } },
+        "bonuses": {
+          "type": "array",
+          "description": "Слоты перков владения. slot — индекс, id — идентификатор перка. T24: реестр допустимых id = WEAPON_BONUS_CATALOG (character.py). Ключи: spec_*, expert_*, master_*.",
+          "items": {
+            "type": "object",
+            "required": ["slot","id"],
+            "properties": {
+              "slot": { "type": "integer", "minimum": 0 },
+              "id":   { "type": "string", "description": "T24: ключ из WEAPON_BONUS_CATALOG (spec_*, expert_*, master_*)." }
+            }
+          }
+        }
+      }
+    },
+
+    "Training": {
+      "type": "object",
+      "properties": {
+        "available": { "type": "integer", "minimum": 0 },
+        "spent":     { "type": "integer", "minimum": 0 },
+        "purchases": {
+          "type": "array",
+          "description": "APPEND-ONLY журнал покупок. Не пересчитывать из него состояние — это история, не текущее.",
+          "items": {
+            "type": "object",
+            "required": ["type","desc","cost","source"],
+            "properties": {
+              "type":   { "type": "string", "enum": ["feat","spell","ability","base","hp","skill","skill_rank","skill_spec","skill_promote","language","weapon","weapon_basics"] },
+              "desc":   { "type": "string" },
+              "cost":   { "type": "integer", "minimum": 0 },
+              "source": { "type": "string", "enum": ["training","loot","race","class","quirk"] }
+            }
+          }
+        }
+      }
+    },
+
+    "Skill": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name":  { "type": "string" },
+        "tier":  { "type": "string", "enum": ["normal","advanced","specialized"] },
+        "rank":  { "type": "integer", "minimum": 0 },
+        "source":{ "type": "string" },
+        "invested": { "type": "integer", "minimum": 0 },
+        "stat":  { "type": "string", "enum": ["str","dex","con","int","wis","cha"] },
+        "mods":  { "type": "array", "items": { "$ref": "#/$defs/Mod" } }
+      }
+    },
+
+    "Feat": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "display_name": { "type": "string" },
+        "desc": { "type": "string" },
+        "source": { "type": "string" },
+        "invested": { "type": "integer", "minimum": 0 },
+        "link": { "type": "string" },
+
+        "is_stance": { "type": "boolean", "default": false,
+          "description": "T-STANCE: черта даёт стойку. В edit_feats не показывается; в UI — только в блоке «Стойка»." },
+        "stance_effects": { "type": "array", "items": { "$ref": "#/$defs/Effect" },
+          "description": "T-STANCE: эффекты стойки (как situational_bonuses.effects)." },
+        "stance_blocks": { "type": "array", "items": { "type": "string" },
+          "description": "T-STANCE: что блокирует." },
+        "effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Effect" },
+          "description": "T-FEAT-EFFECTS: постоянные эффекты черты. Работают, если enabled."
+        },
+        "on_activate_effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Effect" },
+          "description": "T-EFFECTS-UI: разовые эффекты при активации (кнопка ⟳)."
+        },
+        "duration_rounds":  { "type": "integer", "minimum": 0, "default": 0 },
+        "duration_current": { "type": "integer", "minimum": 0, "default": 0 },
+        "charges_max":      { "type": "integer", "minimum": 0, "default": 0 },
+        "charges_current":  { "type": "integer", "minimum": 0, "default": 0 },
+        "charges_tick_mode": {
+          "type": "string",
+          "enum": ["none", "decrement", "increment"],
+          "default": "none"
+        },
+        "cooldown_rounds":  { "type": "integer", "minimum": 0, "default": 0 },
+        "cooldown_current": { "type": "integer", "minimum": 0, "default": 0 },
+        "tick_mode": {
+          "type": "string",
+          "enum": ["none", "restore", "spend", "initiative"],
+          "default": "none"
+        },
+        "tick_on_initiative": { "type": "boolean", "default": true },
+        "permanent":    { "type": "boolean", "default": true },
+        "keep_at_zero": { "type": "boolean", "default": true },
+        "is_buff":      { "type": "boolean", "default": true },
+        "show_on_panel":{ "type": "boolean", "default": true },
+        "allow_toggle": { "type": "boolean", "default": true },
+        "enabled":      { "type": "boolean", "default": true },
+        "uses":         { "type": "boolean", "default": true },
+        "blocks":       {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "T-BLOCKS-EXPANDED: список имён блокируемых функций (реестр BLOCKABLE в character.py). См. situational_bonuses.blocks."
+        }
+      }
+    },
+
+    "Quirk": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "seed":  { "type": "string" },
+        "court": { "type": "string" },
+        "focus": { "type": "string" },
+        "name":  { "type": "string" },
+        "desc":  { "type": "string" },
+        "source":{ "type": "string" }
+      }
+    },
+
+    "Language": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name":   { "type": "string" },
+        "native": { "type": "boolean" },
+        "cost":   { "type": "integer", "minimum": 0 },
+        "source": { "type": "string" },
+        "invested": { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "Downtime": {
+      "type": "object",
+      "properties": {
+        "gold":   { "$ref": "#/$defs/Currency" },
+        "silver": { "$ref": "#/$defs/Currency" },
+        "copper": { "$ref": "#/$defs/Currency" },
+        "rates": {
+          "type": "object",
+          "properties": {
+            "gold_to_silver":   { "type": "integer", "minimum": 1 },
+            "silver_to_copper": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "time_points": { "$ref": "#/$defs/CurrentMax" }
+      }
+    },
+
+    "Currency": {
+      "type": "object",
+      "required": ["name","amount"],
+      "properties": {
+        "name":   { "type": "string" },
+        "amount": { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "Injury": {
+      "type": "object",
+      "required": ["name","severity"],
+      "properties": {
+        "name":     { "type": "string" },
+        "severity": { "type": "string", "enum": ["light","medium","heavy","custom"] },
+        "heal_rating": { "type": "integer", "minimum": 0 },
+        "desc":     { "type": "string" },
+        "tick_on_initiative": { "type": "boolean" },
+        "effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Effect" },
+          "description": "T46: постоянные эффекты травмы (бафы/дебафы)."
+        },
+        "on_activate_effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Effect" },
+          "description": "T-EFFECTS-UI: разовые эффекты при активации."
+        },
+        "duration_rounds":  { "type": "integer", "minimum": 0, "default": 0 },
+        "duration_current": { "type": "integer", "minimum": 0, "default": 0 },
+        "charges_max":      { "type": "integer", "minimum": 0, "default": 0 },
+        "charges_current":  { "type": "integer", "minimum": 0, "default": 0 },
+        "charges_tick_mode": {
+          "type": "string",
+          "enum": ["none", "decrement", "increment"],
+          "default": "none"
+        },
+        "cooldown_rounds":  { "type": "integer", "minimum": 0, "default": 0 },
+        "cooldown_current": { "type": "integer", "minimum": 0, "default": 0 },
+        "tick_mode": {
+          "type": "string",
+          "enum": ["none", "restore", "spend", "initiative"],
+          "default": "none"
+        },
+        "tick_on_initiative": { "type": "boolean", "default": true },
+        "permanent":    { "type": "boolean", "default": true },
+        "keep_at_zero": { "type": "boolean", "default": true },
+        "is_buff":      { "type": "boolean", "default": true },
+        "show_on_panel":{ "type": "boolean", "default": true },
+        "allow_toggle": { "type": "boolean", "default": true },
+        "enabled":      { "type": "boolean", "default": true },
+        "uses":         { "type": "boolean", "default": true },
+        "blocks":       {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "T-BLOCKS-EXPANDED: список имён блокируемых функций (реестр BLOCKABLE в character.py). См. situational_bonuses.blocks."
+        }
+      }
+    },
+
+    "Base": {
+      "type": "object",
+      "properties": {
+        "slots_max": { "type": "integer", "minimum": 0 },
+        "contents":  { "type": "array", "items": { "type": "object" } }
+      }
+    },
+
+    "ManaData": {
+      "type": "object",
+      "properties": {
+        "current": { "type": "integer" },
+        "enabled": { "type": "boolean" },
+        "class_max": { "type": "integer", "minimum": 0 },
+        "bonus_sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name","value"],
+            "properties": {
+              "name":  { "type": "string" },
+              "value": { "type": "integer" }
+            }
+          }
+        },
+        "max": { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "Settings": {
+      "type": "object",
+      "description": "GUI-настройки. НЕ данные персонажа. Ботам-механикам — не трогать.",
+      "properties": {
+        "show_mana":          { "type": "boolean" },
+        "show_class_points":  { "type": "boolean" },
+        "show_spell_slots":   { "type": "boolean" },
+        "show_spell_list":    { "type": "boolean" },
+        "hide_portrait":      { "type": "boolean", "default": false, "description": "Скрыть портрет в главном окне. True = портрет не отображается." },
+        "show_rest_short":    { "type": "boolean" },
+        "show_rest_long":     { "type": "boolean" },
+        "buff_delete_on_zero":  { "type": "boolean", "default": false,
+          "description": "Удалять чип бафа на след. тике, когда duration_current == 0 (если у бафа не стоит keep_at_zero)." },
+        "confirm_chip_delete":  { "type": "boolean", "default": false,
+          "description": "Спрашивать «вы уверены?» перед удалением чипа бафа." },
+        "hide_hints":         { "type": "boolean", "default": false,
+          "description": "T50: скрыть примечания в редакторах (подсказки под полями). НЕ влияет на тултипы (ToolTip)." },
+
+        "alpha_menu":        { "type": "integer", "minimum": 10, "maximum": 90, "default": 90,
+          "description": "T-ALPHA: прозрачность окна меню, 10..90." },
+        "alpha_center":      { "type": "integer", "minimum": 10, "maximum": 90, "default": 90,
+          "description": "T-ALPHA: прозрачность окна чарника, 10..90." },
+        "alpha_chips":       { "type": "integer", "minimum": 10, "maximum": 90, "default": 90,
+          "description": "T-ALPHA: прозрачность окна быстрого доступа, 10..90." },
+        "alpha_log":         { "type": "integer", "minimum": 10, "maximum": 90, "default": 90,
+          "description": "T-ALPHA: прозрачность окна лога, 10..90." },
+        "stance_chips": { "type": "array", "items": { "type": "string" }, "default": [],
+          "description": "T-STANCE: имена стоек (feats[].name, is_stance=true) в быстром доступе (чип «Стойка»). Пусто = все is_stance." },
+        "chips_visible_enabled": { "type": "boolean", "default": false,
+          "description": "T-CHIPS (v18.6): включён ли фильтр chips_visible. false = показывать все; true = только из chips_visible (пусто = ничего)." },
+        "chips_visible": { "type": "array", "items": { "type": "string" }, "default": [],
+          "description": "T-CHIPS (v18.6): id чипов, которые показывать на панели (см. chips.collect_all). Работает только если chips_visible_enabled = true." },
+        "chips_order": { "type": "array", "items": { "type": "string" }, "default": [],
+          "description": "T-CHIPS (v18.6): порядок чипов на панели (список id). Отсутствующие — в конец. Drag&drop сохраняет сюда." },
+        "chips_colors": { "type": "object", "default": {},
+          "additionalProperties": { "type": "string" },
+          "description": "T-CHIPS (v18.6): кастомные цвета чипов {id: '#hex'}. Перекрывают spec['color']." },
+        "chips_positions": { "type": "object", "default": {},
+          "additionalProperties": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "maxItems": 2 },
+          "description": "T-SPLIT-3.2 (v1.1, план): {id: [x, y]} — позиции чипов на десктопе (overlay)." },
+        "chips_drag_mode": { "type": "boolean", "default": false,
+          "description": "T-SPLIT-3.2 (v1.1, план): режим перемещения чипов на десктопе. false = только клики; true = drag." },
+        "close_prev_window": { "type": "boolean", "default": true,
+          "description": "T-SPLIT-4: закрывать (или скрывать) предыдущее окно редактора/чипа при открытии нового." },
+        "alpha_chip_buttons":{ "type": "integer", "minimum": 10, "maximum": 90, "default": 90,
+          "description": "T-ALPHA: прозрачность самих чипов (кнопок), 10..90." },
+        "show_bp_chip":       { "type": "boolean" },
+        "show_comfort_chip":  { "type": "boolean" },
+        "show_attention_chip":{ "type": "boolean" },
+        "show_time_chip":     { "type": "boolean" },
+        "show_parry_ranged_chip": { "type": "boolean", "description": "Чип парирования дальней атаки на панели." },
+        "show_master_reroll_chip": { "type": "boolean", "description": "Чип мастерского переброса на панели." },
+        "show_master_no_attack_tag_chip": { "type": "boolean", "description": "Чип атаки без тега на панели." },
+        "show_master_full_balance_chip": { "type": "boolean", "description": "Чип полного баланса на панели." },
+        "hotkeys": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "ui_layout_mode": {
+          "type": "string",
+          "enum": ["classic", "split", "split_pinned"],
+          "default": "split",
+          "description": "Режим окна. classic = одно окно; split = 3 окна (меню/чарник/чипы); split_pinned = split + центр магнитится справа от меню."
+        },
+        "minimize_to_tray_on_close": {
+          "type": "boolean",
+          "default": true,
+          "description": "При закрытии левого меню сворачиваться в трей (меню + чарник). False = выход из программы."
+        },
+        "ui_layout": { "type": "array", "items": { "type": "object" } },
+        "visible_buttons": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" }
+        },
+        "catalogs_enabled": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "T-CAT: список каталогов. Элемент — '<папка>/<файл>.json' (файл) или '<папка>' (вся папка, обратная совместимость). Пусто = всё включено. Трактовка зависит от catalogs_mode."
+        },
+        "catalogs_items_disabled": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "T-CAT: скрытые элементы внутри включённых файлов. Формат: '<папка>/<файл>#<имя>' (например 'armor/mistria.json#Шлем Мистрии')."
+        },
+        "catalogs_mode": {
+          "type": "string",
+          "enum": ["blacklist","whitelist"],
+          "default": "whitelist",
+          "description": "T-CAT: как трактовать catalogs_enabled. whitelist = только перечисленные включены; blacklist = все, кроме перечисленных."
+        }
+      }
+    }
+  }
+}

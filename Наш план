@@ -1,0 +1,92 @@
+Финальный пакет — документы (быстро, без лишних проверок)
+LOG.md — найди ver: v18.5 → уже есть? Если нет — замени v18.4 → v18.5.
+
+Добавь перед # (v18.5) T-EFFECTS-UI (DONE):
+
+text
+- **`T-MAX-STATS`** — `max_hp` / `max_mana` / `max_balance` / `max_spirit` / `max_resource` / `max_pain_threshold` в `VALID_SIT_TARGETS`, `TARGET_NAMES`, `character.py`.
+- **`T-BLOCKS-EXPANDED`** — `blocks[]` с префиксами `do:*` / `bonus:*` / `res:*`; `is_blocked` / `is_bonus_denied` / `is_resource_denied`; список в `gui_effects`.
+- **`_check.py`** — `check_effects_ui_expanded`, всего **39**.
+TECH.md — ver: v18.5, F14 DONE (T-EFFECTS-UI + T-MAX-STATS + T-BLOCKS-EXPANDED).
+
+PROJECT_MAP.md — _check.py: 39. Добавь T-MAX-STATS / T-BLOCKS-EXPANDED в # FIELDS.
+
+SCHEMA.md — §5.8 дополнить: «max_* цели; blocks[] с префиксами».
+
+GLOSSARY.md — блок T-EFFECTS-UI: добавить max_*, blocks (префиксы).
+
+TASK_CHIPS.md — задачи по чипам (v18.6, план)
+1. Правка, сделанная в этой сессии (v18.5)
+gui.py → _rebuild_resources_panel → _dur_minus:
+
+Было: _maybe_remove_buff(idx).
+
+Стало: self._maybe_remove_buff(idx) + return после удаления.
+
+Почему: метод App, вызывался без self. → NameError.
+
+Проверка: python -c "import gui; print('OK')" — работает.
+
+2. Цель: перетаскивание чипов (как в WoW)
+Чипы должны переставляться мышью (drag & drop) в панели ресурсов.
+
+Порядок сохраняется в settings (новое поле chips_order — список id чипов).
+
+Чипы могут «жить» на десктопе (вне приложения) — флаг settings.chips_on_desktop (пока план, потом — T-SPLIT-3.2).
+
+Сейчас чипы в одном flow (_flow_frame, _reflow_chips). Нужно:
+
+Добавить drag в _add_chip (bind <ButtonPress-1> / <B1-Motion> / <ButtonRelease-1>).
+
+При drop — пересортировать _flow_items (по позиции курсора).
+
+Сохранять порядок в settings["chips_order"] (по id чипа).
+
+При перерисовке (_rebuild_resources_panel) — сортировать по chips_order.
+
+3. Правый клик на чипы
+Ресурсы (HP, мана, баланс, дух, BP, классовые) — правый клик → диалог ввода числа (gui_dialogs.ask_int).
+
+Реализация: добавить в chip() параметры edit_get, edit_set, edit_title.
+
+При правом клике — открывать ask_int, применять значение, self._refresh().
+
+Предметы / Атаки / Бафы — правый клик → редактор этого объекта.
+
+Атака: gui_editors._attack_dialog(app, i, self._refresh).
+
+Баф: gui_combat._edit_buff_dialog(app, i, self._refresh).
+
+Предмет: редактор предмета (из gui_inventory).
+
+4. Разделители групп (опционально)
+Перед группами чипов — метки «Ресурсы», «Бафы», «Атаки», «Стойка».
+
+Реализация: _group_label(text) в _rebuild_resources_panel, вызывать перед соответствующими чипами.
+
+С учётом drag — метки не перетаскиваются (только чипы внутри группы).
+
+5. Сортировка бафов
+НЕ нужна (бафы стоят там, где их поставили).
+
+Порядок задаётся пользователем через drag.
+
+6. Вынос в gui_chips.py (T-SPLIT-3.2)
+gui.py → _rebuild_resources_panel, _init_flow_container, _add_chip, _reflow_chips, _maybe_remove_buff, _rebuild_rest_panel, _do_short_rest, _do_long_rest → вынести в gui_chips.py.
+
+gui.py — делегирует вызовы (как сплит).
+
+Плюс: чипы на десктопе (отдельное окно без рамки, drag за любое место).
+
+7. Стиль / цвета
+Потом (не сейчас). Идеи: единый стиль чипов, прозрачность (settings.alpha_chip_buttons — уже в схеме, нужен UI).
+
+Тёмная / светлая тема — нет (пока).
+
+Как использовать этот файл:
+
+Новый бот прочитает TASK_CHIPS.md и сразу поймёт, что делать.
+
+Правка v18.5 — уже сделана (не потерять).
+
+Начать с пункта 2 (drag чипов) и 3 (правый клик). Пункты 4–6 — по мере готовности.
