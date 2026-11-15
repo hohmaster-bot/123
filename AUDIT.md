@@ -527,3 +527,17 @@
 - Код не запускался; динамическое разрешение импортов, все пользовательские сценарии и фактическое поведение окон не подтверждены.
 - Поиск GitHub по именам функций не вернул результатов, поэтому выводы основаны на чтении полных/целевых фрагментов перечисленных файлов и подтверждённых точках вызова.
 - Исходный код не изменялся.
+
+
+
+## 23. AUDIT storage policy
+USER_REQ: optimize audit for model token/context and read/write cost; human readability is NOT a requirement.
+FORMAT_TARGET: compact machine-oriented records (JSONL or compact YAML), not prose/Markdown narrative.
+RULES:
+- one fact/finding per record; terse keys; stable IDs; shared dictionaries for repeated terms;
+- separate confirmed / hypothesis / open / decision / requirement;
+- no duplicated explanations or repeated history; latest state supersedes old state;
+- retain only actionable evidence: file, symbol, behavior, consequence, confidence, next check;
+- keep enough source anchors to resume code inspection;
+- encoding is secondary; UTF-8 is acceptable, but the main optimization is structure/token volume, not charset.
+ACTION: next audit-file rewrite should compact/normalize the accumulated content, preserving all live findings and decisions while dropping superseded prose and duplicate history.
