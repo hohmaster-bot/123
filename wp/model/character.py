@@ -56,7 +56,10 @@ class Item:
     activation_until: str = ""         # card field "active until": "short" (day) / "long" (decade);
                                        # "" = default by cost (1 -> short, 5 -> long)
     active_until: str = ""             # state while activated: which rest switches it off
-    weapon_id: Optional[str] = None    # link to the weapon catalog
+    weapon_id: Optional[str] = None    # link to the weapon catalog (makes it a weapon)
+    grip: str = "one"                  # weapon hold: "one" (one hand), "off" (off-hand), "two" (two hands)
+    finesse: bool = False              # finesse weapon (Dex allowed with the Finesse feat)
+    attack_stat: str = ""              # forced attack stat (quirk/race effects); "" = default
     durability: int = 0                # value typed by the author (base)
     hp: int = 0
 
@@ -77,6 +80,15 @@ class Language:
 
 
 @dataclass(frozen=True)
+class Feat:
+    fid: str                           # catalog template id (stable)
+    title: str = ""
+    flags: Tuple[str, ...] = ()        # copied from the template, e.g. ("finesse",)
+    source: str = "training"
+    cost: int = 0
+
+
+@dataclass(frozen=True)
 class LogEntry:
     command: str
     summary: str
@@ -85,6 +97,7 @@ class LogEntry:
 @dataclass(frozen=True)
 class Character:
     level: int = 1
+    bab: int = 0                       # base attack bonus (base value, class progression by hand)
     abilities: Dict[str, Ability] = field(default_factory=lambda: {a: Ability() for a in ABILITIES})
     # HP: hit die results entered by hand (progression.md)
     hp_rolls: Tuple[int, ...] = (8,)
@@ -129,6 +142,7 @@ class Character:
     items: Tuple[Item, ...] = ()
     weapons: Tuple[WeaponEntry, ...] = ()
     skills: Tuple[Skill, ...] = ()
+    feats: Tuple[Feat, ...] = ()
     languages: Tuple[Language, ...] = ()
     shield_grade: str = "none"
     armor_grade: str = "none"

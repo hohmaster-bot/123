@@ -1,0 +1,16 @@
+{
+ "format": "wipefinder.feats",
+ "version": 1,
+ "feats": [
+  {
+   "fid": "finesse_training",
+   "name": "Фехтование",
+   "name_en": "Finesse training",
+   "cost": 200,
+   "flags": [
+    "finesse"
+   ],
+   "desc": "Attacks with finesse weapons may use Dex instead of Str (the better of Str/Dex, combat.md Maneuvers)."
+  }
+ ]
+}

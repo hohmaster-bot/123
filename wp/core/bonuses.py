@@ -69,6 +69,15 @@ def morale(value):
     return Bonus(int(value), MORALE, ROLLS, source="morale")
 
 
+def _weapon_match(scope, weapon):
+    """weapon: one id, or a set of ids (the weapon, its item id, its groups)."""
+    if weapon is None:
+        return False
+    if isinstance(weapon, str):
+        return scope == weapon
+    return scope in weapon
+
+
 def applies(b, target, weapon=None):
     """Does bonus b count for this target (and weapon, for attacks)?"""
     if b.btype in AC_ONLY_TYPES:
@@ -76,7 +85,7 @@ def applies(b, target, weapon=None):
     if b.weapon is not None:
         # weapon-scoped: attacks (and damage, except proficiency) with that weapon only
         allowed = (ATTACK,) if b.btype == PROFICIENCY else (ATTACK, DAMAGE)
-        if target not in allowed or b.weapon != weapon:
+        if target not in allowed or not _weapon_match(b.weapon, weapon):
             return False
     if b.btype == PROFICIENCY and b.weapon is None:
         return False            # proficiency is always tied to a weapon

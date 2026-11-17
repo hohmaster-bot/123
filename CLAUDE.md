@@ -52,7 +52,7 @@ Test commands (each exits 1 on any failure, no pytest needed):
   `python Wp_claude/tests/core/test_pain.py`, `python Wp_claude/tests/core/test_tick.py`,
   `python Wp_claude/tests/core/test_statuses.py` (status in CORE_REPORT.md)
 - model + commands: `python Wp_claude/tests/model/test_scenarios.py`, `python Wp_claude/tests/model/test_view.py`,
-  `python Wp_claude/tests/model/test_commands2.py`, `python Wp_claude/tests/model/test_skills_catalog.py`
+  `python Wp_claude/tests/model/test_commands2.py`, `python Wp_claude/tests/model/test_skills_catalog.py`, `python Wp_claude/tests/model/test_attack.py`
   (status in MODEL_REPORT.md)
 - storage: `python Wp_claude/tests/storage/test_character_io.py`; module size: `python Wp_claude/tests/test_module_size.py`
 - ASCII-only code: `python Wp_claude/tests/test_ascii_code.py` (wp/ and Wp_claude/tests/)
