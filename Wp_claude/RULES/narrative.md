@@ -13,8 +13,7 @@
 - Court chance for divine slot restore: see rest.md (formula TBD).
 
 ## Cycle end button (idea) [OWNER]
-- Optional button "end of cycle" ONLY to restore Attention (amount depends on level and drives, no cap). Touches nothing else.
-- The "end of cycle" button also burns unspent time points (OV).
+- Optional button "end of cycle": restores Attention (amount depends on level and drives, no cap) and burns unspent time points (OV).
 
 ## Lens [OWNER]
 - A quest-like goal with a counter shown on the interface: "New World" 11/15. Only the player changes +/- by hand.

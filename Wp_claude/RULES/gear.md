@@ -2,12 +2,12 @@
 
 ## Doll [OWNER]
 - Doll = worn or ready items. Two hands: items in hands needing > 2 hands total cannot be equipped. Rest of doll is worn.
-- Armor, helm, glasses, etc. Character slots exist (listed in old editor).
+- Armor, helm, glasses, etc. Character slots: see doll.md.
 - Magic items may need activation: 1 spirit/day or 5 until session end; cost may scale or have an alternative.
 - Requirements: "Qualification N" or Court level X.
 
 ## Qualification
-- Per item name, in levels, each level costs 50 training. Unlocks hidden properties of unusual items.
+- Tied to a specific item; does not work for other items (training.md). In levels, each level costs 50 training. Unlocks hidden properties of unusual items.
 
 ## Belt (unload) [OWNER]
 - Consumables slots (potions, scrolls). Base 10 L. Activation usually 1 spirit, can differ.
