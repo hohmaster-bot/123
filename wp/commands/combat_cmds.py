@@ -29,6 +29,19 @@ def take_damage(ch, amount=0, dtype=dm.PHYSICAL, parts=None, reductions=None):
 
 
 @command
+def damage_to_balance(ch, amount=0):
+    """Empty-hand parry (owner): the enemy roll landed in the parry layer; the player types the damage.
+    It goes straight to the balance: HP untouched, no percent/DR. Overflow -> OT +1 pain.
+    In combat the balance cap drops by 1 if the balance really lost points."""
+    v, rep = dm.balance_hit(bridge.to_vitals(ch), int(amount))
+    new = bridge.from_vitals(ch, v, pain_source="balance damage overflow")
+    if ch.in_combat and rep.balance_loss > 0:
+        new = replace(new, balance_cap_hits=new.balance_cap_hits + 1)
+    return commit(new, "damage_to_balance", "balance -%d, OT +%d, pain +%d" % (
+        rep.balance_loss, rep.overflow, rep.pain_added), {"report": rep})
+
+
+@command
 def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=0, from_item=False,
                overload=None):
     """Cast: mana/slot, balance, overload (formula or typed value), concentration DC."""

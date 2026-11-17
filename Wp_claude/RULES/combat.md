@@ -51,6 +51,14 @@
   weapon). When on, both attacks get the table penalties (feat? light/finesse off hand?). The second attack of a double
   weapon uses the lower damage row. The view marks which attack is the main hand and which the off hand.
 
+## Empty-hand parry [OWNER]
+- Empty-hand parry and damage to balance [OWNER]: parrying with an empty hand is allowed. The player sees that the
+  enemy roll landed in the parry number (armor/parry layer, defense_layers.md) and presses "take damage to balance".
+  Command damage_to_balance(amount): the damage goes straight to the balance; HP are not touched; percent and DR are
+  not applied (the player types the number). If the balance would go below 0, the overflow goes to OT and gives
+  +1 pain (like an ordinary overflow). In combat the balance cap drops by 1 if the balance really lost points.
+  Examples: balance 6, damage 4 -> 2, HP unchanged; balance 2, damage 5 -> 0, OT +3, pain +1, HP unchanged.
+
 ## Unarmed [OWNER]
 - Unarmed combat is always available: the attack list always has the unarmed attack next to the weapons in hand.
 

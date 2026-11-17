@@ -169,6 +169,22 @@ def take_hit(vitals, parts, reductions=None):
     return vitals, report
 
 
+def balance_hit(vitals, amount):
+    """Damage straight to the balance (empty-hand parry, owner): HP untouched, no percent/DR.
+    Balance floors at 0; overflow -> OT and +1 pain. Returns (new_vitals, DamageReport)."""
+    amount = int(amount)
+    if amount < 0:
+        raise ValueError("damage must be >= 0")
+    bal = max(0, vitals.balance.current)
+    loss = min(amount, bal)
+    overflow = amount - loss
+    pain_added = 1 if overflow > 0 else 0
+    vitals = replace(vitals, balance=replace(vitals.balance, current=bal - loss),
+                     pain=vitals.pain + pain_added, trauma=vitals.trauma + overflow)
+    return vitals, DamageReport(after_reduction=amount, temp_hp_loss=0, absorbed=(), hp_loss=0,
+                                balance_loss=loss, overflow=overflow, pain_added=pain_added)
+
+
 def take_damage(vitals, amount, dtype=PHYSICAL, reductions=None):
     """Shortcut for a single-part hit."""
     return take_hit(vitals, [DamagePart(int(amount), dtype)], reductions)

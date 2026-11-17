@@ -43,6 +43,12 @@ Spell Resistance is separate (vs spells, not a damage step).
   lost). A fully blocked hit does not lower it. The current balance is NOT lowered by the cap drop. DoT does not lower
   the cap unless its effect has the flag "lowers cap". Counted only while combat is active; start and end of combat
   reset the counter. Example: balance 6/6, hit 5 -> 1/6, then cap 5 -> 1/5.
+- Empty-hand parry and damage to balance [OWNER]: parrying with an empty hand is allowed. The player sees that the
+  enemy roll landed in the parry number (armor/parry layer, defense_layers.md) and presses "take damage to balance".
+  Command damage_to_balance(amount): the damage goes straight to the balance; HP are not touched; percent and DR are
+  not applied (the player types the number). If the balance would go below 0, the overflow goes to OT and gives
+  +1 pain (like an ordinary overflow). In combat the balance cap drops by 1 if the balance really lost points.
+  Examples: balance 6, damage 4 -> 2, HP unchanged; balance 2, damage 5 -> 0, OT +3, pain +1, HP unchanged.
 - Heal/consumables without a special flag never exceed max; "over max" is an explicit exception flag on the effect.
 
 ## Pain [OWNER]
