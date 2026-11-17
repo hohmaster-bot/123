@@ -20,6 +20,7 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 - Restores ALL charges automatically EXCEPT injuries (and not consumables/items).
 - Items with charges get checkbox "restore charges on long rest".
 - Class, race, feat, quirk charges, spirit, mana, slots, ki etc: all restored.
+- Long rest NEVER clears trauma points (OT), comfort, or injury charges: those are reset by hand only [OWNER confirmed].
 - Long rest removes ALL pain except permanent sources (injuries, curses). Permanent pain stays.
   HP is restored to max, so temp pain from negative HP is gone too.
 

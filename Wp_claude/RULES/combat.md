@@ -7,6 +7,7 @@
 - Options spent in own turn may carry tag "attack" (player sets tags himself, spells needing attack roll too).
 - 2nd tagged option: -5, 3rd: -10. Paired (two-weapon) attacks: penalty applies to both.
 - Abilities without the tag take no iterative penalty.
+- Some abilities/effects ignore the iterative penalty WITHOUT being tagged as an attack (effect flag, e.g. master bonus: one attack per turn has no [attack] tag).
 
 ## Crit [OWNER]
 - Notation 19+ / 20+ = threat range, x2. "x2/x3/x4" alone = crit on 20.

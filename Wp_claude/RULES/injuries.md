@@ -2,6 +2,7 @@
 
 ## Trauma points (OT) [OWNER]
 - Counter. Source: balance overflow (resources.md). GM turns them into penalties unless the player removes them first.
+- OT are zeroed ONLY by hand (and by the removal ways below). Rest does not touch them. Same for comfort and injury charges.
 - Removal ways (player follows wiki rules, then removes OT in the app; also manual delete of OT is always allowed):
   * Injury taken: light / medium / heavy removes 2 / 5 / 12 OT and gives an effect.
   * Comfort: 1 comfort removes 3 OT.

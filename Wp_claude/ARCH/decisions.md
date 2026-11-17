@@ -7,7 +7,7 @@ Status: A = accepted by owner, P = proposed (needs owner OK), X = superseded.
 | D2 | P | UI toolkit: PySide6. | LGPL; overlay prototypes already on PySide6; Qt has tray, frameless, opacity built in. |
 | D3 | A | Two exclusive modes: Classic (full-screen sheet, Alt-Tab/hotkey) and Overlay (light, always-on-top panels). Never shown together: enabling one disables the other. Each has its own independent settings. Both have an edit mode that works differently. Split removed. | Owner, 2026-11-17. See `surfaces.md`. |
 | D4 | A | i18n: every UI string in locale files; code is ASCII only. | Owner. RU/EN switch; PowerShell can no longer corrupt code. |
-| D5 | P | Commands are the only mutation path: UI -> `dispatch(cmd)` -> validate -> mutate -> action_log -> `changed` signal. | One place for bounds, transactions, undo, refresh (A053, A054, A059). |
+| D5 | P | Commands are the only mutation path: UI -> `dispatch(cmd)` -> validate -> mutate -> action_log -> `changed` signal. Resources get two ops: `restore` (gameplay: regen, heal, rest, tick; clamps to max) and `set` (manual/overfill; no clamp, flagged "over max"). Exceeding max is allowed (RULES/resources.md "Over max"). | One place for bounds, transactions, undo, refresh (A053, A059). |
 | D6 | P | Store base values only; derived values computed on read. | A087 (max inflation), legacy display fields. |
 | D7 | P | Stable ids for every entity (feats, spells, courts, buffs, chips...); no references by display name. | A045, A046, A088; renames orphan chip order/colors. |
 | D8 | P | Docs for Claude in English; owner-facing docs in Russian. | Cyrillic costs noticeably more tokens. |
@@ -16,3 +16,9 @@ Status: A = accepted by owner, P = proposed (needs owner OK), X = superseded.
 | D11 | P | One persistence service: validate, atomic temp+replace write, keep last good copy. | A063, A064, A065, A079. |
 | D12 | A | Logic before UI. Exception: an early technical overlay spike (click-through, hotkey). | Owner; spike de-risks D3. |
 | D13 | P | Three settings domains: character gameplay (in save), catalogs, UI profile (per user, not per character). | A005, A014, A017. Catalog scope: OPEN_QUESTIONS Q7. |
+| D14 | P | One generic effect system for every sheet part (race, class, feat, item, injury, quirk, spell, buff): any effect can change any base parameter, with duration, condition, charges. | RULES/buffs.md, RULES/index.md "Cross-cutting". |
+| D15 | P | Damage absorbers are an ordered, per-character configurable list (default: temp HP -> race pool, e.g. mana -> HP). | RULES/classes_magic.md "Racial damage absorbers". |
+| D16 | P | Weapon stores a list of parents (variety, group; a variety may sit in several groups). Combat basics bonus = max over the weapon and its ancestors, never a sum. | RULES/weapons.md "Combat basics"; baseline WPN-basics-nostack. |
+| D17 | P | Item has two effect sets (always-on / on activation) and a mode flag: additive (active adds on top) or either/or (inactive set OR active set). | RULES/gear.md "Item activation data". |
+| D18 | P | Pain from HP and all other derived values are computed on read, never stored. | RULES/resources.md "Pain"; D6. |
+| D19 | P | Skill tiers normal / advanced / specialized are data; all prices come from the formulas in RULES/skills.md. | RULES/skills.md; avoids hard-coded tier logic. |

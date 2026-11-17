@@ -13,6 +13,8 @@ Legacy tkinter code at repo root is reference only until replaced. Do not edit `
 - UI never mutates the character directly; only through commands (`Wp_claude/ARCH/decisions.md` D5).
 - Store base values only; derived values are computed on read, never written back.
 - Game rules live in `Wp_claude/RULES/`. If code and RULES disagree, ask the owner; do not guess.
+- Numbers in RULES/ are tests. Never change RULES/ without the owner's consent.
+- UI wishes go only to `Wp_claude/UI_WISHES.md`, never into RULES/.
 - `character.schema.json` is the only data contract. Do not duplicate field lists in docs.
 - Do not claim tests ran unless you ran them in this session.
 
@@ -21,7 +23,16 @@ Legacy tkinter code at repo root is reference only until replaced. Do not edit `
 |---|---|
 | any | this file + `Wp_claude/GOTCHAS.md` |
 | game mechanics | `Wp_claude/RULES/index.md` + one domain file |
+| effects, buffs, durations, charges | `RULES/buffs.md` |
+| AC, typed bonuses, morale / attacks, crit, maneuvers | `RULES/defense.md` / `RULES/combat.md` |
+| HP, balance, pain, mana, overload, comfort | `RULES/resources.md` |
+| rest, BP / injuries, OT | `RULES/rest.md` / `RULES/injuries.md` |
+| classes, spells cost / gear, weight, base, items | `RULES/classes_magic.md` / `RULES/gear.md` |
+| training, skills, weapon mastery | `RULES/progression.md`, `RULES/skills.md`, `RULES/weapons.md` |
+| quirks, courts, lenses / catalogs | `RULES/narrative.md` / `RULES/catalog.md` |
+| UI design | `Wp_claude/UI_WISHES.md` + `Wp_claude/ARCH/surfaces.md` |
 | architecture, new module | `Wp_claude/ARCH/decisions.md` + topic file in `Wp_claude/ARCH/` |
+| known code vs rules gaps | `Wp_claude/tests/BASELINE_REPORT.md` |
 | unresolved choices | `Wp_claude/OPEN_QUESTIONS.md` |
 | what to do next | `Wp_claude/ROADMAP.md` |
 
@@ -30,4 +41,4 @@ Never load `AUDIT.md` or old docs whole; search by finding id (`A0xx`).
 ## Testing
 Anything with numbers or state (formulas, effects, ticks, rest, purchases, save/load) gets a test.
 Visual and UX checks are done by the owner by hand.
-Test command: TBD (legacy `_check.py` reports OK even on failure, see GOTCHAS).
+Test command: `python Wp_claude/tests/test_rules_baseline.py` (exit 1 on any failure; known failures listed in BASELINE_REPORT.md).

@@ -338,6 +338,21 @@ def _rest_long_pain():
     return c.pain_extra_temp
 
 
+@case("REST-long-keeps", "rest.md Long rest / injuries.md OT [OWNER confirmed]",
+      "long rest does NOT clear OT (7), comfort (4) or injury charges (1 of 2)",
+      (7, 4, 1), "Character.long_rest")
+def _rest_long_keeps():
+    c = new_char(hp_rolls=[20])
+    c.injury_points = 20
+    pu.add_injury(c, "light")          # OT 20 -> 18
+    c.injuries[0].update({"uses": True, "uses_max": 2, "uses_current": 1})
+    c.injury_points = 7
+    c.comfort["current"] = 4
+    c.long_rest()
+    return (c.injury_points, c.comfort["current"],
+            c.injuries[0]["uses_current"])
+
+
 # -------------------------------------------------------------- injuries.md
 
 for _sev, _exp in [("light", 2), ("medium", 5), ("heavy", 12)]:
@@ -445,18 +460,21 @@ def _res_comfort_max():
 
 # ---------------------------------------------------------------- skills.md
 
-for _tier, _old, _new, _exp in [("normal", 0, 1, 20), ("normal", 2, 3, 60),
-                                ("normal", 19, 20, 400),
-                                ("advanced", 0, 1, 15),
-                                ("specialized", 0, 1, 10),
-                                ("specialized", 19, 20, 200)]:
-    def _mk(tier=_tier, new=_new):
+# Specialized: ranks up to the character level are automatic; 10*new_rank is
+# paid only for ranks ABOVE the level [OWNER confirmed]. So no "0->1" case.
+for _tier, _old, _new, _lvl, _exp in [("normal", 0, 1, 1, 20),
+                                      ("normal", 2, 3, 1, 60),
+                                      ("normal", 19, 20, 1, 400),
+                                      ("advanced", 0, 1, 1, 15),
+                                      ("specialized", 5, 6, 5, 60),
+                                      ("specialized", 19, 20, 1, 200)]:
+    def _mk(tier=_tier, new=_new, lvl=_lvl):
         def fn():
-            # level 1 character; cost of the single step to the NEW rank
-            return pu.skill_rank_step_cost(tier, new, 1)
+            # cost of the single step to the NEW rank for a character of level lvl
+            return pu.skill_rank_step_cost(tier, new, lvl)
         return fn
     case("SK-%s-%d-%d" % (_tier[:4], _old, _new), "skills.md Training cost, Tests [OWNER]",
-         "%s rank %d->%d costs %d" % (_tier, _old, _new, _exp), _exp,
+         "%s rank %d->%d at level %d costs %d" % (_tier, _old, _new, _lvl, _exp), _exp,
          "purchases.skill_rank_step_cost")(_mk())
 
 

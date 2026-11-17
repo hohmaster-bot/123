@@ -18,6 +18,8 @@ skill = ranks + key stat mod + bonuses (race/class/items...) + armor penalty (if
 - Make a skill Advanced: 40 + 20 per OTHER advanced skill. Advanced +1 rank: 15 * rank.
 - Make a skill Specialized: 200 + 50 per OTHER specialized skill. Specialized +1 rank: 10 * rank.
 - "rank" in the cost = the NEW rank [OWNER]. Tests: normal 0->1 = 20, 2->3 = 60, 19->20 = 400; advanced 0->1 = 15; specialized 0->1 = 10, 19->20 = 200.
+- Specialized ranks up to the character level are free/automatic; the 10*new_rank price applies only to ranks ABOVE the level [OWNER confirmed].
+  So tests: specialized 19->20 = 200 is a purchase only for a level < 20 character. 0->1 is never bought.
 - Examples: 2nd advanced skill costs 40+20*1 = 60. 3rd specialization costs 200+50*2 = 300.
 
 ## Creation and free grants [OWNER]
