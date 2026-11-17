@@ -21,6 +21,9 @@ Test runner that can fail (done: baseline script). Golden tests from RULES. Fix 
 ## Phase 3 - nodes without visuals
 Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects (D14-D17), catalogs contract, i18n (D4), theme, panel registry.
 - Before Phase 4: the owner sends screen drawings with labels (A1, A2...), Claude turns them into screen descriptions.
+- Deferred (from REVIEW_REPORT, not done yet): final item hardness/HP from mastery in the model; spell mastery cost
+  25 * (1 + circle^2); level-up command (+100 * level training, HP roll); comfort -> training command;
+  OT removal commands (comfort, attention, injury removal, RL raise); weapon card data from the owner's table.
 
 ## Phase 4 - overlay spike
 PySide6: click-through, always-on-top, global hotkey, tray, multi-monitor.

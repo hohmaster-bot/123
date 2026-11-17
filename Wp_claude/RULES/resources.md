@@ -34,6 +34,12 @@ Spell Resistance is separate (vs spells, not a damage step).
   Then hits of 1 and 1 (balance not restored): each HP -1, pain +1, trauma +1 -> totals HP -12, pain 3, trauma 11.
 - Damage input: button "take damage" + optional DR/- and Resistance selector (by damage type) applied before the above.
   DR/Resistance come from the sheet's effects. [UI wish]
+- Balance cap in combat [OWNER homerule]: the balance max is recomputed at the start of combat (armor + current BP +
+  bonuses) and returns to normal after the combat. Each hit on the character lowers the cap by 1 until the end of
+  combat, ONLY if the damage reached the balance (after percent, flat reductions, temp HP and analogs, HP were really
+  lost). A fully blocked hit does not lower it. The current balance is NOT lowered by the cap drop. DoT does not lower
+  the cap unless its effect has the flag "lowers cap". Counted only while combat is active; start and end of combat
+  reset the counter. Example: balance 6/6, hit 5 -> 1/6, then cap 5 -> 1/5.
 - Heal/consumables without a special flag never exceed max; "over max" is an explicit exception flag on the effect.
 
 ## Pain [OWNER]
@@ -67,17 +73,15 @@ Spell Resistance is separate (vs spells, not a damage step).
 - Some abilities ignore death for a couple of rounds (not modeled), some change the cap (modeled).
 
 ## Zero initiative phase [OWNER]
-After everyone acted:
-1. Buffs/statuses/debuffs lose 1 duration if they can.
-2. DoTs (bleed, fast healing, regeneration).
-3. Balance restoration. Player picks order of DoT vs balance; assume best for player = balance FIRST
-   (while below cap), then DoT damage.
-Spec: per tick restore balance (if overload == 0), then DoT.
+After everyone acted, in this order [OWNER]:
+1. Durations: statuses lose 1 duration (expired ones are removed).
+2. Balance restoration (if overload == 0).
+3. DoTs (bleed, fast healing, regeneration) - balance first, then DoT (best for the player).
 - DoT and regen last exactly their duration [OWNER]: N rounds = N ticks (bleed for 3 rounds hits exactly 3 times).
 - Overload is a number: -1 per zero-initiative tick; at 0 it is gone. End of combat resets it to 0 [OWNER].
 
 ## Spirit, mana, overload [OWNER]
-- Everyone has: HP, balance, balance regen, spirit, trauma points. Spirit pays item activations (1 spirit/day or 5 until session end).
+- Everyone has: HP, balance, balance regen, spirit, trauma points. Spirit pays item activations (1 spirit/day or 5 until the end of the cycle).
 - Spirit max [OWNER] = 5 + 5 * Cha modifier, never below 0 (Cha mod -1 or lower -> 0), plus bonuses/penalties by source.
   Not typed in by hand. Tests: Cha mod +2 -> 15; -1 -> 0; -2 -> 0; +2 with bonus +3 -> 18.
 - Casters (mage): mana instead of slots. Divine casters: slots.

@@ -27,7 +27,8 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 - Charges restore on long rest (rest.md) unless item without the "restore on long rest" checkbox.
 
 ## Stacking (see defense.md)
-- Same type: highest only; only flat stacks; dodge stacks with itself.
+- Same type: the value with the larger absolute value wins, equal absolute values give 0; only flat stacks
+  (on AC dodge also stacks; weapon proficiency stacks with itself). Details: defense.md "Stacking".
 
 ## Ready-made buffs
 - Any ability can be exported as a buff; catalog keeps templates (Entangled, Haste, Rage ...).

@@ -21,6 +21,17 @@
 - +1 (lowers threshold) up to 3 times from mastery, plus X where X = weapon enchant level.
 - Class/race/feat/ability can add +N for a specific weapon.
 
+## Attack records [OWNER]
+- An attack record = weapon + chosen weapon group + grip (one hand, off-hand, two hands) + attack stat (default Str).
+  One weapon may have several records (e.g. "Longsword + Long swords" and "Longsword + Heavy blades").
+  Each record shows to hit, damage and parry with sources.
+- Attacks are shown only for weapons held in the hands (doll: two hands, gear.md), plus the unarmed attack always.
+- Primary records: the player marks up to two records as primary (e.g. one per hand). A single record is primary
+  automatically. Passive group bonuses (balance regen +1 etc.) come from the primary records. Two primary records
+  giving a bonus of one type: stacked by the bonus rules (larger absolute value wins, flat adds) - see OPEN_QUESTIONS Q16.
+- Str to damage by grip [OWNER]: one hand 1x, off-hand 0.5x, two hands 1.5x of the Str modifier; a positive value is
+  multiplied and rounded DOWN (mod 3: two hands 4, off-hand 1); a negative modifier is NOT multiplied (-2 with any grip).
+
 ## Unarmed [OWNER]
 - Unarmed combat is always available: the attack list always has the unarmed attack next to the weapons in hand.
 

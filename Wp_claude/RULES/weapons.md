@@ -39,6 +39,19 @@ Repeat limits: a specialist bonus may be picked again (2nd time) from expert lev
 An expert bonus may be picked a 2nd time at master.
 Tests: after 3 specialist picks all different, expert picks open; at level 9, picking "crit range +1" a 2nd time is allowed; 3rd is not until 12.
 
+## Weapon groups and attack records [OWNER]
+- A weapon group is a list of weapons sharing bonuses created by mastery (e.g. "Basic/simple": dagger, club, staff,
+  light crossbow, bolts). A weapon may be in any number of groups.
+- Attack, damage, parry and other bonuses come from ONE chosen group only; bonuses of two groups at once are not
+  possible. Bonuses of parent (higher) groups are NOT added. (Grade levels and combat basics still follow D16.)
+- Group "Contact" (level 0) is in every new character and in the catalog; its child "Unarmed combat" (scale 1, level 0).
+  Unarmed combat needs no weapon: ALL its bonuses (balance regen +1, parry...) work always, even when armed.
+- Group "Basic/simple" is special: no qualification, no maneuvers or special abilities, it cannot be trained; attacks
+  with these weapons take no -4/-2 qualification penalty.
+- Weapon card fields (owner's table): name, price (gp/sp), damage small and medium (dice), crit (range and multiplier),
+  range, weight (stored in L), type (P/S/B), finesse, hands (1H/2H), hardness (HD), item HP, list of groups.
+  Ammunition (bolts) are separate items with a piece counter.
+
 ## Mastery bonuses in the final numbers [OWNER]
 - Weapon mastery bonuses stack with themselves by their own rules, then are added as FLAT to AC (parry), attack, damage.
 - They change the FINAL durability (hardness) and HP of the item, not the value the author typed into the item.

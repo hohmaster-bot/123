@@ -2,8 +2,13 @@
 
 ## Doll [OWNER]
 - Doll = worn or ready items. Two hands: items in hands needing > 2 hands total cannot be equipped. Rest of doll is worn.
+- Hands [OWNER]: there is no separate shield slot. The two hands are one shared slot for everything that needs hands:
+  weapon, shield, any special item (misc). An item has a field "hands" (0, 1 or 2); the hands of items held in the hands
+  add up to at most 2 (a two-handed weapon takes both; shield + two-handed is impossible). Allowed: shield + weapon,
+  weapon + weapon, two-handed weapon, special item + weapon. The shield bonus to AC (type shield) works only while the
+  shield is held in a hand, not while it lies in the bag.
 - Armor, helm, glasses, etc. Character slots: see doll.md.
-- Magic items may need activation: 1 spirit/day or 5 until session end; cost may scale or have an alternative.
+- Magic items may need activation: 1 spirit/day or 5 until the end of the cycle; cost may scale or have an alternative.
 - Requirements: "Qualification N" or Court level X.
 
 ## Qualification
@@ -43,8 +48,10 @@
 - "Enabled/disabled" mainly means activation of enchanted/special items.
 - Passive requirements: Qualification, skill X with Y ranks, Court X level Y.
 - Activation has two kinds [OWNER]: "day" (active until the end of the SHORT rest) and "decade" (until the end of the LONG rest).
-  The item card has a field "active until: short rest / long rest"; the spirit cost (1, 5 or X) is set separately.
-  Defaults: 1 spirit -> day, 5 spirit -> decade. Short rest switches "day" items off, long rest switches off all.
+  The item card has a spirit price for each kind (usually 1 for day, 5 for decade, any X possible); a kind without a
+  price is not offered. An item with no price for day nor decade is NOT activatable: activation gives a soft refusal
+  "activation price not set" and nothing changes. If only one price is set, that one works.
+  Short rest switches "day" items off, long rest switches off all.
   Cost may also be stat damage, HP, etc.
 - Consumables: usually 1 spirit to activate.
 - Not activated items give fewer bonuses. Example: +5 magic sword (+5 attack, damage and lucky attack = enchant bonus):

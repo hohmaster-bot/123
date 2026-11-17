@@ -13,10 +13,13 @@
 - Court chance for divine slot restore: see rest.md (formula TBD).
 
 ## Cycle end button (idea) [OWNER]
-- Optional button "end of cycle": restores Attention (amount depends on level and drives, no cap) and burns unspent time points (OV).
-- Attention per cycle [OWNER]: 1 + (number of levels reached that are multiples of 3: 3, 6, 9...) + 1 per drive at level 4+.
-  No maximum. The cycle length is set by the GM (module). Command end_cycle only adds attention, nothing else.
+- Button "end of cycle" [OWNER]: adds Attention (1 + levels reached that are multiples of 3: 3, 6, 9... + 1 per drive
+  at level 4+) and burns unspent time points (OV). Nothing else. The cycle length is set by the GM (module).
   Example: level 7, two drives at 4+ -> 1 + 2 + 2 = 5.
+- The end of a cycle implies a long rest, but they are separate buttons: one never triggers the other [OWNER].
+- Attention is its own resource: no cap, never burns, accumulates.
+- OV (time points): 1 Attention gives OV equal to the Con modifier (minimum 2). OV are spent on recipes (crafting) and
+  narratively; unspent OV burn by hand or with the end-of-cycle button. No cap.
 
 ## Lens [OWNER]
 - A quest-like goal with a counter shown on the interface: "New World" 11/15. Only the player changes +/- by hand.
