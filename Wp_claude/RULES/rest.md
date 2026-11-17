@@ -25,31 +25,21 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
   HP is restored to max, so temp pain from negative HP is gone too.
 
 ## Short rest [OWNER]
-- No limit on how many short rests: narrative element, the GM decides.
-- BP is restored during a short rest.
-- Then BP can be spent as a currency (all in one short rest):
-  | Effect | Cost |
-  |---|---|
-  | Restore 1 BP | free, once |
-  | Restore 2+LVL HP | free once, further times 1 BP each |
-  | Restore daily/session ability charges | 2 BP |
-  | Restore all spirit | 2 BP |
-  | Restore 1 stat: returns 1 point of stat damage (stats.md) | 1 BP |
-  | Remove 1 pain | 1 BP |
-  | Restore mana by regen | free once, then 1 BP |
-  | Restore divine casts (chance from Court) | 1 BP |
-- Short rest gives +1 BP "temporary" even if BP is full: can be spent from the list (stat or pain). Allies can give more.
-  Skill checks, class, feats etc can add more BP. Prepare logic for a convenient spend menu later.
-- Effects can modify rest: e.g. owner's race doubles natural recovery bonus on short rest.
-- Short rest heal: 2+level HP (free). Example: level 3, 1/5 HP: +5 free; a second restore costs 1 BP.
-- Example: level 3, 1/5 HP: free HP restore +5 (2+3); second restore costs 1 BP.
-- Short rest also restores 2 + level HP for free (if race or an effect gives more, the larger value is used).
-  A repeated 2 + level HP heal costs 1 BP, as in the spend table.
-
-### Short rest flow [OWNER decision]
-- Short rest gives 1 BP for free: if BP < max, BP +1; if BP is already at max, +1 temporary BP.
-- Then the player spends BP from the list. An option is shown only if there is something to restore
-  (stat not damaged -> "Restore 1 stat" hidden; same for every option).
-- Other BP sources may add BP or temporary BP.
-- "Apply" applies everything. The short rest window closes; excess BP (above max) is lost.
-- Short rest has no limit on how many times.
+1. No limit on how many short rests: narrative element, the GM decides.
+2. Free gains: +1 BP (if BP < max, BP +1; if BP is at max, +1 temporary BP) and 2 + level HP
+   (if race or an effect gives more, the larger value is used).
+3. Then the player spends BP from the table (all in one short rest). A repeated 2 + level HP heal costs 1 BP.
+   | Effect | Cost |
+   |---|---|
+   | Repeat 2+LVL HP heal | 1 BP each |
+   | Restore daily/session ability charges | 2 BP |
+   | Restore all spirit | 2 BP |
+   | Restore 1 stat: returns 1 point of stat damage (stats.md) | 1 BP |
+   | Remove 1 pain | 1 BP |
+   | Restore mana by regen | free once, then 1 BP |
+   | Restore divine casts (chance from Court) | 1 BP |
+4. Only options with something to restore are shown (stat not damaged -> "Restore 1 stat" hidden; same for every option).
+5. Other BP sources (allies, skill checks, class, feats) add BP or temporary BP. Effects can modify rest
+   (e.g. owner's race doubles the natural recovery bonus on short rest).
+6. "Apply" applies everything; the short rest window closes; excess BP (above max) is lost.
+7. Example: level 3, HP 1/20: free +5 HP (2+3); a second heal costs 1 BP.
