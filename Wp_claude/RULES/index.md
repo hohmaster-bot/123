@@ -6,6 +6,7 @@ Each file: rules, then numeric examples (use them as tests).
 
 | File | Covers |
 |---|---|
+| defense_layers.md | AC ladder: which layer an attack roll landed in, owner texts per layer |
 | defense.md | AC types, positioning, touch, typed bonuses, morale |
 | combat.md | actions, iterative attacks, crit, lucky attack, maneuvers, size, spells dmg |
 | buffs.md | effects, buffs, duration, charges |

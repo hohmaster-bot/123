@@ -18,3 +18,5 @@ Q20 unarmed combat -4 until trained to Skilled (weapons.md), Q21 weight L = 1 L,
 ## Game rules (owner decides)
 - Q22 | Price of one base slot: 100 training is taken from the old code (training_costs_draft.md); RULES give no price. Confirm 100? | 100 | open
 - Q23 | Temp HP pools: when combat temp HP and temp HP of a timed buff both exist, which are spent first? Now: combat temp HP first, then buffs in order. Stacking flag: a non-stacking buff adds only up to its amount over the current total. | ? | open
+- Q24 | Defense ladder: AC can also hold other types (flat, enhancement, sacred, profane...). They are not in your AC formula. Which layer do they belong to? Now: counted in AC, but not shown as a layer ("unlisted"). | ? | open
+- Q25 | Defense ladder: a NEGATIVE layer (e.g. dodge -2 from low Dex) has an empty range and moves the next layers down (AC may drop below 10). Is that right? | ? | open

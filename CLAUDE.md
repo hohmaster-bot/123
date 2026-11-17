@@ -25,6 +25,7 @@ Legacy tkinter code at repo root is reference only until replaced. Do not edit `
 | game mechanics | `Wp_claude/RULES/index.md` + one domain file |
 | effects, buffs, durations, charges | `RULES/buffs.md` |
 | AC, typed bonuses, morale / attacks, crit, maneuvers | `RULES/defense.md` / `RULES/combat.md` |
+| AC ladder (which layer a roll hit) | `RULES/defense_layers.md` |
 | HP, balance, pain, mana, overload, comfort | `RULES/resources.md` |
 | rest, BP / injuries, OT | `RULES/rest.md` / `RULES/injuries.md` |
 | classes, spells cost / gear, weight, base, items | `RULES/classes_magic.md` / `RULES/gear.md` |
@@ -50,7 +51,7 @@ Test commands (each exits 1 on any failure, no pytest needed):
   `python Wp_claude/tests/core/test_weapons.py`, `python Wp_claude/tests/core/test_training.py`,
   `python Wp_claude/tests/core/test_combat.py`, `python Wp_claude/tests/core/test_effects.py`,
   `python Wp_claude/tests/core/test_pain.py`, `python Wp_claude/tests/core/test_tick.py`,
-  `python Wp_claude/tests/core/test_statuses.py` (status in CORE_REPORT.md)
+  `python Wp_claude/tests/core/test_statuses.py`, `python Wp_claude/tests/core/test_ac_layers.py` (status in CORE_REPORT.md)
 - model + commands: `python Wp_claude/tests/model/test_scenarios.py`, `python Wp_claude/tests/model/test_view.py`,
   `python Wp_claude/tests/model/test_commands2.py`, `python Wp_claude/tests/model/test_skills_catalog.py`, `python Wp_claude/tests/model/test_attack.py`, `python Wp_claude/tests/model/test_cap_cycle.py`, `python Wp_claude/tests/model/test_weapon_catalog.py`, `python Wp_claude/tests/model/test_group_a.py`, `python Wp_claude/tests/model/test_group_b.py`, `python Wp_claude/tests/model/test_twf.py`, `python Wp_claude/tests/model/test_balance_damage.py`
   (status in MODEL_REPORT.md)
