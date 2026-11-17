@@ -10,7 +10,6 @@ A054 over max (resources.md "Over max", D5).
 - Q6 | Shop: can feats/spells/skills be bought there, or items only? (A069) | items only | open
 - R8 | Short rest: does BP fully restore? "Restore 1 stat" means what? Court chance for divine casts: formula? | - | open
 - R9 | Does short rest happen once per day or unlimited? End-of-session rules (comfort, quirk, etc.)? | - | open
-- R10 | skills.md "Tests" line still lists "specialized 0->1 = 10", but the confirmed line says 0->1 is never bought. Remove the old example? | remove | open
 
 ## Architecture (owner confirms)
 - Q7 | Catalog enable/disable lists: per character or global for the user? (D13) | global | open

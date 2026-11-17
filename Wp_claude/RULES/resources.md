@@ -10,7 +10,7 @@
 
 ## Balance [OWNER]
 - Second bar next to HP, lost together with HP. Usually balance < HP max.
-- Damage that would push balance to -1 or lower: +1 pain (per such hit [?]). Excess goes to trauma points.
+- Damage that would push balance to -1 or lower: +1 pain (per such hit). Excess goes to trauma points.
 - Restored at zero initiative (blocked while overload > 0).
 - Trauma points: GM issues penalties for them unless removed otherwise (after session). Injury editor in Rest GUI [BETA].
 - Balance FLOORS at 0 (never negative). Overflow = damage - balance. Pain +1 per hit with overflow > 0
@@ -68,7 +68,7 @@ Spec: per tick restore balance (if overload == 0), then DoT.
 
 ## Comfort [OWNER]
 - Resource burned during play or exchanged for training. Max formula 5 + 5*level, modifiable by class/race/items.
-- Chip goes red when current > max [?] (see OPEN_QUESTIONS).
+- Chip goes red when current > max.
 
 ## Over max [OWNER, confirmed]
 - ANY resource (HP, mana, spirit, comfort, ...) may exceed max: usually consumable effects, sometimes narrative (rare).
