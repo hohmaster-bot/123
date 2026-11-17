@@ -40,7 +40,7 @@ def default_unarmed():
 
 def visible(ch):
     """Records of weapons in the hands, plus the unarmed record (explicit or default)."""
-    held = in_hands_ids(ch)
+    held = in_hands_ids(ch) - {UNARMED}
     out = [r for r in ch.attacks if r.item != UNARMED and r.item in held]
     unarmed = [r for r in ch.attacks if r.item == UNARMED]
     out += unarmed or [default_unarmed()]

@@ -28,7 +28,9 @@
 - Attacks are shown only for weapons held in the hands (doll: two hands, gear.md), plus the unarmed attack always.
 - Primary records: the player marks up to two records as primary (e.g. one per hand). A single record is primary
   automatically. Passive group bonuses (balance regen +1 etc.) come from the primary records. Two primary records
-  giving a bonus of one type: stacked by the bonus rules (larger absolute value wins, flat adds) - see OPEN_QUESTIONS Q16.
+  with DIFFERENT weapon groups: their passive bonuses add up; the same group counts once [OWNER, Q16].
+- Grip [OWNER, Q19]: a one-handed weapon may be held with two hands (Str x1.5) only if it is NOT a finesse weapon.
+  A finesse weapon: one hand or off-hand only. A two-handed weapon: two hands only.
 - Str to damage by grip [OWNER]: one hand 1x, off-hand 0.5x, two hands 1.5x of the Str modifier; a positive value is
   multiplied and rounded DOWN (mod 3: two hands 4, off-hand 1); a negative modifier is NOT multiplied (-2 with any grip).
 

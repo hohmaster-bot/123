@@ -52,6 +52,9 @@ def add_attack(ch, iid="", group="", grip="one", stat="", rid=""):
     if iid == rec.UNARMED:
         if group not in UNARMED_GROUPS:
             raise CommandError("unarmed attacks use Unarmed combat or Contact")
+        card = next((i for i in ch.items if i.iid == rec.UNARMED), None)
+        if card is not None and card.finesse and grip == "two":
+            raise CommandError("a finesse weapon is held in one hand or the off-hand only (owner)")
     else:
         it = ch.item(iid)
         if not it.groups:
@@ -62,6 +65,8 @@ def add_attack(ch, iid="", group="", grip="one", stat="", rid=""):
             raise CommandError("%s is two-handed" % it.name)
         if grip == "off" and it.hands == 2:
             raise CommandError("a two-handed weapon cannot be off-hand")
+        if grip == "two" and it.finesse:
+            raise CommandError("a finesse weapon is held in one hand or the off-hand only (owner)")
     rid = rid or "%s:%s:%s" % (iid, group, grip)
     if any(r.rid == rid for r in ch.attacks):
         raise CommandError("attack record already exists: %s" % rid)

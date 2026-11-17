@@ -74,8 +74,9 @@ def crit_hint(mult):
 
 
 def _item(ch, record):
+    """The weapon card of a record. Unarmed: the "unarmed" card if the sheet has one."""
     if record.item == UNARMED:
-        return None
+        return next((it for it in ch.items if it.iid == UNARMED), None)
     return ch.item(record.item)
 
 
@@ -140,7 +141,7 @@ def _typed_lines(bonuses, target, ids):
 
 
 def qualification(ch, record, item):
-    """-2 one level below, -4 further below (weapons.md). Basic/simple and unarmed: none."""
+    """-2 one level below, -4 further below (weapons.md). Basic/simple: none. No card: none."""
     if item is None or rec.is_basic(ch, record.group):
         return 0
     n = rec.node(ch, record.group)

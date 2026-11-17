@@ -68,7 +68,8 @@ class Item:
     active_until: str = ""             # state while activated: "short" / "long"
     # weapon card (owner's table)
     groups: Tuple[str, ...] = ()       # weapon groups this weapon belongs to (any number)
-    required_level: int = 0            # qualification level (weapons.md)
+    required_level: int = 0            # qualification level (weapons.md), from the card's qualification
+    qualification: str = ""            # qualification as written in the owner's table
     finesse: bool = False              # finesse weapon (Dex with the Finesse feat)
     price_sp: int = 0                  # price in silver (1 gp = 10 sp)
     damage_small: str = ""             # dice, small size
@@ -79,6 +80,8 @@ class Item:
     dmg_type: str = ""                 # P / S / B
     durability: int = 0                # hardness (HD) typed by the author (base)
     hp: int = 0                        # item HP typed by the author (base)
+    damage_text: str = ""              # damage as written in the table when it is not a simple small/medium pair
+    variable: Tuple[str, ...] = ()     # fields the table gives as "Vary." (left empty on purpose)
 
 
 @dataclass(frozen=True)

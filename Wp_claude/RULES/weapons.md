@@ -44,13 +44,24 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   light crossbow, bolts). A weapon may be in any number of groups.
 - Attack, damage, parry and other bonuses come from ONE chosen group only; bonuses of two groups at once are not
   possible. Bonuses of parent (higher) groups are NOT added. (Grade levels and combat basics still follow D16.)
-- Group "Contact" (level 0) is in every new character and in the catalog; its child "Unarmed combat" (scale 1, level 0).
-  Unarmed combat needs no weapon: ALL its bonuses (balance regen +1, parry...) work always, even when armed.
+- Group "Contact" (level 0) is in every new character and in the catalog. "Unarmed combat" is an ordinary WEAPON
+  (catalog entry) in group Contact, with its own mastery node of scale 1 (or 2) [OWNER]. Unarmed combat needs no
+  weapon in the hands. Its passive bonuses (parry, balance regen) work always, even when armed; its attack and damage
+  bonuses work only on the unarmed attack [OWNER, Q18].
 - Group "Basic/simple" is special: no qualification, no maneuvers or special abilities, it cannot be trained; attacks
   with these weapons take no -4/-2 qualification penalty.
 - Weapon card fields (owner's table): name, price (gp/sp), damage small and medium (dice), crit (range and multiplier),
-  range, weight (stored in L), type (P/S/B), finesse, hands (1H/2H), hardness (HD), item HP, list of groups.
+  range, weight (stored in L), type (P/S/B), qualification (e.g. "Skilled", "Specialist 2"), finesse, hands (1H/2H),
+  hardness (HD), item HP, list of groups. A value "Vary." is allowed: the field stays empty and is marked variable.
   Ammunition (bolts) are separate items with a piece counter.
+- Catalog rows (owner's table, more later):
+  Contact: Unarmed combat (1d2/1d3, crit 20, B, Skilled, finesse, 1H, no HD/HP); Stiletto (5 sp, 1d3/1d4, x3, weight L,
+  P, Skilled, finesse, 1H, HD 10, HP 1); Spiked gauntlets (5 sp, 1d3/1d4, x2, weight L, P, Skilled, finesse, 1H);
+  Improvised weapon (damage, weight, type, hands variable, x2, Skilled); Hidden thief weapons (all variable,
+  Specialist 2, finesse, 1H).
+  Basic/simple: Dagger (1 gp, 1d3/1d4, 19+, 10 ft, weight L, P/S, finesse, 1H, HD 10, HP 1); Club (-, 1d4/1d6, 20+,
+  weight 1, B, 1H, HD 5, HP 2); Quarterstaff (2 sp, 1d4/1d4 and 1d6/1d6, 20+, weight 1, B, 2H, HD 5, HP 2);
+  Light crossbow (1 gp, 1d6/1d8, 19-20, 80 ft, weight 1, P, 2H, HD 3, HP 2); Bolts x10 (1 sp, weight L, HD 0, HP 1, ammo).
 
 ## Mastery bonuses in the final numbers [OWNER]
 - Weapon mastery bonuses stack with themselves by their own rules, then are added as FLAT to AC (parry), attack, damage.

@@ -8,10 +8,12 @@ Q8 no old characters (D1), Q9 hotkey Ctrl+Shift+W (surfaces.md), Q11 overlay edi
 Q12 end of combat resets overload to 0 (resources.md),
 Q13 end of combat resets the morale scale to 0 (defense.md),
 Q14 activation "day"/"decade" is an item field, cost separate (gear.md),
-Q15 feat "Finesse training" costs 200 (training.md).
+Q15 feat "Finesse training" costs 200 (training.md),
+Q16 passive bonuses of two primary records add up for different groups, same group once (combat.md),
+Q17 no refund for a specialized rank the level caught up with (skills.md),
+Q18 Unarmed combat attack/damage only on the unarmed attack, passives always (weapons.md),
+Q19 two hands only for a non-finesse one-handed weapon (combat.md).
 
 ## Game rules (owner decides)
-- Q16 | Two primary attack records give the same passive bonus (e.g. both groups have "balance regen +1"): does it add up (+2) or count once? Now: flat bonuses add (bonus rules); one group used by both records counts once. | ? | open
-- Q17 | Specialized skill: a rank bought above the level (e.g. rank 6 at level 5 for 60) later becomes free when the character reaches level 6. Are those training points given back? Now: no refund. | ? | open
-- Q18 | "Unarmed combat: ALL its bonuses work always, even armed": does that include its attack/damage bonuses on weapon attacks? Now: passive bonuses (parry, balance regen, range) work always; its attack/damage bonuses only on the unarmed attack. | ? | open
-- Q19 | May a one-handed weapon be used two-handed (grip "two", Str x1.5), and is off-hand allowed for any one-handed weapon? Now: one-handed weapons allow one / off / two hands; a two-handed weapon only two hands. | ? | open
+- Q20 | Unarmed combat has qualification "Skilled" (level 4) in the table. A new character has the Unarmed combat node at level 0, so the unarmed attack gets the -4 "not qualified" penalty. Is that intended? Now: yes, -4 (the table is applied literally). | ? | open
+- Q21 | Weight in the table: "L" and "1". Stored now as 1 L and 10 L (1 B). Is "L" = 1 L, and "1" = 1 B = 10 L? Quarterstaff damage "1d4/1d4 and 1d6/1d6" is stored as text (two ends?). Spiked gauntlets: no HD/HP in the table - left 0. | ? | open
