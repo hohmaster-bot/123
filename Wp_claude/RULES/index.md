@@ -19,6 +19,7 @@ Each file: rules, then numeric examples (use them as tests).
 | weapons.md | weapon proficiency levels, costs, bonuses |
 | narrative.md | quirks, stories, courts, quests, drives, attention |
 | catalog.md | catalogs, sharing, sorting |
+| spells.md | spell record, effect link, damage editor [BETA], stance = feat checkbox |
 | stats.md | stat damage, current/max, permanent stat damage |
 | training.md | modes (play/training/edit), sources and cost, ability/armor/shield/language prices, seeds, qualification, professionalism, attention course |
 | crafting.md | recipes, OV, craft DC, unusual items, ILVL |

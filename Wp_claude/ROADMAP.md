@@ -1,5 +1,5 @@
 # Roadmap
-Current: Phase 1 (rules written; a few open questions left) -> Phase 2.
+Current: Phase 2 (core).
 
 ## Phase 0 - setup
 - [x] Branch `Rework`.
@@ -13,7 +13,7 @@ Current: Phase 1 (rules written; a few open questions left) -> Phase 2.
 ## Phase 1 - rules (owner + Claude, one domain at a time)
 - [x] Rules written in `RULES/` for all domains (see `RULES/index.md`), numeric examples are tests.
 - [x] Rules written, incl. stats, training, crafting, doll.
-- [ ] Open questions left: R8, Q3, Q5, Q6 (rules); Q7, Q8, Q9, Q11 (architecture). See OPEN_QUESTIONS.md.
+- [x] Rules written, no open questions.
 
 ## Phase 2 - core
 Test runner that can fail (done: baseline script). Golden tests from RULES. Fix core bugs. Split core into modules (D9).

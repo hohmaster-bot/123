@@ -43,3 +43,13 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 - Effects can modify rest: e.g. owner's race doubles natural recovery bonus on short rest.
 - Short rest heal: 2+level HP (free). Example: level 3, 1/5 HP: +5 free; a second restore costs 1 BP.
 - Example: level 3, 1/5 HP: free HP restore +5 (2+3); second restore costs 1 BP.
+- Short rest also restores 2 + level HP for free (if race or an effect gives more, the larger value is used).
+  A repeated 2 + level HP heal costs 1 BP, as in the spend table.
+
+### Short rest flow [OWNER decision]
+- Short rest gives 1 BP for free: if BP < max, BP +1; if BP is already at max, +1 temporary BP.
+- Then the player spends BP from the list. An option is shown only if there is something to restore
+  (stat not damaged -> "Restore 1 stat" hidden; same for every option).
+- Other BP sources may add BP or temporary BP.
+- "Apply" applies everything. The short rest window closes; excess BP (above max) is lost.
+- Short rest has no limit on how many times.
