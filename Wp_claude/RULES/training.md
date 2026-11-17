@@ -33,8 +33,8 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
   "Владение новой категорией щитов - 100 очков. Тяжелые и ростовые щиты добавляют свой бонус щита к балансу персонажа.
   Легкие -> Тяжелые, рост баланса -> Ростовые, рост баланса, +2 парирование"
 - Code reading: parry = armor proficiency parry (0/2/4/6) + 1 per odd level + weapon mastery parry picks.
-  Assumption Q27: level 1 counts as odd (level 1 -> +1, level 3 -> +2, level 5 -> +3).
-  Tests: none at level 1 -> parry 1; heavy at level 5 -> 6 + 3 = 9.
+  [OWNER, Q27] Level 1 does NOT count: growth starts at level 3 (level 1 -> +0, 3 -> +1, 5 -> +2, 7 -> +3).
+  Tests: none at level 1 -> parry 0; heavy at level 5 -> 6 + 2 = 8.
 - Shield to balance and tower +2 parry: rule only, no code yet (Q28: proficiency grade or the shield item in hand?).
 
 ## Languages [OWNER confirmed]

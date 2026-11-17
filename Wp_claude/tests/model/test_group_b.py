@@ -58,8 +58,8 @@ S.case("b3-weight", "catalog.md [OWNER]: L = 1 L, 1 = 10 L", (1, 10, 10))(
 
 # B4: spiked gauntlets cannot parry: their record parry is 0 even if the group has "parry +1";
 # as primary record the group's parry does not reach AC; Unarmed combat parry still works (empty hand).
-# (AC parry numbers include the level-1 base parry 1, training.md pkg 4 / Q27.)
-@S.case("b4-gauntlets-no-parry", "owner: no parry with spiked gauntlets = empty-hand parry", (0, 11, 12))
+# (Level 1 gives no base parry, training.md Q27.)
+@S.case("b4-gauntlets-no-parry", "owner: no parry with spiked gauntlets = empty-hand parry", (0, 10, 11))
 def _b4():
     g = card("spiked_gauntlet", "sg", in_hands=True)
     contact = WeaponEntry(Weapon("contact", 3, grades=5), "", (Pick(5, "parry_1"),))

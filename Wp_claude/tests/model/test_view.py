@@ -108,13 +108,13 @@ S.case("weapon-level", "weapons.md Example: basics on sword, variety, group -> 4
     lambda: dv.weapon_level(Character(weapons=(
         WeaponEntry(Weapon("g", 3, 1, basics=True)), WeaponEntry(Weapon("v", 2, 1, basics=True, parents=("g",))),
         WeaponEntry(Weapon("s", 1, 1, basics=True, parents=("v",))))), "s"))
-# weapons.md / owner: "Unarmed combat" bonuses always work, even when armed: parry +1 there -> AC parry 12
-# (level 1 gives base parry 1, training.md pkg 4 / Q27).
-S.case("unarmed-combat-parry", "owner: Unarmed combat parry +1 works always (front 10, parry 1 + 1 = 12)", (10, 12))(
+# weapons.md / owner: "Unarmed combat" bonuses always work, even when armed: parry +1 there -> AC parry 11
+# (level 1 gives no base parry, training.md Q27).
+S.case("unarmed-combat-parry", "owner: Unarmed combat parry +1 works always (front 10, parry 11)", (10, 11))(
     lambda: (lambda ch: (dv.ac(ch), dv.ac(ch, "parry")))(
         Character(weapons=(WeaponEntry(Weapon("unarmed_combat", grades=5), picks=(Pick(5, "parry_1"),)),))))
-# A group's parry from a weapon NOT in the hands gives nothing (no attack record visible): parry 11 (level-1 base only).
-S.case("group-parry-not-held", "owner: group bonuses only through a primary attack record (base parry 1 only)", 11)(
+# A group's parry from a weapon NOT in the hands gives nothing (no attack record visible): parry 10.
+S.case("group-parry-not-held", "owner: group bonuses only through a primary attack record", 10)(
     lambda: dv.ac(Character(items=(Item("sw", "sword", kind="weapon", hands=1, groups=("blades",)),),
                             weapons=(WeaponEntry(Weapon("blades", grades=5), picks=(Pick(5, "parry_1"),)),)), "parry"))
 

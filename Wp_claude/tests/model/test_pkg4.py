@@ -104,12 +104,12 @@ S.case("deflection-text", "defense_layers.md [OWNER pkg 4]: deflection text",
        "".join(chr(c) for c in (1072, 1090, 1072, 1082, 1072)))(
     lambda: L.texts()["deflection"][:5])
 
-# ---- B: parry by armor proficiency and odd levels (training.md [OWNER pkg 4], Q27) ----
-S.case("parry-odd-levels", "training.md: +1 parry on every odd level (1->1, 2->1, 3->2, 5->3, 6->3)", (1, 1, 2, 3, 3))(
-    lambda: tuple(acm.odd_level_parry(lv) for lv in (1, 2, 3, 5, 6)))
-S.case("parry-armor-grades", "training.md: none 0, light 2, medium 4, heavy 6 (level 2: +1)", (1, 3, 5, 7))(
-    lambda: tuple(acm.base_parry(g, 2) for g in ("none", "light", "medium", "heavy")))
-S.case("parry-heavy-l5-in-ac", "training.md: heavy at level 5 -> parry 9 -> AC in parry mode 19, front 10", (10, 19))(
+# ---- B: parry by armor proficiency and odd levels (training.md [OWNER pkg 4, Q27: from level 3]) ----
+S.case("parry-odd-levels", "training.md Q27: +1 per odd level from 3 (1->0, 2->0, 3->1, 5->2, 6->2, 7->3)", (0, 0, 1, 2, 2, 3))(
+    lambda: tuple(acm.odd_level_parry(lv) for lv in (1, 2, 3, 5, 6, 7)))
+S.case("parry-armor-grades", "training.md: none 0, light 2, medium 4, heavy 6 (level 3: +1)", (1, 3, 5, 7))(
+    lambda: tuple(acm.base_parry(g, 3) for g in ("none", "light", "medium", "heavy")))
+S.case("parry-heavy-l5-in-ac", "training.md: heavy at level 5 -> parry 6 + 2 = 8 -> AC in parry mode 18, front 10", (10, 18))(
     lambda: (lambda c: (dv.ac(c), dv.ac(c, acm.PARRY)))(Character(level=5, armor_grade="heavy")))
 
 
