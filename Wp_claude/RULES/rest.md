@@ -20,6 +20,7 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 - Restores: all HP, all BP, all pain (except permanent pain from injuries and curses), all ability charges,
   all spells and mana, all spirit, all stats (stat damage; NOT permanent stat damage).
   HP is restored to max, so temp pain from negative HP is gone too.
+- Long rest also resets overload to 0 and sets balance to its max [OWNER confirmed].
 - Does NOT restore only injuries and curses. Temp HP is not touched (a possible checkbox "clear temp HP" later).
 - Items with charges get checkbox "restore charges on long rest"; consumables are not restored.
 - Long rest NEVER clears trauma points (OT), comfort, or injury charges: those are reset by hand only [OWNER confirmed].

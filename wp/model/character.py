@@ -52,6 +52,8 @@ class Item:
     effects_off: Tuple[Effect, ...] = ()   # tab "not activated" (D17)
     effects_on: Tuple[Effect, ...] = ()    # tab "activated" (D17)
     activated: bool = False
+    activation_cost: int = 0           # spirit to activate (0 = not activatable)
+    active_until: str = ""             # "short" / "long": which rest switches it off
     weapon_id: Optional[str] = None    # link to the weapon catalog
     durability: int = 0                # value typed by the author (base)
     hp: int = 0
@@ -63,6 +65,13 @@ class WeaponEntry:
     weapon: Weapon
     title: str = ""                    # display name
     picks: Tuple[Pick, ...] = ()
+
+
+@dataclass(frozen=True)
+class Language:
+    lid: str                           # stable id
+    name: str
+    native: bool = False
 
 
 @dataclass(frozen=True)
@@ -87,8 +96,10 @@ class Character:
     bp_current: int = 0
     temp_bp: int = 0
     bp_bonus: int = 0
-    # pools with a max typed by hand (class tables, narrative)
-    spirit: Pool = Pool(0, 0)
+    # spirit: max derived (5 + 5 * Cha mod, min 0, + bonuses by source)
+    spirit_current: int = 0
+    spirit_bonuses: Tuple[Tuple[str, int], ...] = ()
+    # pools with a max typed by hand (class tables)
     mana: Pool = Pool(0, 0)
     mana_enabled: bool = False
     caster: Optional[str] = None       # magic.MAGE / magic.SLOTS / None
@@ -97,7 +108,8 @@ class Character:
     charges: Tuple[Charge, ...] = ()
     comfort_current: int = 0
     comfort_bonus: int = 0
-    attention: Pool = Pool(0, 0)
+    attention: int = 0                 # no maximum (narrative.md)
+    drives: Dict[str, int] = field(default_factory=dict)   # drive id -> level
     # pain, trauma, overload
     pain: Tuple[PainEntry, ...] = ()
     pain_profile: PainProfile = PainProfile()
@@ -115,6 +127,9 @@ class Character:
     items: Tuple[Item, ...] = ()
     weapons: Tuple[WeaponEntry, ...] = ()
     skills: Tuple[Skill, ...] = ()
+    languages: Tuple[Language, ...] = ()
+    shield_grade: str = "none"
+    armor_grade: str = "none"
     training: int = 1000
     base_slots: int = 5
     size_mod: int = 0

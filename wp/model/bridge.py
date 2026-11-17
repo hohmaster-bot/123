@@ -41,7 +41,7 @@ def from_vitals(ch, v, pain_source=OVERFLOW):
 def to_rest(ch):
     stats = {n: Pool(a.current, a.score_max) for n, a in ch.abilities.items()}
     return rs.RestState(level=ch.level, hp=dv.hp_pool(ch), bp=dv.bp_pool(ch), temp_bp=ch.temp_bp,
-                        pain=ch.pain, spirit=ch.spirit, mana=ch.mana, mana_enabled=ch.mana_enabled,
+                        pain=ch.pain, spirit=dv.spirit_pool(ch), mana=ch.mana, mana_enabled=ch.mana_enabled,
                         slots=dict(ch.slots), resources=dict(ch.resources), charges=ch.charges,
                         stats=stats, trauma=ch.trauma, comfort=dv.comfort_pool(ch))
 
@@ -50,7 +50,7 @@ def from_rest(ch, s):
     abilities = {n: replace(a, damage=s.stats[n].max - s.stats[n].current)
                  for n, a in ch.abilities.items()}
     return replace(ch, hp_current=s.hp.current, bp_current=s.bp.current, temp_bp=s.temp_bp,
-                   pain=s.pain, spirit=s.spirit, mana=s.mana, slots=dict(s.slots),
+                   pain=s.pain, spirit_current=s.spirit.current, mana=s.mana, slots=dict(s.slots),
                    resources=dict(s.resources), charges=s.charges, abilities=abilities)
 
 

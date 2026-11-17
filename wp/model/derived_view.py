@@ -71,6 +71,32 @@ def balance_regen(ch):
     return dv.balance_regen(ch.level, ability_mod(ch, "con"), other)
 
 
+SPIRIT_BASE = 5
+SPIRIT_PER_CHA = 5
+
+
+def spirit_max(ch):
+    """5 + 5 * Cha mod, never below 0, then bonuses/penalties by source (resources.md)."""
+    base = max(0, SPIRIT_BASE + SPIRIT_PER_CHA * ability_mod(ch, "cha"))
+    return base + sum(v for _, v in ch.spirit_bonuses)
+
+
+def spirit_pool(ch):
+    return Pool(ch.spirit_current, spirit_max(ch))
+
+
+ATTENTION_DRIVE_LEVEL = 4
+
+
+def attention_per_cycle(ch):
+    """1 + levels reached that are multiples of 3 + 1 per drive at level 4+ (narrative.md)."""
+    return 1 + ch.level // 3 + sum(1 for v in ch.drives.values() if v >= ATTENTION_DRIVE_LEVEL)
+
+
+def natives(ch):
+    return sum(1 for lang in ch.languages if lang.native)
+
+
 def comfort_max(ch):
     return tr.comfort_max(ch.level, ch.comfort_bonus)
 

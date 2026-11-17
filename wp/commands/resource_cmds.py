@@ -5,6 +5,7 @@ from wp.commands.base import CommandError, command, commit
 from wp.core import damage as dm
 from wp.core import injuries as inj
 from wp.core import rest as rs
+from wp.commands.gear_cmds import LONG, SHORT, switch_off_items
 from wp.model import bridge
 from wp.model import derived_view as dv
 
@@ -14,8 +15,9 @@ _SCALAR = {
     "balance": (dv.balance_pool, "balance_current"),
     "bp": (dv.bp_pool, "bp_current"),
     "comfort": (dv.comfort_pool, "comfort_current"),
+    "spirit": (dv.spirit_pool, "spirit_current"),
 }
-_POOLS = ("spirit", "mana", "attention")
+_POOLS = ("mana",)
 
 
 def _get(ch, name):
@@ -73,15 +75,15 @@ def short_rest(ch, spends=(), other_heal=0, extra_bp=0, extra_temp_bp=0):
     session = rs.start_short_rest(bridge.to_rest(ch), other_heal, extra_bp, extra_temp_bp)
     for opt, params in spends:
         session = rs.spend(session, opt, **dict(params))
-    new = bridge.from_rest(ch, rs.apply_short_rest(session))
+    new = switch_off_items(bridge.from_rest(ch, rs.apply_short_rest(session)), SHORT)
     return commit(new, "short_rest", "short rest: %s" % (
         ", ".join(o for o, _ in spends) or "free gains only"))
 
 
 @command
 def long_rest(ch):
-    """Long rest (rest.md); balance to the new max, overload gone (see MODEL_REPORT)."""
-    new = bridge.from_rest(ch, rs.long_rest(bridge.to_rest(ch)))
+    """Long rest (rest.md): also overload 0 and balance to max [OWNER confirmed]; all items off."""
+    new = switch_off_items(bridge.from_rest(ch, rs.long_rest(bridge.to_rest(ch))), LONG)
     new = replace(new, overload=0)
     new = replace(new, balance_current=max(new.balance_current, dv.balance_max(new)))
     return commit(new, "long_rest", "long rest")

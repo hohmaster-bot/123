@@ -1,4 +1,5 @@
-"""Purchase commands (training.md): buy_ability, buy_skill_rank, buy_weapon_grade, buy_base_slot.
+"""Purchase commands (training.md): ability, skill rank, weapon grade, base slot,
+shield and armor grades, languages.
 Only source = training spends training points."""
 from dataclasses import replace
 
@@ -6,6 +7,8 @@ from wp.commands.base import CommandError, command, commit
 from wp.core import skills as sk
 from wp.core import training as tr
 from wp.core import weapons as wpn
+from wp.model import derived_view as dv
+from wp.model.character import Language
 
 
 def _pay(ch, cost, source):
@@ -57,3 +60,42 @@ def buy_base_slot(ch, source=tr.TRAINING):
     cost = tr.base_slot_cost(ch.base_slots, ch.level)
     new = replace(ch, base_slots=ch.base_slots + 1, training=_pay(ch, cost, source))
     return commit(new, "buy_base_slot", "base slot %d for %d" % (ch.base_slots + 1, cost), {"cost": cost})
+
+
+def _next_grade(grades, current):
+    i = grades.index(current)
+    if i >= len(grades) - 1:
+        raise CommandError("already at max grade")
+    return grades[i + 1]
+
+
+@command
+def buy_shield_grade(ch, source=tr.TRAINING):
+    """Shield proficiency: 100 per grade (none -> light -> heavy -> tower)."""
+    nxt = _next_grade(tr.SHIELD_GRADES, ch.shield_grade)
+    cost = tr.shield_grade_cost(ch.shield_grade)
+    new = replace(ch, shield_grade=nxt, training=_pay(ch, cost, source))
+    return commit(new, "buy_shield_grade", "shield -> %s for %d" % (nxt, cost), {"cost": cost})
+
+
+@command
+def buy_armor_grade(ch, source=tr.TRAINING):
+    """Armor proficiency: 250 per grade (none -> light -> medium -> heavy)."""
+    nxt = _next_grade(tr.ARMOR_GRADES, ch.armor_grade)
+    cost = tr.armor_grade_cost(ch.armor_grade)
+    new = replace(ch, armor_grade=nxt, training=_pay(ch, cost, source))
+    return commit(new, "buy_armor_grade", "armor -> %s for %d" % (nxt, cost), {"cost": cost})
+
+
+@command
+def buy_language(ch, lid="", title="", native=False, source=tr.TRAINING):
+    """Language: non-native 30; native: first free, cheap 50 while natives < Int mod, else 100."""
+    if not lid:
+        raise CommandError("language needs a stable id")
+    if any(lang.lid == lid for lang in ch.languages):
+        raise CommandError("language already known: %r" % (lid,))
+    cost = tr.language_cost(native, dv.natives(ch), dv.ability_mod(ch, "int"))
+    lang = Language(lid, title or lid, bool(native))
+    new = replace(ch, languages=ch.languages + (lang,), training=_pay(ch, cost, source))
+    return commit(new, "buy_language", "language %s%s for %d" % (
+        lid, " (native)" if native else "", cost), {"cost": cost})

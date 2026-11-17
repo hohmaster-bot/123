@@ -78,6 +78,8 @@ Spec: per tick restore balance (if overload == 0), then DoT.
 
 ## Spirit, mana, overload [OWNER]
 - Everyone has: HP, balance, balance regen, spirit, trauma points. Spirit pays item activations (1 spirit/day or 5 until session end).
+- Spirit max [OWNER] = 5 + 5 * Cha modifier, never below 0 (Cha mod -1 or lower -> 0), plus bonuses/penalties by source.
+  Not typed in by hand. Tests: Cha mod +2 -> 15; -1 -> 0; -2 -> 0; +2 with bonus +3 -> 18.
 - Casters (mage): mana instead of slots. Divine casters: slots.
 - Mage cast cost: mana 1/3/5 by circle AND the same amount of balance. Gains X overload
   (X = casting time in ACTIONS, usually 2; spell duration does not matter) [OWNER, changed].

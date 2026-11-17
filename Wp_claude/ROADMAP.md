@@ -20,6 +20,7 @@ Test runner that can fail (done: baseline script). Golden tests from RULES. Fix 
 
 ## Phase 3 - nodes without visuals
 Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects (D14-D17), catalogs contract, i18n (D4), theme, panel registry.
+- Before Phase 4: the owner sends screen drawings with labels (A1, A2...), Claude turns them into screen descriptions.
 
 ## Phase 4 - overlay spike
 PySide6: click-through, always-on-top, global hotkey, tray, multi-monitor.
