@@ -32,13 +32,18 @@ def bp_cap(max_hp):
     return -(-max_hp // 4)
 
 
+def bp_cap_from_hp(hp_pool):
+    """BP cap for an HP pool: always from MAX HP, never from current HP."""
+    return bp_cap(hp_pool.max)
+
+
 def balance_max(armor_bonus, bp_current, bonuses=0):
     """Balance max = worn armor bonus + CURRENT BP + bonuses (race, class, other).
 
     armor_bonus must be the worn armor bonus only: parry gives no balance.
-    Spending BP lowers balance max (rest.md note). No clamp: RULES give none.
+    Spending BP lowers balance max (rest.md note). Never below 0 (owner).
     """
-    return int(armor_bonus) + int(bp_current) + int(bonuses)
+    return max(0, int(armor_bonus) + int(bp_current) + int(bonuses))
 
 
 def balance_regen(level, con_mod, other=0):

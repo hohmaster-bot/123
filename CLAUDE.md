@@ -41,4 +41,8 @@ Never load `AUDIT.md` or old docs whole; search by finding id (`A0xx`).
 ## Testing
 Anything with numbers or state (formulas, effects, ticks, rest, purchases, save/load) gets a test.
 Visual and UX checks are done by the owner by hand.
-Test command: `python Wp_claude/tests/test_rules_baseline.py` (exit 1 on any failure; known failures listed in BASELINE_REPORT.md).
+Test commands (each exits 1 on any failure, no pytest needed):
+- legacy baseline: `python Wp_claude/tests/test_rules_baseline.py` (known failures in BASELINE_REPORT.md)
+- new core `wp/core/`: `python Wp_claude/tests/core/test_derived.py`, `python Wp_claude/tests/core/test_damage.py`,
+  `python Wp_claude/tests/core/test_rest.py`, `python Wp_claude/tests/core/test_magic.py`,
+  `python Wp_claude/tests/core/test_injuries.py` (status in CORE_REPORT.md)

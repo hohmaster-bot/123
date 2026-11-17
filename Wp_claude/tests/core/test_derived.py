@@ -22,6 +22,19 @@ S.case("balance-max-example", "rest.md BP and balance Example [OWNER]", 6)(
 S.case("balance-max-current-bp", "rest.md BP and balance Note [confirmed]", 5)(
     lambda: d.balance_max(armor_bonus=2, bp_current=0, bonuses=3))
 
+S.case("balance-max-floor0", "owner: balance max never below 0", 0)(
+    lambda: d.balance_max(armor_bonus=0, bp_current=1, bonuses=-5))
+
+
+# rest.md: BP cap from MAX HP, not current HP (owner). HP 5 of 20 -> cap 5, not 2.
+class _HP(object):
+    current = 5
+    max = 20
+
+
+S.case("bp-cap-from-max", "rest.md BP cap uses MAX HP (owner)", 5)(
+    lambda: d.bp_cap_from_hp(_HP()))
+
 # rest.md: regen = level + Con mod + other, min 1 (formula, no owner numbers).
 S.case("regen-formula", "rest.md balance regen (formula)", 5)(
     lambda: d.balance_regen(level=3, con_mod=1, other=1))
@@ -46,7 +59,8 @@ S.case("morale-no-combat", "defense.md Morale: only while combat is active", 0)(
 
 # gear.md Weight, Examples [OWNER confirmed] (in L: 5.9 B = 59 L).
 for _mod, _exp in [(0, (59, 109)), (2, (79, 129)), (-2, (39, 89)),
-                   (3, (89, 139)), (-1, (49, 99))]:
+                   (3, (89, 139)), (-1, (49, 99)),
+                   (-5, (9, 59))]:  # owner: Str 1 (mod -5), Str 0 is death
     S.case("load%+d" % _mod, "gear.md Weight Examples [OWNER confirmed]", _exp)(
         lambda m=_mod: d.load_thresholds_l(m))
 S.case("load-status", "gear.md Weight: light to 5.9, heavy to 10.9, above overload",
