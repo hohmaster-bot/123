@@ -38,6 +38,12 @@ Repeat limits: a specialist bonus may be picked again (2nd time) from expert lev
 An expert bonus may be picked a 2nd time at master.
 Tests: after 3 specialist picks all different, expert picks open; at level 9, picking "crit range +1" a 2nd time is allowed; 3rd is not until 12.
 
+## Mastery bonuses in the final numbers [OWNER]
+- Weapon mastery bonuses stack with themselves by their own rules, then are added as FLAT to AC (parry), attack, damage.
+- They change the FINAL durability (hardness) and HP of the item, not the value the author typed into the item.
+  Durability: specialist +30%, expert +70% (they stack). Item HP: +1 per expert pick.
+  Example: +30% and +70% picks -> +100% of the base durability.
+
 ## Notes
 - This "qualification" is weapon level; item "Qualification N" in gear.md is a different mechanic (per-item, 50 training/level).
 - Styles: similar branch rules; app can record one style per equipped weapon or two attack variants (progression.md).

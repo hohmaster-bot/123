@@ -28,7 +28,10 @@ S.case("flat-footed", "defense.md Flat-footed: no Dex, no shield", 17)(
     lambda: a.ac(sample(), a.FLAT_FOOTED))
 S.case("flat-footed-shield-side", "defense.md Flat-footed: shield only from shield side", 19)(
     lambda: a.ac(sample(), a.FLAT_FOOTED, from_shield_side=True))
-S.case("parry", "defense.md Parry: max(armor 4, parry 6) in the armor slot", 24)(
+S.case("flat-footed-no-dodge", "defense.md [OWNER]: flat-footed loses Dex and ALL dodge", 17)(
+    lambda: a.ac(sample(bonuses=(bo.Bonus(1, bo.DEFLECTION, bo.AC), bo.Bonus(3, bo.DODGE, bo.AC))),
+                 a.FLAT_FOOTED))
+S.case("parry","defense.md Parry: max(armor 4, parry 6) in the armor slot", 24)(
     lambda: a.ac(sample(), a.PARRY))
 S.case("parry-armor-bigger", "defense.md Parry: armor bigger -> armor stays", 22)(
     lambda: a.ac(sample(parry=3), a.PARRY))

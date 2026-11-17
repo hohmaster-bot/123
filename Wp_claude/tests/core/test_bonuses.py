@@ -24,11 +24,25 @@ S.case("flat-stacks", "defense.md: flat stacks with itself", 5)(
 S.case("dodge-stacks", "defense.md: dodge stacks with itself", 3)(
     lambda: bo.total([Bonus(1, bo.DODGE, bo.AC), Bonus(2, bo.DODGE, bo.AC)], bo.AC))
 
-S.case("penalty-largest", "owner: same-type penalties -> the largest penalty", -4)(
+S.case("penalty-largest", "defense.md: same-type penalties -> the largest penalty", -4)(
     lambda: bo.total([Bonus(-2, "luck", bo.ATTACK), Bonus(-4, "luck", bo.ATTACK)], bo.ATTACK))
 
-S.case("bonus-plus-penalty", "owner: best bonus + largest penalty of one type", -2)(
-    lambda: bo.total([Bonus(2, bo.MORALE), Bonus(-4, bo.MORALE)], bo.ATTACK))
+# defense.md Stacking [OWNER decision] examples: larger absolute value wins, equal -> 0.
+for _b, _p, _exp in [(3, -4, -4), (3, -1, 3), (2, -2, 0)]:
+    S.case("same-type%+d%+d" % (_b, _p), "defense.md Stacking Examples [OWNER]", _exp)(
+        lambda b=_b, p=_p: bo.total([Bonus(b, "luck", bo.SAVE), Bonus(p, "luck", bo.SAVE)], bo.SAVE))
+
+S.case("flat-bonus-penalty-add", "defense.md: flat adds up (+3 and -4 -> -1)", -1)(
+    lambda: bo.total([Bonus(3), Bonus(-4)], bo.SAVE))
+
+# defense.md: per target. Morale +1 on everything, spell morale -2 on attacks.
+_m1 = [bo.morale(1), Bonus(-2, bo.MORALE, bo.ATTACK)]
+S.case("morale-per-target", "defense.md Example [OWNER]: attacks -2, rest +1", (-2, 1, 1, 1))(
+    lambda: tuple(bo.total(_m1, t) for t in (bo.ATTACK, bo.SAVE, bo.SKILL, bo.DAMAGE)))
+# Heroism +4 morale on attacks, morale -1 on everything.
+_m2 = [bo.morale(-1), Bonus(4, bo.MORALE, bo.ATTACK)]
+S.case("heroism", "defense.md Example [OWNER]: heroism +4 on attacks, morale -1", (4, -1, -1))(
+    lambda: tuple(bo.total(_m2, t) for t in (bo.ATTACK, bo.SAVE, bo.CMB)))
 
 S.case("different-types-add", "defense.md: different types add", 3)(
     lambda: bo.total([Bonus(1, bo.ENHANCEMENT, bo.ATTACK), Bonus(2, "luck", bo.ATTACK)], bo.ATTACK))
@@ -52,10 +66,11 @@ S.case("ac-only-on-ac", "defense.md: AC-only types count on AC", 10)(
     lambda: bo.total(_ac_types, bo.AC))
 
 # defense.md Morale: type morale on ALL rolls, not AC.
-S.case("morale-all-rolls", "defense.md Morale: all rolls",
-       (2, 2, 2, 2, 2, 2, 0))(
+S.case("morale-all-rolls", "defense.md Morale: all rolls, not lucky/crit/AC",
+       (2, 2, 2, 2, 2, 2, 2, 0, 0, 0))(
     lambda: tuple(bo.total([bo.morale(2)], t) for t in
-                  (bo.ATTACK, bo.DAMAGE, bo.SAVE, bo.SKILL, bo.INITIATIVE, bo.CMB, bo.AC)))
+                  (bo.ATTACK, bo.DAMAGE, bo.SAVE, bo.SKILL, bo.INITIATIVE, bo.CMB, bo.MANEUVER,
+                   bo.LUCKY, bo.CRIT, bo.AC)))
 S.case("morale-highest", "defense.md Morale: highest only, like any typed bonus", 3)(
     lambda: bo.total([bo.morale(1), bo.morale(3)], bo.ATTACK))
 

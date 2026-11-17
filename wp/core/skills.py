@@ -3,7 +3,7 @@
 Tiers are data: NORMAL, ADVANCED (+3 to the roll), SPECIALIZED (from advanced only).
 Roll bonus = ranks + key stat mod + bonuses + armor penalty (+3 if advanced/specialized).
 Costs ("rank" = the NEW rank):
-  normal +1 rank 20 * rank (ranks <= level), advanced 15 * rank,
+  normal +1 rank 20 * rank, advanced 15 * rank (both: ranks <= level),
   specialized: ranks up to level are free/automatic, above level 10 * rank.
   make advanced: 40 + 20 * other advanced; make specialized: 200 + 50 * other specialized.
 Free advanced/specialized skills still count as "other".
@@ -54,8 +54,8 @@ def rank_step_cost(tier, new_rank, level):
     new_rank, level = int(new_rank), int(level)
     if new_rank < 1:
         raise ValueError("new rank must be >= 1")
-    if tier == NORMAL and new_rank > level:
-        raise ValueError("normal skill ranks cannot exceed character level")
+    if tier in (NORMAL, ADVANCED) and new_rank > level:
+        raise ValueError("normal/advanced skill ranks cannot exceed character level")
     if tier == SPECIALIZED and new_rank <= level:
         return 0
     return RANK_PRICE[tier] * new_rank

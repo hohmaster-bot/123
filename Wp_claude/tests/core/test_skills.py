@@ -32,6 +32,18 @@ def _cap():
     return "allowed"
 
 
+@S.case("advanced-cap", "owner: advanced ranks cannot exceed level either", "rejected")
+def _adv_cap():
+    try:
+        sk.rank_step_cost(sk.ADVANCED, 4, 3)
+    except ValueError:
+        return "rejected"
+    return "allowed"
+
+
+S.case("spec-no-cap", "skills.md: specialized has no rank cap (level 3 -> rank 10 = 100)", 100)(
+    lambda: sk.rank_step_cost(sk.SPECIALIZED, 10, 3))
+
 # skills.md Examples.
 S.case("2nd-advanced", "skills.md Example: 2nd advanced skill = 40+20*1", 60)(
     lambda: sk.promote_cost([Skill("a", "int", sk.ADVANCED), Skill("b", "int")], "b"))
