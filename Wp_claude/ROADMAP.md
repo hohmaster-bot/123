@@ -24,6 +24,24 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
 - Deferred (from REVIEW_REPORT, not done yet): final item hardness/HP from mastery in the model; spell mastery cost
   25 * (1 + circle^2); level-up command (+100 * level training, HP roll); comfort -> training command;
   OT removal commands (comfort, attention, injury removal, RL raise); weapon card data from the owner's table.
+- Rule exists, no code yet (package 4, training text; see training.md / progression.md / weapons.md):
+  - comfort -> training command (rate (level+1)*5 exists in core);
+  - level-up command (+100 * level training);
+  - combat basics purchase command (cost 50/100/150 exists in core);
+  - new combat maneuver 250 (record of maneuvers per weapon branch);
+  - item qualification purchase 50 * N;
+  - +1 reaction 200 * new number of reactions;
+  - max HP +1 for 50 up to class hit die * level + Con * level;
+  - professionalism 300 (1/2/3/4 specialized class skills), after Q29;
+  - new spell 20 + 10 * circle^2 (half for book / teacher / scroll classes);
+  - spell mastery 25 * (1 + circle^2), three slots, identical upgrade 2nd time = 2 slots, metamagic = its circle;
+  - seed 200 / sprout seed 200;
+  - make a known language native (50 / 100);
+  - attention course +1 for 200 (adds to the stat bonus);
+  - heavy/tower shields add the shield bonus to balance, tower +2 parry (after Q28);
+  - master weapon picks have no mechanics yet: reroll one d20, one attack per turn without the [attack] tag,
+    once per combat restore all balance (free action); expert picks "ignore first vulnerability",
+    "ignore 20% cover", "first ranged attack can be parried" are stored but have no effect in numbers.
 
 ## Phase 4 - overlay spike
 PySide6: click-through, always-on-top, global hotkey, tray, multi-monitor.

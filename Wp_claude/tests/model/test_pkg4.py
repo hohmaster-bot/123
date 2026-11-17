@@ -1,4 +1,4 @@
-"""Package 4 group A: temp HP kinds (resources.md) and the flat layer (defense_layers.md).
+"""Package 4: temp HP kinds (resources.md), the flat layer (defense_layers.md), parry and languages (training.md).
 Run: python Wp_claude/tests/model/test_pkg4.py"""
 import os
 import sys
@@ -103,6 +103,32 @@ S.case("below-10-rolls", "defense_layers.md: AC 8 -> 9 hit, 8 exact, 7 position"
 S.case("deflection-text", "defense_layers.md [OWNER pkg 4]: deflection text",
        "".join(chr(c) for c in (1072, 1090, 1072, 1082, 1072)))(
     lambda: L.texts()["deflection"][:5])
+
+# ---- B: parry by armor proficiency and odd levels (training.md [OWNER pkg 4], Q27) ----
+S.case("parry-odd-levels", "training.md: +1 parry on every odd level (1->1, 2->1, 3->2, 5->3, 6->3)", (1, 1, 2, 3, 3))(
+    lambda: tuple(acm.odd_level_parry(lv) for lv in (1, 2, 3, 5, 6)))
+S.case("parry-armor-grades", "training.md: none 0, light 2, medium 4, heavy 6 (level 2: +1)", (1, 3, 5, 7))(
+    lambda: tuple(acm.base_parry(g, 2) for g in ("none", "light", "medium", "heavy")))
+S.case("parry-heavy-l5-in-ac", "training.md: heavy at level 5 -> parry 9 -> AC in parry mode 19, front 10", (10, 19))(
+    lambda: (lambda c: (dv.ac(c), dv.ac(c, acm.PARRY)))(Character(level=5, armor_grade="heavy")))
+
+
+# ---- B: language 30 * projects from the nearest native (training.md [OWNER pkg 4]) ----
+def _lang(projects):
+    return dispatch(Character(training=500), "buy_language", lid="elf", projects=projects).info["cost"]
+
+
+S.case("lang-projects", "training.md: 30 * projects (1 -> 30, 3 -> 90)", (30, 90))(lambda: (_lang(1), _lang(3)))
+
+
+@S.case("lang-projects-zero", "training.md: projects must be >= 1", "rejected")
+def _lang0():
+    try:
+        _lang(0)
+    except CommandError:
+        return "rejected"
+    return "accepted"
+
 
 if __name__ == "__main__":
     sys.exit(S.run())

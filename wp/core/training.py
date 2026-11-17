@@ -58,8 +58,13 @@ def native_language_cost(natives, int_mod):
     return LANG_NATIVE_CHEAP if natives < int(int_mod) else LANG_NATIVE_EXPENSIVE
 
 
-def language_cost(native, natives=0, int_mod=0):
-    return native_language_cost(natives, int_mod) if native else LANG_NON_NATIVE
+def language_cost(native, natives=0, int_mod=0, projects=1):
+    """Non-native: 30 * number of projects (steps) from the nearest native language (training.md)."""
+    if native:
+        return native_language_cost(natives, int_mod)
+    if int(projects) < 1:
+        raise ValueError("projects from the nearest native language must be >= 1")
+    return LANG_NON_NATIVE * int(projects)
 
 
 # ------------------------------------------------------------ armor, shield

@@ -36,6 +36,19 @@ class AcInput:
     bonuses: Tuple[bo.Bonus, ...] = field(default_factory=tuple)  # effects on AC
 
 
+# Parry from armor proficiency (training.md [OWNER pkg 4]): none 0, light 2, medium 4, heavy 6,
+# plus 1 on every odd level (1, 3, 5, ...; level 1 counts: assumption Q27).
+ARMOR_GRADE_PARRY = {"none": 0, "light": 2, "medium": 4, "heavy": 6}
+
+
+def odd_level_parry(level):
+    return max(0, (int(level) + 1) // 2)
+
+
+def base_parry(armor_grade, level):
+    return ARMOR_GRADE_PARRY[armor_grade] + odd_level_parry(level)
+
+
 def _dex(inp):
     d = inp.dex_mod
     if inp.max_dex is not None:

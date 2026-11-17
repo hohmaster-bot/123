@@ -23,24 +23,58 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
 ## Comfort for training [OWNER]
 - 1 comfort = 5 + 5 * level training (10, 15, 20 at levels 1, 2, 3). Item and class bonuses change it.
 
-## Armor / shield grades
+## Armor / shield grades [OWNER confirmed, package 4]
 - Shield: 100 per grade: none -> light -> heavy -> tower.
-- Armor: 250 per grade: none -> light -> medium -> heavy (from old code, owner did not object).
+- Armor: 250 per grade: none -> light -> medium -> heavy.
+- Owner text (verbatim):
+  "Парирование растет на каждом нечетном уровне на 1."
+  "Владение новой категорией доспехов - 250 очков
+  Не владеет, 0 парирование -> Легкие, 2 парирование -> Средние, 4 парирование -> Тяжелые, 6 парирование. Парирование растет на 1 каждый нечетный уровень."
+  "Владение новой категорией щитов - 100 очков. Тяжелые и ростовые щиты добавляют свой бонус щита к балансу персонажа.
+  Легкие -> Тяжелые, рост баланса -> Ростовые, рост баланса, +2 парирование"
+- Code reading: parry = armor proficiency parry (0/2/4/6) + 1 per odd level + weapon mastery parry picks.
+  Assumption Q27: level 1 counts as odd (level 1 -> +1, level 3 -> +2, level 5 -> +3).
+  Tests: none at level 1 -> parry 1; heavy at level 5 -> 6 + 3 = 9.
+- Shield to balance and tower +2 parry: rule only, no code yet (Q28: proficiency grade or the shield item in hand?).
 
 ## Languages [OWNER confirmed]
 - First native language free. Further native languages: buy with training or get narratively.
 - CHEAP native purchase only while (number of native languages) < Int MODIFIER; otherwise the EXPENSIVE option.
   Int +2: 1 free + 1 cheap = 2 native. Int +3: 1 free + 2 cheap = 3 native. Int +1 or less: only the expensive option.
-- Prices from old code (owner did not object): cheap 50, expensive 100; non-native language 30.
+- Prices [OWNER confirmed, package 4]: cheap 50, expensive 100.
+- Non-native language (verbatim): "Выучить язык - 30*число проектов от ближайшего родного."
+  Test: 1 project -> 30, 3 projects -> 90. The number of projects is entered at the purchase (no language map yet).
+- Native (verbatim): "Сделать язык родным - 50 (если родных меньше Инт). Сверх этого числа - 100." ("Инт" = Int
+  MODIFIER, owner confirmed earlier.) Making an already known language native: rule only, no command yet.
 - Old code compared with the Int SCORE (not the modifier): bug.
 - Tests: Int mod 2, natives 1 -> next native 50; natives 2 -> 100. Int mod 3, natives 2 -> 50; natives 3 -> 100. Int mod 1, natives 1 -> 100.
+
+## Other purchases [OWNER, package 4, verbatim; rule only, no code yet]
+- "Каждый уважающий себя приключенец старается держать себя в форме, оттачивать свое владение оружием, изучать
+  подходящие заклинания и подобное. Для этого раз он может обменивать комфорт очки тренировок по курсу (ЛВЛ+1)*5."
+  ((level+1)*5 = 5 + 5*level, same as "Comfort for training" above.)
+- "Новый прием боя - 250 очков (Вы разрабатываете прием для оружия, которым владеете. Прием на 0-3 уровней сложнее,
+  чем выбранный прием в ветке данного оружия. Вы можете выбирать в качестве стартового приема стандартные, вроде
+  "базовая атака", "захват", "двойная атака". Минимальный уровень равен требуемому уровню владения оружием. Суть приема
+  определяет мастер, и обычно она связана с прошлым приемом в "ветке")."
+- "Новая черта или изменение классовых способностей - 200+ очков, по договоренности с ДМом. Вы можете придумывать
+  бонусы самостоятельно."
+- "Квалификация с предметом - 50*N, где N - указанное в предмете число (требуется для специфических предметов, чтобы
+  раскрыть их более потенциал)."
+- "Получить +1 реакцию - 200*новое число реакций." Test: 1 reaction -> 2nd costs 400.
+- "Увеличение макс хитов на 1 - 50 очков. Увеличивать макс хиты можно до капа, который можно было получить естественным
+  образом (классовый КХП*уровень + ВЫН*уровень)." (КХП = class hit die, ВЫН = Con modifier.)
+- "Новое заклинание - 20 + 10*круг^2. Классы с книгой или возможностью изучить заклинание от учителя или из свитка
+  получают скидку в 2 раза." Test: circle 2 -> 60, with a book 30.
+- "Повысить курс трансформация внимания на 1 - 200 (имеется в виду трансформация внимания в ОВ и пр., складывается с
+  бонусом от характеристики)."
 
 ## Base points [OWNER, Q22]
 - One base point costs 100 training. Max base points = 10 * level (start 5).
 
 ## Seeds, quirks, stories
 - Seed ("new seed" (1), price 200): adds a seed entry to the Quirks tab (a separate tab, plain list).
-- Sprout seed: narratively obtain a quirk.
+- Sprout seed: narratively obtain a quirk. Price (verbatim): "Получить зерно - 200." "Прорастить зерно - 200."
 - Stories are NOT listed separately in the sheet; a story is part of a quirk. Quirk fields: Seedling, Court, Focus, Story name.
 - A quest, if any, is entered by hand.
 
@@ -49,6 +83,10 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
 
 ## Professionalism [OWNER confirmed]
 - A separate number (professionalism level), bought with training (old code: 300 for the feature).
+- Owner text (verbatim, package 4): "Профессионализм - 300 очков. Вы получаете специализированными 1/2/3/4 навыков из
+  списка Вашего класса (для классов с 2+, 4+, 6+, 8+ скп). Если у класса прописана иной "профессионализм", то опция в
+  классе заменяет данную опцию."
+  Open (Q29): how this one-time purchase relates to the "professionalism level" number above.
 - Cannot exceed character level.
 - Class abilities (ONLY class abilities) may reference professionalism level instead of character level.
 - Professionalism may also be a REQUIREMENT for activating items.

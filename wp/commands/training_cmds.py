@@ -97,13 +97,16 @@ def buy_armor_grade(ch, source=tr.TRAINING):
 
 
 @command
-def buy_language(ch, lid="", title="", native=False, source=tr.TRAINING):
-    """Language: non-native 30; native: first free, cheap 50 while natives < Int mod, else 100."""
+def buy_language(ch, lid="", title="", native=False, projects=1, source=tr.TRAINING):
+    """Language: non-native 30 * projects from the nearest native; native: first free, cheap 50 while natives < Int mod, else 100."""
     if not lid:
         raise CommandError("language needs a stable id")
     if any(lang.lid == lid for lang in ch.languages):
         raise CommandError("language already known: %r" % (lid,))
-    cost = tr.language_cost(native, dv.natives(ch), dv.ability_mod(ch, "int"))
+    try:
+        cost = tr.language_cost(native, dv.natives(ch), dv.ability_mod(ch, "int"), projects)
+    except ValueError as e:
+        raise CommandError(str(e))
     lang = Language(lid, title or lid, bool(native))
     new = replace(ch, languages=ch.languages + (lang,), training=_pay(ch, cost, source))
     return commit(new, "buy_language", "language %s%s for %d" % (

@@ -19,3 +19,6 @@ Q20 unarmed combat -4 until trained to Skilled (weapons.md), Q21 weight L = 1 L,
 ## Game rules (owner decides)
 - Q23 | Temp HP spend order. ASSUMPTION (owner, package 4): first the "by button" temp HP, then buff temp HP in order (resources.md). Stacking flag: a non-stacking buff adds only up to its amount over the current total. | as is | assumption
 - Q26 | Defense ladder: AC types without a layer of their own (enhancement, sacred, profane, racial...) are put into "flat" (the sum of layers must equal AC). Right? | flat | assumption
+- Q27 | Parry "+1 on every odd level": does level 1 count? Now: yes (level 1 -> +1, 3 -> +2, 5 -> +3). It adds to the armor proficiency parry (0/2/4/6) and the weapon mastery parry picks. | level 1 counts | assumption
+- Q28 | Shields: "heavy and tower shields add their shield bonus to balance", tower "+2 parry". Is it the shield PROFICIENCY grade, or a heavy/tower shield held in a hand (or both: grade AND shield in hand)? | shield in hand + grade | open
+- Q29 | Professionalism 300: gives 1/2/3/4 specialized class skills. How does it relate to the "professionalism level" number (training.md)? Is it bought once, or each purchase raises the level by 1? | ? | open
