@@ -21,11 +21,13 @@ RANK_PRICE = {NORMAL: 20, ADVANCED: 15, SPECIALIZED: 10}
 
 @dataclass(frozen=True)
 class Skill:
-    name: str
+    name: str                 # stable id; for a family: "<template>:<sub-name>"
     stat: str                 # key stat: str, dex, con, int, wis, cha
     tier: str = NORMAL
     ranks: int = 0            # bought ranks
     armor_penalty_applies: bool = False
+    template: str = ""        # catalog template id (skills_list.md)
+    sub: str = ""             # sub-skill name for a param family ("kuznets", "air"...)
 
     def __post_init__(self):
         if self.tier not in TIERS:
