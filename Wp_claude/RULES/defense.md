@@ -28,6 +28,7 @@
   NOT to the lucky attack die, the crit die or AC.
 - bonus = trunc(scale / 2): -10 -> -5, +10 -> +5, +/-1 per 2 steps.
 - Only while combat is active. One button start/end combat (text switches). Inactive -> morale ignored.
+- End of combat resets the morale scale to 0 [OWNER].
 - At <= -5 show "We are losing!", at >= +5 "We are winning!". Nice-to-have: record max/min morale of the fight.
 - Examples: scale 3 -> +1; scale -4 -> -2; scale 1 -> 0.
 
