@@ -13,6 +13,14 @@ skill = ranks + key stat mod + bonuses (race/class/items...) + armor penalty (if
   Gained by training (expensive) or class feat "Professionalism" (TBD, cheaper).
 - "Cycle" = GM-announced big time span (see injuries.md).
 
+## Skill catalog [OWNER]
+- The default skill catalog (45 templates) is DATA loaded from skills_list.md, not hard-coded. The player may add own templates (catalog.md).
+- A new character starts with ONLY two skills: Perception (perception) and Search (search), both 0 ranks.
+  Every other skill is added by the player from the catalog (picking a template creates the skill with 0 ranks).
+- Templates flagged `param` are families: on adding, the player names the sub-skill. Examples: "Craft (smith) III" =
+  template craft_3 named "smith"; "Culture knowledge: North"; "Piloting: air". Each sub-skill has its own ranks;
+  several sub-skills of one family may exist.
+
 ## Training cost
 - Normal +1 rank: 20 * rank.
 - Make a skill Advanced: 40 + 20 per OTHER advanced skill. Advanced +1 rank: 15 * rank.
