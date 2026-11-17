@@ -12,6 +12,7 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
 - Rule: only source = training spends training points. Other sources (race, class, loot, quirk) never spend them
   (old code wrongly spends for any source). Race and class abilities and feats can ALSO be bought with training.
 - Price is editable on any purchase except feats (feat price is entered by its author, default 200 [beta behavior]).
+- Feat "Finesse training" (finesse_training): 200 [OWNER confirmed].
 
 ## Ability score cost
 - Score used for pricing = base + RACE bonus. Item and quirk bonuses do NOT raise the price; injuries usually do not lower it.

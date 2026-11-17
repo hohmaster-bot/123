@@ -7,7 +7,7 @@ R8 short rest BP flow (rest.md), Q3 stance (spells.md), Q5 spells (spells.md), Q
 Q8 no old characters (D1), Q9 hotkey Ctrl+Shift+W (surfaces.md), Q11 overlay editor (surfaces.md),
 Q12 end of combat resets overload to 0 (resources.md),
 Q13 end of combat resets the morale scale to 0 (defense.md),
-Q14 activation "day"/"decade" is an item field, cost separate (gear.md).
+Q14 activation "day"/"decade" is an item field, cost separate (gear.md),
+Q15 feat "Finesse training" costs 200 (training.md).
 
-## Game rules (owner decides)
-- Q15 | Price of the feat "Finesse training" (finesse_training, wp/catalog/data/feats_default.json): RULES only say "feat price is entered by its author, default 200" (training.md). 200 is a guess by Claude. Correct price? | keep 200 until answered | open
+No open questions.
