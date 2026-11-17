@@ -11,6 +11,7 @@ Pure functions; nothing is mutated in place.
 from dataclasses import dataclass, field, replace
 from typing import Dict, Tuple
 
+from wp.core import pain as pn
 from wp.core.damage import Pool
 from wp.core.injuries import restore_stat, stat_damaged
 
@@ -46,8 +47,7 @@ class RestState:
     hp: Pool
     bp: Pool
     temp_bp: int = 0
-    pain: int = 0                 # removable pain
-    permanent_pain: int = 0       # injuries, curses: rest never removes it
+    pain: Tuple[pn.PainEntry, ...] = ()   # list of pain entries (permanent ones stay)
     spirit: Pool = Pool(0, 0)
     mana: Pool = Pool(0, 0)
     mana_enabled: bool = False
@@ -128,7 +128,7 @@ def options(rest):
                          for c in s.charges),
         OPT_SPIRIT: s.spirit.current < s.spirit.max,
         OPT_STAT: any(stat_damaged(p) for p in s.stats.values()),
-        OPT_PAIN: s.pain > 0,
+        OPT_PAIN: any(e.amount > 0 and not e.permanent for e in s.pain),
         OPT_MANA: s.mana_enabled and s.mana.current < s.mana.max,
         OPT_DIVINE: any(p.current < p.max for p in s.slots.values()),
     }
@@ -167,7 +167,7 @@ def spend(rest, option, stat=None, mana_amount=0, circle=None):
         stats[stat] = restore_stat(stats[stat], 1)
         s = replace(s, stats=stats)
     elif option == OPT_PAIN:
-        s = replace(s, pain=s.pain - 1)
+        s = replace(s, pain=pn.remove(s.pain, 1))
     elif option == OPT_MANA:
         m = s.mana
         s = replace(s, mana=replace(m, current=min(m.max, m.current + int(mana_amount))))
@@ -192,7 +192,7 @@ def apply_short_rest(rest):
 
 def long_rest(state):
     """Long rest (rest.md): HP, BP, spirit, mana, slots, class resources to max;
-    ability charges and items with "restore on long rest" back; removable pain 0;
+    ability charges and items with "restore on long rest" back; temporary pain gone;
     stat damage healed (current -> max; permanent damage already lowered max).
     NOT touched: OT, comfort, injury charges, permanent pain, temp HP."""
     charges = []
@@ -205,7 +205,7 @@ def long_rest(state):
         hp=_restore_full(state.hp),
         bp=_restore_full(state.bp),
         temp_bp=0,
-        pain=0,
+        pain=pn.clear_temporary(state.pain),
         spirit=_restore_full(state.spirit),
         mana=_restore_full(state.mana) if state.mana_enabled else state.mana,
         slots={c: _restore_full(p) for c, p in state.slots.items()},

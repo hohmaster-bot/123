@@ -14,6 +14,10 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 - Instant/one-shot (applied once, e.g. temp HP).
 - Duration drops by 1 each zero-initiative phase automatically (resources.md).
 
+## Value from the current overload [OWNER]
+- A status/ability may read the CURRENT overload as its number. Example: bonus to attack and damage with natural weapons
+  equal to the current overload.
+
 ## Condition
 - "in combat only" or "out of combat only" (e.g. items giving skill bonuses outside combat).
 

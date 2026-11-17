@@ -20,3 +20,4 @@ Kept apart from RULES/. Nothing here changes numbers.
 - Statuses: filter and favorite buttons.
 - Pain editor (list of pain entries; turn one into a status).
 - Morale scale editor.
+- Crit confirmation tooltip (house-rule note): x2 -> +0, x3 -> +4, x4 -> +8.

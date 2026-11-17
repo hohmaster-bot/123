@@ -4,8 +4,10 @@ Mage (mana user), circle 1-9: mana = spell mana cost, balance = same, overload =
 Non-mage (slots), circle 1-9: one slot of that circle, no balance, overload = 2X.
 Cantrip (circle 0): a circle-0 slot if the character has any (even mana users),
 otherwise unlimited; overload 2X for everyone.
-X = spell duration in rounds; instant cast = 0, so overload 0.
-Overload > 0 forbids balance regen.
+X = casting time in ACTIONS (standard action = 2, usually 2); spell duration does
+not matter (owner change). The default comes from the formula; the player may
+type another value at the cast. Overload > 0 forbids balance regen; it drops by 1
+per zero-initiative tick (tick.py).
 Mage with less balance than the cost: balance -> 0, +1 pain, OT = missing part,
 concentration DC = 10 + 2 * OT (else the spell fails).
 Spell from a magic item / consumable: no overload, no balance (item activation
@@ -56,28 +58,47 @@ def concentration_dc(ot_gained):
     return CONCENTRATION_BASE + CONCENTRATION_PER_OT * int(ot_gained)
 
 
-def cast_cost(caster, circle, duration_rounds, mana_cost=0, circle0_slots=0,
-              from_item=False):
-    """Cost of one cast. caster: MAGE or SLOTS. circle0_slots: max circle-0 slots.
+STANDARD_ACTION = 2      # combat.md: shift 1, move 1, standard 2, full-round 3, complete 4
+
+
+def default_overload(caster, circle, cast_actions=STANDARD_ACTION, from_item=False):
+    """Formula default: mage X, non-mage (slot) 2X, cantrip 2X for everyone,
+    item / consumable 0. X = casting time in actions."""
+    x = int(cast_actions)
+    if x < 0:
+        raise ValueError("casting time must be >= 0")
+    if from_item:
+        return 0
+    if int(circle) == 0 or caster == SLOTS:
+        return 2 * x
+    if caster == MAGE:
+        return x
+    raise ValueError("unknown caster type: %r" % (caster,))
+
+
+def cast_cost(caster, circle, cast_actions=STANDARD_ACTION, mana_cost=0, circle0_slots=0,
+              from_item=False, overload=None):
+    """Cost of one cast. caster: MAGE or SLOTS. cast_actions: casting time in actions.
+    circle0_slots: max circle-0 slots. overload: value typed in by hand (None = formula).
     from_item: spell from a magic item / consumable -> no overload, no balance,
     no mana, no slot (the item pays; its spirit activation is separate)."""
     circle = int(circle)
-    x = int(duration_rounds)
     if not 0 <= circle <= 9:
         raise ValueError("circle must be 0..9")
-    if x < 0:
-        raise ValueError("duration must be >= 0")
+    ov = default_overload(caster, circle, cast_actions, from_item)
+    if overload is not None:
+        if int(overload) < 0:
+            raise ValueError("overload must be >= 0")
+        ov = int(overload)
     if from_item:
-        return CastCost(mana=0, balance=0, slot_circle=None, overload=0)
+        return CastCost(mana=0, balance=0, slot_circle=None, overload=ov)
     if circle == 0:
         slot = 0 if circle0_slots > 0 else None
-        return CastCost(mana=0, balance=0, slot_circle=slot, overload=2 * x)
+        return CastCost(mana=0, balance=0, slot_circle=slot, overload=ov)
     if caster == MAGE:
         m = int(mana_cost)
-        return CastCost(mana=m, balance=m, slot_circle=None, overload=x)
-    if caster == SLOTS:
-        return CastCost(mana=0, balance=0, slot_circle=circle, overload=2 * x)
-    raise ValueError("unknown caster type: %r" % (caster,))
+        return CastCost(mana=m, balance=m, slot_circle=None, overload=ov)
+    return CastCost(mana=0, balance=0, slot_circle=circle, overload=ov)
 
 
 def can_pay(state, cost):

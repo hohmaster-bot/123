@@ -28,15 +28,25 @@ INSTANT = "instant"
 TEMP_HP = "temp_hp"
 
 
+OVERLOAD = "overload"      # value source: the current overload number
+
+
 @dataclass(frozen=True)
 class Effect:
     target: str
-    value: int
+    value: int = 0
     btype: str = bo.FLAT
     weapon: Optional[str] = None
+    value_source: Optional[str] = None   # e.g. OVERLOAD: value = current overload
 
-    def as_bonus(self, source=""):
-        return bo.Bonus(self.value, self.btype, self.target, self.weapon, source)
+    def resolve(self, context=None):
+        """The effect's number: fixed value, or read from the context (buffs.md)."""
+        if self.value_source is None:
+            return int(self.value)
+        return int((context or {}).get(self.value_source, 0))
+
+    def as_bonus(self, source="", context=None):
+        return bo.Bonus(self.resolve(context), self.btype, self.target, self.weapon, source)
 
 
 @dataclass(frozen=True)
@@ -48,6 +58,7 @@ class OneShot:
 @dataclass(frozen=True)
 class Status:
     name: str
+    sid: str = ""                      # stable id (D7)
     effects: Tuple[Effect, ...] = ()
     one_shot: Tuple[OneShot, ...] = ()
     per_tick_hp: int = 0               # DoT < 0, heal per tick > 0
@@ -81,12 +92,13 @@ def is_effective(status, in_combat):
     return status.duration != INSTANT
 
 
-def bonuses_from(statuses, in_combat):
-    """Typed bonuses of every effective status (feed into bonuses.total)."""
+def bonuses_from(statuses, in_combat, context=None):
+    """Typed bonuses of every effective status (feed into bonuses.total).
+    context: values effects may read, e.g. {OVERLOAD: 3}."""
     out = []
     for s in statuses:
         if is_effective(s, in_combat):
-            out.extend(e.as_bonus(s.name) for e in s.effects)
+            out.extend(e.as_bonus(s.name, context) for e in s.effects)
     return tuple(out)
 
 

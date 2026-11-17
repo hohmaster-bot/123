@@ -73,15 +73,19 @@ After everyone acted:
 3. Balance restoration. Player picks order of DoT vs balance; assume best for player = balance FIRST
    (while below cap), then DoT damage.
 Spec: per tick restore balance (if overload == 0), then DoT.
+- DoT and regen last exactly their duration [OWNER]: N rounds = N ticks (bleed for 3 rounds hits exactly 3 times).
+- Overload is a number: -1 per zero-initiative tick; at 0 it is gone.
 
 ## Spirit, mana, overload [OWNER]
 - Everyone has: HP, balance, balance regen, spirit, trauma points. Spirit pays item activations (1 spirit/day or 5 until session end).
 - Casters (mage): mana instead of slots. Divine casters: slots.
-- Mage cast cost: mana 1/3/5 by circle AND the same amount of balance. Gains X overload (X = spell duration in rounds).
+- Mage cast cost: mana 1/3/5 by circle AND the same amount of balance. Gains X overload
+  (X = casting time in ACTIONS, usually 2; spell duration does not matter) [OWNER, changed].
 - Overload > 0 forbids balance regen. New casts add. Other sources add; player may raise it deliberately.
 - Non-mage: slots, no balance loss, gets 2X overload. Must be changeable (rule may change).
-- Examples: mage casts 3-mana spell lasting 4 rounds: mana -3, balance -3, overload +4.
-  Non-mage same spell: slot spent, balance unchanged, overload +8.
+- The overload value is computed by the formula by default and can be typed in by hand at the cast.
+- Examples: mage casts a 3-mana standard-action spell (2 actions): mana -3, balance -3, overload +2.
+  Non-mage same spell: slot spent, balance unchanged, overload +4.
 
 ## Class resources [OWNER]
 - Class pools (Ki, Darkness, Paladin defense points + Holiness) look/work like HP, mana, spirit. Players define in editor/catalog.

@@ -45,6 +45,27 @@ def _expired():
     return (s.statuses, r.expired, s.vitals.hp.current)
 
 
+@S.case("bleed-3-rounds", "resources.md [OWNER]: bleed for 3 rounds hits exactly 3 times", (14, ()))
+def _bleed3():
+    s = state(hp=20, balance=10)
+    hits = []
+    for _ in range(4):
+        before = s.vitals.hp.current
+        s, _ = zero_initiative(s)
+        hits.append(before - s.vitals.hp.current)
+    return (s.vitals.hp.current, s.statuses) if hits == [2, 2, 2, 0] else hits
+
+
+@S.case("overload-falls", "resources.md [OWNER]: overload -1 per tick, gone at 0", (3, 2, 1, 0, 0))
+def _ov_falls():
+    s = state(overload=4, statuses=())
+    out = []
+    for _ in range(5):
+        s, _ = zero_initiative(s)
+        out.append(s.overload)
+    return tuple(out)
+
+
 @S.case("overload-blocks", "resources.md: overload > 0 forbids balance regen", (0, True, 1))
 def _overload():
     s, r = zero_initiative(state(overload=2, statuses=()))

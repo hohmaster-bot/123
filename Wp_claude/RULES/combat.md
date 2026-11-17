@@ -13,7 +13,8 @@
 - Notation 19+ / 20+ = threat range, x2. "x2/x3/x4" alone = crit on 20.
 - Weapon mastery can widen range by 2 (20 -> 18). Keen property or similar feat doubles base threat range.
 - Item must store: base crit + modifiers from mastery and properties. Crit range must be modifiable by feats.
-- Crit die gets no bonuses/penalties.
+- The crit confirmation roll already includes bonuses and penalties (rolled by the player); the core does not touch it [OWNER].
+- Tooltip only (house-rule note, no calculation) when confirming a crit: x2 -> +0, x3 -> +4, x4 -> +8.
 
 ## Lucky attack [OWNER]
 - Separate die, no bonuses/penalties. Base 20.

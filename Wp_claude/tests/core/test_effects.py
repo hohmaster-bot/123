@@ -63,6 +63,16 @@ S.case("temp-hp-no-stack", "buffs.md: temp HP not stacking -> higher value", 5)(
 S.case("temp-hp-stack", "buffs.md: temp HP stacking flag -> add", 8)(
     lambda: ef.apply_temp_hp(3, 5, stacks=True))
 
+# buffs.md [OWNER]: value from the current overload: attack and damage with natural weapons = overload.
+_NAT = Status("feral", effects=(Effect(bo.ATTACK, value_source=ef.OVERLOAD, weapon="natural"),
+                                Effect(bo.DAMAGE, value_source=ef.OVERLOAD, weapon="natural")))
+S.case("overload-source", "buffs.md [OWNER]: natural weapons attack and damage = current overload",
+       (3, 3, 0, 0))(
+    lambda: (bo.total(ef.bonuses_from([_NAT], True, {ef.OVERLOAD: 3}), bo.ATTACK, weapon="natural"),
+             bo.total(ef.bonuses_from([_NAT], True, {ef.OVERLOAD: 3}), bo.DAMAGE, weapon="natural"),
+             bo.total(ef.bonuses_from([_NAT], True, {ef.OVERLOAD: 3}), bo.ATTACK, weapon="sword"),
+             bo.total(ef.bonuses_from([_NAT], True, {ef.OVERLOAD: 0}), bo.ATTACK, weapon="natural")))
+
 # combat.md: effect flag 'ignores iterative penalty'.
 S.case("ignores-iterative", "combat.md: effect flag", (True, False))(
     lambda: (ef.ignores_iterative([Status("master", ignores_iterative=True)], True),

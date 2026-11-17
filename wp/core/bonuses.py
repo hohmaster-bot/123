@@ -73,8 +73,11 @@ def applies(b, target, weapon=None):
     """Does bonus b count for this target (and weapon, for attacks)?"""
     if b.btype in AC_ONLY_TYPES:
         return target == AC        # AC-only types: AC and nothing else
-    if b.weapon is not None and (target != ATTACK or b.weapon != weapon):
-        return False
+    if b.weapon is not None:
+        # weapon-scoped: attacks (and damage, except proficiency) with that weapon only
+        allowed = (ATTACK,) if b.btype == PROFICIENCY else (ATTACK, DAMAGE)
+        if target not in allowed or b.weapon != weapon:
+            return False
     if b.btype == PROFICIENCY and b.weapon is None:
         return False            # proficiency is always tied to a weapon
     if b.target == target:

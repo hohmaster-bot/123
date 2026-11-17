@@ -51,3 +51,5 @@ Test commands (each exits 1 on any failure, no pytest needed):
   `python Wp_claude/tests/core/test_combat.py`, `python Wp_claude/tests/core/test_effects.py`,
   `python Wp_claude/tests/core/test_pain.py`, `python Wp_claude/tests/core/test_tick.py`,
   `python Wp_claude/tests/core/test_statuses.py` (status in CORE_REPORT.md)
+- model + commands: `python Wp_claude/tests/model/test_scenarios.py`, `python Wp_claude/tests/model/test_view.py`
+  (status in MODEL_REPORT.md)

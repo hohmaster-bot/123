@@ -7,6 +7,7 @@ from _runner import Suite  # noqa: E402
 
 from wp.core.damage import Pool  # noqa: E402
 from wp.core import rest as r  # noqa: E402
+from wp.core.pain import PainEntry as PE  # noqa: E402
 
 S = Suite("test_rest")
 
@@ -60,7 +61,7 @@ def _hidden():
 @S.case("options-shown", "rest.md Short rest 4 [OWNER]",
         (("stat", 1), ("pain", 1)))
 def _shown():
-    s = st(hp=Pool(20, 20), stats={"str": Pool(17, 18)}, pain=2)
+    s = st(hp=Pool(20, 20), stats={"str": Pool(17, 18)}, pain=(PE(2),))
     return r.options(r.start_short_rest(s))
 
 
@@ -68,7 +69,7 @@ def _shown():
         (("heal", 1), ("charges", 2), ("spirit", 2), ("stat", 1), ("pain", 1),
          ("mana", 0), ("divine", 1)))
 def _costs():
-    s = st(stats={"con": Pool(10, 12)}, pain=1, spirit=Pool(0, 5),
+    s = st(stats={"con": Pool(10, 12)}, pain=(PE(1),), spirit=Pool(0, 5),
            mana=Pool(0, 6), mana_enabled=True, slots={1: Pool(0, 2)},
            charges=(r.Charge("rage", r.ABILITY, Pool(0, 3)),))
     return r.options(r.start_short_rest(s))
@@ -90,10 +91,15 @@ def _stat():
     return (rest.state.stats["str"].current, rest.state.bp.current)
 
 
-@S.case("pain-1bp", "rest.md table: remove 1 pain for 1 BP", (1, 2))
+@S.case("pain-1bp", "rest.md table: remove 1 pain for 1 BP (pain list)", (1, 2))
 def _pain():
-    rest = r.spend(r.start_short_rest(st(pain=2)), r.OPT_PAIN)
-    return (rest.state.pain, rest.state.bp.current)
+    rest = r.spend(r.start_short_rest(st(pain=(PE(2, "overflow"),))), r.OPT_PAIN)
+    return (sum(e.amount for e in rest.state.pain), rest.state.bp.current)
+
+
+@S.case("pain-permanent-hidden", "rest.md: only permanent pain -> 'remove pain' hidden", ())
+def _pain_perm():
+    return r.options(r.start_short_rest(st(hp=Pool(20, 20), pain=(PE(2, "curse", True),))))
 
 
 @S.case("not-enough-bp", "rest.md: spend only what you have", "rejected")
@@ -121,7 +127,7 @@ def _extra():
 
 # rest.md Long rest.
 def _long_state():
-    return st(hp=Pool(-4, 20), bp=Pool(0, 5), pain=3, permanent_pain=1,
+    return st(hp=Pool(-4, 20), bp=Pool(0, 5), pain=(PE(3, "overflow"), PE(1, "curse", True)),
               spirit=Pool(1, 5), mana=Pool(0, 6), mana_enabled=True,
               slots={1: Pool(0, 2)}, resources={"ki": Pool(0, 4)},
               charges=(r.Charge("rage", r.ABILITY, Pool(0, 3)),
@@ -146,10 +152,10 @@ def _long2():
     return tuple(c.pool.current for c in s.charges)
 
 
-@S.case("long-pain", "rest.md Long rest: pain gone except permanent", (0, 1))
+@S.case("long-pain", "rest.md Long rest: pain gone except permanent", (1, ("curse",)))
 def _long3():
     s = r.long_rest(_long_state())
-    return (s.pain, s.permanent_pain)
+    return (sum(e.amount for e in s.pain), tuple(e.source for e in s.pain))
 
 
 @S.case("long-keeps", "rest.md / injuries.md: long rest never touches OT, comfort", (7, 4))

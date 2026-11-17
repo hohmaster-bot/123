@@ -24,13 +24,14 @@
 
 ## Spell cost [OWNER, confirmed]
 - Circles 0-9 as in Pathfinder. Mana cost per spell is whatever the spell says (1, 3, 5 ... by circle); entered per spell.
-- Mage (mana user): balance cost = mana cost (0 mana -> 0 balance). Overload = duration in rounds
-  (4 rounds -> 4; instant cast -> 0).
+- Mage (mana user): balance cost = mana cost (0 mana -> 0 balance). Overload X = casting time in actions
+  (standard action = 2, usually 2) [OWNER, changed]. Spell duration does not affect overload.
+  Default from the formula; the player may type another value at the cast.
 - Non-mana caster: spends a slot of that circle, no balance loss, overload 2X.
 - Cantrips (circle 0): characters with a circle-0 slot spend it, EVEN mana users have slots for circle 0 only.
   Characters who can cast cantrips but have no circle-0 slot at all: unlimited. Cantrip overload 2X for everyone.
-- Examples: mage, circle 2 (3 mana), 4 rounds: mana -3, balance -3, overload +4. Instant 3-mana spell: mana -3, balance -3, overload 0.
-  Non-mage circle 1, 3 rounds: slot -1, overload +6.
+- Examples: mage, circle 2 (3 mana), standard action (2): mana -3, balance -3, overload +2.
+  Non-mage circle 1, standard action (2): slot -1, overload +4. Full-round (3 actions): mage +3, non-mage +6.
 - Mage with less balance than the spell cost [OWNER]: balance drops to 0, +1 pain, OT = the missing part.
   The app shows the DC at once: "Concentration DC = 10 + 2 * OT gained, otherwise the spell fails".
   Example: balance 2, cost 5 -> OT 3, pain 1, DC 16.
