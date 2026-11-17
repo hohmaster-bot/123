@@ -18,6 +18,9 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 - A status/ability may read the CURRENT overload as its number. Example: bonus to attack and damage with natural weapons
   equal to the current overload.
 
+## Skills target [OWNER]
+- An effect may target one skill (e.g. +2 to Stealth only) or all skills.
+
 ## Condition
 - "in combat only" or "out of combat only" (e.g. items giving skill bonuses outside combat).
 
@@ -25,6 +28,7 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 - A buff source (ability/item) may have charges (e.g. rage 2/3). If placed on screen/slot, tapping activates it;
   shows remaining rounds and remaining charges.
 - Charges restore on long rest (rest.md) unless item without the "restore on long rest" checkbox.
+  Charges kept on a status (rage 2/3) are restored too.
 
 ## Stacking (see defense.md)
 - Same type: the value with the larger absolute value wins, equal absolute values give 0; only flat stacks

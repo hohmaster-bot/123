@@ -70,6 +70,7 @@ class Status:
     temp_hp_stacks: bool = False
     ignores_iterative: bool = False
     lowers_balance_cap: bool = False   # DoT flag: its hits lower the balance cap in combat
+    temp_hp_left: int = 0              # temp HP given by this status, lasting as long as the status
     active: bool = True
     source: str = ""
 
@@ -167,6 +168,12 @@ def tick_all(statuses):
 def end_combat(statuses):
     """Remove 'until end of combat' statuses."""
     return tuple(s for s in statuses if s.duration != END_OF_COMBAT)
+
+
+def holds_temp_hp(status):
+    """Temp HP from a status with its own duration (ticks / infinite) lives with the status;
+    instant and 'until end of combat' temp HP go to the combat pool."""
+    return status.duration in (TICKS, INFINITE)
 
 
 def drop_instant(statuses):

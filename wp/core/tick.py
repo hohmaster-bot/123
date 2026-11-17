@@ -74,7 +74,7 @@ def zero_initiative(state, reductions=None):
             before = v.hp.current
             v = replace(v, hp=restore(v.hp, s.per_tick_hp))
             healed += v.hp.current - before
-    loss = hp_loss_per_tick(state.negative_state, state.traits)
+    loss = hp_loss_per_tick(state.negative_state, state.traits) if v.hp.current < 0 else 0
     if loss > 0:
         v, r = take_hit(v, [DamagePart(loss, "untyped")])
         dot += r.hp_loss + r.temp_hp_loss + sum(a for _, a in r.absorbed)

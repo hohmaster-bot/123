@@ -2,7 +2,7 @@
 
   FRONT        full AC.
   FLANK        shield side: the shield bonus is ignored.
-  FLAT_FOOTED  no Dex (and no dodge); shield only if the attack comes from the shield side.
+  FLAT_FOOTED  no Dex bonus and no dodge (a low-Dex penalty stays); shield only from the shield side.
   PARRY        front only: armor slot uses max(armor, parry).
   TOUCH        ignores natural armor, shield, parry and armor.
 Overload caps Dex + dodge at +2. The shield bonus can be switched off.
@@ -68,7 +68,7 @@ def ac(inp, mode=FRONT, from_shield_side=False):
 
     others = [b for b in parts if b.btype != bo.DODGE]
     if mode == FLAT_FOOTED:
-        dex_dodge = 0
+        dex_dodge = min(0, _dex(inp))      # low-Dex penalty stays; Dex bonus and dodge are lost
     else:
         dex_dodge = _dex(inp) + bo.stack([b for b in parts if b.btype == bo.DODGE])
         if inp.overloaded:

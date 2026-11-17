@@ -24,9 +24,17 @@ class Result:
     info: Dict[str, Any] = field(default_factory=dict)
 
 
+def normalize(ch):
+    """States at HP < 0 exist only while HP < 0 (resources.md): at HP >= 0 the state is cleared."""
+    if ch.negative_state is not None and ch.hp_current >= 0:
+        return replace(ch, negative_state=None)
+    return ch
+
+
 def commit(ch, command, summary, info=None):
-    """Append a log entry and wrap the new state in a Result."""
+    """Append a log entry and wrap the new (normalized) state in a Result."""
     entry = LogEntry(command, summary)
+    ch = normalize(ch)
     return Result(state=replace(ch, log=ch.log + (entry,)), entry=entry, info=dict(info or {}))
 
 

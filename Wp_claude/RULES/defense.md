@@ -3,7 +3,8 @@
 ## Positioning [OWNER]
 - Front attack: full AC.
 - Flank (shield side): attacker may ignore shield bonus (incl. spell shields, e.g. weapon-side).
-- Flat-footed ("in surprise"): AC without Dex and without ALL dodge bonus. Shield counts only if attack comes from shield side.
+- Flat-footed ("in surprise"): AC without the Dex BONUS and without ALL dodge bonus; a penalty from low Dex stays [OWNER].
+  Shield counts only if attack comes from shield side. Example: Dex -2: front AC 8, flat-footed 8.
 - Parry: same bonus type as armor. If no armor or parry > armor, player usually picks parry. Front only.
 - Touch: ignores natural armor, shield, parry, armor bonuses.
 - Need UI toggle: shield bonus on/off in AC, or show small secondary number "AC with shield".

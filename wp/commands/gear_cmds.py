@@ -83,7 +83,8 @@ def start_combat(ch):
 
 @command
 def end_combat(ch):
-    """End of combat: temp HP gone (resources.md: usually lasts to end of combat),
+    """End of combat: temp HP 'until the end of combat' gone (temp HP of statuses with their own
+    duration stays with the status, owner),
     'until end of combat' statuses removed (buffs.md), overload reset to 0
     (resources.md [OWNER]), morale scale reset to 0 (defense.md [OWNER])."""
     if not ch.in_combat:

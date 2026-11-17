@@ -78,10 +78,19 @@ def _weapon_match(scope, weapon):
     return scope in weapon
 
 
-def applies(b, target, weapon=None):
-    """Does bonus b count for this target (and weapon, for attacks)?"""
+SKILL_PREFIX = "skill:"          # target "skill:<skill id>" = one skill only; SKILL = all skills
+
+
+def skill_target(skill_id):
+    return SKILL_PREFIX + skill_id
+
+
+def applies(b, target, weapon=None, skill=None):
+    """Does bonus b count for this target (and weapon for attacks, skill id for skills)?"""
     if b.btype in AC_ONLY_TYPES:
         return target == AC        # AC-only types: AC and nothing else
+    if b.target.startswith(SKILL_PREFIX):
+        return target == SKILL and skill is not None and b.target[len(SKILL_PREFIX):] == skill
     if b.weapon is not None:
         # weapon-scoped: attacks (and damage, except proficiency) with that weapon only
         allowed = (ATTACK,) if b.btype == PROFICIENCY else (ATTACK, DAMAGE)
@@ -121,9 +130,9 @@ def winner(bonus, penalty):
     return 0
 
 
-def total(bonuses, target, weapon=None):
-    """Total typed bonus for a target (e.g. ATTACK with weapon 'longsword')."""
-    return stack([b for b in bonuses if applies(b, target, weapon)])
+def total(bonuses, target, weapon=None, skill=None):
+    """Total typed bonus for a target (e.g. ATTACK with weapon 'longsword', SKILL with skill 'stealth')."""
+    return stack([b for b in bonuses if applies(b, target, weapon, skill)])
 
 
 def by_type(bonuses, target, weapon=None):

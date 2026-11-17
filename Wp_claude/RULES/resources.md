@@ -6,6 +6,9 @@
 - Damage hits temp HP first. Absorbed part does NOT reduce balance.
 - Example: 3 temp HP, 7 damage -> temp 0, HP -4, balance -4.
 - Usually lasts to end of combat. Otherwise it is a buff with expiry in ticks; buffs can be instant one-shot or timed.
+- [OWNER] Temp HP given by a buff with its own duration (ticks) live until that duration ends and are NOT cleared by
+  the end of combat; only temp HP without their own duration ("until end of combat") are cleared by the end of combat.
+  The short rest clears all temp HP after its spends (rest.md).
 - HP can go below 0.
 
 ## Damage pipeline [OWNER]
@@ -55,7 +58,8 @@ Spell Resistance is separate (vs spells, not a damage step).
 - Temp pain from HP = floor(-hp / 3) when hp < 0, else 0. Computed live from CURRENT hp, adds to other pain.
   Examples [OWNER]: hp 0 -> 0; -2 -> 0; -5 -> 1; -7 -> 2; -12 -> 4. Heal -7 by 2 -> -5 -> 1 temp pain gone.
   Do not store it; derive on read (D6).
-- Statuses at hp < 0 [OWNER] (player sets manually, no auto-switch assumed):
+- Statuses at hp < 0 [OWNER] (player sets manually, no auto-switch assumed). They exist only while HP < 0: at HP >= 0
+  there is no HP loss per tick and the state is cleared (healing to 0+, long rest):
   * "resting in negatives": unconscious, cannot act until healed to 0+. Loses 1 HP per tick.
     Tooltip: d100 roll of 90+ stabilizes (rolled outside).
   * "stabilized": lies unconscious, no HP loss. Replaces the two others. Text: "you are stabilized and unconscious".
@@ -79,11 +83,16 @@ After everyone acted, in this order [OWNER]:
 3. DoTs (bleed, fast healing, regeneration) - balance first, then DoT (best for the player).
 - DoT and regen last exactly their duration [OWNER]: N rounds = N ticks (bleed for 3 rounds hits exactly 3 times).
 - Overload is a number: -1 per zero-initiative tick; at 0 it is gone. End of combat resets it to 0 [OWNER].
+  Order inside the tick: the regen check uses the overload at the START of the tick, then overload drops by 1
+  (overload 1: no regen in this tick, overload 0, regen in the next tick).
+- Damage from the "dying" state and from DoT goes through temp HP and balance like an ordinary hit (temp HP and
+  analogs first, then HP and balance; overflow -> OT and +1 pain).
 
 ## Spirit, mana, overload [OWNER]
 - Everyone has: HP, balance, balance regen, spirit, trauma points. Spirit pays item activations (1 spirit/day or 5 until the end of the cycle).
 - Spirit max [OWNER] = 5 + 5 * Cha modifier, never below 0 (Cha mod -1 or lower -> 0), plus bonuses/penalties by source.
   Not typed in by hand. Tests: Cha mod +2 -> 15; -1 -> 0; -2 -> 0; +2 with bonus +3 -> 18.
+  The total after bonuses and penalties is never below 0 [OWNER] (Cha 8 with penalty -2 -> 0).
 - Casters (mage): mana instead of slots. Divine casters: slots.
 - Mage cast cost: mana 1/3/5 by circle AND the same amount of balance. Gains X overload
   (X = casting time in ACTIONS, usually 2; spell duration does not matter) [OWNER, changed].

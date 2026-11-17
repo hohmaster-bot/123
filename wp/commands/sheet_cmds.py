@@ -21,15 +21,15 @@ def add_skill(ch, catalog=None, tid="", sub=""):
 
 
 @command
-def add_feat(ch, catalog=None, fid="", source="training", cost=None):
-    """Take a feat from the catalog. Price: the template's (default 200) unless given;
-    only source 'training' spends training points (training.md)."""
+def add_feat(ch, catalog=None, fid="", source="training"):
+    """Take a feat from the catalog. The price is the catalog's (feat price is set by its author and
+    cannot be changed on purchase, training.md); only source 'training' spends training points."""
     if catalog is None:
         raise CommandError("no feat catalog given")
     t = catalog.get(fid)
     if any(f.fid == fid for f in ch.feats):
         raise CommandError("feat already on the sheet: %s" % fid)
-    price = t.cost if cost is None else int(cost)
+    price = t.cost
     try:
         left = tr.pay(ch.training, price, source)
     except ValueError as e:

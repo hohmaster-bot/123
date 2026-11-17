@@ -4,7 +4,8 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 
 ## BP and balance [OWNER]
 - BP cap = ceil(max HP / 4) [OWNER, corrected]. Tests: 11->3, 15->4, 19->5, 20->5, 21->6.
-- Balance max = current armor bonus (worn armor only; PARRY gives NO balance) + current BP + bonuses (race, class, other).
+- Balance max = current armor bonus (worn armor only; PARRY gives NO balance) + current BP + temporary BP (e.g. given
+  narratively) [OWNER] + bonuses (race, class, other).
   Example [OWNER]: 4 max HP -> BP 1; leather armor bonus 2; race +3 -> balance max 6.
   Note: BP is the CURRENT BP, so spending BP on short rest lowers balance max [confirmed by owner formula].
 - Balance regen per zero-initiative tick = current level + Con modifier + other (e.g. +1 from unarmed mastery), min 1.
@@ -43,5 +44,5 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 4. Only options with something to restore are shown (stat not damaged -> "Restore 1 stat" hidden; same for every option).
 5. Other BP sources (allies, skill checks, class, feats) add BP or temporary BP. Effects can modify rest
    (e.g. owner's race doubles the natural recovery bonus on short rest).
-6. "Apply" applies everything; the short rest window closes; excess BP (above max) is lost.
+6. "Apply" applies everything; the short rest window closes; excess BP (above max) is lost; ALL temp HP are cleared [OWNER].
 7. Example: level 3, HP 1/20: free +5 HP (2+3); a second heal costs 1 BP.

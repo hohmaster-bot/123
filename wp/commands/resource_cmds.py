@@ -76,6 +76,8 @@ def short_rest(ch, spends=(), other_heal=0, extra_bp=0, extra_temp_bp=0):
     for opt, params in spends:
         session = rs.spend(session, opt, **dict(params))
     new = switch_off_items(bridge.from_rest(ch, rs.apply_short_rest(session)), SHORT)
+    # rest.md [OWNER]: after the spends the short rest clears ALL temp HP
+    new = replace(new, temp_hp=0, statuses=tuple(replace(s, temp_hp_left=0) for s in new.statuses))
     return commit(new, "short_rest", "short rest: %s" % (
         ", ".join(o for o, _ in spends) or "free gains only"))
 
@@ -84,6 +86,10 @@ def short_rest(ch, spends=(), other_heal=0, extra_bp=0, extra_temp_bp=0):
 def long_rest(ch):
     """Long rest (rest.md): also overload 0 and balance to max [OWNER confirmed]; all items off."""
     new = switch_off_items(bridge.from_rest(ch, rs.long_rest(bridge.to_rest(ch))), LONG)
+    # buffs.md / rest.md: charges of statuses (rage 2/3) come back on the long rest
+    new = replace(new, statuses=tuple(
+        replace(s, charges=replace(s.charges, current=max(s.charges.current, s.charges.max)))
+        if s.charges is not None else s for s in new.statuses))
     new = replace(new, overload=0)
     new = replace(new, balance_current=max(new.balance_current, dv.balance_max(new)))
     return commit(new, "long_rest", "long rest")

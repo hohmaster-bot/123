@@ -7,6 +7,7 @@ from wp.core import effects as ef
 from wp.core import magic as mg
 from wp.core import tick as tk
 from wp.model import bridge
+from wp.model import derived_view as dv
 
 
 @command
@@ -55,7 +56,13 @@ def add_status(ch, status=None, ticks=None):
     if not ef.can_activate(status):
         raise CommandError("no charges left: %s" % status.name)
     st = ef.activate(status, ticks)
-    temp = ef.apply_one_shot(st, ch.temp_hp)
+    if ef.holds_temp_hp(st):
+        before = dv.temp_hp_total(ch)
+        gained = ef.apply_one_shot(st, before) - before
+        st = replace(st, temp_hp_left=st.temp_hp_left + max(0, gained))
+        temp = ch.temp_hp
+    else:
+        temp = ef.apply_one_shot(st, ch.temp_hp)
     kept = ch.statuses if st.duration == ef.INSTANT else ch.statuses + (st,)
     new = replace(ch, statuses=kept, temp_hp=temp)
     return commit(new, "add_status", "status %s" % st.name)

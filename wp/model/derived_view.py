@@ -69,8 +69,8 @@ def shield_bonus(ch):
 
 
 def balance_max_base(ch):
-    """Worn armor bonus + CURRENT BP + bonuses (rest.md); parry gives none."""
-    return dv.balance_max(armor_bonus(ch), ch.bp_current, ch.balance_bonus)
+    """Worn armor bonus + CURRENT BP + temporary BP (e.g. narrative) + bonuses (rest.md); parry gives none."""
+    return dv.balance_max(armor_bonus(ch), ch.bp_current + ch.temp_bp, ch.balance_bonus)
 
 
 def balance_max(ch):
@@ -97,9 +97,9 @@ SPIRIT_PER_CHA = 5
 
 
 def spirit_max(ch):
-    """5 + 5 * Cha mod, never below 0, then bonuses/penalties by source (resources.md)."""
+    """5 + 5 * Cha mod, never below 0, then bonuses/penalties by source; the total is never below 0."""
     base = max(0, SPIRIT_BASE + SPIRIT_PER_CHA * ability_mod(ch, "cha"))
-    return base + sum(v for _, v in ch.spirit_bonuses)
+    return max(0, base + sum(v for _, v in ch.spirit_bonuses))
 
 
 def spirit_pool(ch):
@@ -116,6 +116,11 @@ def attention_per_cycle(ch):
 
 def natives(ch):
     return sum(1 for lang in ch.languages if lang.native)
+
+
+def temp_hp_total(ch):
+    """Temp HP 'until the end of combat' + temp HP held by statuses with their own duration."""
+    return ch.temp_hp + sum(s.temp_hp_left for s in ch.statuses)
 
 
 def comfort_max(ch):
@@ -187,8 +192,8 @@ def all_bonuses(ch):
     return tuple(out)
 
 
-def total(ch, target, weapon=None):
-    return bo.total(all_bonuses(ch), target, weapon)
+def total(ch, target, weapon=None, skill=None):
+    return bo.total(all_bonuses(ch), target, weapon, skill)
 
 
 def ac_input(ch):
@@ -223,7 +228,7 @@ def armor_skill_penalty(ch):
 
 def skill_bonus(ch, name):
     s = skill(ch, name)
-    return sk.roll_bonus(s, ch.level, ability_mod(ch, s.stat), total(ch, bo.SKILL),
+    return sk.roll_bonus(s, ch.level, ability_mod(ch, s.stat), total(ch, bo.SKILL, skill=s.name),
                          armor_skill_penalty(ch))
 
 

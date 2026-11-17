@@ -44,7 +44,7 @@ S.case("spirit-max", "resources.md Tests [OWNER]: Cha mod +2 -> 15; -1 -> 0; -2 
     lambda: tuple(dv.spirit_max(Character(abilities=ab(cha=c))) for c in (14, 8, 6)))
 S.case("spirit-bonus", "resources.md Tests [OWNER]: +2 with bonus +3 -> 18", 18)(
     lambda: dv.spirit_max(Character(abilities=ab(cha=14), spirit_bonuses=(("ring", 3),))))
-S.case("spirit-penalty-after-floor", "resources.md: floor 0 first, then penalties (Cha -1, -2 -> -2)", -2)(
+S.case("spirit-penalty-after-floor", "resources.md [OWNER, A7]: total never below 0 (Cha -1, penalty -2 -> 0)", 0)(
     lambda: dv.spirit_max(Character(abilities=ab(cha=8), spirit_bonuses=(("curse", -2),))))
 S.case("spirit-long-rest", "rest.md: long rest restores all spirit (to the derived max)", 15)(
     lambda: run(Character(abilities=ab(cha=14)), ("long_rest", {})).spirit_current)

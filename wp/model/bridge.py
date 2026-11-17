@@ -21,8 +21,22 @@ def _absorber_pool(ch, name):
 
 def to_vitals(ch):
     abs_ = tuple(Absorber(n, _absorber_pool(ch, n).current) for n in ch.absorbers)
-    return Vitals(hp=dv.hp_pool(ch), balance=dv.balance_pool(ch), temp_hp=ch.temp_hp,
+    return Vitals(hp=dv.hp_pool(ch), balance=dv.balance_pool(ch), temp_hp=dv.temp_hp_total(ch),
                   absorbers=abs_, pain=0, trauma=ch.trauma)
+
+
+def _spend_temp(ch, left):
+    """Split the remaining temp HP back: the combat pool is used first, then statuses in order."""
+    used = dv.temp_hp_total(ch) - left
+    take = min(used, ch.temp_hp)
+    temp = ch.temp_hp - take
+    used -= take
+    statuses = []
+    for s in ch.statuses:
+        t = min(used, s.temp_hp_left)
+        used -= t
+        statuses.append(replace(s, temp_hp_left=s.temp_hp_left - t) if t else s)
+    return temp, tuple(statuses)
 
 
 def from_vitals(ch, v, pain_source=OVERFLOW):
@@ -34,8 +48,9 @@ def from_vitals(ch, v, pain_source=OVERFLOW):
         else:
             resources[a.name] = replace(resources[a.name], current=a.current)
     pain = pn.add(ch.pain, v.pain, pain_source) if v.pain else ch.pain
+    temp, statuses = _spend_temp(ch, v.temp_hp)
     return replace(ch, hp_current=v.hp.current, balance_current=v.balance.current,
-                   temp_hp=v.temp_hp, mana=mana, resources=resources, trauma=v.trauma, pain=pain)
+                   temp_hp=temp, statuses=statuses, mana=mana, resources=resources, trauma=v.trauma, pain=pain)
 
 
 def to_rest(ch):
@@ -72,5 +87,13 @@ def to_tick(ch):
 
 
 def from_tick(ch, t):
-    ch = from_vitals(ch, t.vitals, pain_source="tick: balance overflow")
-    return replace(ch, statuses=t.statuses, overload=t.overload)
+    """Statuses after the tick (expired removed, with their temp HP), then vitals."""
+    kept = {s.sid for s in t.statuses}
+    left = {s.sid: s for s in ch.statuses}
+    statuses = tuple(replace(s, temp_hp_left=left[s.sid].temp_hp_left) if s.sid in left else s
+                     for s in t.statuses)
+    gone = sum(s.temp_hp_left for s in ch.statuses if s.sid not in kept)
+    base = replace(ch, statuses=statuses)
+    v = replace(t.vitals, temp_hp=max(0, t.vitals.temp_hp - gone))
+    ch = from_vitals(base, v, pain_source="tick: balance overflow")
+    return replace(ch, overload=t.overload)
