@@ -137,8 +137,8 @@ S.case("activate-x", "gear.md X spirit -> until long rest (OPEN_QUESTIONS Q14)",
 
 
 # End of combat.
-@S.case("end-combat", "resources.md / buffs.md: temp HP gone, end-of-combat statuses removed; "
-        "overload and morale scale kept (Q12, Q13)", (False, 0, ("curse",), 3, 6))
+@S.case("end-combat", "resources.md / buffs.md: temp HP gone, end-of-combat statuses removed, "
+        "overload 0 [OWNER]; morale scale kept (Q13)", (False, 0, ("curse",), 0, 6))
 def _end():
     ch = Character(temp_hp=5, overload=3, morale_scale=6,
                    statuses=(Status("haste", sid="h", duration=ef.END_OF_COMBAT), Status("curse", sid="c")))

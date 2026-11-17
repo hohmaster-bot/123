@@ -74,7 +74,7 @@ After everyone acted:
    (while below cap), then DoT damage.
 Spec: per tick restore balance (if overload == 0), then DoT.
 - DoT and regen last exactly their duration [OWNER]: N rounds = N ticks (bleed for 3 rounds hits exactly 3 times).
-- Overload is a number: -1 per zero-initiative tick; at 0 it is gone.
+- Overload is a number: -1 per zero-initiative tick; at 0 it is gone. End of combat resets it to 0 [OWNER].
 
 ## Spirit, mana, overload [OWNER]
 - Everyone has: HP, balance, balance regen, spirit, trauma points. Spirit pays item activations (1 spirit/day or 5 until session end).
