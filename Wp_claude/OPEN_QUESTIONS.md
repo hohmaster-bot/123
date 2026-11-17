@@ -13,10 +13,9 @@ Q16 passive bonuses of two primary records add up for different groups, same gro
 Q17 no refund for a specialized rank the level caught up with (skills.md),
 Q18 Unarmed combat attack/damage only on the unarmed attack, passives always (weapons.md),
 Q19 two hands only for a non-finesse one-handed weapon (combat.md),
+Q22 base point 100, max 10*level (training.md), Q24/Q25 flat layer, no negative layers (defense_layers.md),
 Q20 unarmed combat -4 until trained to Skilled (weapons.md), Q21 weight L = 1 L, N = N*10 L; quarterstaff is a double weapon; gauntlet zeros stay (catalog.md, weapons.md).
 
 ## Game rules (owner decides)
-- Q22 | Price of one base slot: 100 training is taken from the old code (training_costs_draft.md); RULES give no price. Confirm 100? | 100 | open
-- Q23 | Temp HP pools: when combat temp HP and temp HP of a timed buff both exist, which are spent first? Now: combat temp HP first, then buffs in order. Stacking flag: a non-stacking buff adds only up to its amount over the current total. | ? | open
-- Q24 | Defense ladder: AC can also hold other types (flat, enhancement, sacred, profane...). They are not in your AC formula. Which layer do they belong to? Now: counted in AC, but not shown as a layer ("unlisted"). | ? | open
-- Q25 | Defense ladder: a NEGATIVE layer (e.g. dodge -2 from low Dex) has an empty range and moves the next layers down (AC may drop below 10). Is that right? | ? | open
+- Q23 | Temp HP spend order. ASSUMPTION (owner, package 4): first the "by button" temp HP, then buff temp HP in order (resources.md). Stacking flag: a non-stacking buff adds only up to its amount over the current total. | as is | assumption
+- Q26 | Defense ladder: AC types without a layer of their own (enhancement, sacred, profane, racial...) are put into "flat" (the sum of layers must equal AC). Right? | flat | assumption

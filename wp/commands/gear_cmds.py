@@ -83,13 +83,13 @@ def start_combat(ch):
 
 @command
 def end_combat(ch):
-    """End of combat: temp HP 'until the end of combat' gone (temp HP of statuses with their own
-    duration stays with the status, owner),
-    'until end of combat' statuses removed (buffs.md), overload reset to 0
+    """End of combat: temp HP are NOT touched (button temp HP live to the short rest, buff temp HP
+    live with the buff; resources.md [OWNER]),
+    'until end of combat' statuses removed with their temp HP (buffs.md), overload reset to 0
     (resources.md [OWNER]), morale scale reset to 0 (defense.md [OWNER])."""
     if not ch.in_combat:
         raise CommandError("no combat is active")
-    new = replace(ch, in_combat=False, temp_hp=0, overload=0, morale_scale=0, balance_cap_hits=0,
+    new = replace(ch, in_combat=False, overload=0, morale_scale=0, balance_cap_hits=0,
                   statuses=ef.end_combat(ch.statuses))
     return commit(new, "end_combat", "combat ended")
 

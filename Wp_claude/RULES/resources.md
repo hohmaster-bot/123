@@ -5,10 +5,11 @@
   never hp_current > hp_max.
 - Damage hits temp HP first. Absorbed part does NOT reduce balance.
 - Example: 3 temp HP, 7 damage -> temp 0, HP -4, balance -4.
-- Usually lasts to end of combat. Otherwise it is a buff with expiry in ticks; buffs can be instant one-shot or timed.
-- [OWNER] Temp HP given by a buff with its own duration (ticks) live until that duration ends and are NOT cleared by
-  the end of combat; only temp HP without their own duration ("until end of combat") are cleared by the end of combat.
+- [OWNER, package 4] Two kinds of temp HP:
+  - from a buff: given for N rounds, they live as long as the buff lives;
+  - "by button" (entered by hand): live until the SHORT rest; the end of combat does NOT clear them.
   The short rest clears all temp HP after its spends (rest.md).
+- Spend order (Q23, assumption): first the "by button" temp HP, then the buff temp HP (buffs in order).
 - HP can go below 0.
 
 ## Damage pipeline [OWNER]

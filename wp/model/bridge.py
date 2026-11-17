@@ -26,7 +26,7 @@ def to_vitals(ch):
 
 
 def _spend_temp(ch, left):
-    """Split the remaining temp HP back: the combat pool is used first, then statuses in order."""
+    """Split the remaining temp HP back: the "by button" pool is used first, then statuses in order (Q23)."""
     used = dv.temp_hp_total(ch) - left
     take = min(used, ch.temp_hp)
     temp = ch.temp_hp - take

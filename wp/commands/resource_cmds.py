@@ -1,4 +1,4 @@
-"""Resource commands: restore, set_value, short_rest, long_rest, spend_bp, add_injury."""
+"""Resource commands: restore, set_value, set_temp_hp, short_rest, long_rest, spend_bp, add_injury."""
 from dataclasses import replace
 
 from wp.commands.base import CommandError, command, commit
@@ -57,6 +57,14 @@ def set_value(ch, resource="hp", value=0):
     after = dm.set_value(_get(ch, resource), value)
     return commit(_put(ch, resource, after), "set_value", "%s = %d%s" % (
         resource, after.current, " (over max)" if after.over_max else ""))
+
+
+@command
+def set_temp_hp(ch, value=0):
+    """Temp HP "by button" (resources.md [OWNER]): set by hand, live until the short rest."""
+    if value < 0:
+        raise CommandError("temp HP cannot be negative")
+    return commit(replace(ch, temp_hp=int(value)), "set_temp_hp", "temp HP (button) = %d" % int(value))
 
 
 @command

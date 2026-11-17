@@ -19,7 +19,7 @@ def plus_one_each():
     return acm.parts(acm.AcInput(dex_mod=1, armor=1, natural=1, shield=1, size_mod=1, bonuses=b))
 
 
-# Owner example: 1-9 position, 10 size, 11 dodge, 12 insight, 13 morale, 14 competence, 15 luck,
+# Owner example (flat 0 -> empty, skipped): 1-9 position, 10 size, 11 dodge, 12 insight, 13 morale, 14 competence, 15 luck,
 # 16 circumstance, 17 deflection, 18 shield, 19 armor, 20 natural, 21 exact, 22+ hit.
 S.case("example-ladder", "defense_layers.md Example [OWNER]: +1 of every type",
        (("position", None, 9), ("size", 10, 10), ("dodge", 11, 11), ("insight", 12, 12), ("morale", 13, 13),
@@ -50,8 +50,8 @@ S.case("roll-equals-ac", "defense_layers.md: roll == AC -> hit just barely", ("e
     lambda: (lambda r: (r[0], r[1].lo, r[1].hi))(L.layer_for_roll(acm.parts(acm.AcInput(dex_mod=2, armor=4)), 16)))
 S.case("roll-below-10", "defense_layers.md: below 10 -> no position", ("position", "position"))(
     lambda: (L.layer_for_roll(plus_one_each(), 9)[0], L.layer_for_roll(plus_one_each(), 1)[0]))
-S.case("texts-by-type", "defense_layers.md: texts are data by layer type; deflection not given yet", (14, ""))(
-    lambda: (lambda t: (len(t), t["deflection"]))(L.texts()))
+S.case("texts-by-type", "defense_layers.md: texts are data by layer type; deflection given, flat not yet", (15, True, ""))(
+    lambda: (lambda t: (len(t), bool(t["deflection"]), t["flat"]))(L.texts()))
 
 if __name__ == "__main__":
     sys.exit(S.run())

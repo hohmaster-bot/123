@@ -74,9 +74,9 @@ def _a3():
     return (dv.skill_bonus(ch, "stealth"), dv.skill_bonus(ch, "athletics"))
 
 
-# A4: temp HP from a buff with a duration in ticks survives the end of combat; combat temp HP does not.
-# Buff 5 temp HP (3 ticks) + combat temp HP 4. End of combat -> 5 remain.
-@S.case("a4-temp-hp-duration", "owner: temp HP of a timed buff live to its end, not to the end of combat", (9, 5))
+# A4 (package 4): neither buff temp HP nor button temp HP are cleared by the end of combat.
+# Buff 5 temp HP (3 ticks) + button temp HP 4. End of combat -> 9 remain.
+@S.case("a4-temp-hp-duration", "resources.md [OWNER pkg 4]: end of combat clears no temp HP", (9, 9))
 def _a4():
     buff = Status("aid", sid="aid", one_shot=(OneShot(ef.TEMP_HP, 5),), duration=ef.TICKS, temp_hp_stacks=True)
     ch = run(hero(temp_hp=4), ("start_combat", {}), ("add_status", {"status": buff, "ticks": 3}))
@@ -89,7 +89,7 @@ S.case("a4-temp-hp-expire", "owner: temp HP go away with the buff", 0)(
     lambda: dv.temp_hp_total(run(hero(), ("add_status", {"status": Status("aid", sid="a", one_shot=(OneShot(ef.TEMP_HP, 5),),
                                                                            duration=ef.TICKS), "ticks": 1}), ("tick", {}))))
 # Damage takes the combat pool first, then the buff: pool 4 + buff 5, hit 6 -> pool 0, buff 3.
-S.case("a4-temp-hp-order", "decision: combat temp HP are used before buff temp HP", (0, 3))(
+S.case("a4-temp-hp-order", "resources.md Q23 assumption: button temp HP are used before buff temp HP", (0, 3))(
     lambda: (lambda c: (c.temp_hp, c.statuses[0].temp_hp_left))(
         run(hero(temp_hp=4), ("add_status", {"status": Status("aid", sid="a", one_shot=(OneShot(ef.TEMP_HP, 5),),
                                                               duration=ef.TICKS, temp_hp_stacks=True), "ticks": 3}),

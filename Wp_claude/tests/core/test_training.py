@@ -44,7 +44,7 @@ def _shield_max():
 
 # gear.md Base.
 S.case("base-start", "gear.md Base: start 5 slots", 5)(lambda: t.BASE_START)
-S.case("base-cost", "legacy price 100 (training_costs_draft.md), see OPEN_QUESTIONS Q22", 100)(lambda: t.base_slot_cost(5, 1))
+S.case("base-cost", "training.md Base points [OWNER, Q22]: 100 per point", 100)(lambda: t.base_slot_cost(5, 1))
 
 
 @S.case("base-cap", "gear.md Base: max 10*level (level 2 -> 20)", "rejected")

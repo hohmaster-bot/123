@@ -35,6 +35,9 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
 - Old code compared with the Int SCORE (not the modifier): bug.
 - Tests: Int mod 2, natives 1 -> next native 50; natives 2 -> 100. Int mod 3, natives 2 -> 50; natives 3 -> 100. Int mod 1, natives 1 -> 100.
 
+## Base points [OWNER, Q22]
+- One base point costs 100 training. Max base points = 10 * level (start 5).
+
 ## Seeds, quirks, stories
 - Seed ("new seed" (1), price 200): adds a seed entry to the Quirks tab (a separate tab, plain list).
 - Sprout seed: narratively obtain a quirk.
