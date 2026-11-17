@@ -193,11 +193,8 @@ def attack(ch, item=None, stat=None, crit_mult=2):
 
 
 def all_attacks(ch):
-    """Every weapon in hand, or the unarmed attack if none."""
-    items = weapons_in_hand(ch)
-    if not items:
-        return (attack(ch, None),)
-    return tuple(attack(ch, it) for it in items)
+    """Every weapon in hand, plus the unarmed attack: unarmed combat is always available (owner)."""
+    return tuple(attack(ch, it) for it in weapons_in_hand(ch)) + (attack(ch, None),)
 
 
 def find(view, label):

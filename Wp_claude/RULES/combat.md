@@ -21,6 +21,9 @@
 - +1 (lowers threshold) up to 3 times from mastery, plus X where X = weapon enchant level.
 - Class/race/feat/ability can add +N for a specific weapon.
 
+## Unarmed [OWNER]
+- Unarmed combat is always available: the attack list always has the unarmed attack next to the weapons in hand.
+
 ## Maneuvers
 - CMB / CMD / SR (SR not added yet, trait of race/class/feat).
 - CMD does NOT follow AC rules. CMB gets weapon-group bonuses and others.

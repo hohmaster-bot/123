@@ -9,4 +9,5 @@ Q12 end of combat resets overload to 0 (resources.md),
 Q13 end of combat resets the morale scale to 0 (defense.md),
 Q14 activation "day"/"decade" is an item field, cost separate (gear.md).
 
-No open questions.
+## Game rules (owner decides)
+- Q15 | Price of the feat "Finesse training" (finesse_training, wp/catalog/data/feats_default.json): RULES only say "feat price is entered by its author, default 200" (training.md). 200 is a guess by Claude. Correct price? | keep 200 until answered | open

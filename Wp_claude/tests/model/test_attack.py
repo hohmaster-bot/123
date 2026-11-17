@@ -157,6 +157,13 @@ def _unarmed():
     return (v.weapon, v.to_hit, v.damage)
 
 
+# Owner: unarmed combat is always available. Sword in hand -> two attacks: the sword and unarmed.
+# Sword: to hit 10 (see to-hit-basic). Unarmed: BAB 5 + Str 3 = 8.
+S.case("unarmed-always", "owner: unarmed attack is always listed next to weapons in hand",
+       (("i-sword", 10), ("unarmed", 8)))(
+    lambda: tuple((v.weapon, v.to_hit) for v in av.all_attacks(hero())))
+
+
 # ---------------------------------------------------------------- damage
 
 # One hand: Str +3 x1 = 3, + enhancement 1 = 4.
