@@ -692,6 +692,123 @@ def _wpn_pick3b():
         (12, "spec_crit_range")]))
 
 
+# -------------------------------------------------------------- training.md
+
+def _ability_steps(score, steps):
+    c = new_char(str=score)
+    out = []
+    for _ in range(steps):
+        out.append(pu.ability_up_cost(c, "str"))
+        c.abilities["str"] += 1
+    return tuple(out)
+
+
+@case("TRN-ability-race", "training.md Ability score cost, Example [OWNER]",
+      "price score = base 13 + race 2 = 15 (race bonus kept apart from base)",
+      15, "(race stat bonus field)")
+def _trn_ability_race():
+    raise NotImplementedInCode(
+        "no race stat bonus: ability_up_cost reads abilities[ab] only; "
+        "race +2 must be typed into the base score")
+
+
+@case("TRN-ability-15-18", "training.md Ability score cost, Example [OWNER]",
+      "score 15 (stored directly): 15->16 = 450, 16->17 = 450, 17->18 = 600",
+      (450, 450, 600), "purchases.ability_up_cost")
+def _trn_ability_15():
+    return _ability_steps(15, 3)
+
+
+@case("TRN-ability-item", "training.md Ability score cost [OWNER]",
+      "item bonus +2 Str does not change price: 15->16 still 450",
+      450, "purchases.ability_up_cost")
+def _trn_ability_item():
+    c = new_char(str=15)
+    c.add_item(name="belt", location="equipped", slot="belt",
+               passive_bonuses=[{"target": "str", "value": 2,
+                                 "bonus_type": "enhancement"}])
+    c._sync_item_bonuses()
+    return pu.ability_up_cost(c, "str")
+
+
+@case("TRN-source-free", "training.md Modes [OWNER]",
+      "source race: base slot and feat (200) spend 0 training", (0, 0),
+      "purchases._pay (buy_base_slot, buy_feat)")
+def _trn_source_free():
+    c = new_char(level=2)
+    a = c.training["available"]
+    pu.buy_base_slot(c, "race")
+    base_spent = a - c.training["available"]
+    a = c.training["available"]
+    pu.buy_feat(c, "f", cost=200, source="race")
+    return (base_spent, a - c.training["available"])
+
+
+@case("TRN-shield", "training.md Armor / shield grades [OWNER]",
+      "shield 100 per grade: none -> light -> heavy -> tower = 300 total",
+      (100, 100, 100, "Tower"), "purchases.buy_shield_grade")
+def _trn_shield():
+    c = new_char()
+    costs = tuple(pu.buy_shield_grade(c) for _ in range(3))
+    return costs + (c.proficiencies["shields"],)
+
+
+def _native_cost(int_score, natives):
+    c = new_char(int=int_score)
+    c.languages = [{"name": "L%d" % i, "native": True, "source": "training",
+                    "invested": 0} for i in range(natives)]
+    return pu.language_cost(c, native=True)
+
+
+@case("TRN-lang-first-free", "training.md Languages [OWNER confirmed]",
+      "first native language is free", 0, "purchases.language_cost")
+def _trn_lang_first():
+    return _native_cost(10, 0)
+
+
+for _int, _mod, _nat, _exp in [(14, 2, 1, 50), (14, 2, 2, 100),
+                               (16, 3, 2, 50), (16, 3, 3, 100),
+                               (12, 1, 1, 100)]:
+    def _mk(i=_int, n=_nat):
+        def fn():
+            return _native_cost(i, n)
+        return fn
+    case("TRN-lang-int%+d-nat%d" % (_mod, _nat),
+         "training.md Languages, Tests [OWNER confirmed]",
+         "Int mod %+d, natives %d -> next native costs %d" % (_mod, _nat, _exp),
+         _exp, "purchases.language_cost")(_mk())
+
+
+@case("TRN-attention-base", "training.md Attention course option 4, Example",
+      "5 attention at minimum (0.4 each) -> +2.0 base slots", 2.0,
+      "(attention -> base points)")
+def _trn_att_base():
+    raise NotImplementedInCode(
+        "buy_attention_course only pays 200 training; no attention -> "
+        "base points conversion, no fractional base points")
+
+
+@case("TRN-prof-cap", "training.md Professionalism [OWNER confirmed]",
+      "professionalism level cannot exceed character level (level 1: 2nd buy rejected)",
+      "rejected", "(professionalism level)")
+def _trn_prof_cap():
+    raise NotImplementedInCode(
+        "buy_professionalism only pays 300; no professionalism level number")
+
+
+# -------------------------------------------------------------- crafting.md
+
+for _cid, _rule, _exp in [("CRF-dc-material", "X=2 with unusual material -> DC 15+X = 17", 17),
+                          ("CRF-dc-nomaterial", "X=2 without material -> DC 15+3X = 21", 21),
+                          ("CRF-dc-ov", "X=2 with material, 2 extra OV (-4 each) -> DC 9", 9)]:
+    def _mk():
+        def fn():
+            raise NotImplementedInCode("no recipes / craft DC / OV in code")
+        return fn
+    case(_cid, "crafting.md Unusual items, Example [OWNER]", _rule, _exp,
+         "(crafting)")(_mk())
+
+
 # ------------------------------------------------------------- narrative.md
 
 def _lens_step(cur, mx, delta):

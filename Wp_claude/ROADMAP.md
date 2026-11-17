@@ -1,5 +1,5 @@
 # Roadmap
-Current: Phase 0 (only owner review of P decisions left) / Phase 1 (only open questions left).
+Current: Phase 1 (rules written; a few open questions left) -> Phase 2.
 
 ## Phase 0 - setup
 - [x] Branch `Rework`.
@@ -8,11 +8,12 @@ Current: Phase 0 (only owner review of P decisions left) / Phase 1 (only open qu
 - [x] Baseline tests from RULES examples: `Wp_claude/tests/test_rules_baseline.py`, results in `tests/BASELINE_REPORT.md`.
 - [x] `.gitignore` (`characters/`, `__pycache__/`).
 - [x] Legacy `_check.py` checked: fails on a broken formula; only the schema check is dead (see GOTCHAS).
-- [ ] Owner reviews decisions marked P (OPEN_QUESTIONS Q10).
+- [x] Owner approved decisions D2-D19 (all A).
 
 ## Phase 1 - rules (owner + Claude, one domain at a time)
 - [x] Rules written in `RULES/` for all domains (see `RULES/index.md`), numeric examples are tests.
-- [ ] Resolve remaining OPEN_QUESTIONS (game rules section).
+- [x] Rules written, incl. stats, training, crafting, doll.
+- [ ] Open questions left: R8, Q3, Q5, Q6 (rules); Q7, Q8, Q9, Q11 (architecture). See OPEN_QUESTIONS.md.
 
 ## Phase 2 - core
 Test runner that can fail (done: baseline script). Golden tests from RULES. Fix core bugs. Split core into modules (D9).

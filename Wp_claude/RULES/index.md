@@ -19,6 +19,11 @@ Each file: rules, then numeric examples (use them as tests).
 | weapons.md | weapon proficiency levels, costs, bonuses |
 | narrative.md | quirks, stories, courts, quests, drives, attention |
 | catalog.md | catalogs, sharing, sorting |
+| stats.md | stat damage, current/max, permanent stat damage |
+| training.md | modes (play/training/edit), sources and cost, ability/armor/shield/language prices, seeds, qualification, professionalism, attention course |
+| crafting.md | recipes, OV, craft DC, unusual items, ILVL |
+| doll.md | 22 doll slots |
+| training_costs_draft.md | replaced by training.md; kept as a reference of the legacy code prices |
 
 Cross-cutting: ANY part of the sheet (item, feat, race, class, injury, quirk, buff) can change ANY base parameter
 (stats, resources, regen, caps, forbid recovery, add resources). Model this as one generic effect system.

@@ -25,6 +25,7 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
   HP is restored to max, so temp pain from negative HP is gone too.
 
 ## Short rest [OWNER]
+- No limit on how many short rests: narrative element, the GM decides.
 - BP is restored during a short rest.
 - Then BP can be spent as a currency (all in one short rest):
   | Effect | Cost |

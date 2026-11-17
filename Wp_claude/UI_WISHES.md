@@ -12,3 +12,8 @@ Kept apart from RULES/. Nothing here changes numbers.
 - Weapon bonus picker: on 2nd/3rd specialist, expert, master picks hide or grey options that are no longer allowed (repeat limits, tier gate).
 - Skill tier marks in work mode: normal none, advanced one star, specialized two stars (or diamond). Show only final bonus (ranks optional) outside edit/training mode.
 - Skills auto-sorted by key stat; sort can be disabled or changed.
+- Three modes: Play / Training / Edit (RULES/training.md).
+- Abilities/feats/items: field "source" and a separate field "cost".
+- Quirks: a separate tab, plain list.
+- "Spend comfort for training" and the attention course sit next to each other.
+- Class abilities can reference professionalism level (instead of character level).
