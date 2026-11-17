@@ -158,5 +158,14 @@ def _long4():
     return (s.trauma, s.comfort.current)
 
 
+@S.case("long-stats", "rest.md Long rest [OWNER]: stat damage healed, permanent not",
+        ((18, 18), (17, 17)))
+def _long5():
+    from wp.core import injuries as inj
+    con = inj.permanent_stat_damage(Pool(18, 18), 1)          # permanent: max 17
+    s = r.long_rest(st(stats={"str": Pool(15, 18), "con": inj.damage_stat(con, 2)}))
+    return tuple((p.current, p.max) for p in (s.stats["str"], s.stats["con"]))
+
+
 if __name__ == "__main__":
     sys.exit(S.run())

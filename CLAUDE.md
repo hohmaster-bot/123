@@ -45,4 +45,5 @@ Test commands (each exits 1 on any failure, no pytest needed):
 - legacy baseline: `python Wp_claude/tests/test_rules_baseline.py` (known failures in BASELINE_REPORT.md)
 - new core `wp/core/`: `python Wp_claude/tests/core/test_derived.py`, `python Wp_claude/tests/core/test_damage.py`,
   `python Wp_claude/tests/core/test_rest.py`, `python Wp_claude/tests/core/test_magic.py`,
-  `python Wp_claude/tests/core/test_injuries.py` (status in CORE_REPORT.md)
+  `python Wp_claude/tests/core/test_injuries.py`, `python Wp_claude/tests/core/test_bonuses.py`,
+  `python Wp_claude/tests/core/test_ac.py`, `python Wp_claude/tests/core/test_skills.py` (status in CORE_REPORT.md)

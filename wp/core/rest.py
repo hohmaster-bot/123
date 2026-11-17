@@ -192,8 +192,9 @@ def apply_short_rest(rest):
 
 def long_rest(state):
     """Long rest (rest.md): HP, BP, spirit, mana, slots, class resources to max;
-    ability charges and items with "restore on long rest" back; removable pain 0.
-    NOT touched: OT, comfort, injury charges, permanent pain, stat damage."""
+    ability charges and items with "restore on long rest" back; removable pain 0;
+    stat damage healed (current -> max; permanent damage already lowered max).
+    NOT touched: OT, comfort, injury charges, permanent pain, temp HP."""
     charges = []
     for ch in state.charges:
         if ch.kind == ABILITY or (ch.kind == ITEM and ch.restore_on_long_rest):
@@ -210,4 +211,5 @@ def long_rest(state):
         slots={c: _restore_full(p) for c, p in state.slots.items()},
         resources={n: _restore_full(p) for n, p in state.resources.items()},
         charges=tuple(charges),
+        stats={n: restore_stat(p, p.max) for n, p in state.stats.items()},
     )

@@ -69,6 +69,31 @@ def _adds():
     return s.overload
 
 
+# classes_magic.md [OWNER]: balance 2, cost 5 -> balance 0, OT 3, pain 1, DC 16.
+@S.case("balance-short", "classes_magic.md Example [OWNER]: balance 2, cost 5",
+        (0, 3, 1, 16, 3, 1))
+def _short():
+    s0 = m.CasterState(mana=Pool(10, 10), balance=Pool(2, 10), slots={})
+    s, res = m.cast(s0, m.cast_cost(m.MAGE, 3, 1, mana_cost=5))
+    return (s.balance.current, s.trauma, s.pain, res.concentration_dc,
+            res.ot_gained, res.pain_gained)
+
+
+@S.case("balance-enough-no-check", "classes_magic.md: enough balance -> no OT, no pain, no DC",
+        (0, 0, None))
+def _enough():
+    s0 = m.CasterState(mana=Pool(10, 10), balance=Pool(5, 10), slots={})
+    s, res = m.cast(s0, m.cast_cost(m.MAGE, 3, 1, mana_cost=5))
+    return (s.trauma, s.pain, res.concentration_dc)
+
+
+# classes_magic.md [OWNER]: spells from items/consumables: no overload, no balance.
+@S.case("from-item", "classes_magic.md [OWNER]: item spell, no overload, no balance",
+        (0, 0, None, 0))
+def _item():
+    return delta(caster(), m.cast_cost(m.MAGE, 3, 5, mana_cost=5, from_item=True))
+
+
 S.case("regen-blocked", "resources.md: overload > 0 forbids balance regen", (True, False))(
     lambda: (m.balance_regen_blocked(1), m.balance_regen_blocked(0)))
 

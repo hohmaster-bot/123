@@ -31,6 +31,10 @@
   Characters who can cast cantrips but have no circle-0 slot at all: unlimited. Cantrip overload 2X for everyone.
 - Examples: mage, circle 2 (3 mana), 4 rounds: mana -3, balance -3, overload +4. Instant 3-mana spell: mana -3, balance -3, overload 0.
   Non-mage circle 1, 3 rounds: slot -1, overload +6.
+- Mage with less balance than the spell cost [OWNER]: balance drops to 0, +1 pain, OT = the missing part.
+  The app shows the DC at once: "Concentration DC = 10 + 2 * OT gained, otherwise the spell fails".
+  Example: balance 2, cost 5 -> OT 3, pain 1, DC 16.
+- Spells from magic items and consumables give no overload and cost no balance [OWNER]. Item activation still costs spirit.
 
 ## Racial damage absorbers [OWNER]
 - Absorption is 1:1; absorbed part does not hit balance (like temp HP). Other traits/classes/races may add other absorbers.
