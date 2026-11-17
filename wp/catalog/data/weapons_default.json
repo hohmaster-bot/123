@@ -1,47 +1,238 @@
 {
  "format": "wipefinder.weapons",
- "version": 2,
- "note": "Rows from the owner's table (Contact, Basic/simple). The full table comes later. Price in silver (1 gp = 10 sp). Weight in L: table 'L' -> 1 L, table '1' -> 10 L (1 B) - see OPEN_QUESTIONS Q21. 'variable' lists fields the table gives as 'Vary.' (left empty).",
+ "version": 3,
+ "note": "Rows from the owner's table (Contact, Basic/simple). The full table comes later. Price in silver (1 gp = 10 sp). Weight in L: table 'L' -> 1 L, a plain number N -> N * 10 L (1 = 10 L = 1 B) [OWNER]. 'variable' lists fields the table gives as 'Vary.' (left empty). Column 'F.' = finesse = light.",
  "qualification_levels": {
-  "Новичок": 1, "Ученик": 2, "Любитель": 3, "Опытный": 4,
-  "Специалист 1": 5, "Специалист 2": 6, "Специалист 3": 7,
-  "Эксперт 1": 8, "Эксперт 2": 9, "Эксперт 3": 10, "Эксперт 4": 11, "Мастер": 12
+  "Новичок": 1,
+  "Ученик": 2,
+  "Любитель": 3,
+  "Опытный": 4,
+  "Специалист 1": 5,
+  "Специалист 2": 6,
+  "Специалист 3": 7,
+  "Эксперт 1": 8,
+  "Эксперт 2": 9,
+  "Эксперт 3": 10,
+  "Эксперт 4": 11,
+  "Мастер": 12
  },
  "groups": [
-  {"gid": "contact", "name": "Контактное", "name_en": "Contact", "scale": 3, "difficulty": 1, "parents": [], "basic": false},
-  {"gid": "basic_simple", "name": "Базовое/простое", "name_en": "Basic/simple", "scale": 3, "difficulty": 1, "parents": [], "basic": true}
+  {
+   "gid": "contact",
+   "name": "Контактное",
+   "name_en": "Contact",
+   "scale": 3,
+   "difficulty": 1,
+   "parents": [],
+   "basic": false
+  },
+  {
+   "gid": "basic_simple",
+   "name": "Базовое/простое",
+   "name_en": "Basic/simple",
+   "scale": 3,
+   "difficulty": 1,
+   "parents": [],
+   "basic": true
+  }
  ],
  "weapons": [
-  {"wid": "unarmed_combat", "name": "Рукопашный бой", "name_en": "Unarmed combat", "kind": "weapon",
-   "groups": ["contact"], "node": {"scale": 1, "difficulty": 1, "parents": ["contact"]},
-   "damage_small": "1d2", "damage_medium": "1d3", "crit_range": 20, "crit_mult": 2, "dmg_type": "B",
-   "qualification": "Опытный", "finesse": true, "hands": 1, "durability": 0, "hp": 0},
-  {"wid": "stiletto", "name": "Стилет", "kind": "weapon", "groups": ["contact"],
-   "price_sp": 5, "damage_small": "1d3", "damage_medium": "1d4", "crit_range": 20, "crit_mult": 3, "weight_l": 1,
-   "dmg_type": "P", "qualification": "Опытный", "finesse": true, "hands": 1, "durability": 10, "hp": 1},
-  {"wid": "spiked_gauntlet", "name": "Шипастые перчатки", "kind": "weapon", "groups": ["contact"],
-   "price_sp": 5, "damage_small": "1d3", "damage_medium": "1d4", "crit_range": 20, "crit_mult": 2, "weight_l": 1,
-   "dmg_type": "P", "qualification": "Опытный", "finesse": true, "hands": 1},
-  {"wid": "improvised", "name": "Импровизированное оружие", "kind": "weapon", "groups": ["contact"],
-   "crit_range": 20, "crit_mult": 2, "qualification": "Опытный",
-   "variable": ["damage_small", "damage_medium", "weight_l", "dmg_type", "hands"]},
-  {"wid": "hidden_thief", "name": "Скрытое воровское вооружение", "kind": "weapon", "groups": ["contact"],
-   "qualification": "Специалист 2", "finesse": true, "hands": 1,
-   "variable": ["price_sp", "damage_small", "damage_medium", "crit_range", "crit_mult", "range_ft", "weight_l",
-                "dmg_type", "durability", "hp"]},
-  {"wid": "dagger", "name": "Кинжал", "kind": "weapon", "groups": ["basic_simple"],
-   "price_sp": 10, "damage_small": "1d3", "damage_medium": "1d4", "crit_range": 19, "crit_mult": 2, "range_ft": 10,
-   "weight_l": 1, "dmg_type": "P/S", "finesse": true, "hands": 1, "durability": 10, "hp": 1},
-  {"wid": "club", "name": "Дубинка", "kind": "weapon", "groups": ["basic_simple"],
-   "price_sp": 0, "damage_small": "1d4", "damage_medium": "1d6", "crit_range": 20, "crit_mult": 2,
-   "weight_l": 10, "dmg_type": "B", "hands": 1, "durability": 5, "hp": 2},
-  {"wid": "quarterstaff", "name": "Посох", "kind": "weapon", "groups": ["basic_simple"],
-   "price_sp": 2, "damage_text": "1d4/1d4 и 1d6/1d6", "crit_range": 20, "crit_mult": 2,
-   "weight_l": 10, "dmg_type": "B", "hands": 2, "durability": 5, "hp": 2},
-  {"wid": "light_crossbow", "name": "Легкий арбалет", "kind": "weapon", "groups": ["basic_simple"],
-   "price_sp": 10, "damage_small": "1d6", "damage_medium": "1d8", "crit_range": 19, "crit_mult": 2, "range_ft": 80,
-   "weight_l": 10, "dmg_type": "P", "hands": 2, "durability": 3, "hp": 2},
-  {"wid": "bolts", "name": "Болты", "kind": "ammo", "groups": ["basic_simple"],
-   "price_sp": 1, "weight_l": 1, "durability": 0, "hp": 1, "count": 10}
+  {
+   "wid": "unarmed_combat",
+   "name": "Рукопашный бой",
+   "name_en": "Unarmed combat",
+   "kind": "weapon",
+   "groups": [
+    "contact"
+   ],
+   "node": {
+    "scale": 1,
+    "difficulty": 1,
+    "parents": [
+     "contact"
+    ]
+   },
+   "damage_small": "1d2",
+   "damage_medium": "1d3",
+   "crit_range": 20,
+   "crit_mult": 2,
+   "dmg_type": "B",
+   "qualification": "Опытный",
+   "finesse": true,
+   "hands": 1,
+   "durability": 0,
+   "hp": 0
+  },
+  {
+   "wid": "stiletto",
+   "name": "Стилет",
+   "kind": "weapon",
+   "groups": [
+    "contact"
+   ],
+   "price_sp": 5,
+   "damage_small": "1d3",
+   "damage_medium": "1d4",
+   "crit_range": 20,
+   "crit_mult": 3,
+   "weight_l": 1,
+   "dmg_type": "P",
+   "qualification": "Опытный",
+   "finesse": true,
+   "hands": 1,
+   "durability": 10,
+   "hp": 1
+  },
+  {
+   "wid": "spiked_gauntlet",
+   "name": "Шипастые перчатки",
+   "kind": "weapon",
+   "groups": [
+    "contact"
+   ],
+   "price_sp": 5,
+   "damage_small": "1d3",
+   "damage_medium": "1d4",
+   "crit_range": 20,
+   "crit_mult": 2,
+   "weight_l": 1,
+   "dmg_type": "P",
+   "qualification": "Опытный",
+   "finesse": true,
+   "hands": 1,
+   "no_parry": true
+  },
+  {
+   "wid": "improvised",
+   "name": "Импровизированное оружие",
+   "kind": "weapon",
+   "groups": [
+    "contact"
+   ],
+   "crit_range": 20,
+   "crit_mult": 2,
+   "qualification": "Опытный",
+   "variable": [
+    "damage_small",
+    "damage_medium",
+    "weight_l",
+    "dmg_type",
+    "hands"
+   ]
+  },
+  {
+   "wid": "hidden_thief",
+   "name": "Скрытое воровское вооружение",
+   "kind": "weapon",
+   "groups": [
+    "contact"
+   ],
+   "qualification": "Специалист 2",
+   "finesse": true,
+   "hands": 1,
+   "variable": [
+    "price_sp",
+    "damage_small",
+    "damage_medium",
+    "crit_range",
+    "crit_mult",
+    "range_ft",
+    "weight_l",
+    "dmg_type",
+    "durability",
+    "hp"
+   ]
+  },
+  {
+   "wid": "dagger",
+   "name": "Кинжал",
+   "kind": "weapon",
+   "groups": [
+    "basic_simple"
+   ],
+   "price_sp": 10,
+   "damage_small": "1d3",
+   "damage_medium": "1d4",
+   "crit_range": 19,
+   "crit_mult": 2,
+   "range_ft": 10,
+   "weight_l": 1,
+   "dmg_type": "P/S",
+   "finesse": true,
+   "hands": 1,
+   "durability": 10,
+   "hp": 1
+  },
+  {
+   "wid": "club",
+   "name": "Дубинка",
+   "kind": "weapon",
+   "groups": [
+    "basic_simple"
+   ],
+   "price_sp": 0,
+   "damage_small": "1d4",
+   "damage_medium": "1d6",
+   "crit_range": 20,
+   "crit_mult": 2,
+   "weight_l": 10,
+   "dmg_type": "B",
+   "hands": 1,
+   "durability": 5,
+   "hp": 2
+  },
+  {
+   "wid": "quarterstaff",
+   "name": "Посох",
+   "kind": "weapon",
+   "groups": [
+    "basic_simple"
+   ],
+   "price_sp": 2,
+   "crit_range": 20,
+   "crit_mult": 2,
+   "weight_l": 10,
+   "dmg_type": "B",
+   "hands": 2,
+   "durability": 5,
+   "hp": 2,
+   "double": true,
+   "damage_small": "1d4",
+   "damage_medium": "1d6",
+   "damage_small2": "1d4",
+   "damage_medium2": "1d6"
+  },
+  {
+   "wid": "light_crossbow",
+   "name": "Легкий арбалет",
+   "kind": "weapon",
+   "groups": [
+    "basic_simple"
+   ],
+   "price_sp": 10,
+   "damage_small": "1d6",
+   "damage_medium": "1d8",
+   "crit_range": 19,
+   "crit_mult": 2,
+   "range_ft": 80,
+   "weight_l": 10,
+   "dmg_type": "P",
+   "hands": 2,
+   "durability": 3,
+   "hp": 2
+  },
+  {
+   "wid": "bolts",
+   "name": "Болты",
+   "kind": "ammo",
+   "groups": [
+    "basic_simple"
+   ],
+   "price_sp": 1,
+   "weight_l": 1,
+   "durability": 0,
+   "hp": 1,
+   "count": 10
+  }
  ]
 }

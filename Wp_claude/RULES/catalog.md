@@ -10,6 +10,8 @@
 - Sort/filter axes: weapons, armor and shields, source (tag = player name or module), magic items, spells, feats, "other".
 - Users create their own catalogs and entries; players share files. Anything a player creates can be put into a catalog.
 - Enabled catalogs: one list for the user (global), not per character.
+- Weight in catalog rows [OWNER]: "L" = 1 L; a plain number N = N * 10 L (1 = 10 L = 1 B). The unit "B" is not
+  written in the rows.
 - Skills: the default skill catalog ships with the app as data (skills_list.md, 45 templates); see skills.md "Skill catalog".
 - Shop is just a layer on the catalog [OWNER]: taking an item from the catalog can buy it at once (gold deducted automatically);
   taking a feat can buy it for training (only if the checkbox "pay with training" is on). Items only for gold.

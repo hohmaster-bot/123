@@ -63,6 +63,15 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   weight 1, B, 1H, HD 5, HP 2); Quarterstaff (2 sp, 1d4/1d4 and 1d6/1d6, 20+, weight 1, B, 2H, HD 5, HP 2);
   Light crossbow (1 gp, 1d6/1d8, 19-20, 80 ft, weight 1, P, 2H, HD 3, HP 2); Bolts x10 (1 sp, weight L, HD 0, HP 1, ammo).
 
+## Weapon card details [OWNER]
+- Double weapon (quarterstaff): the card has two damage rows, one per end. A normal attack uses the TOP row.
+  A double weapon counts as fit for two-weapon fighting; its other end counts as a light weapon.
+  Quarterstaff "1d4/1d4 and 1d6/1d6" = small 1d4 on both ends, medium 1d6 on both ends.
+- Light and finesse are ONE flag (column "F." of the table). An unarmed strike is always light.
+- Spiked gauntlets: you cannot parry with them; it is the same as parrying with an empty hand.
+- Unarmed combat has no privileges [OWNER, Q20]: its qualification is Skilled (4); until it is trained to level 4
+  the unarmed attack takes the -4 "not qualified" penalty.
+
 ## Mastery bonuses in the final numbers [OWNER]
 - Weapon mastery bonuses stack with themselves by their own rules, then are added as FLAT to AC (parry), attack, damage.
 - They change the FINAL durability (hardness) and HP of the item, not the value the author typed into the item.

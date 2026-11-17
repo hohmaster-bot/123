@@ -70,7 +70,7 @@ class Item:
     groups: Tuple[str, ...] = ()       # weapon groups this weapon belongs to (any number)
     required_level: int = 0            # qualification level (weapons.md), from the card's qualification
     qualification: str = ""            # qualification as written in the owner's table
-    finesse: bool = False              # finesse weapon (Dex with the Finesse feat)
+    finesse: bool = False              # column "F." of the table: finesse AND light (one flag, owner)
     price_sp: int = 0                  # price in silver (1 gp = 10 sp)
     damage_small: str = ""             # dice, small size
     damage_medium: str = ""            # dice, medium size
@@ -80,6 +80,10 @@ class Item:
     dmg_type: str = ""                 # P / S / B
     durability: int = 0                # hardness (HD) typed by the author (base)
     hp: int = 0                        # item HP typed by the author (base)
+    damage_small2: str = ""            # double weapon: second row (the other end)
+    damage_medium2: str = ""
+    double: bool = False               # double weapon (quarterstaff): two damage rows, one per end
+    no_parry: bool = False             # cannot parry with it (spiked gauntlets = parry with an empty hand)
     damage_text: str = ""              # damage as written in the table when it is not a simple small/medium pair
     variable: Tuple[str, ...] = ()     # fields the table gives as "Vary." (left empty on purpose)
 

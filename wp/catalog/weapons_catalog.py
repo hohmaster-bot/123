@@ -27,7 +27,7 @@ BASIC = "basic_simple"
 ITEM_FIELDS = ("kind", "groups", "required_level", "finesse", "price_sp", "damage_small",
                "damage_medium", "crit_range", "crit_mult", "range_ft", "dmg_type", "hands",
                "weight_l", "durability", "hp", "count", "armor", "shield", "max_dex", "skill_penalty",
-               "damage_text", "variable")
+               "damage_text", "variable", "damage_small2", "damage_medium2", "double", "no_parry")
 
 
 @dataclass(frozen=True)
@@ -132,6 +132,13 @@ def start_nodes(catalog):
 def start_items(catalog):
     """New character: the Unarmed combat card (always available, not held in the hands)."""
     return (make_item(catalog, UNARMED_COMBAT, UNARMED_ITEM),)
+
+
+def is_light(item):
+    """Light and finesse are ONE flag (column "F."); an unarmed strike is always light (owner)."""
+    if item is None or item.iid == UNARMED_ITEM:
+        return True
+    return bool(item.finesse)
 
 
 def make_item(catalog, wid, iid):

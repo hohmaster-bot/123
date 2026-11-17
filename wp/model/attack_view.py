@@ -55,6 +55,7 @@ class AttackView:
     parry: int
     parry_lines: Tuple[Line, ...]
     crit_hint: str = ""
+    dice: Tuple[str, str] = ("", "")   # damage dice (small, medium) of the row used
 
 
 # ------------------------------------------------------------------ helpers
@@ -174,12 +175,25 @@ def attack(ch, record):
 
     p = wpn.mastery_flat(rec.group_picks(ch, record.group))["parry"]
     parry_lines = (Line("group parry", p, (record.group,)),) if p else ()
+    if item is not None and item.no_parry:
+        # spiked gauntlets: no parry with the weapon itself; it is parrying with an empty hand
+        p, parry_lines = 0, (Line("no parry: empty hand", 0, (item.iid,)),)
 
     return AttackView(record=record.rid, weapon=record.item, group=record.group, stat=st,
                       to_hit=sum(x.value for x in hit), to_hit_lines=tuple(hit),
                       damage=sum(x.value for x in dmg), damage_lines=tuple(dmg),
                       parry=p, parry_lines=parry_lines,
-                      crit_hint=crit_hint(item.crit_mult if item is not None else 2))
+                      crit_hint=crit_hint(item.crit_mult if item is not None else 2),
+                      dice=dice_row(item, 1))
+
+
+def dice_row(item, row):
+    """Damage dice (small, medium): row 1 = the normal (top) row; row 2 = the other end of a double weapon."""
+    if item is None:
+        return ("", "")
+    if row == 2 and item.double:
+        return (item.damage_small2, item.damage_medium2)
+    return (item.damage_small, item.damage_medium)
 
 
 def all_attacks(ch):

@@ -12,10 +12,9 @@ Q15 feat "Finesse training" costs 200 (training.md),
 Q16 passive bonuses of two primary records add up for different groups, same group once (combat.md),
 Q17 no refund for a specialized rank the level caught up with (skills.md),
 Q18 Unarmed combat attack/damage only on the unarmed attack, passives always (weapons.md),
-Q19 two hands only for a non-finesse one-handed weapon (combat.md).
+Q19 two hands only for a non-finesse one-handed weapon (combat.md),
+Q20 unarmed combat -4 until trained to Skilled (weapons.md), Q21 weight L = 1 L, N = N*10 L; quarterstaff is a double weapon; gauntlet zeros stay (catalog.md, weapons.md).
 
 ## Game rules (owner decides)
-- Q20 | Unarmed combat has qualification "Skilled" (level 4) in the table. A new character has the Unarmed combat node at level 0, so the unarmed attack gets the -4 "not qualified" penalty. Is that intended? Now: yes, -4 (the table is applied literally). | ? | open
-- Q21 | Weight in the table: "L" and "1". Stored now as 1 L and 10 L (1 B). Is "L" = 1 L, and "1" = 1 B = 10 L? Quarterstaff damage "1d4/1d4 and 1d6/1d6" is stored as text (two ends?). Spiked gauntlets: no HD/HP in the table - left 0. | ? | open
 - Q22 | Price of one base slot: 100 training is taken from the old code (training_costs_draft.md); RULES give no price. Confirm 100? | 100 | open
 - Q23 | Temp HP pools: when combat temp HP and temp HP of a timed buff both exist, which are spent first? Now: combat temp HP first, then buffs in order. Stacking flag: a non-stacking buff adds only up to its amount over the current total. | ? | open

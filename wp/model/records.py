@@ -59,6 +59,13 @@ def primary(ch):
     return ()
 
 
+def _no_parry(ch, record):
+    for it in ch.items:
+        if it.iid == record.item:
+            return it.no_parry
+    return False
+
+
 def group_picks(ch, gid):
     n = node(ch, gid)
     return n.picks if n is not None else ()
@@ -77,7 +84,10 @@ def passive_groups(ch):
 def passive_bonuses(ch, key):
     """Passive group bonuses as FLAT bonuses (stacked by bonuses.py: flat adds)."""
     out = []
+    no_parry = {r.group for r in primary(ch) if _no_parry(ch, r)}
     for gid in passive_groups(ch):
+        if key == "parry" and gid in no_parry and gid != UNARMED_COMBAT:
+            continue            # a weapon that cannot parry gives no parry from its group (empty hand instead)
         v = wpn.mastery_flat(group_picks(ch, gid)).get(key, 0)
         if v:
             out.append(bo.Bonus(v, bo.FLAT, bo.AC if key == "parry" else "passive", source=gid))
