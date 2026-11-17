@@ -7,13 +7,22 @@ from wp.model import derived_view as dv
 
 SHORT = "short"
 LONG = "long"
-SHORT_REST_COST = 1        # 1 spirit: active until the end of the SHORT rest
-LONG_REST_COST = 5         # 5 spirit: active until the end of the LONG rest
+SHORT_REST_COST = 1        # default: 1 spirit -> "day" (until the end of the SHORT rest)
+LONG_REST_COST = 5         # default: 5 spirit -> "decade" (until the end of the LONG rest)
+DEFAULT_UNTIL = {SHORT_REST_COST: SHORT, LONG_REST_COST: LONG}
 
 
-def active_until(cost):
-    """1 spirit -> until short rest; 5 (and any other X) -> until long rest (OPEN_QUESTIONS Q14)."""
-    return SHORT if int(cost) == SHORT_REST_COST else LONG
+def active_until(item, cost):
+    """gear.md [OWNER]: the card field 'active until' decides; the spirit cost is separate.
+    Empty field: default by cost (1 -> day, 5 -> decade); any other cost needs the field."""
+    if item.activation_until:
+        if item.activation_until not in (SHORT, LONG):
+            raise CommandError("'active until' must be short or long rest")
+        return item.activation_until
+    if int(cost) in DEFAULT_UNTIL:
+        return DEFAULT_UNTIL[int(cost)]
+    raise CommandError("%s: cost %d spirit needs the field 'active until' (short or long rest)"
+                       % (item.name, int(cost)))
 
 
 def _replace_item(ch, iid, **changes):
@@ -40,10 +49,11 @@ def activate_item(ch, iid="", cost=None):
         raise CommandError("item is not activatable: %s" % it.name)
     if ch.spirit_current < spirit:
         raise CommandError("not enough spirit: need %d, have %d" % (spirit, ch.spirit_current))
-    new = replace(_replace_item(ch, iid, activated=True, active_until=active_until(spirit)),
+    until = active_until(it, spirit)
+    new = replace(_replace_item(ch, iid, activated=True, active_until=until),
                   spirit_current=ch.spirit_current - spirit)
     return commit(new, "activate_item", "%s activated for %d spirit (until %s rest)" % (
-        it.name, spirit, active_until(spirit)))
+        it.name, spirit, until))
 
 
 @command
@@ -56,7 +66,7 @@ def deactivate_item(ch, iid=""):
 
 
 def switch_off_items(ch, rest_kind):
-    """Short rest switches off 1-spirit items; long rest switches off all."""
+    """Short rest switches off "day" items; long rest switches off all."""
     items = tuple(replace(it, activated=False, active_until="")
                   if it.activated and (rest_kind == LONG or it.active_until == SHORT) else it
                   for it in ch.items)

@@ -131,9 +131,25 @@ S.case("activate-no-spirit", "gear.md: activation needs spirit", "rejected")(
 S.case("deactivate", "gear.md: player switches it off", (False, 1))(
     lambda: (lambda ch: (ch.item("sw").activated, dv.total(ch, "attack")))(
         run(_BASE, ("activate_item", {"iid": "sw"}), ("deactivate_item", {"iid": "sw"}))))
-S.case("activate-x", "gear.md X spirit -> until long rest (OPEN_QUESTIONS Q14)", (12, "long"))(
-    lambda: (lambda ch: (ch.spirit_current, ch.item("sw").active_until))(
-        run(_BASE, ("activate_item", {"iid": "sw", "cost": 3}))))
+# gear.md [OWNER]: card field "active until" (day / decade), spirit cost separate (Q14).
+_WAND = Item("wd", "wand", equipped=True, activation_cost=3, activation_until="short")
+_ORB = Item("ob", "orb", equipped=True, activation_cost=1, activation_until="long")
+_ROD = Item("rd", "rod", equipped=True, activation_cost=3)
+_FIELD = Character(abilities=ab(cha=14), spirit_current=15, items=(_WAND, _ORB, _ROD))
+
+S.case("field-x-day", "gear.md [OWNER]: X spirit with field 'day' -> off after short rest", (12, "short", False))(
+    lambda: (lambda a, b: (a.spirit_current, a.item("wd").active_until, b.item("wd").activated))(
+        run(_FIELD, ("activate_item", {"iid": "wd"})),
+        run(_FIELD, ("activate_item", {"iid": "wd"}), ("short_rest", {}))))
+S.case("field-overrides-default", "gear.md [OWNER]: 1 spirit but field 'decade' -> survives short rest", ("long", True))(
+    lambda: (lambda a, b: (a.item("ob").active_until, b.item("ob").activated))(
+        run(_FIELD, ("activate_item", {"iid": "ob"})),
+        run(_FIELD, ("activate_item", {"iid": "ob"}), ("short_rest", {}))))
+S.case("defaults", "gear.md [OWNER]: defaults 1 spirit -> day, 5 spirit -> decade", ("short", "long"))(
+    lambda: (lambda ch: (ch.item("sw").active_until, ch.item("cl").active_until))(
+        run(_BASE, ("activate_item", {"iid": "sw"}), ("activate_item", {"iid": "cl"}))))
+S.case("x-needs-field", "gear.md: X spirit without the field has no default", "rejected")(
+    lambda: rejected(_FIELD, "activate_item", iid="rd"))
 
 
 # End of combat.

@@ -6,7 +6,7 @@ A054 over max (resources.md "Over max", D5), Q10 decisions approved, R9 short re
 R8 short rest BP flow (rest.md), Q3 stance (spells.md), Q5 spells (spells.md), Q6 shop (catalog.md), Q7 catalogs global (catalog.md, D13),
 Q8 no old characters (D1), Q9 hotkey Ctrl+Shift+W (surfaces.md), Q11 overlay editor (surfaces.md),
 Q12 end of combat resets overload to 0 (resources.md),
-Q13 end of combat resets the morale scale to 0 (defense.md).
+Q13 end of combat resets the morale scale to 0 (defense.md),
+Q14 activation "day"/"decade" is an item field, cost separate (gear.md).
 
-## Game rules (owner decides)
-- Q14 | Item activation for X spirit (not 1, not 5): until the end of which rest is it active? gear.md names only 1 (short rest) and 5 (long rest). | until long rest | open
+No open questions.

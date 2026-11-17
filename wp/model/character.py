@@ -53,7 +53,9 @@ class Item:
     effects_on: Tuple[Effect, ...] = ()    # tab "activated" (D17)
     activated: bool = False
     activation_cost: int = 0           # spirit to activate (0 = not activatable)
-    active_until: str = ""             # "short" / "long": which rest switches it off
+    activation_until: str = ""         # card field "active until": "short" (day) / "long" (decade);
+                                       # "" = default by cost (1 -> short, 5 -> long)
+    active_until: str = ""             # state while activated: which rest switches it off
     weapon_id: Optional[str] = None    # link to the weapon catalog
     durability: int = 0                # value typed by the author (base)
     hp: int = 0

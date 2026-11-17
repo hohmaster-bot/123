@@ -55,3 +55,4 @@ Test commands (each exits 1 on any failure, no pytest needed):
   `python Wp_claude/tests/model/test_commands2.py`, `python Wp_claude/tests/model/test_skills_catalog.py`
   (status in MODEL_REPORT.md)
 - storage: `python Wp_claude/tests/storage/test_character_io.py`; module size: `python Wp_claude/tests/test_module_size.py`
+- ASCII-only code: `python Wp_claude/tests/test_ascii_code.py` (wp/ and Wp_claude/tests/)

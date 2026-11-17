@@ -42,8 +42,10 @@
 ## Enabled / disabled (activation) [OWNER]
 - "Enabled/disabled" mainly means activation of enchanted/special items.
 - Passive requirements: Qualification, skill X with Y ranks, Court X level Y.
-- Activation cost: usually 1 spirit (active until end of SHORT rest), 5 spirit (until end of LONG rest), or X spirit.
-  Short rest switches 1-spirit items off, long rest switches off all. Cost may also be stat damage, HP, etc.
+- Activation has two kinds [OWNER]: "day" (active until the end of the SHORT rest) and "decade" (until the end of the LONG rest).
+  The item card has a field "active until: short rest / long rest"; the spirit cost (1, 5 or X) is set separately.
+  Defaults: 1 spirit -> day, 5 spirit -> decade. Short rest switches "day" items off, long rest switches off all.
+  Cost may also be stat damage, HP, etc.
 - Consumables: usually 1 spirit to activate.
 - Not activated items give fewer bonuses. Example: +5 magic sword (+5 attack, damage and lucky attack = enchant bonus):
   inactive it is only a masterwork sword giving +1 attack, nothing else.
