@@ -51,6 +51,7 @@ class Weapon:
     basics: bool = False         # combat basics bought on this node
     parents: Tuple[str, ...] = ()
     required_level: int = 0      # qualification level of the weapon
+    basic: bool = False          # group "Basic/simple": no qualification, cannot be trained
 
 
 @dataclass(frozen=True)

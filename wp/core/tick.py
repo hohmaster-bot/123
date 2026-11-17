@@ -34,6 +34,7 @@ class TickReport:
     regen_blocked: bool
     dot_damage: int
     healed: int
+    cap_hits: int = 0                  # flagged DoT hits that reached HP (balance cap homerule)
 
 
 def zero_initiative(state, reductions=None):
@@ -62,10 +63,13 @@ def zero_initiative(state, reductions=None):
     # 3) DoT / heal per tick (statuses active at the start of the tick), negative-HP loss
     dot = 0
     healed = 0
+    cap_hits = 0
     for s in acting:
         if s.per_tick_hp < 0:
             v, r = take_hit(v, [DamagePart(-s.per_tick_hp, s.dot_type)], reductions)
             dot += r.hp_loss + r.temp_hp_loss + sum(a for _, a in r.absorbed)
+            if s.lowers_balance_cap and r.hp_loss > 0:
+                cap_hits += 1
         elif s.per_tick_hp > 0:
             before = v.hp.current
             v = replace(v, hp=restore(v.hp, s.per_tick_hp))
@@ -78,4 +82,4 @@ def zero_initiative(state, reductions=None):
 
     new = replace(state, vitals=v, statuses=new_statuses, overload=overload)
     return new, TickReport(steps=tuple(steps), expired=expired, balance_gained=gained,
-                           regen_blocked=blocked, dot_damage=dot, healed=healed)
+                           regen_blocked=blocked, dot_damage=dot, healed=healed, cap_hits=cap_hits)

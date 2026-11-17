@@ -17,7 +17,7 @@ from wp.core.effects import Effect, Status  # noqa: E402
 from wp.core.pain import PainEntry  # noqa: E402
 from wp.core.rest import Charge  # noqa: E402
 from wp.core.weapons import Pick, Weapon  # noqa: E402
-from wp.model.character import Ability, Character, Item, Language, WeaponEntry  # noqa: E402
+from wp.model.character import Ability, AttackRecord, Character, Item, Language, WeaponEntry  # noqa: E402
 from wp.storage import character_io as cio  # noqa: E402
 
 S = Suite("test_character_io")
@@ -33,12 +33,14 @@ def sample():
         pain=(PainEntry(2, "overflow"), PainEntry(1, "curse", True)), trauma=7, overload=2,
         statuses=(Status("bleed", sid="s1", per_tick_hp=-2, duration=ef.TICKS, remaining=2),
                   Status("feral", sid="s2", effects=(Effect("attack", value_source=ef.OVERLOAD, weapon="natural"),))),
-        items=(Item("i1", "sword", equipped=True, activation_cost=1, activated=True, active_until="short",
+        items=(Item("i1", "sword", kind="weapon", in_hands=True, hands=1, groups=("w1",), activation_day=1,
+                    activated=True, active_until="short", skill_penalty=-1,
                     effects_on=(Effect("attack", 5, "enhancement"),)),),
         weapons=(WeaponEntry(Weapon("w1", 2, 1, grades=5, parents=("w0",)), "long swords",
                              (Pick(5, "parry_1"),)),),
         skills=(sk.Skill("arcana", "int", sk.ADVANCED, 3),), languages=(Language("l1", "Common", True),),
-        drives={"growth": 4}, attention=3, spirit_current=4, shield_grade="light")
+        drives={"growth": 4}, attention=3, spirit_current=4, shield_grade="light",
+        attacks=(AttackRecord("r1", "i1", "w1", "one", primary=True),), balance_cap_hits=2, ov=5)
 
 
 def tmpdir():

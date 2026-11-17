@@ -56,8 +56,8 @@ S.case("stat-drain", "stats.md Tests: Str 18/18, drain 1 -> 17/18", (17, 18))(
 S.case("stat-restore", "stats.md Tests: 17/18 + 1 -> 18/18 (not above max)", (18, 18))(
     lambda: (lambda p: (p.current, p.max))(inj.restore_stat(Pool(17, 18), 3)))
 
-S.case("stat-permanent", "stats.md Tests: permanent Con damage 1 -> max 17, current min(current, 17)",
-       ((17, 17), (15, 17)))(
+S.case("stat-permanent", "stats.md Tests [OWNER, corrected]: permanent 1 lowers max and current: 18/18 -> 17/17, 15/18 -> 14/17",
+       ((17, 17), (14, 17)))(
     lambda: tuple((p.current, p.max) for p in (inj.permanent_stat_damage(Pool(18, 18), 1),
                                                 inj.permanent_stat_damage(Pool(15, 18), 1))))
 

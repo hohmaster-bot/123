@@ -31,9 +31,9 @@ def run(ch, *steps):
     return ch
 
 
-def rejected(ch, name, **params):
+def rejected(ch, cmd, /, **params):
     try:
-        dispatch(ch, name, **params)
+        dispatch(ch, cmd, **params)
     except CommandError:
         return "rejected"
     return "allowed"
@@ -63,6 +63,34 @@ def _cycle():
     new = run(_CH7, ("end_cycle", {}))
     same = replace(new, attention=_CH7.attention, log=_CH7.log) == _CH7
     return (new.attention, same)
+
+
+# skills.md [OWNER]: specialized ranks up to the level are free and follow the level.
+# Level 5, bought ranks 0 -> effective rank 5. Target 6: one command, one paid rank: 10 * 6 = 60.
+@S.case("spec-target-rank", "skills.md [OWNER]: level 5, target 6 -> one command, 60", (60, 6, 940))
+def _spec():
+    from wp.core import skills as sk
+    ch = Character(level=5, skills=(sk.Skill("x", "int", sk.SPECIALIZED, 0),))
+    r = dispatch(ch, "buy_skill_rank", name="x", target=6)
+    return (r.info["cost"], r.state.skills[0].ranks, r.state.training)
+
+
+# At level 6 rank 6 is free (level covers it): nothing to buy; next rank 7 costs 70.
+@S.case("spec-level-up", "skills.md [OWNER]: at level 6 rank 6 is free; 7 costs 70", ("rejected", 6, 70))
+def _spec_lvl():
+    from wp.core import skills as sk
+    ch = Character(level=6, skills=(sk.Skill("x", "int", sk.SPECIALIZED, 0),))
+    eff = sk.effective_ranks(ch.skills[0], ch.level)
+    return (rejected(ch, "buy_skill_rank", name="x", target=6), eff,
+            dispatch(ch, "buy_skill_rank", name="x", target=7).info["cost"])
+
+
+# Normal skill with a target: ranks 0 -> 3 at level 3 = 20 + 40 + 60 = 120.
+@S.case("normal-target-rank", "skills.md: normal 0 -> 3 = 20 + 40 + 60", 120)
+def _norm():
+    from wp.core import skills as sk
+    ch = Character(level=3, skills=(sk.Skill("y", "int"),))
+    return dispatch(ch, "buy_skill_rank", name="y", target=3).info["cost"]
 
 
 # training.md Armor / shield grades.
@@ -100,21 +128,45 @@ S.case("languages-int3", "training.md Test: Int +3, natives 2 -> 50", 50)(
                          ("buy_language", {"lid": "b", "native": True})),
                      "buy_language", lid="c", native=True).info["cost"])
 
-# gear.md Enabled / disabled: 1 spirit until short rest, 5 until long rest.
-_SWORD = Item("sw", "sword", equipped=True, activation_cost=1, effects_off=(Effect("attack", 1),),
+# gear.md [OWNER]: two activation kinds, each with its own spirit price on the card:
+# "day" (until the end of the short rest) and "decade" (until the end of the long rest).
+_SWORD = Item("sw", "sword", equipped=True, activation_day=1, effects_off=(Effect("attack", 1),),
               effects_on=(Effect("attack", 5, "enhancement"),))
-_CLOAK = Item("cl", "cloak", equipped=True, activation_cost=5)
-_BASE = Character(abilities=ab(cha=14), spirit_current=15, items=(_SWORD, _CLOAK))
+_CLOAK = Item("cl", "cloak", equipped=True, activation_decade=5)
+_BOTH = Item("bt", "staff", equipped=True, activation_day=1, activation_decade=5)
+_NONE = Item("nn", "stone", equipped=True)
+_BASE = Character(abilities=ab(cha=14), spirit_current=15, items=(_SWORD, _CLOAK, _BOTH, _NONE))
 
 
-@S.case("activate-1", "gear.md: 1 spirit -> active until the end of the short rest", (14, True, "short", 5))
+# Only the day price is set -> it works: spirit 15 - 1 = 14, active until short rest, attack tab +5.
+@S.case("activate-day", "gear.md [OWNER]: one price set -> that one works (day, 1 spirit)", (14, True, "short", 5))
 def _act1():
     ch = run(_BASE, ("activate_item", {"iid": "sw"}))
     return (ch.spirit_current, ch.item("sw").activated, ch.item("sw").active_until, dv.total(ch, "attack"))
 
 
-@S.case("short-rest-off", "gear.md: short rest switches off 1-spirit items, keeps 5-spirit ones",
-        (False, True))
+S.case("activate-decade", "gear.md [OWNER]: only the decade price -> decade, 5 spirit", (10, "long"))(
+    lambda: (lambda ch: (ch.spirit_current, ch.item("cl").active_until))(run(_BASE, ("activate_item", {"iid": "cl"}))))
+S.case("both-prices-choose", "gear.md: both prices -> the player picks the kind", ((14, "short"), (10, "long")))(
+    lambda: tuple((lambda ch: (ch.spirit_current, ch.item("bt").active_until))(
+        run(_BASE, ("activate_item", {"iid": "bt", "kind": k}))) for k in ("day", "decade")))
+S.case("both-prices-no-kind", "gear.md: both prices and no choice -> asks to choose", "rejected")(
+    lambda: rejected(_BASE, "activate_item", iid="bt"))
+
+
+# Owner: no price for day nor decade -> not activatable: soft refusal, sheet unchanged.
+@S.case("no-price-soft-refusal", "gear.md [OWNER]: no price -> 'activation price not set', sheet unchanged",
+        ("activation price not set", True, False))
+def _none():
+    r = dispatch(_BASE, "activate_item", iid="nn")
+    return (r.info.get("refused"), r.state is _BASE, r.state.item("nn").activated)
+
+
+S.case("kind-without-price", "gear.md: asking for a kind whose price is not set -> soft refusal", "activation price not set")(
+    lambda: dispatch(_BASE, "activate_item", iid="sw", kind="decade").info.get("refused"))
+
+
+@S.case("short-rest-off", "gear.md: short rest switches off day items, keeps decade ones", (False, True))
 def _short():
     ch = run(_BASE, ("activate_item", {"iid": "sw"}), ("activate_item", {"iid": "cl"}), ("short_rest", {}))
     return (ch.item("sw").activated, ch.item("cl").activated)
@@ -131,25 +183,6 @@ S.case("activate-no-spirit", "gear.md: activation needs spirit", "rejected")(
 S.case("deactivate", "gear.md: player switches it off", (False, 1))(
     lambda: (lambda ch: (ch.item("sw").activated, dv.total(ch, "attack")))(
         run(_BASE, ("activate_item", {"iid": "sw"}), ("deactivate_item", {"iid": "sw"}))))
-# gear.md [OWNER]: card field "active until" (day / decade), spirit cost separate (Q14).
-_WAND = Item("wd", "wand", equipped=True, activation_cost=3, activation_until="short")
-_ORB = Item("ob", "orb", equipped=True, activation_cost=1, activation_until="long")
-_ROD = Item("rd", "rod", equipped=True, activation_cost=3)
-_FIELD = Character(abilities=ab(cha=14), spirit_current=15, items=(_WAND, _ORB, _ROD))
-
-S.case("field-x-day", "gear.md [OWNER]: X spirit with field 'day' -> off after short rest", (12, "short", False))(
-    lambda: (lambda a, b: (a.spirit_current, a.item("wd").active_until, b.item("wd").activated))(
-        run(_FIELD, ("activate_item", {"iid": "wd"})),
-        run(_FIELD, ("activate_item", {"iid": "wd"}), ("short_rest", {}))))
-S.case("field-overrides-default", "gear.md [OWNER]: 1 spirit but field 'decade' -> survives short rest", ("long", True))(
-    lambda: (lambda a, b: (a.item("ob").active_until, b.item("ob").activated))(
-        run(_FIELD, ("activate_item", {"iid": "ob"})),
-        run(_FIELD, ("activate_item", {"iid": "ob"}), ("short_rest", {}))))
-S.case("defaults", "gear.md [OWNER]: defaults 1 spirit -> day, 5 spirit -> decade", ("short", "long"))(
-    lambda: (lambda ch: (ch.item("sw").active_until, ch.item("cl").active_until))(
-        run(_BASE, ("activate_item", {"iid": "sw"}), ("activate_item", {"iid": "cl"}))))
-S.case("x-needs-field", "gear.md: X spirit without the field has no default", "rejected")(
-    lambda: rejected(_FIELD, "activate_item", iid="rd"))
 
 
 # End of combat.

@@ -38,30 +38,58 @@ class Ability:
         return self.score_max - self.damage
 
 
+WEAPON = "weapon"
+SHIELD = "shield"
+MISC = "misc"
+AMMO = "ammo"
+
+
 @dataclass(frozen=True)
 class Item:
     iid: str                           # stable id
     name: str
-    equipped: bool = False
+    kind: str = ""                     # WEAPON / SHIELD / MISC / AMMO / "" (worn gear, bag item)
+    equipped: bool = False             # worn on the doll (armor, ring, belt...)
+    in_hands: bool = False             # held in the hands slot (weapon, shield, special item)
+    hands: int = 0                     # hands needed in the hands slot: 0, 1 or 2 (gear.md)
     carried: bool = True               # False = left at the base (no weight)
     armor: int = 0                     # worn armor bonus
-    shield: int = 0
+    shield: int = 0                    # shield bonus to AC: only while in hands (gear.md)
     natural: int = 0
     max_dex: Optional[int] = None
+    skill_penalty: int = 0             # armor penalty to Str/Dex skills (gear.md "Armor"), e.g. -2
     weight_l: int = 0
+    count: int = 1                     # pieces (ammo: bolts...)
     effects_off: Tuple[Effect, ...] = ()   # tab "not activated" (D17)
     effects_on: Tuple[Effect, ...] = ()    # tab "activated" (D17)
     activated: bool = False
-    activation_cost: int = 0           # spirit to activate (0 = not activatable)
-    activation_until: str = ""         # card field "active until": "short" (day) / "long" (decade);
-                                       # "" = default by cost (1 -> short, 5 -> long)
-    active_until: str = ""             # state while activated: which rest switches it off
-    weapon_id: Optional[str] = None    # link to the weapon catalog (makes it a weapon)
-    grip: str = "one"                  # weapon hold: "one" (one hand), "off" (off-hand), "two" (two hands)
-    finesse: bool = False              # finesse weapon (Dex allowed with the Finesse feat)
-    attack_stat: str = ""              # forced attack stat (quirk/race effects); "" = default
-    durability: int = 0                # value typed by the author (base)
-    hp: int = 0
+    activation_day: int = 0            # spirit price for "day" (until the short rest); 0 = not set
+    activation_decade: int = 0         # spirit price for "decade" (until the long rest); 0 = not set
+    active_until: str = ""             # state while activated: "short" / "long"
+    # weapon card (owner's table)
+    groups: Tuple[str, ...] = ()       # weapon groups this weapon belongs to (any number)
+    required_level: int = 0            # qualification level (weapons.md)
+    finesse: bool = False              # finesse weapon (Dex with the Finesse feat)
+    price_sp: int = 0                  # price in silver (1 gp = 10 sp)
+    damage_small: str = ""             # dice, small size
+    damage_medium: str = ""            # dice, medium size
+    crit_range: int = 20               # lowest d20 that threatens
+    crit_mult: int = 2
+    range_ft: int = 0
+    dmg_type: str = ""                 # P / S / B
+    durability: int = 0                # hardness (HD) typed by the author (base)
+    hp: int = 0                        # item HP typed by the author (base)
+
+
+@dataclass(frozen=True)
+class AttackRecord:
+    """Attack record = weapon + chosen weapon group + grip + attack stat (owner)."""
+    rid: str                           # stable id
+    item: str                          # item iid, or "unarmed"
+    group: str                         # weapon group (mastery node id) giving the bonuses
+    grip: str = "one"                  # "one" / "off" / "two"
+    stat: str = ""                     # attack stat; "" = default (Str, Finesse rules)
+    primary: bool = False
 
 
 @dataclass(frozen=True)
@@ -143,6 +171,9 @@ class Character:
     weapons: Tuple[WeaponEntry, ...] = ()
     skills: Tuple[Skill, ...] = ()
     feats: Tuple[Feat, ...] = ()
+    attacks: Tuple[AttackRecord, ...] = ()
+    balance_cap_hits: int = 0          # hits this combat that lowered the balance cap (homerule)
+    ov: int = 0                        # time points (OV), no cap
     languages: Tuple[Language, ...] = ()
     shield_grade: str = "none"
     armor_grade: str = "none"

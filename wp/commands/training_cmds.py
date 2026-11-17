@@ -29,16 +29,23 @@ def buy_ability(ch, name="str", source=tr.TRAINING):
 
 
 @command
-def buy_skill_rank(ch, name="", source=tr.TRAINING):
+def buy_skill_rank(ch, name="", target=None, source=tr.TRAINING):
+    """Raise a skill to a TARGET rank (default: one above the current effective rank).
+    Specialized: ranks up to the level are free and follow the level automatically
+    (skills.md [OWNER]); only ranks above the level are paid, all in one command."""
     skills = list(ch.skills)
     i = next((k for k, s in enumerate(skills) if s.name == name), None)
     if i is None:
         raise CommandError("no skill %r" % (name,))
     s = skills[i]
-    cost = sk.rank_step_cost(s.tier, s.ranks + 1, ch.level)
-    skills[i] = replace(s, ranks=s.ranks + 1)
+    have = sk.effective_ranks(s, ch.level)
+    target = have + 1 if target is None else int(target)
+    if target <= have:
+        raise CommandError("%s already has rank %d" % (name, have))
+    cost = sk.ranks_cost(s.tier, have, target, ch.level)
+    skills[i] = replace(s, ranks=target)
     new = replace(ch, skills=tuple(skills), training=_pay(ch, cost, source))
-    return commit(new, "buy_skill_rank", "%s rank %d for %d" % (name, s.ranks + 1, cost), {"cost": cost})
+    return commit(new, "buy_skill_rank", "%s rank %d -> %d for %d" % (name, have, target, cost), {"cost": cost})
 
 
 @command
@@ -46,6 +53,8 @@ def buy_weapon_grade(ch, wid="", source=tr.TRAINING):
     catalog = ch.weapon_catalog()
     if wid not in catalog:
         raise CommandError("no weapon %r" % (wid,))
+    if catalog[wid].basic:
+        raise CommandError("group Basic/simple cannot be trained")
     if wpn.level(catalog, wid) >= wpn.MAX_LEVEL:
         raise CommandError("weapon already at level 12")
     cost = wpn.grade_cost(catalog, wid)

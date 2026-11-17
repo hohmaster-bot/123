@@ -1,12 +1,14 @@
-"""Attack and damage breakdown vs RULES/combat.md, weapons.md, defense.md.
+"""Attack records, weapon groups, hands (RULES/combat.md, weapons.md, defense.md, gear.md).
 Run: python Wp_claude/tests/model/test_attack.py
 
-Every expected number is worked out line by line in a comment, so the owner can
-check it by hand. Shared sample hero (unless a test says otherwise):
-  level 5, BAB 5, Str 16 (mod +3), Dex 18 (mod +4), in combat.
-  Longsword in one hand: weapon node "longsword" (6 bought grades -> level 6),
-  parent group "heavy_blades"; mastery picks: slot 5 "attack +1", slot 6 "crit +1".
-  The sword item: tab "not activated" gives +1 enhancement to attack and damage.
+Every expected number is worked out in a comment. Shared sample hero:
+  level 5, BAB 5, Str 16 (+3), Dex 18 (+4), Con 10 (+0), in combat.
+  Longsword (1 hand) in the hands, groups: long_swords and heavy_blades.
+  Its tab "not activated": +1 enhancement to attack and damage.
+  Groups (mastery nodes):
+    heavy_blades: level 8, picks 5 attack +1, 6 balance regen +1, 7 parry +1, 8 damage +3
+    long_swords:  level 6, parent heavy_blades, picks 5 attack +1, 6 crit +1
+  Records: "ls" = longsword + long_swords, one hand; "hb" = longsword + heavy_blades, one hand.
 """
 import os
 import sys
@@ -24,7 +26,8 @@ from wp.core.effects import Effect, Status  # noqa: E402
 from wp.core.pain import PainEntry, PainProfile  # noqa: E402
 from wp.core.weapons import Pick, Weapon  # noqa: E402
 from wp.model import attack_view as av  # noqa: E402
-from wp.model.character import Ability, Character, Feat, Item, WeaponEntry  # noqa: E402
+from wp.model import derived_view as dv  # noqa: E402
+from wp.model.character import Ability, AttackRecord, Character, Feat, Item, WeaponEntry  # noqa: E402
 
 S = Suite("test_attack")
 
@@ -36,215 +39,232 @@ def abil(**scores):
     return a
 
 
-SWORD = Item("i-sword", "longsword", equipped=True, weapon_id="longsword", grip="one",
+SWORD = Item("sw", "longsword", kind="weapon", hands=1, in_hands=True, groups=("long_swords", "heavy_blades"),
              effects_off=(Effect(bo.ATTACK, 1, bo.ENHANCEMENT), Effect(bo.DAMAGE, 1, bo.ENHANCEMENT)))
-WEAPONS = (WeaponEntry(Weapon("heavy_blades", 3, 1), "heavy blades"),
-           WeaponEntry(Weapon("longsword", 2, 1, grades=6, parents=("heavy_blades",)), "long swords",
-                       (Pick(5, "attack_1"), Pick(6, "crit_1"))))
+HB = WeaponEntry(Weapon("heavy_blades", 3, 1, grades=8), "heavy blades",
+                 (Pick(5, "attack_1"), Pick(6, "balance_regen_1"), Pick(7, "parry_1"), Pick(8, "damage_3")))
+LS = WeaponEntry(Weapon("long_swords", 2, 1, grades=6, parents=("heavy_blades",)), "long swords",
+                 (Pick(5, "attack_1"), Pick(6, "crit_1")))
+R_LS = AttackRecord("ls", "sw", "long_swords", "one")
+R_HB = AttackRecord("hb", "sw", "heavy_blades", "one")
 
 
 def hero(**kw):
     base = dict(level=5, bab=5, abilities=abil(str=16, dex=18), in_combat=True,
-                items=(SWORD,), weapons=WEAPONS)
+                items=(SWORD,), weapons=(HB, LS), attacks=(R_LS,))
     base.update(kw)
     return Character(**base)
 
 
-# ---------------------------------------------------------------- to hit
-
-# BAB 5
-# + Str mod +3              (default attack stat is Str)
-# + proficiency +1           (mastery pick "attack +1" on the longsword node)
-# + enhancement +1           (the sword's own tab)
-# = 10                       (out of combat? no: in combat, but morale scale 0 -> +0)
-S.case("to-hit-basic", "combat.md / weapons.md: BAB + Str + proficiency + enhancement", 10)(
-    lambda: av.attack(hero(), SWORD).to_hit)
+def view(ch, rid):
+    return av.by_record(ch, rid)
 
 
-# Same + group bonus: status "Blade style" +1 competence to attacks with group heavy_blades.
-# Sword (in heavy_blades): 10 + competence 1 = 11.
-# Axe (not in the group, no mastery, no tab): BAB 5 + Str 3 = 8 (no competence).
-@S.case("to-hit-group", "weapons.md: group bonus counts only for a weapon of that group", (11, 8))
-def _group():
-    st = Status("Blade style", effects=(Effect(bo.ATTACK, 1, "competence", weapon="heavy_blades"),))
-    axe = Item("i-axe", "axe", equipped=True, weapon_id="axe")
-    ch = hero(statuses=(st,), items=(SWORD, axe), weapons=WEAPONS + (WeaponEntry(Weapon("axe")),))
-    return (av.attack(ch, SWORD).to_hit, av.attack(ch, axe).to_hit)
+def rejected(fn):
+    try:
+        fn()
+    except (CommandError, ValueError, KeyError):
+        return "rejected"
+    return "allowed"
 
 
-# Morale scale 4 in combat -> trunc(4/2) = +2 morale; pain: one entry of 1 -> -1.
-# 10 + morale 2 - pain 1 = 11
-S.case("to-hit-morale-pain", "defense.md morale + resources.md pain", 11)(
-    lambda: av.attack(hero(morale_scale=4, pain=(PainEntry(1, "overflow"),)), SWORD).to_hit)
+# ---------------------------------------------------------- records and groups
 
-# Morale counts only in combat: out of combat morale 0 -> 10.
-S.case("morale-out-of-combat", "defense.md: morale only while combat is active", 10)(
-    lambda: av.attack(hero(morale_scale=4, in_combat=False), SWORD).to_hit)
-
-# Pain profile "pain gives no penalties": pain 3 -> 0. To hit stays 10.
-S.case("pain-no-penalty", "resources.md: 'pain gives no penalties' race", 10)(
-    lambda: av.attack(hero(pain=(PainEntry(3),), pain_profile=PainProfile(no_penalty=True)), SWORD).to_hit)
+# Record "ls": BAB 5 + Str 3 + proficiency 1 (long_swords "attack +1") + enhancement 1 = 10.
+# Damage: Str 3 (one hand) + enhancement 1 = 4. Parry: long_swords has no parry pick -> 0.
+S.case("record-ls", "weapons.md: record = weapon + one group", (10, 4, 0))(
+    lambda: (lambda v: (v.to_hit, v.damage, v.parry))(view(hero(), "ls")))
 
 
-# defense.md Example [OWNER]: morale +1 on everything (scale 2 -> trunc(2/2) = 1) and a spell
-# morale penalty -2 on attacks. Same type morale: +1 vs -2 -> the larger absolute value wins: -2.
-# To hit: 10 + morale(-2) = 8.   Damage: Str 3 + enhancement 1 + morale(+1) = 5.
-@S.case("morale-same-type", "defense.md Example [OWNER]: attacks -2, damage +1", (8, 5))
-def _morale_type():
-    spell = Status("bane", effects=(Effect(bo.ATTACK, -2, bo.MORALE),))
-    v = av.attack(hero(morale_scale=2, statuses=(spell,)), SWORD)
+# One weapon, two records, two groups -> different bonuses.
+# Record "hb": BAB 5 + Str 3 + proficiency 1 (heavy_blades) + enhancement 1 = 10 to hit;
+# damage Str 3 + enhancement 1 + mastery damage 3 = 7; parry 1 (heavy_blades "parry +1").
+@S.case("one-weapon-two-groups", "owner: one weapon with two records gives different bonuses", ((10, 4, 0), (10, 7, 1)))
+def _two_groups():
+    ch = hero(attacks=(R_LS, R_HB))
+    return tuple((v.to_hit, v.damage, v.parry) for v in (view(ch, "ls"), view(ch, "hb")))
+
+
+# No bonuses from two groups at once: both groups have "attack +1" (proficiency adds with itself!),
+# yet record "ls" stays at 10 (not 11) and gets no damage +3 from heavy_blades.
+S.case("no-two-groups", "owner: bonuses come only from the ONE chosen group", (10, 4))(
+    lambda: (lambda v: (v.to_hit, v.damage))(view(hero(attacks=(R_LS, R_HB)), "ls")))
+
+
+# Parent group adds no bonuses: heavy_blades is the parent of long_swords. A status +1 competence
+# to attacks with heavy_blades counts for record "hb" (11) but NOT for record "ls" (10).
+@S.case("parent-no-bonus", "owner: parent group bonuses are not added", (10, 11))
+def _parent():
+    st = Status("style", effects=(Effect(bo.ATTACK, 1, "competence", weapon="heavy_blades"),))
+    ch = hero(attacks=(R_LS, R_HB), statuses=(st,))
+    return (view(ch, "ls").to_hit, view(ch, "hb").to_hit)
+
+
+# Two weapons in the hands, each with its own record and group:
+# sword (long_swords) one hand -> 10; dagger (basic_simple) off-hand: BAB 5 + Str 3 = 8 to hit,
+# damage Str 3 * 0.5 = 1.5 -> 1 (no tab, no mastery).
+@S.case("two-weapons", "owner: two weapons in the hands, each with its own record", ((10, 4), (8, 1)))
+def _two_weapons():
+    dagger = Item("dg", "dagger", kind="weapon", hands=1, in_hands=True, groups=("basic_simple",))
+    ch = hero(items=(SWORD, dagger), attacks=(R_LS, AttackRecord("dg", "dg", "basic_simple", "off")))
+    return tuple((v.to_hit, v.damage) for v in (view(ch, "ls"), view(ch, "dg")))
+
+
+# Attacks only for weapons in the hands, plus unarmed always.
+S.case("visible-in-hands", "owner: attacks only for weapons in the hands + unarmed always",
+       (("ls", "unarmed"), ("unarmed",)))(
+    lambda: (tuple(v.record for v in av.all_attacks(hero())),
+             tuple(v.record for v in av.all_attacks(hero(items=(replace(SWORD, in_hands=False),))))))
+
+
+# Basic/simple: no qualification. Dagger needs level 3. In basic_simple: no penalty -> 8.
+# The same dagger in a normal group "knives" at level 0 (3 below) -> -4 -> 4.
+@S.case("basic-no-penalty", "owner: Basic/simple has no -4/-2 qualification penalty", (8, 4))
+def _basic():
+    dagger = Item("dg", "dagger", kind="weapon", hands=1, in_hands=True, groups=("basic_simple", "knives"),
+                  required_level=3)
+    ch = hero(items=(dagger,), weapons=(HB, LS, WeaponEntry(Weapon("knives"))),
+              attacks=(AttackRecord("b", "dg", "basic_simple"), AttackRecord("k", "dg", "knives")))
+    return (view(ch, "b").to_hit, view(ch, "k").to_hit)
+
+
+S.case("basic-untrainable", "owner: Basic/simple cannot be trained", "rejected")(
+    lambda: rejected(lambda: dispatch(hero(weapons=(WeaponEntry(Weapon("basic_simple", basic=True)),)),
+                                      "buy_weapon_grade", wid="basic_simple")))
+
+
+# Qualification in a normal group: long_swords level 6; sword needs 7 -> -2: 10 - 2 = 8.
+S.case("qualification", "weapons.md: -2 one level below", 8)(
+    lambda: view(hero(items=(replace(SWORD, required_level=7),)), "ls").to_hit)
+
+
+# -------------------------------------------------------------- primary records
+
+# Balance regen: level 5 + Con 0 = 5. Primary "hb" (heavy_blades has balance regen +1) -> 6.
+# Primary "ls" (no such pick) -> 5.
+@S.case("regen-from-primary", "owner: passive group bonus (regen +1) from the primary record", (6, 5))
+def _regen():
+    a = hero(attacks=(replace(R_HB, primary=True), R_LS))
+    b = hero(attacks=(R_HB, replace(R_LS, primary=True)))
+    return (dv.balance_regen(a), dv.balance_regen(b))
+
+
+S.case("single-record-primary", "owner: a single record is primary automatically", 6)(
+    lambda: dv.balance_regen(hero(attacks=(R_HB,))))
+
+
+@S.case("max-two-primary", "owner: at most two primary records", "rejected")
+def _max2():
+    ch = hero(attacks=(R_LS, R_HB, AttackRecord("x", "sw", "long_swords", "two")))
+    for rid in ("ls", "hb"):
+        ch = dispatch(ch, "set_primary_attack", rid=rid).state
+    return rejected(lambda: dispatch(ch, "set_primary_attack", rid="x"))
+
+
+# Unarmed combat works always, even armed: its "balance regen +1" -> 5 + 1 = 6 with the sword record "ls".
+@S.case("unarmed-always-works", "owner: Unarmed combat bonuses work even when armed", 6)
+def _unarmed():
+    uc = WeaponEntry(Weapon("unarmed_combat", 1, 1, grades=6, parents=("contact",)), "",
+                     (Pick(5, "attack_1"), Pick(6, "balance_regen_1")))
+    return dv.balance_regen(hero(weapons=(HB, LS, uc)))
+
+
+# Unarmed attack (always listed): BAB 5 + Str 3 + Unarmed combat "attack +1" = 9; damage Str 3.
+@S.case("unarmed-attack", "owner: unarmed record uses Unarmed combat", (9, 3))
+def _unarmed_atk():
+    uc = WeaponEntry(Weapon("unarmed_combat", 1, 1, grades=5, parents=("contact",)), "", (Pick(5, "attack_1"),))
+    v = view(hero(weapons=(HB, LS, uc)), "unarmed")
     return (v.to_hit, v.damage)
 
 
-# defense.md Example [OWNER]: heroism +4 morale on attacks, morale scale -2 (-> -1 on everything).
-# To hit: +4 vs -1 -> +4: 10 + 4 = 14.   Damage: Str 3 + enhancement 1 + morale(-1) = 3.
-@S.case("heroism", "defense.md Example [OWNER]: attacks +4, damage -1", (14, 3))
-def _heroism():
-    h = Status("heroism", effects=(Effect(bo.ATTACK, 4, bo.MORALE),))
-    v = av.attack(hero(morale_scale=-2, statuses=(h,)), SWORD)
+# ---------------------------------------------------- morale, pain, stats, grip
+
+# Morale scale 4 -> +2; pain 1 -> -1: 10 + 2 - 1 = 11.
+S.case("morale-pain", "defense.md + resources.md", 11)(
+    lambda: view(hero(morale_scale=4, pain=(PainEntry(1),)), "ls").to_hit)
+S.case("morale-out-of-combat", "defense.md: morale only in combat", 10)(
+    lambda: view(hero(morale_scale=4, in_combat=False), "ls").to_hit)
+S.case("pain-no-penalty", "resources.md: 'pain gives no penalties'", 10)(
+    lambda: view(hero(pain=(PainEntry(3),), pain_profile=PainProfile(no_penalty=True)), "ls").to_hit)
+
+
+# defense.md Example [OWNER]: morale +1 (scale 2) and a spell morale -2 on attacks:
+# attack -2 wins -> 10 - 2 = 8; damage keeps +1 -> 4 + 1 = 5.
+@S.case("morale-same-type", "defense.md Example [OWNER]", (8, 5))
+def _mt():
+    v = view(hero(morale_scale=2, statuses=(Status("bane", effects=(Effect(bo.ATTACK, -2, bo.MORALE),)),)), "ls")
     return (v.to_hit, v.damage)
 
 
-# Enhancement +1 on the sword and "magic weapon" status +1 enhancement -> +1, not +2 (defense.md Example).
-# To hit stays 10.
-S.case("enchant-not-stack", "defense.md Example: +1 sword + magic weapon +1 -> +1", 10)(
-    lambda: av.attack(hero(statuses=(Status("magic weapon", effects=(Effect(bo.ATTACK, 1, bo.ENHANCEMENT),)),)),
-                      SWORD).to_hit)
-
-
-# Another equipped weapon's own +2 enhancement does NOT leak into the longsword attack: stays 10.
-@S.case("other-weapon-no-leak", "attack: one weapon's bonuses stay with that weapon", 10)
-def _leak():
-    dagger = Item("i-dag", "dagger", equipped=True, weapon_id="dagger", grip="off",
-                  effects_off=(Effect(bo.ATTACK, 2, bo.ENHANCEMENT),))
-    return av.attack(hero(items=(SWORD, dagger), weapons=WEAPONS + (WeaponEntry(Weapon("dagger")),)),
-                     SWORD).to_hit
-
-
-# weapons.md qualification: the longsword node needs level 7, the hero has level 6 -> one below -> -2.
-# 10 - 2 = 8.   Needs 8 (two below) -> -4: 10 - 4 = 6.
-@S.case("qualification", "weapons.md: -2 one level below, -4 further below", (8, 6))
-def _qual():
-    def need(n):
-        w = (WEAPONS[0], WeaponEntry(Weapon("longsword", 2, 1, grades=6, parents=("heavy_blades",),
-                                            required_level=n), "long swords", WEAPONS[1].picks))
-        return av.attack(hero(weapons=w), SWORD).to_hit
-    return (need(7), need(8))
-
-
-# Finesse: a rapier (finesse weapon) with the "Finesse training" feat uses the better of Str/Dex.
-# Rapier has no mastery and no tab bonus: BAB 5 + Dex 4 = 9.  Without the feat: BAB 5 + Str 3 = 8.
-@S.case("finesse", "combat.md + feat Finesse training: better of Str/Dex", ((9, "dex"), (8, "str")))
-def _finesse():
-    rapier = Item("i-rap", "rapier", equipped=True, weapon_id="rapier", finesse=True)
-    w = WEAPONS + (WeaponEntry(Weapon("rapier")),)
-    feat = Feat("finesse_training", flags=(fc.FINESSE,))
-    a = av.attack(hero(items=(rapier,), weapons=w, feats=(feat,)), rapier)
-    b = av.attack(hero(items=(rapier,), weapons=w), rapier)
+# Finesse: rapier + Finesse training -> better of Str 3 / Dex 4 = Dex: 5 + 4 = 9; without the feat: 5 + 3 = 8.
+@S.case("finesse", "combat.md + Finesse training", ((9, "dex"), (8, "str")))
+def _fin():
+    rapier = Item("rp", "rapier", kind="weapon", hands=1, in_hands=True, finesse=True, groups=("rapiers",))
+    rec = AttackRecord("rp", "rp", "rapiers")
+    a = view(hero(items=(rapier,), attacks=(rec,), feats=(Feat("finesse_training", flags=(fc.FINESSE,)),)), "rp")
+    b = view(hero(items=(rapier,), attacks=(rec,)), "rp")
     return ((a.to_hit, a.stat), (b.to_hit, b.stat))
 
 
-# Any stat may be chosen for a special attack (quirk/race): Wis 14 (+2): BAB 5 + Wis 2 + prof 1 + ench 1 = 9.
-S.case("chosen-stat", "combat.md: attack stat can be chosen (quirk/race effects)", (9, "wis"))(
-    lambda: (lambda v: (v.to_hit, v.stat))(
-        av.attack(hero(abilities=abil(str=16, dex=18, wis=14)), SWORD, stat="wis")))
+# Chosen stat (quirk/race): Wis 14 (+2): 5 + 2 + 1 + 1 = 9.
+S.case("chosen-stat", "combat.md: attack stat chosen on the record", (9, "wis"))(
+    lambda: (lambda v: (v.to_hit, v.stat))(view(hero(abilities=abil(str=16, dex=18, wis=14),
+                                                     attacks=(replace(R_LS, stat="wis"),)), "ls")))
 
 
-# Unarmed (nothing in hand): BAB 5 + Str 3 = 8; damage Str 3 (one hand factor 1x).
-@S.case("unarmed", "combat.md: unarmed attack uses BAB + Str", ("unarmed", 8, 3))
-def _unarmed():
-    v = av.all_attacks(hero(items=()))[0]
-    return (v.weapon, v.to_hit, v.damage)
-
-
-# Owner: unarmed combat is always available. Sword in hand -> two attacks: the sword and unarmed.
-# Sword: to hit 10 (see to-hit-basic). Unarmed: BAB 5 + Str 3 = 8.
-S.case("unarmed-always", "owner: unarmed attack is always listed next to weapons in hand",
-       (("i-sword", 10), ("unarmed", 8)))(
-    lambda: tuple((v.weapon, v.to_hit) for v in av.all_attacks(hero())))
-
-
-# ---------------------------------------------------------------- damage
-
-# One hand: Str +3 x1 = 3, + enhancement 1 = 4.
-S.case("damage-one-hand", "owner: one hand 1x Str", 4)(lambda: av.attack(hero(), SWORD).damage)
-
-# Str to damage by grip, owner examples: mod +3 two hands: 3 * 1.5 = 4.5 -> round down 4;
-# off-hand: 3 * 0.5 = 1.5 -> 1; one hand: 3.
-S.case("str-grip-positive", "owner: +3 -> two hands 4, off-hand 1, one hand 3", (4, 1, 3))(
-    lambda: (av.str_damage(3, "two"), av.str_damage(3, "off"), av.str_damage(3, "one")))
-
-# Negative mod is not multiplied: -2 with any grip -> -2.
-S.case("str-grip-negative", "owner: -2 with any grip -> -2", (-2, -2, -2))(
-    lambda: (av.str_damage(-2, "two"), av.str_damage(-2, "off"), av.str_damage(-2, "one")))
-
-# Odd mods round down: +1 two hands 1.5 -> 1; +1 off-hand 0.5 -> 0; +5 two hands 7.5 -> 7.
-S.case("str-grip-round-down", "owner: positive bonus rounds DOWN", (1, 0, 7))(
-    lambda: (av.str_damage(1, "two"), av.str_damage(1, "off"), av.str_damage(5, "two")))
-
-
-# Two-handed greatsword, Str 16 (+3): Str 4 (4.5 down) + no tab = 4.
-@S.case("damage-two-hands", "owner: two hands 1.5x Str, round down", 4)
-def _two():
-    gs = Item("i-gs", "greatsword", equipped=True, weapon_id="greatsword", grip="two")
-    return av.attack(hero(items=(gs,), weapons=WEAPONS + (WeaponEntry(Weapon("greatsword")),)), gs).damage
-
-
-# Str 6 (mod -2) with the sword in one hand: damage = -2 + enhancement 1 = -1; to hit = 5 - 2 + 1 + 1 = 5.
-S.case("damage-negative-str", "owner: negative Str applied once", (-1, 5))(
-    lambda: (lambda v: (v.damage, v.to_hit))(av.attack(hero(abilities=abil(str=6, dex=18)), SWORD)))
-
-
-# Mastery "damage +3" (expert pick) on the node, level 8 with 3 specialist picks:
-# damage = Str 3 + enhancement 1 + mastery 3 = 7.
-@S.case("damage-mastery", "weapons.md: mastery damage +3 as flat", 7)
-def _mastery_dmg():
-    picks = (Pick(5, "attack_1"), Pick(6, "crit_1"), Pick(7, "parry_1"), Pick(8, "damage_3"))
-    w = (WEAPONS[0], WeaponEntry(Weapon("longsword", 2, 1, grades=8, parents=("heavy_blades",)),
-                                 "long swords", picks))
-    return av.attack(hero(weapons=w), SWORD).damage
-
-
-# Pain on damage too: pain 2 -> damage 4 - 2 = 2 (pain hits damage rolls, resources.md).
-S.case("damage-pain", "resources.md: pain -1 per pain on damage", 2)(
-    lambda: av.attack(hero(pain=(PainEntry(2),)), SWORD).damage)
-
-
-# Group bonus to damage: status +2 flat damage with heavy_blades -> 4 + 2 = 6.
-S.case("damage-group", "weapons.md: group bonus to damage", 6)(
-    lambda: av.attack(hero(statuses=(Status("style", effects=(Effect(bo.DAMAGE, 2, weapon="heavy_blades"),)),)),
-                      SWORD).damage)
-
-# --------------------------------------------------------- shape and hint
-
-S.case("lines-sum", "attack view: lines add up to the totals", True)(
-    lambda: (lambda v: sum(x.value for x in v.to_hit_lines) == v.to_hit
-             and sum(x.value for x in v.damage_lines) == v.damage)(
-        av.attack(hero(morale_scale=4, pain=(PainEntry(1),)), SWORD)))
-S.case("crit-hint", "combat.md: tooltip only: x2 +0, x3 +4, x4 +8", ("+0", "+4", "+8"))(
+S.case("str-grip", "owner: +3 -> two hands 4, off 1, one 3; -2 any grip -2",
+       ((4, 1, 3), (-2, -2, -2)))(
+    lambda: (tuple(av.str_damage(3, g) for g in ("two", "off", "one")),
+             tuple(av.str_damage(-2, g) for g in ("two", "off", "one"))))
+S.case("crit-hint", "combat.md: tooltip x2 +0, x3 +4, x4 +8", ("+0", "+4", "+8"))(
     lambda: tuple(av.crit_hint(m) for m in (2, 3, 4)))
 
 
-# Feat catalog: Finesse training is data, costs 200 from training; race source is free.
-@S.case("feat-catalog", "training.md: feat from catalog, 200; only training spends",
-        ("finesse_training", ("finesse",), 800, 1000))
-def _feat():
-    cat = fc.load_default()
-    t = cat.get("finesse_training")
-    a = dispatch(Character(), "add_feat", catalog=cat, fid="finesse_training").state
-    b = dispatch(Character(), "add_feat", catalog=cat, fid="finesse_training", source="race").state
-    return (t.fid, t.flags, a.training, b.training)
+# Another weapon's own +2 enhancement does not leak into record "ls": stays 10.
+@S.case("other-weapon-no-leak", "a weapon's own bonuses stay with that weapon", 10)
+def _leak():
+    dagger = Item("dg", "dagger", kind="weapon", hands=1, in_hands=True, groups=("basic_simple",),
+                  effects_off=(Effect(bo.ATTACK, 2, bo.ENHANCEMENT),))
+    return view(hero(items=(SWORD, dagger)), "ls").to_hit
 
 
-@S.case("feat-twice", "a feat can be taken only once", "rejected")
-def _twice():
-    cat = fc.load_default()
-    ch = dispatch(Character(), "add_feat", catalog=cat, fid="finesse_training").state
-    try:
-        dispatch(ch, "add_feat", catalog=cat, fid="finesse_training")
-    except CommandError:
-        return "rejected"
-    return "allowed"
+S.case("lines-sum", "attack view: lines add up", True)(
+    lambda: (lambda v: sum(x.value for x in v.to_hit_lines) == v.to_hit
+             and sum(x.value for x in v.damage_lines) == v.damage)(
+        view(hero(morale_scale=4, pain=(PainEntry(1),), attacks=(R_HB,)), "hb")))
+
+
+# ------------------------------------------------------------- hands (gear.md)
+
+SHIELD = Item("sh", "shield", kind="shield", hands=1, shield=2)
+GREAT = Item("gs", "greatsword", kind="weapon", hands=2, groups=("heavy_blades",))
+SWORD_FREE = replace(SWORD, in_hands=False)
+
+
+def equip(ch, *iids):
+    for iid in iids:
+        ch = dispatch(ch, "equip_hands", iid=iid).state
+    return ch
+
+
+# Shield + sword: AC front 10 + Dex 4 + shield 2 = 16; one sword record + unarmed.
+@S.case("shield-and-sword", "gear.md [OWNER]: shield + weapon; shield counts in hand", (16, ("ls", "unarmed")))
+def _shield_sword():
+    ch = equip(hero(items=(SWORD_FREE, SHIELD)), "sw", "sh")
+    return (dv.ac(ch), tuple(v.record for v in av.all_attacks(ch)))
+
+
+S.case("two-one-handed", "gear.md: two one-handed weapons", 2)(
+    lambda: dv.hands_used(equip(hero(items=(SWORD_FREE, replace(SWORD_FREE, iid="sw2"))), "sw", "sw2")))
+S.case("two-handed-and-shield", "gear.md [OWNER]: two-handed weapon and shield together -> rejected", "rejected")(
+    lambda: rejected(lambda: equip(hero(items=(GREAT, SHIELD)), "gs", "sh")))
+# Shield in the bag (not in a hand): AC 10 + Dex 4 = 14, no shield bonus.
+S.case("shield-in-bag", "gear.md [OWNER]: shield in the bag gives no AC", 14)(
+    lambda: dv.ac(hero(items=(SWORD, SHIELD))))
+S.case("two-handed-grip", "a two-handed weapon needs grip two", "rejected")(
+    lambda: rejected(lambda: dispatch(hero(items=(GREAT,)), "add_attack", iid="gs", group="heavy_blades", grip="one")))
+S.case("group-must-match", "a record's group must be one of the weapon's groups", "rejected")(
+    lambda: rejected(lambda: dispatch(hero(), "add_attack", iid="sw", group="axes")))
 
 
 if __name__ == "__main__":

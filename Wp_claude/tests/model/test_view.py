@@ -44,6 +44,23 @@ S.case("stat-current", "stats.md Tests: Str 18/18, drain 1 -> 17; permanent 1 ->
        (17, 17, 18))(lambda: (dv.ability_current(Character(abilities=ab(str=Ability(18, damage=1))), "str"),
                               Ability(18, permanent=1).score_max, Ability(16, race=2).score_max))
 
+# stats.md Tests [OWNER, corrected]: Str 18, damage 3 (current 15), permanent damage 1 -> 14/17.
+# max = 18 - 1 = 17; current = 17 - 3 = 14.
+S.case("stat-permanent-on-damaged", "stats.md [OWNER]: 15/18 + permanent 1 -> 14/17", (14, 17))(
+    lambda: (lambda a: (a.current, a.score_max))(Ability(18, damage=3, permanent=1)))
+
+# gear.md "Armor": skill penalty on Str/Dex skills. Worn mail with skill penalty -2, Dex 14 (+2), Int 14 (+2):
+# stealth (Dex, penalty applies) = ranks 0 + Dex 2 - 2 = 0; arcana (Int, no penalty) = 0 + 2 = 2.
+@S.case("armor-skill-penalty", "gear.md Armor: skill penalty to Str/Dex skills only", (0, 2, 2))
+def _penalty():
+    from wp.catalog import skills_catalog as sc
+    cat = sc.load_default()
+    mail = Item("m", "mail", equipped=True, armor=4, skill_penalty=-2)
+    ch = Character(abilities=ab(dex=14, int=14), items=(mail,),
+                   skills=(sc.make_skill(cat, "stealth"), sc.make_skill(cat, "know_magic")))
+    no_armor = Character(abilities=ab(dex=14, int=14), skills=ch.skills)
+    return (dv.skill_bonus(ch, "stealth"), dv.skill_bonus(ch, "know_magic"), dv.skill_bonus(no_armor, "stealth"))
+
 # gear.md Weight: Str +2 -> light to 7.9 B (79 L).
 S.case("load", "gear.md Weight Example: Str +2 -> 79 L light, 80 L heavy", ("light", "heavy"))(
     lambda: tuple(dv.load_status(Character(abilities=ab(str=14), items=(Item("b", "bag", weight_l=w),)))
@@ -60,7 +77,7 @@ S.case("morale", "defense.md: morale scale 4 -> +2 in combat, 0 out of combat", 
 
 # defense.md AC: armor item, Dex, flat-footed.
 _ARMORED = Character(abilities=ab(dex=16), items=(Item("a", "mail", equipped=True, armor=4, max_dex=2),
-                                                  Item("s", "shield", equipped=True, shield=2)))
+                                                  Item("s", "shield", kind="shield", in_hands=True, hands=1, shield=2)))
 S.case("ac", "defense.md: front 10+2(max dex)+4+2, flat-footed no Dex/shield, touch", (18, 14, 12))(
     lambda: (dv.ac(_ARMORED), dv.ac(_ARMORED, "flat_footed"), dv.ac(_ARMORED, "touch")))
 
@@ -91,10 +108,14 @@ S.case("weapon-level", "weapons.md Example: basics on sword, variety, group -> 4
     lambda: dv.weapon_level(Character(weapons=(
         WeaponEntry(Weapon("g", 3, 1, basics=True)), WeaponEntry(Weapon("v", 2, 1, basics=True, parents=("g",))),
         WeaponEntry(Weapon("s", 1, 1, basics=True, parents=("v",))))), "s"))
-S.case("mastery-parry", "weapons.md [OWNER]: mastery parry +1 enters AC parry mode (front 10, parry 11)",
-       (10, 11))(
+# weapons.md / owner: "Unarmed combat" bonuses always work, even when armed: parry +1 there -> AC parry 11.
+S.case("unarmed-combat-parry", "owner: Unarmed combat parry +1 works always (front 10, parry 11)", (10, 11))(
     lambda: (lambda ch: (dv.ac(ch), dv.ac(ch, "parry")))(
-        Character(weapons=(WeaponEntry(Weapon("s", grades=5), picks=(Pick(5, "parry_1"),)),))))
+        Character(weapons=(WeaponEntry(Weapon("unarmed_combat", grades=5), picks=(Pick(5, "parry_1"),)),))))
+# A group's parry from a weapon NOT in the hands gives nothing (no attack record visible): parry 10.
+S.case("group-parry-not-held", "owner: group bonuses only through a primary attack record", 10)(
+    lambda: dv.ac(Character(items=(Item("sw", "sword", kind="weapon", hands=1, groups=("blades",)),),
+                            weapons=(WeaponEntry(Weapon("blades", grades=5), picks=(Pick(5, "parry_1"),)),)), "parry"))
 
 if __name__ == "__main__":
     sys.exit(S.run())

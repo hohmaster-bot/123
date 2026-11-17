@@ -23,7 +23,8 @@ from wp.core.rest import Charge
 from wp.core.skills import Skill
 from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
-from wp.model.character import Ability, Character, Feat, Item, Language, LogEntry, WeaponEntry
+from wp.model.character import (Ability, AttackRecord, Character, Feat, Item, Language, LogEntry,
+                                WeaponEntry)
 
 FORMAT = "wipefinder.character"
 VERSION = 1
@@ -32,7 +33,8 @@ BAK_SUFFIX = ".bak"
 
 _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,
-    NegativeTraits, Pick, Weapon, Ability, Character, Feat, Item, Language, LogEntry, WeaponEntry)}
+    NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry,
+    WeaponEntry)}
 
 
 class StorageError(Exception):

@@ -69,6 +69,7 @@ class Status:
     charges: Optional[Pool] = None     # None = no charges
     temp_hp_stacks: bool = False
     ignores_iterative: bool = False
+    lowers_balance_cap: bool = False   # DoT flag: its hits lower the balance cap in combat
     active: bool = True
     source: str = ""
 

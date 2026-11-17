@@ -109,11 +109,10 @@ def restore_stat(stat, n=1):
 
 
 def permanent_stat_damage(stat, n=1):
-    """Permanent damage (curse/injury) lowers MAX; current = min(current, new max)."""
+    """Permanent damage (curse/injury) lowers MAX and CURRENT by n (stats.md [OWNER, corrected])."""
     if n < 0:
         raise ValueError("n must be >= 0")
-    new_max = stat.max - n
-    return Pool(current=min(stat.current, new_max), max=new_max)
+    return Pool(current=stat.current - n, max=stat.max - n)
 
 
 def stat_damaged(stat):

@@ -1,0 +1,17 @@
+{
+ "format": "wipefinder.weapons",
+ "version": 1,
+ "note": "Weapon stats (price, damage, crit, range, weight, type, hands, hardness, HP) must come from the owner's table; fields left empty here are NOT rules.",
+ "groups": [
+  {"gid": "contact", "name": "Контактное", "name_en": "Contact", "scale": 3, "difficulty": 1, "parents": [], "basic": false},
+  {"gid": "unarmed_combat", "name": "Безоружный бой", "name_en": "Unarmed combat", "scale": 1, "difficulty": 1, "parents": ["contact"], "basic": false},
+  {"gid": "basic_simple", "name": "Базовое/простое", "name_en": "Basic/simple", "scale": 3, "difficulty": 1, "parents": [], "basic": true}
+ ],
+ "weapons": [
+  {"wid": "dagger", "name": "Кинжал", "kind": "weapon", "groups": ["basic_simple"]},
+  {"wid": "club", "name": "Дубинка", "kind": "weapon", "groups": ["basic_simple"]},
+  {"wid": "quarterstaff", "name": "Посох", "kind": "weapon", "groups": ["basic_simple"]},
+  {"wid": "light_crossbow", "name": "Легкий арбалет", "kind": "weapon", "groups": ["basic_simple"]},
+  {"wid": "bolts", "name": "Болты", "kind": "ammo", "groups": ["basic_simple"], "count": 10}
+ ]
+}

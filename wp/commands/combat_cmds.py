@@ -19,6 +19,9 @@ def take_damage(ch, amount=0, dtype=dm.PHYSICAL, parts=None, reductions=None):
         raise CommandError("damage must be >= 0")
     v, rep = dm.take_hit(bridge.to_vitals(ch), hit, reductions)
     new = bridge.from_vitals(ch, v)
+    if ch.in_combat and rep.hp_loss > 0:
+        # owner homerule: a hit that reached HP/balance lowers the balance cap by 1 this combat
+        new = replace(new, balance_cap_hits=new.balance_cap_hits + 1)
     return commit(new, "take_damage", "hit %d -> hp -%d, balance -%d, OT +%d, pain +%d" % (
         rep.after_reduction, rep.hp_loss, rep.balance_loss, rep.overflow, rep.pain_added),
         {"report": rep})
@@ -71,6 +74,8 @@ def tick(ch, reductions=None):
     """Zero-initiative phase: durations, balance, DoT, overload -1."""
     t, rep = tk.zero_initiative(bridge.to_tick(ch), reductions)
     new = bridge.from_tick(ch, t)
+    if ch.in_combat and rep.cap_hits:
+        new = replace(new, balance_cap_hits=new.balance_cap_hits + rep.cap_hits)
     return commit(new, "tick", "balance +%d, dot %d, heal %d, expired %s" % (
         rep.balance_gained, rep.dot_damage, rep.healed, ",".join(rep.expired) or "-"),
         {"report": rep})
