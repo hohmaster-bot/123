@@ -33,7 +33,7 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
   | Restore 2+LVL HP | free once, further times 1 BP each |
   | Restore daily/session ability charges | 2 BP |
   | Restore all spirit | 2 BP |
-  | Restore 1 stat (damage/drain?) | 1 BP |
+  | Restore 1 stat: returns 1 point of stat damage (stats.md) | 1 BP |
   | Remove 1 pain | 1 BP |
   | Restore mana by regen | free once, then 1 BP |
   | Restore divine casts (chance from Court) | 1 BP |
