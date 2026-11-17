@@ -22,6 +22,17 @@ S.case("cost-240", "weapons.md Example: X=2, difficulty 2, scale 3 -> 240", 240)
 S.case("cost-x-excludes-self", "weapons.md: X counts only OTHER groups at 8+", 30)(
     lambda: w.grade_cost({"a": Weapon("a", grades=9)}, "a"))
 
+# weapons.md [OWNER]: three experts (8, 9, 10): each expert X = 2, any other weapon X = 3.
+def _experts():
+    return {"a": Weapon("a", grades=8), "b": Weapon("b", 2, grades=9),
+            "c": Weapon("c", 3, grades=10, parents=("a",)), "n": Weapon("n", grades=2)}
+
+
+S.case("x-three-experts", "weapons.md Test [OWNER]: experts X=2, others X=3 (cost / (d*s))",
+       (40, 40, 40, 45))(
+    lambda: tuple(w.grade_cost(_experts(), n) // (_experts()[n].difficulty * _experts()[n].scale)
+                  for n in ("a", "b", "c", "n")))
+
 # Combat basics.
 S.case("basics-cost", "weapons.md: basics 50/100/150 for scale 1/2/3", (50, 100, 150))(
     lambda: tuple(w.basics_cost(s) for s in (1, 2, 3)))

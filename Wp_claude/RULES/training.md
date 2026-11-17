@@ -19,6 +19,9 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
 - Example: base 13 + race 2 = 15. 15->16 = 150*3 = 450; 16->17 = 450; 17->18 = 150*4 = 600.
   If a race bonus is lost narratively, the price follows the new score.
 
+## Comfort for training [OWNER]
+- 1 comfort = 5 + 5 * level training (10, 15, 20 at levels 1, 2, 3). Item and class bonuses change it.
+
 ## Armor / shield grades
 - Shield: 100 per grade: none -> light -> heavy -> tower.
 - Armor: 250 per grade: none -> light -> medium -> heavy (from old code, owner did not object).

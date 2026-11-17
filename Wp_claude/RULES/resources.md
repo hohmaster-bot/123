@@ -38,6 +38,12 @@ Spell Resistance is separate (vs spells, not a damage step).
 
 ## Pain [OWNER]
 - Death at 8 pain (cap can be changed by race/class/feat -> must be editable).
+- Pain is stored as a list of entries (amount, source, permanent or temporary); total pain = sum of all entries.
+  Pain can be the price for activating an ability or an item.
+- Death: total pain >= cap (default 8). The cap is changed by race, template, feat (e.g. 12; some have "pain gives no penalties").
+- Pain penalty: -1 to ALL rolls per pain (saves, damage, attacks, skills, anything with a die), EXCEPT the lucky attack.
+  Races may ignore pain or morale, or get a damage bonus per pain.
+- In the editor one pain entry can be turned into a status (change the property of one pain).
 - Sources: balance overflow; ability costs; GM punishment; curses/injuries (permanent, not removed by rest);
   temporary (situational); +1 temporary pain per 3 FULL HP below 0.
 - Temp pain from HP = floor(-hp / 3) when hp < 0, else 0. Computed live from CURRENT hp, adds to other pain.

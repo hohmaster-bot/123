@@ -105,9 +105,14 @@ def comfort_max(level, bonus=0):
     return 5 + 5 * int(level) + int(bonus)
 
 
-def comfort_to_training(points, rate):
-    """Training for spent comfort. The rate is NOT in RULES/: pass it in."""
-    return int(points) * int(rate)
+def comfort_rate(level, bonus=0):
+    """1 comfort = 5 + 5 * level training (training.md); item/class bonuses change it."""
+    return 5 + 5 * int(level) + int(bonus)
+
+
+def comfort_to_training(points, level, bonus=0):
+    """Training for spent comfort."""
+    return int(points) * comfort_rate(level, bonus)
 
 
 # --------------------------------------------------------- attention course

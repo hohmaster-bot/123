@@ -48,4 +48,6 @@ Test commands (each exits 1 on any failure, no pytest needed):
   `python Wp_claude/tests/core/test_injuries.py`, `python Wp_claude/tests/core/test_bonuses.py`,
   `python Wp_claude/tests/core/test_ac.py`, `python Wp_claude/tests/core/test_skills.py`,
   `python Wp_claude/tests/core/test_weapons.py`, `python Wp_claude/tests/core/test_training.py`,
-  `python Wp_claude/tests/core/test_combat.py` (status in CORE_REPORT.md)
+  `python Wp_claude/tests/core/test_combat.py`, `python Wp_claude/tests/core/test_effects.py`,
+  `python Wp_claude/tests/core/test_pain.py`, `python Wp_claude/tests/core/test_tick.py`,
+  `python Wp_claude/tests/core/test_statuses.py` (status in CORE_REPORT.md)

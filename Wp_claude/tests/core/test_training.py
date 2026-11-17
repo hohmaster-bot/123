@@ -64,6 +64,12 @@ S.case("level-up", "progression.md: level-up = 100 * new level", (200, 300))(
 # resources.md Comfort.
 S.case("comfort-max", "resources.md: comfort max 5 + 5*level (level 3 -> 20)", 20)(lambda: t.comfort_max(3))
 
+# training.md Comfort for training [OWNER]: 1 comfort = 5 + 5 * level.
+S.case("comfort-rate", "training.md Comfort for training [OWNER]: 10, 15, 20 at levels 1-3", (10, 15, 20))(
+    lambda: tuple(t.comfort_rate(lv) for lv in (1, 2, 3)))
+S.case("comfort-to-training", "training.md: 3 comfort at level 2 + item bonus 5", 60)(
+    lambda: t.comfort_to_training(3, 2, bonus=5))
+
 # training.md Modes: only source = training spends points.
 S.case("source-free", "training.md: race/class/loot/quirk never spend training", (1000, 1000, 1000, 1000))(
     lambda: tuple(t.pay(1000, 200, s) for s in ("race", "class", "loot", "quirk")))

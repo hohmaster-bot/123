@@ -17,3 +17,6 @@ Kept apart from RULES/. Nothing here changes numbers.
 - Quirks: a separate tab, plain list.
 - "Spend comfort for training" and the attention course sit next to each other.
 - Class abilities can reference professionalism level (instead of character level).
+- Statuses: filter and favorite buttons.
+- Pain editor (list of pain entries; turn one into a status).
+- Morale scale editor.

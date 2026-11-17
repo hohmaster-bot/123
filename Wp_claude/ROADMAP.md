@@ -25,7 +25,7 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
 PySide6: click-through, always-on-top, global hotkey, tray, multi-monitor.
 
 ## Phase 5 - UI
-Sheet, then overlay panels, then editors (see `UI_WISHES.md`). Delete tkinter.
+Sheet, then overlay panels, then editors (see `UI_WISHES.md`), incl. pain editor and morale scale editor. Delete tkinter.
 
 ## Phase 6 - release v1.0
 Archive old docs, final cleanup.

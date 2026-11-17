@@ -15,6 +15,7 @@ Level is per weapon "target" (see scale). Weapon stores required level (qualific
 ## Cost of +1 grade
 cost = (30 + 5*X) * difficulty * scale
 - X = number of weapon groups already developed to Expert (8) or higher, excluding the group being raised.
+  [OWNER] Any node of any scale counts (child or not). Test: three experts (8, 9, 10): each expert X = 2, any other weapon X = 3.
 - Cost grows only through OTHER groups at expert+.
 - Examples: X=0, difficulty 1, scale 2 -> 60. X=2, difficulty 2, scale 3 -> (30+10)*2*3 = 240.
 

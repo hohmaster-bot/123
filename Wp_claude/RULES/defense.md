@@ -22,7 +22,9 @@
 - Example: +1 enchanted sword, "magic weapon" status gives +1 enchant -> result +1, not +2.
 
 ## Morale (battle) [OWNER]
-- Scale -10..+10. Bonus to ALL rolls (skills, saves, attacks, maneuvers, CMB, damage), type "morale";
+- Scale is physically -10..+10. A class effect may "count morale X higher at the player's choice".
+  Bonuses and penalties to morale (typed bonuses) are not limited by the scale.
+- Bonus to ALL rolls (skills, saves, attacks, maneuvers, CMB, damage), type "morale";
   NOT to the lucky attack die, the crit die or AC.
 - bonus = trunc(scale / 2): -10 -> -5, +10 -> +5, +/-1 per 2 steps.
 - Only while combat is active. One button start/end combat (text switches). Inactive -> morale ignored.

@@ -1,5 +1,5 @@
 # Buffs / effects [OWNER]
-Buff = status = debuff = situational. One generic effect system for ALL sheet parts (race, class, feat, item, injury, quirk, spell, buff).
+Buff = status = debuff = situational: one concept, "Status" [OWNER]. Everything from spells, DoT and heal per tick are ordinary statuses. One generic effect system for ALL sheet parts (race, class, feat, item, injury, quirk, spell, buff).
 
 ## What an effect can change
 Any parameter: stats, initiative, attack bonus, AC, actions, saves, skills, resources (max, regen, current), speed, etc.
@@ -7,7 +7,8 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 (e.g. +4 Str for 8 rounds).
 
 ## Duration kinds
-- N ticks (zero-initiative ticks), also "level x minutes -> rounds" style formulas.
+- N ticks (zero-initiative ticks). Duration is typed in by hand as a number; no "level x minutes" formulas [OWNER].
+  Long statuses are removed by hand.
 - Until end of combat.
 - Narrative infinite: until the GM cancels.
 - Instant/one-shot (applied once, e.g. temp HP).
