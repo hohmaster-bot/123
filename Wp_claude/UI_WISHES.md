@@ -1,0 +1,14 @@
+# UI wishes (design, NOT rules)
+Kept apart from RULES/. Nothing here changes numbers.
+- Damage: [Take damage][gear]; gear = DR/- and Resistance picker by damage type.
+- Dying: painful action slots highlighted red; player taps spent actions (or skips).
+- Over-max values shown red (comfort, base, load); load/base overload icon.
+- Shield bonus on/off in AC or small secondary number "AC with shield".
+- Morale: one button start/end combat (label toggles); indicators "We are losing!" / "We are winning!" at -5 / +5; log min/max morale.
+- Short rest: convenient menu of BP spends (list in RULES/rest.md); temp BP shown.
+- Chips/tooltips for quests, courts, stories, quirks; quirk "burn" = grey + status destroyed.
+- Item/ability -> code to clipboard; PDF export (balance max only); copy character.
+- Tooltip on resting in negatives: d100 90+ stabilizes.
+- Weapon bonus picker: on 2nd/3rd specialist, expert, master picks hide or grey options that are no longer allowed (repeat limits, tier gate).
+- Skill tier marks in work mode: normal none, advanced one star, specialized two stars (or diamond). Show only final bonus (ranks optional) outside edit/training mode.
+- Skills auto-sorted by key stat; sort can be disabled or changed.
