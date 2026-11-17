@@ -89,6 +89,57 @@ def _res_temphp():
             c.balance["current"] - 10)
 
 
+# Damage pipeline (resources.md "Damage pipeline" [OWNER]):
+# percent -> flat by damage type (DR = flat vs PHYSICAL) -> temp HP -> analogs -> HP.
+# Round UP, never fractional.
+
+def _pipeline_api():
+    """Legacy take_damage(amount) has no damage type / percent / flat params."""
+    import inspect
+    params = list(inspect.signature(ch.Character.take_damage).parameters)
+    if params == ["self", "amount"]:
+        raise NotImplementedInCode(
+            "take_damage(amount) only: no damage types, percent or flat "
+            "reduction, no absorber list")
+    raise NotImplementedInCode(
+        "take_damage signature changed to %r: update this test" % params)
+
+
+@case("DMG-round", "resources.md Damage pipeline, Rounding [OWNER]",
+      "10 dmg, 25% reduction -> 7.5 -> 8 (round up)", 8,
+      "(damage pipeline: percent step)")
+def _dmg_round():
+    _pipeline_api()
+
+
+@case("DMG-fire-example", "resources.md Damage pipeline, Example [OWNER]",
+      "10 fire, 50% -> 5, flat fire 2 -> 3, temp HP 0 -> HP -3, balance -3",
+      (-3, -3), "(damage pipeline)")
+def _dmg_fire():
+    _pipeline_api()
+
+
+@case("DMG-dr-not-fire", "resources.md Damage pipeline step 2 [OWNER]",
+      "DR 2 (flat vs physical) does not reduce 10 fire -> 10", 10,
+      "(damage pipeline: flat by type)")
+def _dmg_dr_fire():
+    _pipeline_api()
+
+
+@case("DMG-parts", "resources.md Damage pipeline step 2 (numbers: owner task)",
+      "hit 8 physical + 3 fire, DR 2, fire resist 1 -> 6 + 2 = 8", 8,
+      "(damage pipeline: components)")
+def _dmg_parts():
+    _pipeline_api()
+
+
+@case("DMG-order", "resources.md Damage pipeline steps 3-5 (derived from rule text)",
+      "temp HP 2, mana analog 3, 7 dmg -> temp 0, mana -3, HP -2, balance -2",
+      (0, -3, -2, -2), "(damage pipeline: absorber list)")
+def _dmg_order():
+    _pipeline_api()
+
+
 def _overflow_char():
     c = new_char(hp_rolls=[30])
     c.combat["hp_current"] = 30
@@ -239,6 +290,27 @@ for _str, _mod, _exp in [(10, 0, (59, 109)), (14, 2, (79, 129)),
          "Str mod %+d -> light/heavy %.1f / %.1f B (in L)"
          % (_mod, _exp[0] / 10.0, _exp[1] / 10.0),
          _exp, "Character.max_weight_light / max_weight_loaded")(_mk())
+
+
+@case("GEAR-item-tabs", "gear.md Item activation data [OWNER, simplified] + Example",
+      "+5 sword: 'not activated' tab attack +1, 'activated' tab attack +5; "
+      "only one tab acts -> attack bonus (inactive, active) = (1, 5)",
+      (1, 5), "Character.activate_item (passive_bonuses + activation_effects)")
+def _gear_item_tabs():
+    # Legacy storage: passive_bonuses act while equipped; activation_effects
+    # are ADDED on activation. No 'inactive only' set exists.
+    c = new_char()
+    it = c.add_item(name="sword", category="weapon", location="equipped",
+                    slot="weapon_main", activatable=True,
+                    activation_cost_spirit=0,
+                    passive_bonuses=[{"target": "attack", "value": 1,
+                                      "bonus_type": "flat"}],
+                    activation_effects=[{"target": "attack", "value": 5}])
+    c._sync_item_bonuses()
+    off = c.situational_bonus("attack")
+    c.activate_item(it["id"])
+    on = c.situational_bonus("attack")
+    return (off, on)
 
 
 @case("GEAR-base-start", "gear.md Base [OWNER]",

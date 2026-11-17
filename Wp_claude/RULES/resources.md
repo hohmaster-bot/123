@@ -8,9 +8,24 @@
 - Usually lasts to end of combat. Otherwise it is a buff with expiry in ticks; buffs can be instant one-shot or timed.
 - HP can go below 0.
 
+## Damage pipeline [OWNER]
+Order for incoming damage of a type:
+1. Percent reduction of damage: 25 / 50 / 75 % (usually race, items too). Official name TBD (owner: do not name it "resist"; GUI name later).
+2. Flat reduction BY DAMAGE TYPE [OWNER]: one mechanism. "DR/-" is just the flat resist to PHYSICAL damage; fire resist etc. are other types.
+   DR does not work on fire. Damage may have several components, each handled by its own type:
+   fire sword hit = 8 physical + 3 fire -> physical part uses DR/physical resist, fire part uses fire resist.
+   Overlap of two reductions on one component is not modeled for now. Before taking damage the player can pick which
+   reduction applies (gear icon next to Take damage); a setting may allow summing them.
+3. Temp HP.
+4. Temp-HP analogs (e.g. racial: damage hits MANA first; others possible), in a configurable order.
+5. HP (and balance, see below). Only the part that reaches HP touches balance.
+Rounding [OWNER]: damage is never fractional; round UP (against the player). 10 dmg, 25% -> 7.5 -> 8.
+Example: 10 fire, percent 50% -> 5, flat 2 -> 3, temp HP 0 -> HP -3, balance -3.
+Spell Resistance is separate (vs spells, not a damage step).
+
 ## Balance [OWNER]
 - Second bar next to HP, lost together with HP. Usually balance < HP max.
-- Damage that would push balance to -1 or lower: +1 pain (per such hit). Excess goes to trauma points.
+- Damage that would push balance to -1 or lower: +1 pain (per such hit, even if balance is already 0). Excess goes to trauma points.
 - Restored at zero initiative (blocked while overload > 0).
 - Trauma points: GM issues penalties for them unless removed otherwise (after session). Injury editor in Rest GUI [BETA].
 - Balance FLOORS at 0 (never negative). Overflow = damage - balance. Pain +1 per hit with overflow > 0
@@ -68,7 +83,7 @@ Spec: per tick restore balance (if overload == 0), then DoT.
 
 ## Comfort [OWNER]
 - Resource burned during play or exchanged for training. Max formula 5 + 5*level, modifiable by class/race/items.
-- Chip goes red when current > max.
+- Chip goes red when current > max; player spends it down by the next session (see Over max).
 
 ## Over max [OWNER, confirmed]
 - ANY resource (HP, mana, spirit, comfort, ...) may exceed max: usually consumable effects, sometimes narrative (rare).

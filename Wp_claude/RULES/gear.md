@@ -47,7 +47,5 @@
 - Consumables: usually 1 spirit to activate.
 - Not activated items give fewer bonuses. Example: +5 magic sword (+5 attack, damage and lucky attack = enchant bonus):
   inactive it is only a masterwork sword giving +1 attack, nothing else.
-- Item activation data [OWNER]: item has two effect sets with a mode flag:
-  * additive: always-on effects + "extra bonuses on activation" (active adds on top), or
-  * either/or: inactive set OR active set, never both.
-  Author fills both sets; state is activated / off.
+- Item activation data [OWNER, simplified]: item has two tabs: "not activated" and "activated". Either one set of effects or the other, never both.
+  (An additive item just repeats the base effects in the activated tab.) No mode flag.
