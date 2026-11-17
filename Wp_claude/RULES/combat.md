@@ -34,6 +34,23 @@
 - Str to damage by grip [OWNER]: one hand 1x, off-hand 0.5x, two hands 1.5x of the Str modifier; a positive value is
   multiplied and rounded DOWN (mod 3: two hands 4, off-hand 1); a negative modifier is NOT multiplied (-2 with any grip).
 
+## Two-weapon fighting [OWNER, verbatim]
+"If you wield a second weapon in your off hand, you can get one extra attack per round with that weapon. You suffer a -6 penalty with your regular attack or attacks with your primary hand and a -10 penalty to the attack with your off hand when you fight this way. You can reduce these penalties in two ways. First, if your off-hand weapon is light, the penalties are reduced by 2 each. An unarmed strike is always considered light. Second, the Two-Weapon Fighting feat lessens the primary hand penalty by 2, and the off-hand penalty by 6. Double Weapons: You can use a double weapon to make an extra attack with the off-hand end of the weapon as if you were fighting with two weapons. The penalties apply as if the off-hand end of the weapon was a light weapon. Thrown Weapons: The same rules apply when you throw a weapon from each hand. Treat a dart or shuriken as a light weapon, and a bolas, javelin, net, or sling as a one-handed weapon."
+
+| Case | Primary hand | Off hand |
+|---|---|---|
+| Normal penalties | -6 | -10 |
+| Off-hand weapon is light | -4 | -8 |
+| Two-Weapon Fighting feat | -4 | -4 |
+| Off-hand weapon is light and Two-Weapon Fighting feat | -2 | -2 |
+
+- [OWNER] Both attacks are ONE combination (one action, one attack tag). Class and race features may lower the
+  penalty down to 0: effect "two-weapon penalty reduction" (a number; the final penalty is never below 0, never a bonus).
+- Feat "Two-Weapon Fighting" (base) is in the catalog (default price 200, editable). Improved and Greater versions are not added.
+- An attack record has the toggle "combination of two attacks" (available with two weapons in the hands or a double
+  weapon). When on, both attacks get the table penalties (feat? light/finesse off hand?). The second attack of a double
+  weapon uses the lower damage row. The view marks which attack is the main hand and which the off hand.
+
 ## Unarmed [OWNER]
 - Unarmed combat is always available: the attack list always has the unarmed attack next to the weapons in hand.
 

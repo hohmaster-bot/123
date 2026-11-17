@@ -83,6 +83,27 @@ def remove_attack(ch, rid=""):
 
 
 @command
+def set_twf(ch, rid="", off="", on=True):
+    """Two-weapon combination on a record (main hand). off = off-hand record id, or "" for the other
+    end of a double weapon. Allowed only with two weapons in the hands or a double weapon."""
+    from wp.model import twf
+    rec_ = next((r for r in ch.attacks if r.rid == rid), None)
+    if rec_ is None:
+        raise CommandError("no attack record %r" % (rid,))
+    if on:
+        if not twf.available(ch, rec_, off):
+            raise CommandError("two-weapon combination needs two weapons in the hands or a double weapon")
+        if off:
+            other = next((r for r in ch.attacks if r.rid == off), None)
+            if other is None or other.item == rec_.item:
+                raise CommandError("the off-hand record must be another weapon")
+        elif not (rec_.item != rec.UNARMED and ch.item(rec_.item).double):
+            raise CommandError("without an off-hand record the weapon must be a double weapon")
+    attacks = tuple(replace(r, twf=bool(on), twf_off=off if on else "") if r.rid == rid else r for r in ch.attacks)
+    return commit(replace(ch, attacks=attacks), "set_twf", "%s two-weapon %s" % (rid, "on" if on else "off"))
+
+
+@command
 def set_primary_attack(ch, rid="", on=True):
     """Mark a record primary (at most 2) or not."""
     if not any(r.rid == rid for r in ch.attacks):

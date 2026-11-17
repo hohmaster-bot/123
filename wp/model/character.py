@@ -97,6 +97,8 @@ class AttackRecord:
     grip: str = "one"                  # "one" / "off" / "two"
     stat: str = ""                     # attack stat; "" = default (Str, Finesse rules)
     primary: bool = False
+    twf: bool = False                  # "combination of two attacks" toggle (two-weapon fighting)
+    twf_off: str = ""                  # off-hand record id; "" = the other end of a double weapon
 
 
 @dataclass(frozen=True)
