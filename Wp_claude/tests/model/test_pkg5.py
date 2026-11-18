@@ -13,8 +13,9 @@ from wp.core import bonuses as bo  # noqa: E402
 from wp.commands import CommandError, dispatch  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
 from wp.model import ids  # noqa: E402
+from wp.storage import character_io as cio  # noqa: E402
 from wp.model import attack_view as av  # noqa: E402
-from wp.core.effects import Status  # noqa: E402
+from wp.core.effects import Effect, Status  # noqa: E402
 from wp.model.character import SHIELD, Character, Item  # noqa: E402
 
 S = Suite("test_pkg5")
@@ -156,6 +157,50 @@ def _misc():
     except CommandError:
         return "rejected"
     return "accepted"
+
+
+# ---- H: enchantment N of weapons, armor and shields ----
+def _sword(n, effects=()):
+    return Item("sw", "sword", kind="weapon", hands=1, in_hands=True, groups=("blades",), durability=10, hp=5,
+                enchant=n, effects_off=effects)
+
+
+def _attack(item):
+    ch = Character(items=(item,), bab=0)
+    ch = dispatch(ch, "add_attack", iid=item.iid, group="blades").state
+    return av.by_record(ch, ch.attacks[0].rid)
+
+
+S.case("h-sword-hd-hp", "gear.md [OWNER pkg 5]: sword +3 -> hardness +6, item HP +3 (10/5 -> 16/8)", (16, 8, 8))(
+    lambda: (dv.item_durability(_sword(3)), dv.item_hp_max(_sword(3)), dv.item_hp_current(_sword(3))))
+S.case("h-sword-attack", "gear.md: sword +3 -> attack +3, damage +3, lucky 20 -> 17", (3, 3, 17))(
+    lambda: (lambda a: (a.to_hit, a.damage, a.lucky))(_attack(_sword(3))))
+S.case("h-item-hp-current", "gear.md: current item HP = max - damage taken (+2 enchant: 7 - 3 = 4)", 4)(
+    lambda: dv.item_hp_current(Item("x", "x", hp=5, enchant=2, hp_damage=3)))
+
+
+def _armored(n):
+    arm = Item("ar", "chain", equipped=True, armor=4, durability=10, hp=20, enchant=n)
+    return Character(items=(arm,)), arm
+
+
+S.case("h-armor", "gear.md: armor +2 -> armor layer +2 (4 -> 6), hardness +4, HP +2", (6, 14, 22))(
+    lambda: (lambda c, a: (dict(acm.parts(dv.ac_input(c)))["armor"], dv.item_durability(a), dv.item_hp_max(a)))(
+        *_armored(2)))
+S.case("h-shield", "gear.md: shield +1 -> shield bonus +1 (2 -> 3)", 3)(
+    lambda: dv.shield_bonus(Character(items=(Item("sh", "shield", kind=SHIELD, hands=1, in_hands=True, shield=2,
+                                                  enchant=1),))))
+S.case("h-shield-no-attack-bonus", "gear.md: a shield's enchantment raises the shield bonus, not its attack", 0)(
+    lambda: (lambda ch: av.by_record(ch, ch.attacks[0].rid).to_hit)(
+        dispatch(Character(items=(Item("sh", "shield", kind=SHIELD, hands=1, in_hands=True, shield=2, enchant=1),)),
+                 "add_attack", iid="sh").state))
+S.case("h-fire-is-an-effect", "D14 [OWNER pkg 5]: 'fire d6' is an ordinary item effect: shown as dice, damage number same",
+       ((("1d6", "fire"),), 0))(
+    lambda: (lambda a: (a.extra_dice, a.damage))(_attack(_sword(0, (Effect(bo.DAMAGE, dice="1d6", note="fire"),)))))
+S.case("h-save-load", "D11: enchant, item damage, shield type and effect dice survive save/load", True)(
+    lambda: (lambda c: cio.loads(cio.dumps(c)) == c)(Character(items=(
+        _sword(2, (Effect(bo.DAMAGE, dice="1d6", note="fire"),)),
+        Item("sh", "shield", kind=SHIELD, shield=2, shield_type="tower", hp_damage=1),))))
 
 if __name__ == "__main__":
     sys.exit(S.run())

@@ -38,6 +38,8 @@ class Effect:
     btype: str = bo.FLAT
     weapon: Optional[str] = None
     value_source: Optional[str] = None   # e.g. OVERLOAD: value = current overload
+    dice: str = ""                     # extra dice (e.g. "1d6" on damage); not a number, shown as is
+    note: str = ""                     # free text: "fire", "crit protection 25%" ... (any kind, D14)
 
     def resolve(self, context=None):
         """The effect's number: fixed value, or read from the context (buffs.md)."""

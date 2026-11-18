@@ -59,13 +59,37 @@ def hands_used(ch):
     return sum(it.hands for it in _in_hands(ch))
 
 
+def armor_value(it):
+    """Armor bonus of one item: base + enchantment (gear.md, package 5)."""
+    return it.armor + it.enchant if it.armor > 0 else 0
+
+
+def shield_value(it):
+    """Shield bonus of one item: base + enchantment (gear.md, package 5)."""
+    return it.shield + it.enchant if it.shield > 0 else 0
+
+
 def armor_bonus(ch):
-    return max([it.armor for it in _equipped(ch)] or [0])
+    return max([armor_value(it) for it in _equipped(ch)] or [0])
 
 
 def shield_bonus(ch):
     """Shield bonus counts only while the shield is held in a hand (gear.md)."""
-    return max([it.shield for it in _in_hands(ch)] or [0])
+    return max([shield_value(it) for it in _in_hands(ch)] or [0])
+
+
+def item_durability(it, picks=()):
+    """Final hardness (HD): base with weapon mastery percent, then +2 per enchantment level."""
+    return wpn.final_durability(it.durability, picks) + 2 * it.enchant
+
+
+def item_hp_max(it, picks=()):
+    """Final item HP: base + expert picks + 1 per enchantment level."""
+    return wpn.final_hp(it.hp, picks) + it.enchant
+
+
+def item_hp_current(it, picks=()):
+    return item_hp_max(it, picks) - it.hp_damage
 
 
 BALANCE_SHIELDS = ("heavy", "tower")
@@ -74,7 +98,7 @@ BALANCE_SHIELDS = ("heavy", "tower")
 def shield_balance_bonus(ch):
     """Heavy and tower shields add their shield bonus to the balance max while held in a hand
     (training.md [OWNER, Q28])."""
-    return max([it.shield for it in _in_hands(ch) if it.shield_type in BALANCE_SHIELDS] or [0])
+    return max([shield_value(it) for it in _in_hands(ch) if it.shield_type in BALANCE_SHIELDS] or [0])
 
 
 def balance_max_base(ch):

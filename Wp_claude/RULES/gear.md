@@ -40,6 +40,19 @@
 - Skill penalty (Str/Dex skills), arcane spell failure chance (slot magic & mana, NOT ki-like abilities).
 - Weight, armor bonus. May slow. Mwk/special may reduce penalty (rarely give bonus).
 
+## Enchantment [OWNER, package 5]
+- An item has an enchantment level N (weapons, armor, shields).
+- Weapon: +N to attack, damage and the lucky attack (type enhancement).
+- Armor and shield: +N to the armor / shield bonus (raises the "armor" / "shield" layer).
+- ALL three kinds: hardness (HD) +2*N, item max HP and current HP +1*N.
+- Other enchantment effects (crit protection 25%, fire d6 on attacks, ...) are ordinary item effects in the common
+  effect system (D14); no code per kind, the number of kinds is not limited. An effect may carry dice and a text note.
+- Tests: sword +3 -> hardness +6, HP +3; armor +2 -> armor layer +2, hardness +4, HP +2; shield +1 -> shield bonus +1;
+  "fire d6" stays an item effect.
+- Order (assumption, Q30): hardness = base with the weapon mastery percent, then +2*N.
+- Open (Q30): an item that needs activation (gear.md "+5 sword inactive = masterwork") - does its enchantment work
+  while not activated? Now: the enchantment always works.
+
 ## Item codes / sharing [OWNER]
 - Any item/ability/etc -> code copied to clipboard. Code -> import as item (catalog import wanted, not built).
 - Whole character copy, PDF export. UI must not block copy.

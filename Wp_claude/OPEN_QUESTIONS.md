@@ -22,3 +22,4 @@ Q20 unarmed combat -4 until trained to Skilled (weapons.md), Q21 weight L = 1 L,
 
 ## Game rules (owner decides)
 - Q23 | Temp HP spend order. ASSUMPTION (owner, package 4): first the "by button" temp HP, then buff temp HP in order (resources.md). Stacking flag: a non-stacking buff adds only up to its amount over the current total. | as is | assumption
+- Q30 | Enchantment N of an item that needs activation: does it work while the item is NOT activated? gear.md says an inactive +5 sword is only a masterwork sword. Now the enchantment always works. Also: hardness = base * mastery percent, then +2N (order). | only when activated (or no activation needed) | open

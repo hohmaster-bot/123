@@ -56,6 +56,8 @@ class AttackView:
     parry_lines: Tuple[Line, ...]
     crit_hint: str = ""
     dice: Tuple[str, str] = ("", "")   # damage dice (small, medium) of the row used
+    lucky: int = 20                    # lucky attack threshold (mastery picks, enchantment)
+    extra_dice: Tuple[Tuple[str, str], ...] = ()   # (dice, note) from the weapon's effects, e.g. ("1d6", "fire")
 
 
 # ------------------------------------------------------------------ helpers
@@ -124,9 +126,31 @@ def _group_bonuses(ch, record):
     return out
 
 
+def enchant_bonuses(item):
+    """Weapon enchantment N: +N enhancement to attack and damage of this weapon (gear.md).
+    A shield's enchantment raises its shield bonus instead (derived_view.shield_value)."""
+    if item is None or item.enchant <= 0 or rec.is_shield(item):
+        return []
+    src = "enchant +%d" % item.enchant
+    return [bo.Bonus(item.enchant, bo.ENHANCEMENT, t, item.iid, src) for t in (bo.ATTACK, bo.DAMAGE)]
+
+
+def weapon_enchant(item):
+    return 0 if item is None or rec.is_shield(item) else item.enchant
+
+
+def extra_dice(item):
+    """Dice parts of the weapon's active tab (any kind: fire, acid...): shown, not summed."""
+    if item is None:
+        return ()
+    return tuple((e.dice, e.note) for e in (item.effects_on if item.activated else item.effects_off)
+                 if e.dice and e.target == bo.DAMAGE)
+
+
 def drum(ch, record, item):
     out = list(ef.bonuses_from(ch.statuses, ch.in_combat, dv.context(ch)))
     out += _item_bonuses(ch, item)
+    out += enchant_bonuses(item)
     out += _group_bonuses(ch, record)
     out.append(replace(bo.morale(dv.morale_bonus(ch)), source="morale scale"))
     return out
@@ -184,7 +208,9 @@ def attack(ch, record):
                       damage=sum(x.value for x in dmg), damage_lines=tuple(dmg),
                       parry=p, parry_lines=parry_lines,
                       crit_hint=crit_hint(item.crit_mult if item is not None else 2),
-                      dice=dice_row(item, 1))
+                      dice=dice_row(item, 1),
+                      lucky=wpn.lucky_threshold(rec.group_picks(ch, record.group), weapon_enchant(item)),
+                      extra_dice=extra_dice(item))
 
 
 def dice_row(item, row):
