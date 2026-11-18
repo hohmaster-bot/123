@@ -30,10 +30,22 @@ def pick(p, *keys):
 
 
 # ---- A: dodge layer = dodge bonuses + Dex mod ----
-S.case("a-dex-2-dodge+1", "defense_layers.md [OWNER pkg 5]: Dex -2, dodge +1 -> flat -1, dodge 0", (0, -1))(
-    lambda: pick(layers(dex_mod=-2, bonuses=(dodge(1),)), "dodge", "flat"))
-S.case("a-dex-2-dodge+1-ff", "defense_layers.md: Dex -2, dodge +1, flat-footed -> flat -2", (0, -2))(
-    lambda: pick(layers(acm.FLAT_FOOTED, dex_mod=-2, bonuses=(dodge(1),)), "dodge", "flat"))
+S.case("a-dex-2-dodge+1", "defense_layers.md [OWNER pkg 5]: Dex -2, dodge +1 -> sum -1: base 9, dodge 0, flat 0",
+       (0, 0, 9))(
+    lambda: (lambda p: (p["dodge"], p["flat"], L.base(tuple(p.items()))))(layers(dex_mod=-2, bonuses=(dodge(1),))))
+S.case("a-dex-2-dodge+1-ff", "defense_layers.md: Dex -2, dodge +1, flat-footed -> base 8", (0, 8))(
+    lambda: (lambda p: (p["dodge"], L.base(tuple(p.items()))))(
+        layers(acm.FLAT_FOOTED, dex_mod=-2, bonuses=(dodge(1),))))
+# Owner example: Dex -2, armor 8: base 8, position 1-7, armor 8-15, exact 16, hit 17+; flat-footed the same.
+_EX = (("position", None, 7), ("armor", 8, 15), ("exact", 16, 16), ("hit", 17, None))
+S.case("a-example-ladder", "defense_layers.md Example [OWNER pkg 5]: Dex -2, armor 8 (front and flat-footed)",
+       (_EX, _EX))(
+    lambda: tuple(tuple((r.layer, r.lo, r.hi) for r in L.ladder(acm.parts(acm.AcInput(dex_mod=-2, armor=8), m)))
+                  for m in (acm.FRONT, acm.FLAT_FOOTED)))
+S.case("a-example-rolls", "defense_layers.md: rolls 7 position, 8 armor, 16 exact, 17 hit", ("position", "armor", "exact", "hit"))(
+    lambda: tuple(L.layer_for_roll(acm.parts(acm.AcInput(dex_mod=-2, armor=8)), r)[0] for r in (7, 8, 16, 17)))
+S.case("a-untyped-split", "defense_layers.md: untyped +3 to flat, untyped -1 lowers the base", (3, -1))(
+    lambda: pick(layers(bonuses=(bo.Bonus(3, bo.FLAT, bo.AC), bo.Bonus(-1, bo.FLAT, bo.AC))), "flat", "penalty"))
 S.case("a-dex+2-dodge+1", "defense_layers.md: Dex +2, dodge +1 -> dodge 3", (3, 0))(
     lambda: pick(layers(dex_mod=2, bonuses=(dodge(1),)), "dodge", "flat"))
 S.case("a-dex+2-dodge+1-ff", "defense_layers.md: Dex +2, dodge +1, flat-footed -> 0", (0, 0))(

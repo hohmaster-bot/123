@@ -1,19 +1,19 @@
 """Defense ladder (RULES/defense_layers.md): which AC layer an attack roll landed in.
 
-AC = 10 + size + dodge (Dex bonus) + insight + morale + competence + luck + circumstance
-     + deflection + shield + armor (incl. parry) + flat + natural armor.
-Typed layers are never below 0. "flat" holds untyped bonuses, types without a layer and ALL
-penalties (low Dex too); it can be negative. The sum of the layers is always AC - 10.
-Layer i covers rolls from 10 + (sum of earlier layers) to 10 + (sum including it) - 1.
-Rolls below 10: "position" (no position found). Roll == AC: "exact" (hit, but no full
-damage; can be played as a maneuver). Roll > AC: "hit". A layer with a zero bonus (or a
-negative flat) has an empty range and is skipped.
+base = 10 + penalty (sum of ALL negative parts: low Dex, negative dodge sum, any typed or untyped
+penalty). AC = base + size + dodge + insight + morale + competence + luck + circumstance + deflection
++ shield + armor (incl. parry) + flat + natural armor; every layer >= 0.
+Rolls below the base: "position". Layer i covers rolls from base + (sum of earlier layers) to
+base + (sum including it) - 1. Roll == AC: "exact" (hit, but no full damage; can be played as a
+maneuver). Roll > AC: "hit". A layer with a zero bonus has an empty range and is skipped.
 """
 import io
 import json
 import os
 from dataclasses import dataclass
 from typing import Optional
+
+from wp.core.ac import PENALTY
 
 
 BASE = 10
@@ -31,38 +31,41 @@ class Range:
     hi: Optional[int]          # last roll of the layer (None = open end)
 
 
+def _split(ac_parts):
+    """(penalty, [(layer, value), ...]) from ac.parts()."""
+    penalty = sum(v for t, v in ac_parts if t == PENALTY)
+    return penalty, [(t, v) for t, v in ac_parts if t != PENALTY]
+
+
+def base(ac_parts):
+    return BASE + _split(ac_parts)[0]
+
+
 def ac_total(ac_parts):
     return BASE + sum(v for _, v in ac_parts)
 
 
 def ladder(ac_parts):
-    """All ranges: position, every layer with a positive bonus, exact, hit."""
-    out = [Range(POSITION, None, BASE - 1)]
-    start = BASE
-    for t, v in ac_parts:
+    """All ranges: position (below the base), every layer with a positive bonus, exact, hit."""
+    penalty, layers = _split(ac_parts)
+    start = BASE + penalty
+    out = [Range(POSITION, None, start - 1)]
+    for t, v in layers:
         if v > 0:
             out.append(Range(t, start, start + v - 1))
         start += v
-    total = ac_total(ac_parts)
-    out.append(Range(EXACT, total, total))
-    out.append(Range(HIT, total + 1, None))
+    out.append(Range(EXACT, start, start))
+    out.append(Range(HIT, start + 1, None))
     return tuple(out)
 
 
 def layer_for_roll(ac_parts, roll):
     """(layer, Range) for one attack roll total."""
     roll = int(roll)
-    total = ac_total(ac_parts)
-    if roll > total:
-        return HIT, Range(HIT, total + 1, None)
-    if roll == total:
-        return EXACT, Range(EXACT, total, total)
     for r in ladder(ac_parts):
-        lo_ok = r.lo is None or roll >= r.lo
-        hi_ok = r.hi is None or roll <= r.hi
-        if lo_ok and hi_ok:
+        if (r.lo is None or roll >= r.lo) and (r.hi is None or roll <= r.hi):
             return r.layer, r
-    return POSITION, Range(POSITION, None, BASE - 1)
+    raise AssertionError("ladder has a gap")      # ranges cover every roll
 
 
 def texts(path=TEXTS_PATH):

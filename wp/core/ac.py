@@ -60,17 +60,19 @@ def _dex(inp):
     return d
 
 
-# Layer order of the defense ladder (RULES/defense_layers.md). "flat" comes after armor:
-# untyped bonuses, types without their own layer, and ALL negative parts go there.
+# Layer order of the defense ladder (RULES/defense_layers.md). Base = 10 + PENALTY (the sum of all
+# negative parts, <= 0); the layers follow the base, never below 0. "flat" (after armor) holds only
+# positive untyped bonuses and positive types without their own layer.
+PENALTY = "penalty"
 LAYER_TYPES = ("size", bo.DODGE, "insight", bo.MORALE, "competence", "luck", "circumstance",
                bo.DEFLECTION, bo.SHIELD, bo.ARMOR, bo.FLAT, bo.NATURAL)
 TYPED_LAYERS = tuple(t for t in LAYER_TYPES if t != bo.FLAT)
 
 
 def parts(inp, mode=FRONT, from_shield_side=False):
-    """AC broken into layers: ((layer, value), ...) in LAYER_TYPES order; sum = AC - 10.
-    Typed layers are never below 0; their negative part goes to "flat".
-    dodge = dodge bonuses + Dex mod (they add up); a negative sum goes to "flat" (defense_layers.md).
+    """AC as ((PENALTY, p), (layer, value), ...): p <= 0 lowers the base (base = 10 + p), then the
+    layers in LAYER_TYPES order, each >= 0. The sum of all entries = AC - 10.
+    dodge = dodge bonuses + Dex mod (they add up); a negative sum goes to the penalty (defense_layers.md).
     Flat-footed: the POSITIVE parts (dodge bonuses, Dex bonus) are lost, penalties stay.
     armor holds max(armor, parry) in PARRY mode, plus enhancement bonuses to AC (owner, Q26)."""
     if mode not in (FRONT, FLANK, FLAT_FOOTED, PARRY, TOUCH):
@@ -113,14 +115,19 @@ def parts(inp, mode=FRONT, from_shield_side=False):
                          + bo.stack([b for b in items if b.btype == bo.ENHANCEMENT]))
         else:
             values[t] = bo.stack([b for b in items if b.btype == t])
-    # types without a layer (sacred, profane...) are not shown in the ladder; in AC they go to "flat"
-    flat = (bo.stack([b for b in items if b.btype not in TYPED_LAYERS and b.btype != bo.ENHANCEMENT])
-            + sum(min(0, v) for v in values.values()))
-    return tuple((t, flat if t == bo.FLAT else max(0, values[t])) for t in LAYER_TYPES)
+    # untyped: positives to "flat", negatives to the penalty; other types without a layer (sacred,
+    # profane...): stacked per type, a positive result to "flat", a negative one to the penalty
+    flat = sum(max(0, int(b.value)) for b in items if b.btype == bo.FLAT)
+    penalty = sum(min(0, int(b.value)) for b in items if b.btype == bo.FLAT)
+    for t in {b.btype for b in items} - set(TYPED_LAYERS) - {bo.FLAT, bo.ENHANCEMENT}:
+        v = bo.stack([b for b in items if b.btype == t])
+        flat, penalty = flat + max(0, v), penalty + min(0, v)
+    penalty += sum(min(0, v) for v in values.values())
+    return ((PENALTY, penalty),) + tuple((t, flat if t == bo.FLAT else max(0, values[t])) for t in LAYER_TYPES)
 
 
 def ac(inp, mode=FRONT, from_shield_side=False):
-    """AC for one attack direction = 10 + the sum of its layers."""
+    """AC for one attack direction = base (10 + penalty) + the sum of the layers."""
     return BASE_AC + sum(v for _, v in parts(inp, mode, from_shield_side))
 
 

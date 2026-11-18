@@ -63,7 +63,7 @@ S.case("order-button-first", "OPEN_QUESTIONS Q23 assumption: button temp HP spen
             ("take_damage", {"amount": 6}))))
 
 
-# ---- A3 flat layer ----
+# ---- A3 flat layer (package 5: penalties lower the base, flat only positive) ----
 def layers(**kw):
     mode = kw.pop("mode", acm.FRONT)
     return dict(acm.parts(acm.AcInput(**kw), mode))
@@ -85,15 +85,16 @@ S.case("sum-equals-ac", "defense_layers.md: sum of layers = AC in every mode (mi
                                                  bo.Bonus(1, bo.FLAT, bo.AC), bo.Bonus(2, bo.DODGE, bo.AC))),
                             acm.AcInput(dex_mod=3, armor=2, overloaded=True))
                 for m in (acm.FRONT, acm.FLANK, acm.FLAT_FOOTED, acm.PARRY, acm.TOUCH)))
-S.case("dex-minus2-flat", "defense_layers.md [OWNER pkg 4]: Dex -2 -> flat -2, dodge 0, AC 8", (-2, 0, 8))(
-    lambda: (lambda p: (p["flat"], p["dodge"], 10 + sum(p.values())))(layers(dex_mod=-2)))
-S.case("flat-footed-dex-minus2", "defense_layers.md: flat-footed Dex -2 -> flat still -2, dodge bonus blocked",
+S.case("dex-minus2-base", "defense_layers.md [OWNER pkg 5]: Dex -2 -> penalty -2 (base 8), flat 0, dodge 0, AC 8",
+       (-2, 0, 0, 8))(
+    lambda: (lambda p: (p["penalty"], p["flat"], p["dodge"], 10 + sum(p.values())))(layers(dex_mod=-2)))
+S.case("flat-footed-dex-minus2", "defense_layers.md: flat-footed Dex -2 -> penalty still -2, dodge bonus blocked",
        (-2, 0, 8))(
-    lambda: (lambda p: (p["flat"], p["dodge"], 10 + sum(p.values())))(
+    lambda: (lambda p: (p["penalty"], p["dodge"], 10 + sum(p.values())))(
         layers(dex_mod=-2, bonuses=(bo.Bonus(3, bo.DODGE, bo.AC),), mode=acm.FLAT_FOOTED)))
-S.case("no-negative-layers", "defense_layers.md: typed layers never below 0, penalties in flat (luck -3, size -1)",
+S.case("no-negative-layers", "defense_layers.md: no layer below 0 (flat too); penalties lower the base (luck -3, size -1)",
        (True, -4))(
-    lambda: (lambda p: (all(v >= 0 for t, v in p.items() if t != "flat"), p["flat"]))(
+    lambda: (lambda p: (all(v >= 0 for t, v in p.items() if t != "penalty"), p["penalty"]))(
         layers(size_mod=-1, armor=3, bonuses=(bo.Bonus(-3, "luck", bo.AC),))))
 S.case("other-type-in-flat", "OPEN_QUESTIONS Q26 assumption: sacred +2 goes to flat", 2)(
     lambda: layers(bonuses=(bo.Bonus(2, "sacred", bo.AC),))["flat"])

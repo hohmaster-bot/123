@@ -13,8 +13,8 @@ Q16 passive bonuses of two primary records add up for different groups, same gro
 Q17 no refund for a specialized rank the level caught up with (skills.md),
 Q18 Unarmed combat attack/damage only on the unarmed attack, passives always (weapons.md),
 Q19 two hands only for a non-finesse one-handed weapon (combat.md),
-Q22 base point 100, max 10*level (training.md), Q24/Q25 flat layer, no negative layers (defense_layers.md),
-Q26 enhancement -> armor layer, other unlisted types -> flat as assumption (defense_layers.md),
+Q22 base point 100, max 10*level (training.md), Q24/Q25 flat = positive untyped only, no negative layers, penalties lower the base (defense_layers.md, pkg 5),
+Q26 enhancement -> armor layer; other unlisted types: positive -> flat, negative -> penalty (assumption, defense_layers.md),
 Q28 heavy/tower shield in hand adds its shield bonus to balance max; tower GRADE gives +2 parry (training.md),
 Q27 parry +1 per odd level from level 3, level 1 does not count (training.md),
 Q20 unarmed combat -4 until trained to Skilled (weapons.md), Q21 weight L = 1 L, N = N*10 L; quarterstaff is a double weapon; gauntlet zeros stay (catalog.md, weapons.md).
