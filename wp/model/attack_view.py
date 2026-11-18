@@ -60,6 +60,10 @@ class AttackView:
     item_state: str = "ok"             # items.py: ok / broken / not_working / destroyed
     lucky: int = 20                    # lucky attack threshold (mastery picks, enchantment)
     extra_dice: Tuple[Tuple[str, str], ...] = ()   # (dice, note) from the weapon's effects, e.g. ("1d6", "fire")
+    available: bool = True             # all weapons it needs are in the hands (records.attack_available)
+    missing: Tuple[str, ...] = ()      # item ids that must be taken in hand
+    in_hands: Tuple[str, ...] = ()     # item ids now in the hands
+    drops_shield_ac: bool = False      # attacking with a shield: no shield bonus to AC until the next turn
 
 
 # ------------------------------------------------------------------ helpers
@@ -107,7 +111,7 @@ def _item_bonuses(ch, item):
     for it in ch.items:
         if not (it.equipped or it.in_hands):
             continue
-        for e in dv.item_tab(it):
+        for e in dv.item_tab(it, dv.picks(ch, it)):
             b = e.as_bonus(it.name, ctx)
             if rec.attack_groups(it) and b.target in (bo.ATTACK, bo.DAMAGE) and b.weapon is None:
                 if item is None or it.iid != item.iid:
@@ -128,39 +132,46 @@ def _group_bonuses(ch, record):
     return out
 
 
-def enchant_bonuses(item):
+def enchant_bonuses(ch, item):
     """Weapon enchantment N: +N enhancement to attack and damage of this weapon, ONLY while the
-    weapon is activated (gear.md, Q30). A shield's enchantment raises its shield bonus instead."""
-    n = weapon_enchant(item)
-    if n <= 0:
-        return []
-    return [bo.Bonus(n, bo.ENHANCEMENT, t, item.iid, "enchant +%d" % n) for t in (bo.ATTACK, bo.DAMAGE)]
+    weapon is activated and works (gear.md, Q30, R2). A shield's enchantment raises its shield bonus
+    instead. Masterwork: +1 enhancement to attack, so with +N the larger wins (package 8 D3)."""
+    out = []
+    if item is None:
+        return out
+    n = weapon_enchant(ch, item)
+    if n > 0:
+        out += [bo.Bonus(n, bo.ENHANCEMENT, t, item.iid, "enchant +%d" % n) for t in (bo.ATTACK, bo.DAMAGE)]
+    mw = itm.masterwork_attack(item, dv.picks(ch, item))
+    if mw:
+        out.append(bo.Bonus(mw, bo.ENHANCEMENT, bo.ATTACK, item.iid, "masterwork"))
+    return out
 
 
-def weapon_enchant(item):
-    return 0 if item is None or rec.is_shield(item) else dv.enchant(item)
+def weapon_enchant(ch, item):
+    return 0 if item is None or rec.is_shield(item) else dv.enchant(item, dv.picks(ch, item))
 
 
-def extra_dice(item):
+def extra_dice(ch, item):
     """Dice parts of the weapon's active tab (any kind: fire, acid...): shown, not summed."""
     if item is None:
         return ()
-    return tuple((e.dice, e.note) for e in dv.item_tab(item)
+    return tuple((e.dice, e.note) for e in dv.item_tab(item, dv.picks(ch, item))
                  if e.dice and e.target == bo.DAMAGE)
 
 
-def broken_bonuses(item):
+def broken_bonuses(ch, item):
     """Broken weapon: -2 to attack and damage with it (gear.md, package 6)."""
-    if item is None or not itm.broken(item):
+    if item is None or not itm.broken(item, dv.picks(ch, item)):
         return []
     return [bo.Bonus(itm.BROKEN_PENALTY, bo.FLAT, t, item.iid, "broken") for t in (bo.ATTACK, bo.DAMAGE)]
 
 
 def drum(ch, record, item):
-    out = list(ef.bonuses_from(ch.statuses, ch.in_combat, dv.context(ch)))
+    out = list(ef.bonuses_from(ch.statuses, dv.context(ch)))
     out += _item_bonuses(ch, item)
-    out += enchant_bonuses(item)
-    out += broken_bonuses(item)
+    out += enchant_bonuses(ch, item)
+    out += broken_bonuses(ch, item)
     out += _group_bonuses(ch, record)
     out.append(replace(bo.morale(dv.morale_bonus(ch)), source="morale scale"))
     return out
@@ -213,15 +224,18 @@ def attack(ch, record):
         # spiked gauntlets: no parry with the weapon itself; it is parrying with an empty hand
         p, parry_lines = 0, (Line("no parry: empty hand", 0, (item.iid,)),)
 
+    ok, why = rec.attack_available(ch, record)
     return AttackView(record=record.rid, weapon=record.item, group=record.group, stat=st,
                       to_hit=sum(x.value for x in hit), to_hit_lines=tuple(hit),
                       damage=sum(x.value for x in dmg), damage_lines=tuple(dmg),
                       parry=p, parry_lines=parry_lines,
                       crit_hint=crit_hint(item.crit_mult if item is not None else 2),
-                      dice=dice_row(item, 1) if item is None or itm.works(item) else ("", ""),
-                      item_state=itm.state(item) if item is not None else itm.OK,
-                      lucky=wpn.lucky_threshold(rec.group_picks(ch, record.group), weapon_enchant(item)),
-                      extra_dice=extra_dice(item))
+                      dice=dice_row(item, 1) if item is None or dv.works(ch, item) else ("", ""),
+                      item_state=itm.state(item, dv.picks(ch, item)) if item is not None else itm.OK,
+                      lucky=wpn.lucky_threshold(rec.group_picks(ch, record.group), weapon_enchant(ch, item)),
+                      extra_dice=extra_dice(ch, item),
+                      available=ok, missing=why["missing"], in_hands=why["in_hands"],
+                      drops_shield_ac=item is not None and rec.is_shield(item))
 
 
 def dice_row(item, row):
@@ -234,8 +248,18 @@ def dice_row(item, row):
 
 
 def all_attacks(ch):
-    """Every visible record: weapons in the hands + the unarmed attack (always)."""
+    """Every visible record: weapons in the hands + the unarmed attack (always). Each view has the
+    availability flag (a two-weapon record with only one of its weapons in hand is visible but
+    not available)."""
     return tuple(attack(ch, r) for r in rec.visible(ch))
+
+
+def all_records(ch):
+    """EVERY attack record (also of weapons not in the hands) + unarmed, each with `available`
+    and `missing`, so the UI can grey out what cannot be used now (package 8 B)."""
+    recs = [r for r in ch.attacks if r.item != UNARMED]
+    recs += [r for r in rec.visible(ch) if r.item == UNARMED]
+    return tuple(attack(ch, r) for r in recs)
 
 
 def by_record(ch, rid):

@@ -108,9 +108,9 @@ S.case("a5-dodge-lost", "defense.md: dodge bonus lost when flat-footed even with
     lambda: dv.ac(Character(abilities=abil(dex=6), statuses=(Status("d", effects=(Effect(bo.AC, 2, bo.DODGE),)),)),
                   acm.FLAT_FOOTED))
 
-# A6: balance max = armor 2 + current BP 3 + temp BP 2 + bonus 1 = 8 (parry gives none).
-S.case("a6-temp-bp-in-balance", "rest.md [OWNER]: balance max includes temporary BP", 8)(
-    lambda: dv.balance_max(hero(bp_current=3, temp_bp=2, balance_bonus=1,
+# A6: balance max = armor 2 + current BP 5 (3 + 2 above max, overcap pkg 8 C) + bonus 1 = 8.
+S.case("a6-overcap-in-balance", "rest.md [OWNER pkg 8]: balance max includes BP above max", 8)(
+    lambda: dv.balance_max(hero(bp_current=5, balance_bonus=1,
                                 items=(Item("l", "leather", equipped=True, armor=2),))))
 
 # A7: Cha 8 (-1) -> base 0; penalty -2 -> total never below 0 -> 0.
@@ -163,9 +163,9 @@ def _m41():
 # M47: lucky cap 3: 4 lucky picks (impossible by the repeat limits, forced here) -> 20 - 3 = 17.
 S.case("m47-lucky-cap", "combat.md: lucky from mastery at most 3", 17)(
     lambda: wpn.lucky_threshold([Pick(8, "lucky_1")] * 4))
-# M48: long rest clears temporary BP.
-S.case("m48-long-rest-temp-bp", "rest.md: long rest clears temporary BP", 0)(
-    lambda: run(hero(temp_bp=2), ("long_rest", {})).temp_bp)
+# M48: long rest drops BP above max (overcap, pkg 8 C).
+S.case("m48-long-rest-overcap", "rest.md [OWNER pkg 8]: long rest BP above max -> max", True)(
+    lambda: (lambda c: c.bp_current == dv.bp_max(c))(run(hero(bp_current=dv.bp_max(hero()) + 2), ("long_rest", {}))))
 
 
 # A9: feat price comes from the catalog; a cost parameter is not accepted.

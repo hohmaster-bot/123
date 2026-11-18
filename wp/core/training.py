@@ -13,6 +13,7 @@ ARMOR_GRADE_COST = 250
 SHIELD_GRADES = ("none", "light", "heavy", "tower")
 ARMOR_GRADES = ("none", "light", "medium", "heavy")
 BASE_SLOT_COST = 100
+HP_POINT_COST = 50          # max HP +1 (hit-die HP, up to die * level)
 BASE_START = 5
 LANG_NON_NATIVE = 30
 LANG_NATIVE_CHEAP = 50

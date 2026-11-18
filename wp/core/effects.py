@@ -4,7 +4,8 @@ Status = buff = debuff = situational. A status holds:
   - timed part: typed bonuses (target, value, bonus type) via bonuses.py;
   - one-shot part: applied once on activation (e.g. temp HP);
   - per-tick HP change (DoT < 0, heal > 0), applied in the zero-initiative phase;
-  - condition: always / in combat only / out of combat only;
+  - no combat-only condition (owner, package 8): ticks are the combat clock; DoT, regen and
+    buff durations all count down the same way, long effects are lowered by hand;
   - duration: N ticks (typed in by hand), until end of combat, infinite, instant;
   - charges (current/max); no charges left -> cannot activate;
   - flags: temp HP stacks, ignores iterative penalty; active / off.
@@ -15,10 +16,6 @@ from typing import Optional, Tuple
 
 from wp.core import bonuses as bo
 from wp.core.damage import Pool
-
-ALWAYS = "always"
-IN_COMBAT = "in_combat"
-OUT_OF_COMBAT = "out_of_combat"
 
 TICKS = "ticks"
 END_OF_COMBAT = "end_of_combat"
@@ -65,7 +62,6 @@ class Status:
     one_shot: Tuple[OneShot, ...] = ()
     per_tick_hp: int = 0               # DoT < 0, heal per tick > 0
     dot_type: str = "untyped"          # damage type of the DoT part
-    condition: str = ALWAYS
     duration: str = INFINITE
     remaining: int = 0                 # ticks left (duration == TICKS)
     charges: Optional[Pool] = None     # None = no charges
@@ -79,36 +75,28 @@ class Status:
 
 # ------------------------------------------------------------- reading
 
-def condition_ok(status, in_combat):
-    if status.condition == IN_COMBAT:
-        return bool(in_combat)
-    if status.condition == OUT_OF_COMBAT:
-        return not in_combat
-    return True
-
-
-def is_effective(status, in_combat):
-    """Active, condition met, not expired."""
-    if not status.active or not condition_ok(status, in_combat):
+def is_effective(status):
+    """Active and not expired."""
+    if not status.active:
         return False
     if status.duration == TICKS and status.remaining <= 0:
         return False
     return status.duration != INSTANT
 
 
-def bonuses_from(statuses, in_combat, context=None):
+def bonuses_from(statuses, context=None):
     """Typed bonuses of every effective status (feed into bonuses.total).
     context: values effects may read, e.g. {OVERLOAD: 3}."""
     out = []
     for s in statuses:
-        if is_effective(s, in_combat):
+        if is_effective(s):
             out.extend(e.as_bonus(s.name, context) for e in s.effects)
     return tuple(out)
 
 
-def ignores_iterative(statuses, in_combat):
+def ignores_iterative(statuses):
     """True if an effective status carries the 'ignores iterative penalty' flag."""
-    return any(s.ignores_iterative for s in statuses if is_effective(s, in_combat))
+    return any(s.ignores_iterative for s in statuses if is_effective(s))
 
 
 # ------------------------------------------------------------- changing
@@ -173,9 +161,10 @@ def end_combat(statuses):
 
 
 def holds_temp_hp(status):
-    """Temp HP from a status with its own duration (ticks / infinite) lives with the status;
-    instant and 'until end of combat' temp HP go to the combat pool."""
-    return status.duration in (TICKS, INFINITE)
+    """Temp HP from a status with a duration (ticks / until end of combat / infinite) lives with
+    the status and goes when it ends (resources.md, package 8 R1); an instant status keeps nothing,
+    its temp HP go to the "by button" pool (until the short rest)."""
+    return status.duration in (TICKS, END_OF_COMBAT, INFINITE)
 
 
 def drop_instant(statuses):

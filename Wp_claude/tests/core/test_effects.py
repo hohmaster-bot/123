@@ -18,7 +18,7 @@ RAGE = Status("rage", effects=(Effect("str", 4, bo.MORALE), Effect(bo.AC, -2)),
               charges=Pool(3, 3))
 
 S.case("timed-part", "buffs.md: timed +4 Str and -2 AC", (4, -2))(
-    lambda: (bo.total(ef.bonuses_from([RAGE], True), "str"), bo.total(ef.bonuses_from([RAGE], True), bo.AC)))
+    lambda: (bo.total(ef.bonuses_from([RAGE]), "str"), bo.total(ef.bonuses_from([RAGE]), bo.AC)))
 S.case("one-shot", "buffs.md: one-shot temp HP applied once", 5)(lambda: ef.apply_one_shot(RAGE, 0))
 
 # buffs.md Charges: rage 2/3; no charges left -> cannot activate.
@@ -50,12 +50,11 @@ S.case("instant-not-kept", "buffs.md: instant one-shot is not kept", ())(
     lambda: ef.drop_instant([Status("heal", duration=ef.INSTANT)]))
 
 # buffs.md Condition: in combat only / out of combat only.
-_OUT = Status("tools", effects=(Effect(bo.SKILL, 2, "competence"),), condition=ef.OUT_OF_COMBAT)
-S.case("condition", "buffs.md: out-of-combat bonus", (0, 2))(
-    lambda: (bo.total(ef.bonuses_from([_OUT], True), bo.SKILL),
-             bo.total(ef.bonuses_from([_OUT], False), bo.SKILL)))
+_TOOLS = Status("tools", effects=(Effect(bo.SKILL, 2, "competence"),))
+S.case("no-condition", "buffs.md [OWNER pkg 8]: no combat-only condition, a status works while active", (2, False))(
+    lambda: (bo.total(ef.bonuses_from([_TOOLS]), bo.SKILL), hasattr(_TOOLS, "condition")))
 S.case("inactive", "effects: switched off -> no bonuses", 0)(
-    lambda: bo.total(ef.bonuses_from([ef.set_active(RAGE, False)], True), "str"))
+    lambda: bo.total(ef.bonuses_from([ef.set_active(RAGE, False)]), "str"))
 
 # buffs.md Stacking flags: temp HP from statuses may or may not stack.
 S.case("temp-hp-no-stack", "buffs.md: temp HP not stacking -> higher value", 5)(
@@ -68,15 +67,15 @@ _NAT = Status("feral", effects=(Effect(bo.ATTACK, value_source=ef.OVERLOAD, weap
                                 Effect(bo.DAMAGE, value_source=ef.OVERLOAD, weapon="natural")))
 S.case("overload-source", "buffs.md [OWNER]: natural weapons attack and damage = current overload",
        (3, 3, 0, 0))(
-    lambda: (bo.total(ef.bonuses_from([_NAT], True, {ef.OVERLOAD: 3}), bo.ATTACK, weapon="natural"),
-             bo.total(ef.bonuses_from([_NAT], True, {ef.OVERLOAD: 3}), bo.DAMAGE, weapon="natural"),
-             bo.total(ef.bonuses_from([_NAT], True, {ef.OVERLOAD: 3}), bo.ATTACK, weapon="sword"),
-             bo.total(ef.bonuses_from([_NAT], True, {ef.OVERLOAD: 0}), bo.ATTACK, weapon="natural")))
+    lambda: (bo.total(ef.bonuses_from([_NAT], {ef.OVERLOAD: 3}), bo.ATTACK, weapon="natural"),
+             bo.total(ef.bonuses_from([_NAT], {ef.OVERLOAD: 3}), bo.DAMAGE, weapon="natural"),
+             bo.total(ef.bonuses_from([_NAT], {ef.OVERLOAD: 3}), bo.ATTACK, weapon="sword"),
+             bo.total(ef.bonuses_from([_NAT], {ef.OVERLOAD: 0}), bo.ATTACK, weapon="natural")))
 
 # combat.md: effect flag 'ignores iterative penalty'.
 S.case("ignores-iterative", "combat.md: effect flag", (True, False))(
-    lambda: (ef.ignores_iterative([Status("master", ignores_iterative=True)], True),
-             ef.ignores_iterative([Status("other")], True)))
+    lambda: (ef.ignores_iterative([Status("master", ignores_iterative=True)]),
+             ef.ignores_iterative([Status("other")])))
 
 if __name__ == "__main__":
     sys.exit(S.run())

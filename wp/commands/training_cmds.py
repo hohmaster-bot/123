@@ -50,6 +50,31 @@ def buy_skill_rank(ch, name="", target=None, source=tr.TRAINING):
 
 
 @command
+def buy_hp(ch, source=tr.TRAINING):
+    """Max HP +1 for 50 (training.md): raises the hit-die HP only, never above die * level. The point
+    goes to the first level whose roll is below the die."""
+    i = next((k for k, v in enumerate(ch.hp_rolls) if v < ch.hit_die), None)
+    if i is None or dv.hit_die_hp(ch) >= dv.hit_die_cap(ch):
+        raise CommandError("hit-die HP already at the cap %d" % dv.hit_die_cap(ch))
+    rolls = ch.hp_rolls[:i] + (ch.hp_rolls[i] + 1,) + ch.hp_rolls[i + 1:]
+    new = replace(ch, hp_rolls=rolls, training=_pay(ch, tr.HP_POINT_COST, source))
+    return commit(new, "buy_hp", "hit-die HP +1 (level %d) for %d" % (i + 1, tr.HP_POINT_COST),
+                  {"cost": tr.HP_POINT_COST})
+
+
+@command
+def set_hp_roll(ch, level=1, value=1):
+    """Edit the hit-die HP of one level (progression.md): 1..die (no resources spent)."""
+    level, value = int(level), int(value)
+    if not 1 <= level <= len(ch.hp_rolls):
+        raise CommandError("no hit-die roll for level %d" % level)
+    if not 1 <= value <= ch.hit_die:
+        raise CommandError("hit-die HP must be 1..%d" % ch.hit_die)
+    rolls = ch.hp_rolls[:level - 1] + (value,) + ch.hp_rolls[level:]
+    return commit(replace(ch, hp_rolls=rolls), "set_hp_roll", "level %d hit-die HP = %d" % (level, value))
+
+
+@command
 def buy_weapon_grade(ch, wid="", source=tr.TRAINING):
     catalog = ch.weapon_catalog()
     if wid not in catalog:

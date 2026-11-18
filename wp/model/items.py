@@ -9,6 +9,13 @@
 - States: "ok"; "broken" = 0 < HP <= 50% of max; "not_working" = HP 0 (gives nothing);
   "destroyed" = HP went below 0 (stored flag, cannot be activated or healed).
 - An item without HP (max 0, no stored current) is not tracked: always "ok".
+- HP 0 (or destroyed): the item gives NOTHING, also no enchantment (+N attack/damage/lucky,
+  armor/shield +N, hardness +2N) and no tabs (package 8, R2).
+- `picks` = weapon mastery picks of the group the item is used with (records.item_picks):
+  "weapon HP +1" raises max HP, "durability +30% / +70%" raises hardness (package 8, R3).
+- Masterwork (flag, independent of activation): weapon +1 to attack as an ENHANCEMENT bonus
+  (does not stack with enchantment +N: the larger wins); armor/shield skill penalty -1 smaller
+  (never above 0). Applied before the broken doubling (package 8, D3).
 """
 from dataclasses import replace
 
@@ -19,6 +26,8 @@ BROKEN = "broken"
 NOT_WORKING = "not_working"
 DESTROYED = "destroyed"
 BROKEN_PENALTY = -2            # weapon: attack and damage with it
+MASTERWORK_ATTACK = 1          # masterwork weapon: +1 attack, type enhancement
+MASTERWORK_PENALTY_RELIEF = 1  # masterwork armor/shield: skill penalty 1 smaller
 
 
 def item_active(it):
@@ -26,9 +35,9 @@ def item_active(it):
     return it.activated and not it.destroyed and (it.activation_day > 0 or it.activation_decade > 0)
 
 
-def enchant(it):
-    """Enchantment level N, only while the item is activated (Q30)."""
-    return it.enchant if item_active(it) else 0
+def enchant(it, picks=()):
+    """Enchantment level N, only while the item is activated (Q30) AND works (HP > 0, R2)."""
+    return it.enchant if item_active(it) and works(it, picks) else 0
 
 
 def hp_max(it, picks=(), active=None):
@@ -58,8 +67,8 @@ def state(it, picks=()):
     return OK
 
 
-def works(it):
-    return state(it) not in (NOT_WORKING, DESTROYED)
+def works(it, picks=()):
+    return state(it, picks) not in (NOT_WORKING, DESTROYED)
 
 
 def defensive(it):
@@ -67,20 +76,38 @@ def defensive(it):
     return it.armor > 0 or it.shield > 0 or it.kind == "shield" or bool(it.shield_type)
 
 
-def broken(it):
-    return state(it) == BROKEN
+def broken(it, picks=()):
+    return state(it, picks) == BROKEN
 
 
-def tab(it):
+def masterwork_attack(it, picks=()):
+    """Masterwork weapon (not a shield): +1 attack (enhancement); nothing at HP 0."""
+    if not it.masterwork or defensive(it) or not works(it, picks):
+        return 0
+    return MASTERWORK_ATTACK
+
+
+def skill_penalty(it, picks=()):
+    """Str/Dex skill penalty of armor or a shield: masterwork -1 smaller (not above 0), then doubled
+    while broken (gear.md); 0 at HP 0 (the item counts as taken off)."""
+    if not works(it, picks):
+        return 0
+    p = min(0, it.skill_penalty)
+    if it.masterwork:
+        p = min(0, p + MASTERWORK_PENALTY_RELIEF)
+    return 2 * p if broken(it, picks) else p
+
+
+def tab(it, picks=()):
     """The one acting tab (D17): "activated" while active, else "not activated"; nothing at HP 0."""
-    if not works(it):
+    if not works(it, picks):
         return ()
     return it.effects_on if item_active(it) else it.effects_off
 
 
 def durability(it, picks=()):
     """Final hardness: base with weapon mastery percent, then +2N while activated (assumption)."""
-    return wpn.final_durability(it.durability, picks) + 2 * enchant(it)
+    return wpn.final_durability(it.durability, picks) + 2 * enchant(it, picks)
 
 
 def scale_off(cur, old_max, new_max):
@@ -92,14 +119,15 @@ def scale_off(cur, old_max, new_max):
     return max(1, v)
 
 
-def switch(it, on):
+def switch(it, on, picks=()):
     """The item with `activated` = on and its current HP adjusted (gear.md, package 6)."""
     new = replace(it, activated=on, active_until=it.active_until if on else "")
     if it.hp_current is None or not it.enchant:
         return new
     if on:
         return replace(new, hp_current=it.hp_current + it.enchant)
-    return replace(new, hp_current=scale_off(it.hp_current, hp_max(it, active=True), hp_max(it, active=False)))
+    return replace(new, hp_current=scale_off(it.hp_current, hp_max(it, picks, active=True),
+                                             hp_max(it, picks, active=False)))
 
 
 def with_hp(it, value):
@@ -110,5 +138,5 @@ def with_hp(it, value):
     return replace(it, hp_current=value)
 
 
-def damaged(it, amount):
-    return with_hp(it, hp_current(it) - int(amount))
+def damaged(it, amount, picks=()):
+    return with_hp(it, hp_current(it, picks) - int(amount))

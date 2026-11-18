@@ -1,7 +1,7 @@
 """Armor class by attack direction (RULES/defense.md "Positioning", gear.md overload).
 
   FRONT        full AC.
-  FLANK        shield side: the shield bonus is ignored.
+  FLANK        shield side: the shield bonus is ignored (option flank_drops_shield, default on).
   FLAT_FOOTED  no Dex bonus and no dodge (a low-Dex penalty stays); shield only from the shield side.
   PARRY        front only: armor slot uses max(armor, parry).
   TOUCH        ignores natural armor, shield, parry and armor.
@@ -32,7 +32,8 @@ class AcInput:
     size_mod: int = 0
     max_dex: Optional[int] = None  # armor max Dex, None = no cap
     overloaded: bool = False
-    shield_enabled: bool = True    # UI toggle
+    shield_enabled: bool = True    # UI toggle (also off after an attack with the shield)
+    flank_drops_shield: bool = True    # checkbox: in FLANK mode the shield is dropped (attacker "may")
     bonuses: Tuple[bo.Bonus, ...] = field(default_factory=tuple)  # effects on AC
 
 
@@ -80,7 +81,7 @@ def parts(inp, mode=FRONT, from_shield_side=False):
 
     armor_value = max(inp.armor, inp.parry) if mode == PARRY else inp.armor
     use_shield = inp.shield_enabled
-    if mode == FLANK:
+    if mode == FLANK and inp.flank_drops_shield:
         use_shield = False
     if mode == FLAT_FOOTED and not from_shield_side:
         use_shield = False

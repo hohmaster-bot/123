@@ -81,6 +81,8 @@ class Item:
     dmg_type: str = ""                 # P / S / B
     durability: int = 0                # hardness (HD) typed by the author (base)
     hp: int = 0                        # item HP typed by the author (base)
+    masterwork: bool = False           # masterwork (any item, activated or not): weapon +1 attack
+                                       # (enhancement), armor/shield skill penalty -1 smaller (items.py)
     enchant: int = 0                   # enchantment level N (gear.md): weapon +N attack/damage/lucky,
                                        # armor/shield +N bonus; all: hardness +2N, item HP +N
     hp_current: Optional[int] = None   # CURRENT item HP (None = at max); see wp/model/items.py
@@ -142,16 +144,17 @@ class Character:
     bab: int = 0                       # base attack bonus (base value, class progression by hand)
     abilities: Dict[str, Ability] = field(default_factory=lambda: {a: Ability() for a in ABILITIES})
     # HP: hit die results entered by hand (progression.md)
-    hp_rolls: Tuple[int, ...] = (8,)
-    hp_bonus: int = 0
+    hp_rolls: Tuple[int, ...] = (8,)   # hit-die HP per level: level 1 = the die max, later = entered
+    hit_die: int = 8                   # class hit die (cap for each roll and for training HP)
+    hp_race: int = 0                   # race bonus to max HP (may be 0)
+    hp_bonus: int = 0                  # other bonuses to max HP (feats, class, quirks, items)
     hp_current: int = 8
     temp_hp: int = 0
     # balance / BP (maxima derived)
     balance_current: int = 0
     balance_bonus: int = 0             # race, class, other
     balance_regen_bonus: int = 0
-    bp_current: int = 0
-    temp_bp: int = 0
+    bp_current: int = 0                # may be above max: "overcap" (narrative BP...), package 8 C
     bp_bonus: int = 0
     # spirit: max derived (5 + 5 * Cha mod, min 0, + bonuses by source)
     spirit_current: int = 0
@@ -160,6 +163,7 @@ class Character:
     mana: Pool = Pool(0, 0)
     mana_enabled: bool = False
     caster: Optional[str] = None       # magic.MAGE / magic.SLOTS / None
+    divine_slots: bool = False         # slots are divine casts (short rest option "divine casts")
     slots: Dict[int, Pool] = field(default_factory=dict)
     resources: Dict[str, Pool] = field(default_factory=dict)
     charges: Tuple[Charge, ...] = ()
@@ -194,6 +198,7 @@ class Character:
     training: int = 1000
     base_slots: int = 5
     size_mod: int = 0
+    ignore_bag_weight: bool = False    # bag weight not counted (gear.md "drop bag" button, package 8 E)
     log: Tuple[LogEntry, ...] = ()
 
     def ability(self, name):

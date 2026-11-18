@@ -53,20 +53,35 @@ def from_vitals(ch, v, pain_source=OVERFLOW):
                    temp_hp=temp, statuses=statuses, mana=mana, resources=resources, trauma=v.trauma, pain=pain)
 
 
+STATUS_CHARGE = "status:"          # rest charge name for the charges kept on a status (rage 2/3)
+
+
+def _status_charges(ch):
+    """Charges kept on statuses go to the rest as ability charges: the short rest option
+    "restore charges" and the long rest bring them back (buffs.md, package 8 R16)."""
+    return tuple(rs.Charge(STATUS_CHARGE + s.sid, rs.ABILITY, s.charges)
+                 for s in ch.statuses if s.charges is not None)
+
+
 def to_rest(ch):
     stats = {n: Pool(a.current, a.score_max) for n, a in ch.abilities.items()}
-    return rs.RestState(level=ch.level, hp=dv.hp_pool(ch), bp=dv.bp_pool(ch), temp_bp=ch.temp_bp,
+    return rs.RestState(level=ch.level, hp=dv.hp_pool(ch), bp=dv.bp_pool(ch),
                         pain=ch.pain, spirit=dv.spirit_pool(ch), mana=ch.mana, mana_enabled=ch.mana_enabled,
-                        slots=dict(ch.slots), resources=dict(ch.resources), charges=ch.charges,
+                        divine=ch.divine_slots, slots=dict(ch.slots), resources=dict(ch.resources),
+                        charges=ch.charges + _status_charges(ch),
                         stats=stats, trauma=ch.trauma, comfort=dv.comfort_pool(ch))
 
 
 def from_rest(ch, s):
     abilities = {n: replace(a, damage=s.stats[n].max - s.stats[n].current)
                  for n, a in ch.abilities.items()}
-    return replace(ch, hp_current=s.hp.current, bp_current=s.bp.current, temp_bp=s.temp_bp,
+    own = tuple(c for c in s.charges if not c.name.startswith(STATUS_CHARGE))
+    back = {c.name[len(STATUS_CHARGE):]: c.pool for c in s.charges if c.name.startswith(STATUS_CHARGE)}
+    statuses = tuple(replace(st, charges=back[st.sid]) if st.charges is not None and st.sid in back else st
+                     for st in ch.statuses)
+    return replace(ch, hp_current=s.hp.current, bp_current=s.bp.current,
                    pain=s.pain, spirit_current=s.spirit.current, mana=s.mana, slots=dict(s.slots),
-                   resources=dict(s.resources), charges=s.charges, abilities=abilities)
+                   resources=dict(s.resources), charges=own, abilities=abilities, statuses=statuses)
 
 
 def to_caster(ch):

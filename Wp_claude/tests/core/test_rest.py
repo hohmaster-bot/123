@@ -19,17 +19,17 @@ def st(**kw):
 
 
 # rest.md Short rest 2: +1 BP if below max.
-@S.case("free-bp", "rest.md Short rest 2 [OWNER]", (3, 0))
+@S.case("free-bp", "rest.md Short rest 2 [OWNER]", (3, 5))
 def _free_bp():
     s = r.start_short_rest(st()).state
-    return (s.bp.current, s.temp_bp)
+    return (s.bp.current, s.bp.max)
 
 
-# ... +1 temp BP if BP at max.
-@S.case("free-temp-bp", "rest.md Short rest 2 [OWNER]", (5, 1))
+# ... at max the +1 goes above max (overcap, package 8 C: no separate temp BP).
+@S.case("free-overcap", "rest.md Short rest 2 [OWNER pkg 8]", (6, 5))
 def _free_temp():
     s = r.start_short_rest(st(bp=Pool(5, 5))).state
-    return (s.bp.current, s.temp_bp)
+    return (s.bp.current, s.bp.max)
 
 
 # rest.md Example 7: level 3, HP 1/20: free +5 HP; a second heal costs 1 BP.
@@ -70,7 +70,7 @@ def _shown():
          ("mana", 0), ("divine", 1)))
 def _costs():
     s = st(stats={"con": Pool(10, 12)}, pain=(PE(1),), spirit=Pool(0, 5),
-           mana=Pool(0, 6), mana_enabled=True, slots={1: Pool(0, 2)},
+           mana=Pool(0, 6), mana_enabled=True, slots={1: Pool(0, 2)}, divine=True,
            charges=(r.Charge("rage", r.ABILITY, Pool(0, 3)),))
     return r.options(r.start_short_rest(s))
 
@@ -112,17 +112,46 @@ def _no_bp():
     return "allowed"
 
 
-# rest.md Short rest 6: Apply -> excess BP (above max) is lost.
-@S.case("apply-excess-lost", "rest.md Short rest 6 [OWNER]", (5, 0))
+# rest.md Short rest 6: Apply -> excess BP (above max) is lost (default); keep_overcap keeps it.
+@S.case("apply-excess-lost", "rest.md Short rest 6 [OWNER pkg 8]: 5/5 + 1 free + 2 -> 5", 5)
 def _apply():
-    rest = r.start_short_rest(st(bp=Pool(5, 5)), extra_temp_bp=2)
-    s = r.apply_short_rest(rest)
-    return (s.bp.current, s.temp_bp)
+    rest = r.start_short_rest(st(bp=Pool(5, 5)), extra_bp=2)
+    return r.apply_short_rest(rest).bp.current
+
+
+@S.case("apply-keep-overcap", "rest.md [OWNER pkg 8]: keep_overcap -> 8/5 kept", 8)
+def _apply_keep():
+    rest = r.start_short_rest(st(bp=Pool(5, 5)), extra_bp=2)
+    return r.apply_short_rest(rest, keep_overcap=True).bp.current
+
+
+# M55 (REVIEW_REPORT_3): ORDINARY BP above max (not from the rest) is lost too.
+@S.case("m55-ordinary-overcap", "rest.md [OWNER pkg 8]: BP 7/5 before the rest -> 5 after", 5)
+def _m55():
+    return r.apply_short_rest(r.start_short_rest(st(bp=Pool(7, 5)))).bp.current
 
 
 @S.case("extra-bp", "rest.md Short rest 5: other BP sources add BP", 5)
 def _extra():
-    return r.bp_available(r.start_short_rest(st(bp=Pool(2, 5)), extra_bp=1, extra_temp_bp=1))
+    return r.bp_available(r.start_short_rest(st(bp=Pool(2, 5)), extra_bp=2))
+
+
+@S.case("long-rest-drops-overcap", "rest.md [OWNER pkg 8]: long rest BP 8/5 -> 5", 5)
+def _long_overcap():
+    return r.long_rest(st(bp=Pool(8, 5))).bp.current
+
+
+@S.case("divine-only-divine", "rest.md [OWNER pkg 8 R17]: divine option only with divine slots", (False, True))
+def _divine():
+    def has(divine):
+        rest = r.start_short_rest(st(slots={1: Pool(0, 2)}, divine=divine))
+        return r.OPT_DIVINE in dict(r.options(rest))
+    return (has(False), has(True))
+
+
+@S.case("racial-mana-long-rest", "rest.md [OWNER pkg 8 R18]: long rest restores mana without mana_enabled", 6)
+def _mana():
+    return r.long_rest(st(mana=Pool(1, 6), mana_enabled=False)).mana.current
 
 
 # rest.md Long rest.

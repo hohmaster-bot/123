@@ -72,9 +72,10 @@ S.case("b-enhancement-touch", "defense.md: touch ignores armor, so its enhanceme
 
 
 # ---- C: shields: type on the card, heavy/tower add the shield bonus to balance max while in a hand ----
-def shield_char(stype, in_hands=True, bonus=2):
+def shield_char(stype, in_hands=True, bonus=2, grade="tower"):
+    """Package 8 D1: the balance bonus needs the shield grade; "tower" grade covers every type."""
     sh = Item("sh", "shield", kind=SHIELD, hands=1, in_hands=in_hands, shield=bonus, shield_type=stype)
-    return Character(hp_rolls=(8,), hp_current=8, bp_current=2, items=(sh,))
+    return Character(hp_rolls=(8,), hp_current=8, bp_current=2, items=(sh,), shield_grade=grade)
 
 
 S.case("c-heavy-in-hand", "training.md [OWNER Q28]: heavy shield +2 in hand -> balance max +2", 2)(

@@ -70,6 +70,10 @@ def add_status(ch, status=None, ticks=None):
     if not ef.can_activate(status):
         raise CommandError("no charges left: %s" % status.name)
     st = ef.activate(status, ticks)
+    if st.duration == ef.TICKS and st.remaining <= 0:
+        raise CommandError("status %s lasts N ticks: give the number of ticks (> 0)" % st.name)
+    if st.sid and any(s.sid == st.sid for s in ch.statuses):
+        raise CommandError("a status with id %r is already on the sheet" % (st.sid,))
     if not st.sid:                     # the program makes the stable id from the name (D7)
         st = replace(st, sid=ids.make_id(st.name, (s.sid for s in ch.statuses)))
     if ef.holds_temp_hp(st):
@@ -82,6 +86,23 @@ def add_status(ch, status=None, ticks=None):
     kept = ch.statuses if st.duration == ef.INSTANT else ch.statuses + (st,)
     new = replace(ch, statuses=kept, temp_hp=temp)
     return commit(new, "add_status", "status %s" % st.name)
+
+
+@command
+def set_status_duration(ch, sid="", remaining=0):
+    """Set the ticks left of an N-ticks status by hand (buffs.md [OWNER pkg 8]: long effects are not
+    simulated; the player lowers them by ticks or by hand). 0 or less removes the status."""
+    st = next((s for s in ch.statuses if s.sid == sid), None)
+    if st is None:
+        raise CommandError("no status with id %r" % (sid,))
+    if st.duration != ef.TICKS:
+        raise CommandError("status %s has no tick duration" % st.name)
+    remaining = int(remaining)
+    if remaining <= 0:
+        kept = tuple(s for s in ch.statuses if s.sid != sid)
+        return commit(replace(ch, statuses=kept), "set_status_duration", "status %s removed" % st.name)
+    statuses = tuple(replace(s, remaining=remaining) if s.sid == sid else s for s in ch.statuses)
+    return commit(replace(ch, statuses=statuses), "set_status_duration", "status %s: %d ticks" % (st.name, remaining))
 
 
 @command

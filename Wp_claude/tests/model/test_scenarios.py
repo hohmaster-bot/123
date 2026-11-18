@@ -68,10 +68,9 @@ def _short():
     return (ch.hp_current, ch.bp_current, dv.pain_total(ch))
 
 
-@S.case("short-rest-temp-bp-lost", "rest.md Short rest 6: excess BP lost on Apply", (5, 0))
+@S.case("short-rest-overcap-lost", "rest.md Short rest 6 [OWNER pkg 8]: excess BP lost on Apply", 5)
 def _short_temp():
-    ch = run(hero(), ("short_rest", {"extra_temp_bp": 2}))
-    return (ch.bp_current, ch.temp_bp)
+    return run(hero(), ("short_rest", {"extra_bp": 2})).bp_current
 
 
 # rest.md Long rest [OWNER].
@@ -177,10 +176,9 @@ def _over():
     return (ch.hp_current, ch2.hp_current, dv.hp_pool(ch2).over_max)
 
 
-@S.case("spend-bp", "rest.md: BP spent by hand, temporary first", (4, 0))
+@S.case("spend-bp", "rest.md [OWNER pkg 8]: BP spent by hand, BP above max is ordinary BP", 4)
 def _bp():
-    ch = run(hero(bp_current=5, temp_bp=1), ("spend_bp", {"n": 2}))
-    return (ch.bp_current, ch.temp_bp)
+    return run(hero(bp_current=6), ("spend_bp", {"n": 2})).bp_current
 
 
 @S.case("add-injury", "injuries.md: light injury removes 2 OT, RL 3", (3, 3))

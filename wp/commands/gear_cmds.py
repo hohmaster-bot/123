@@ -27,9 +27,10 @@ def damage_item(ch, iid="", amount=0):
         raise CommandError("destroyed: %s" % it.name)
     if amount < 0:
         raise CommandError("damage cannot be negative")
-    new = itm.damaged(it, amount)
+    p = dv.picks(ch, it)
+    new = itm.damaged(it, amount, p)
     return commit(_put(ch, new), "damage_item", "%s -%d HP -> %d (%s)" % (
-        it.name, amount, new.hp_current, itm.state(new)))
+        it.name, amount, new.hp_current, itm.state(new, p)))
 
 
 @command
@@ -39,7 +40,8 @@ def set_item_hp(ch, iid="", value=0):
     if it.destroyed:
         raise CommandError("destroyed: %s" % it.name)
     new = itm.with_hp(it, value)
-    return commit(_put(ch, new), "set_item_hp", "%s HP = %d (%s)" % (it.name, new.hp_current, itm.state(new)))
+    return commit(_put(ch, new), "set_item_hp", "%s HP = %d (%s)" % (
+        it.name, new.hp_current, itm.state(new, dv.picks(ch, it))))
 
 
 def _prices(item):
@@ -69,7 +71,7 @@ def activate_item(ch, iid="", kind=None):
     spirit = prices[kind]
     if ch.spirit_current < spirit:
         raise CommandError("not enough spirit: need %d, have %d" % (spirit, ch.spirit_current))
-    on = replace(itm.switch(it, True), active_until=UNTIL[kind])        # enchanted: current HP +N
+    on = replace(itm.switch(it, True, dv.picks(ch, it)), active_until=UNTIL[kind])        # enchanted: current HP +N
     new = replace(_put(ch, on), spirit_current=ch.spirit_current - spirit)
     return commit(new, "activate_item", "%s activated for %d spirit (%s)" % (it.name, spirit, kind))
 
@@ -79,12 +81,12 @@ def deactivate_item(ch, iid=""):
     it = ch.item(iid)
     if not it.activated:
         raise CommandError("not activated: %s" % it.name)
-    return commit(_put(ch, itm.switch(it, False)), "deactivate_item", "%s deactivated" % it.name)
+    return commit(_put(ch, itm.switch(it, False, dv.picks(ch, it))), "deactivate_item", "%s deactivated" % it.name)
 
 
 def switch_off_items(ch, rest_kind):
     """Short rest switches off "day" items; long rest switches off all."""
-    items = tuple(itm.switch(it, False)
+    items = tuple(itm.switch(it, False, dv.picks(ch, it))
                   if it.activated and (rest_kind == LONG or it.active_until == SHORT) else it
                   for it in ch.items)
     return replace(ch, items=items)
@@ -113,9 +115,10 @@ def end_combat(ch):
 @command
 def end_cycle(ch):
     """End of cycle (narrative.md [OWNER]): adds Attention (1 + levels 3, 6, 9... + drives 4+)
-    and burns unspent OV. Nothing else: it does not run a long rest (separate button)."""
+    and burns unspent OV, drops BP above max. Nothing else: it does not run a long rest (separate button)."""
     gain = dv.attention_per_cycle(ch)
-    return commit(replace(ch, attention=ch.attention + gain, ov=0), "end_cycle",
+    bp = min(ch.bp_current, dv.bp_max(ch))          # BP above max is dropped (package 8 C)
+    return commit(replace(ch, attention=ch.attention + gain, ov=0, bp_current=bp), "end_cycle",
                   "attention +%d, OV %d burned" % (gain, ch.ov), {"gain": gain, "burned": ch.ov})
 
 

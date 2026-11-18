@@ -46,6 +46,43 @@ def in_hands_ids(ch):
     return {it.iid for it in ch.items if it.in_hands}
 
 
+def held_ids(ch):
+    """Items in the hands, in list order (data for the UI: "in hands: sword A, shield A")."""
+    return tuple(it.iid for it in ch.items if it.in_hands)
+
+
+def required_items(ch, record):
+    """Items an attack record needs in the hands: its weapon (a double weapon is one item), plus
+    the off-hand weapon of a two-weapon record. Unarmed needs no item."""
+    need = [record.item] if record.item != UNARMED else []
+    if record.twf and record.twf_off:
+        off = next((r for r in ch.attacks if r.rid == record.twf_off), None)
+        if off is not None and off.item != UNARMED and off.item not in need:
+            need.append(off.item)
+    return tuple(need)
+
+
+def _unarmed_off(ch, record):
+    if not (record.twf and record.twf_off):
+        return False
+    off = next((r for r in ch.attacks if r.rid == record.twf_off), None)
+    return off is not None and off.item == UNARMED
+
+
+def attack_available(ch, record):
+    """Can this attack record be used now (package 8 B)? Every weapon it needs must be in the hands
+    (two-weapon: both, in any order; double weapon: the one weapon); an unarmed off-hand strike
+    needs a free hand. Returns (bool, data) with ids, not text, so the UI can grey it out and say
+    why: {"required": ids, "in_hands": ids, "missing": ids, "free_hand": bool}."""
+    held = held_ids(ch)
+    need = required_items(ch, record)
+    missing = tuple(i for i in need if i not in held)
+    used = sum(it.hands for it in ch.items if it.in_hands)
+    free = used <= 1 if _unarmed_off(ch, record) else True
+    ok = not missing and free
+    return ok, {"required": need, "in_hands": held, "missing": missing, "free_hand": free}
+
+
 def default_unarmed():
     return AttackRecord(rid=UNARMED, item=UNARMED, group=UNARMED_COMBAT)
 
@@ -81,6 +118,22 @@ def _no_parry(ch, record):
 def group_picks(ch, gid):
     n = node(ch, gid)
     return n.picks if n is not None else ()
+
+
+def item_record(ch, iid):
+    """The attack record that ties an item to ONE weapon group: the item's primary record, else its
+    first record; None if the item has no record (package 8, R3: never two groups at once)."""
+    recs = [r for r in ch.attacks if r.item == iid]
+    marked = [r for r in recs if r.primary]
+    return (marked or recs or [None])[0]
+
+
+def item_picks(ch, item):
+    """Mastery picks that change the item's HP and hardness (weapons.md "weapon HP +1",
+    "durability +30% / +70%"): the picks of the group of item_record. A shield attacks through
+    group Contact by default, so Contact picks reach a shield the same way (package 8, D2)."""
+    r = item_record(ch, item.iid)
+    return group_picks(ch, r.group) if r is not None else ()
 
 
 def passive_groups(ch):

@@ -32,7 +32,7 @@ def equip_hands(ch, iid=""):
         raise CommandError("%s is already in the hands" % it.name)
     if it.hands <= 0:
         raise CommandError("%s needs no hands" % it.name)
-    check_wearable(it)                 # a shield at HP 0 cannot be taken up; a weapon at HP 0 can
+    check_wearable(ch, it)             # a shield at HP 0 cannot be taken up; a weapon at HP 0 can
     if dv.hands_used(ch) + it.hands > MAX_HANDS:
         raise CommandError("not enough free hands for %s (%d of %d used)" % (it.name, dv.hands_used(ch), MAX_HANDS))
     return commit(_set_item(ch, iid, in_hands=True), "equip_hands", "%s in hands" % it.name)

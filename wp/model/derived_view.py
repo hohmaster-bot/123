@@ -3,6 +3,8 @@
 Everything is computed on read from base values through wp.core.*; nothing here
 is stored back into the character.
 """
+from dataclasses import dataclass
+
 from wp.core import ac as acm
 from wp.core import bonuses as bo
 from wp.core import derived as dv
@@ -29,9 +31,21 @@ def ability_mod(ch, name):
 
 # --------------------------------------------------------------- HP, BP, bal
 
+def hit_die_hp(ch):
+    """Hit-die HP: level 1 = the die max, later levels = the value entered at level up (and
+    training HP), each roll at most the die (progression.md, training.md)."""
+    return sum(ch.hp_rolls)
+
+
+def hit_die_cap(ch):
+    """Most hit-die HP possible: die * level (training HP cannot go above it)."""
+    return ch.hit_die * ch.level
+
+
 def hp_max(ch):
-    """Sum of hit-die results + Con mod per level + bonus, at least 1."""
-    return max(1, sum(ch.hp_rolls) + ability_mod(ch, "con") * ch.level + ch.hp_bonus)
+    """Hit-die HP + CURRENT Con mod * level (negative subtracts) + race bonus + other bonuses,
+    at least 1 (package 8 H)."""
+    return max(1, hit_die_hp(ch) + ability_mod(ch, "con") * ch.level + ch.hp_race + ch.hp_bonus)
 
 
 def hp_pool(ch):
@@ -46,10 +60,19 @@ def bp_pool(ch):
     return Pool(ch.bp_current, bp_max(ch))
 
 
+def picks(ch, it):
+    """Mastery picks reaching this item (records.item_picks, package 8 R3)."""
+    return rec.item_picks(ch, it)
+
+
+def works(ch, it):
+    return itm.works(it, picks(ch, it))
+
+
 def _equipped(ch):
     """Worn on the doll (armor, rings...). An item at HP 0 or destroyed counts as taken off:
     no AC bonus, no armor skill penalty, no Dex cap, no tab (gear.md [OWNER pkg 7])."""
-    return [it for it in ch.items if it.equipped and itm.works(it)]
+    return [it for it in ch.items if it.equipped and works(ch, it)]
 
 
 def _in_hands(ch):
@@ -70,45 +93,87 @@ item_hp_current = itm.hp_current
 item_state = itm.state
 
 
-def _defense_value(it, base):
+@dataclass(frozen=True)
+class ItemView:
+    """Derived numbers of one item with the mastery picks that reach it (package 8, R3)."""
+    iid: str
+    state: str
+    hp_current: int
+    hp_max: int
+    durability: int
+    enchant: int
+    masterwork: bool
+    skill_penalty: int
+    group: str                         # group whose picks count ("" = none)
+    shield_proficient: bool = True
+
+
+def item_view(ch, iid):
+    it = ch.item(iid)
+    p = picks(ch, it)
+    r = rec.item_record(ch, iid)
+    return ItemView(iid=iid, state=itm.state(it, p), hp_current=itm.hp_current(it, p),
+                    hp_max=itm.hp_max(it, p), durability=itm.durability(it, p),
+                    enchant=itm.enchant(it, p), masterwork=it.masterwork,
+                    skill_penalty=itm.skill_penalty(it, p), group=r.group if r is not None else "",
+                    shield_proficient=shield_proficient(ch, it))
+
+
+def _defense_value(it, base, p=()):
     """Armor / shield bonus of one item: base + enchantment while activated; broken -> half (down);
     HP 0 or destroyed -> 0 (gear.md)."""
-    if base <= 0 or not itm.works(it):
+    if base <= 0 or not itm.works(it, p):
         return 0
-    v = base + enchant(it)
-    return v // 2 if itm.broken(it) else v
+    v = base + enchant(it, p)
+    return v // 2 if itm.broken(it, p) else v
 
 
-def armor_value(it):
-    return _defense_value(it, it.armor)
+def armor_value(it, p=()):
+    return _defense_value(it, it.armor, p)
 
 
-def shield_value(it):
-    return _defense_value(it, it.shield)
+def shield_value(it, p=()):
+    return _defense_value(it, it.shield, p)
 
 
 def armor_bonus(ch):
-    return max([armor_value(it) for it in _equipped(ch)] or [0])
+    return max([armor_value(it, picks(ch, it)) for it in _equipped(ch)] or [0])
 
 
 def shield_bonus(ch):
     """Shield bonus counts only while the shield is held in a hand (gear.md)."""
-    return max([shield_value(it) for it in _in_hands(ch)] or [0])
+    return max([shield_value(it, picks(ch, it)) for it in _in_hands(ch)] or [0])
 
 
+# Shield proficiency (training.md, package 8 D1): grade rank 0 none, 1 light, 2 heavy, 3 tower.
+SHIELD_RANK = {"none": 0, "light": 1, "heavy": 2, "tower": 3}
+SHIELD_NEED = {"": 1, "light": 1, "heavy": 2, "tower": 3}
 BALANCE_SHIELDS = ("heavy", "tower")
 
 
+def shield_rank(ch):
+    return SHIELD_RANK[ch.shield_grade]
+
+
+def shield_proficient(ch, it):
+    """True for a non-shield; a shield needs the grade of its type (light 1, heavy 2, tower 3)."""
+    if not rec.is_shield(it):
+        return True
+    return shield_rank(ch) >= SHIELD_NEED.get(it.shield_type, 1)
+
+
 def shield_balance_bonus(ch):
-    """Heavy and tower shields add their shield bonus to the balance max while held in a hand
-    (training.md [OWNER, Q28])."""
-    return max([shield_value(it) for it in _in_hands(ch) if it.shield_type in BALANCE_SHIELDS] or [0])
+    """Heavy and tower shields add their shield bonus to the balance max while held in a hand,
+    only with the proficiency grade of that type (heavy: rank 2, tower: rank 3); light never
+    (training.md [OWNER, Q28, package 8 D1])."""
+    return max([shield_value(it, picks(ch, it)) for it in _in_hands(ch)
+                if it.shield_type in BALANCE_SHIELDS and shield_proficient(ch, it)] or [0])
 
 
 def balance_max_base(ch):
-    """Worn armor bonus + CURRENT BP + temporary BP (e.g. narrative) + heavy/tower shield in hand
-    + bonuses (rest.md, training.md); parry gives none."""
-    return dv.balance_max(armor_bonus(ch), ch.bp_current + ch.temp_bp,
+    """Worn armor bonus + CURRENT BP (BP above max included: overcap, package 8 C)
+    + heavy/tower shield in hand + bonuses (rest.md, training.md); parry gives none."""
+    return dv.balance_max(armor_bonus(ch), ch.bp_current,
                           ch.balance_bonus + shield_balance_bonus(ch))
 
 
@@ -172,8 +237,32 @@ def comfort_pool(ch):
 
 # ---------------------------------------------------------------------- load
 
+def in_bag(it):
+    """Bag = carried, not worn, not in the hands, not a weapon (gear.md "Bag")."""
+    return it.carried and not it.equipped and not it.in_hands and it.kind != "weapon"
+
+
+def bag_weight_l(ch):
+    return sum(it.weight_l for it in ch.items if in_bag(it))
+
+
 def carried_weight_l(ch):
-    return sum(it.weight_l for it in ch.items if it.carried)
+    """Carried weight; the bag counts unless ignore_bag_weight is on (package 8 E)."""
+    return sum(it.weight_l for it in ch.items
+               if it.carried and not (ch.ignore_bag_weight and in_bag(it)))
+
+
+@dataclass(frozen=True)
+class WeightView:
+    carried_l: int
+    bag_l: int
+    ignore_bag_weight: bool
+    load: str
+
+
+def weight_view(ch):
+    return WeightView(carried_l=carried_weight_l(ch), bag_l=bag_weight_l(ch),
+                      ignore_bag_weight=ch.ignore_bag_weight, load=load_status(ch))
 
 
 def load_status(ch):
@@ -214,7 +303,7 @@ def item_effects(ch):
     effects belong to its attack records (attack_view), not to every roll."""
     out = []
     for it in _equipped(ch) + [i for i in _in_hands(ch) if not i.equipped]:
-        for e in item_tab(it):
+        for e in item_tab(it, picks(ch, it)):
             b = e.as_bonus(it.name, context(ch))
             if rec.attack_groups(it) and b.target in (bo.ATTACK, bo.DAMAGE):
                 continue
@@ -224,7 +313,7 @@ def item_effects(ch):
 
 def all_bonuses(ch):
     """Typed bonuses from statuses, items, morale and pain."""
-    out = list(ef.bonuses_from(ch.statuses, ch.in_combat, context(ch)))
+    out = list(ef.bonuses_from(ch.statuses, context(ch)))
     out += item_effects(ch)
     out.append(bo.morale(morale_bonus(ch)))
     out.append(pn.penalty_bonus(pain_total(ch), ch.pain_profile))
@@ -235,7 +324,7 @@ def total(ch, target, weapon=None, skill=None):
     return bo.total(all_bonuses(ch), target, weapon, skill)
 
 
-def ac_input(ch):
+def ac_input(ch, flank_drops_shield=True, shield_enabled=True):
     eq = _equipped(ch)
     caps = [it.max_dex for it in eq if it.max_dex is not None]
     # parry = armor proficiency + odd levels + tower shield grade (training.md) + weapon mastery picks (weapons.md)
@@ -244,12 +333,15 @@ def ac_input(ch):
                        natural=max([it.natural for it in eq] or [0]),
                        shield=shield_bonus(ch),
                        size_mod=ch.size_mod, max_dex=min(caps) if caps else None,
-                       overloaded=overloaded(ch),
+                       overloaded=overloaded(ch), shield_enabled=shield_enabled,
+                       flank_drops_shield=flank_drops_shield,
                        bonuses=tuple(b for b in all_bonuses(ch) if b.target == bo.AC))
 
 
-def ac(ch, mode=acm.FRONT, from_shield_side=False):
-    return acm.ac(ac_input(ch), mode, from_shield_side)
+def ac(ch, mode=acm.FRONT, from_shield_side=False, flank_drops_shield=True, shield_enabled=True):
+    """AC for one direction. flank_drops_shield: checkbox (default on); shield_enabled=False after an
+    attack with the shield (no shield bonus until the next turn, AttackView.drops_shield_ac)."""
+    return acm.ac(ac_input(ch, flank_drops_shield, shield_enabled), mode, from_shield_side)
 
 
 # -------------------------------------------------------------------- skills
@@ -262,9 +354,10 @@ def skill(ch, name):
 
 
 def armor_skill_penalty(ch):
-    """Penalty of worn armor to Str/Dex skills (gear.md 'Armor'): sum of worn items' penalties;
-    a broken item's penalty is doubled (gear.md, package 6)."""
-    return sum(min(0, it.skill_penalty) * (2 if itm.broken(it) else 1) for it in _equipped(ch))
+    """Penalty to Str/Dex skills (gear.md 'Armor'): worn items + shields held in a hand (a shield
+    counts as armor, package 8 R4); masterwork -1 smaller, broken doubled (items.skill_penalty)."""
+    held = [it for it in _in_hands(ch) if not it.equipped and rec.is_shield(it)]
+    return sum(itm.skill_penalty(it, picks(ch, it)) for it in _equipped(ch) + held)
 
 
 def skill_bonus(ch, name):

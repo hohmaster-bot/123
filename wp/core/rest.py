@@ -1,11 +1,14 @@
 """Short and long rest (RULES/rest.md, classes_magic.md "Restore", buffs.md charges).
 
+BP above the max ("overcap", e.g. narrative temporary BP or the free +1 at max) is stored simply as
+BP above max; there is no separate temporary BP (owner, package 8 C).
 Short rest is a small session:
-  start_short_rest()  -> free gains: +1 BP (or +1 temp BP at max) and the free heal
+  start_short_rest()  -> free gains: +1 BP (at max it goes over max) and the free heal
   options()           -> only options that have something to restore
   spend()             -> pay BP for one option
-  apply_short_rest()  -> end: temp BP and BP above max are lost
-Long rest: everything back except OT, comfort, injury charges, permanent pain.
+  apply_short_rest()  -> end: BP above max is lost, unless keep_overcap=True
+Long rest: everything back except OT, comfort, injury charges, permanent pain; BP exactly to max
+(overcap dropped).
 Pure functions; nothing is mutated in place.
 """
 from dataclasses import dataclass, field, replace
@@ -45,12 +48,12 @@ class Charge:
 class RestState:
     level: int
     hp: Pool
-    bp: Pool
-    temp_bp: int = 0
+    bp: Pool                      # current may be above max (overcap)
     pain: Tuple[pn.PainEntry, ...] = ()   # list of pain entries (permanent ones stay)
     spirit: Pool = Pool(0, 0)
     mana: Pool = Pool(0, 0)
     mana_enabled: bool = False
+    divine: bool = False          # the caster's slots are divine (short rest "divine casts" option)
     slots: Dict[int, Pool] = field(default_factory=dict)       # circle -> pool
     resources: Dict[str, Pool] = field(default_factory=dict)   # ki, darkness...
     charges: Tuple[Charge, ...] = ()
@@ -94,23 +97,17 @@ def free_heal_amount(level, other_heal=0):
     return max(2 + int(level), int(other_heal))
 
 
-def start_short_rest(state, other_heal=0, extra_bp=0, extra_temp_bp=0):
-    """Free gains: +1 BP (at max -> +1 temp BP), the free heal, extra BP from
-    other sources (allies, skills, class, feats)."""
-    bp, temp = state.bp, state.temp_bp
-    if bp.current < bp.max:
-        bp = replace(bp, current=bp.current + 1)
-    else:
-        temp += 1
-    bp = replace(bp, current=bp.current + int(extra_bp))
-    temp += int(extra_temp_bp)
+def start_short_rest(state, other_heal=0, extra_bp=0):
+    """Free gains: +1 BP (at max it goes above max), the free heal, extra BP from
+    other sources (allies, skills, class, feats); all may go above max (overcap)."""
+    bp = replace(state.bp, current=state.bp.current + 1 + int(extra_bp))
     heal = free_heal_amount(state.level, other_heal)
-    st = replace(state, bp=bp, temp_bp=temp, hp=_heal(state.hp, heal))
+    st = replace(state, bp=bp, hp=_heal(state.hp, heal))
     return ShortRest(state=st, free_heal=heal)
 
 
 def bp_available(rest):
-    return rest.state.bp.current + rest.state.temp_bp
+    return rest.state.bp.current
 
 
 def option_cost(rest, option):
@@ -130,7 +127,7 @@ def options(rest):
         OPT_STAT: any(stat_damaged(p) for p in s.stats.values()),
         OPT_PAIN: any(e.amount > 0 and not e.permanent for e in s.pain),
         OPT_MANA: s.mana_enabled and s.mana.current < s.mana.max,
-        OPT_DIVINE: any(p.current < p.max for p in s.slots.values()),
+        OPT_DIVINE: s.divine and any(p.current < p.max for p in s.slots.values()),
     }
     order = (OPT_HEAL, OPT_CHARGES, OPT_SPIRIT, OPT_STAT, OPT_PAIN,
              OPT_MANA, OPT_DIVINE)
@@ -138,12 +135,10 @@ def options(rest):
 
 
 def _pay(state, cost):
-    """Pay BP: temporary BP first (it is lost at the end anyway), then BP."""
-    if state.bp.current + state.temp_bp < cost:
+    """Pay BP (BP above max is spent like any BP)."""
+    if state.bp.current < cost:
         raise ValueError("not enough BP: need %d" % cost)
-    from_temp = min(cost, state.temp_bp)
-    return replace(state, temp_bp=state.temp_bp - from_temp,
-                   bp=replace(state.bp, current=state.bp.current - (cost - from_temp)))
+    return replace(state, bp=replace(state.bp, current=state.bp.current - cost))
 
 
 def spend(rest, option, stat=None, mana_amount=0, circle=None):
@@ -182,10 +177,15 @@ def spend(rest, option, stat=None, mana_amount=0, circle=None):
     return replace(rest, state=s)
 
 
-def apply_short_rest(rest):
-    """'Apply': end of short rest. Temp BP and BP above max are lost."""
+def drop_overcap(bp):
+    """BP above max is lost (short rest by default, long rest, end of cycle)."""
+    return replace(bp, current=min(bp.current, bp.max))
+
+
+def apply_short_rest(rest, keep_overcap=False):
+    """'Apply': end of short rest. BP above max is lost, unless keep_overcap (package 8 C)."""
     s = rest.state
-    return replace(s, temp_bp=0, bp=replace(s.bp, current=min(s.bp.current, s.bp.max)))
+    return s if keep_overcap else replace(s, bp=drop_overcap(s.bp))
 
 
 # --------------------------------------------------------------- long rest
@@ -194,6 +194,7 @@ def long_rest(state):
     """Long rest (rest.md): HP, BP, spirit, mana, slots, class resources to max;
     ability charges and items with "restore on long rest" back; temporary pain gone;
     stat damage healed (current -> max; permanent damage already lowered max).
+    BP goes exactly to max (overcap dropped, package 8 C); mana always (racial mana too, R18).
     NOT touched: OT, comfort, injury charges, permanent pain, temp HP."""
     charges = []
     for ch in state.charges:
@@ -203,11 +204,10 @@ def long_rest(state):
     return replace(
         state,
         hp=_restore_full(state.hp),
-        bp=_restore_full(state.bp),
-        temp_bp=0,
+        bp=replace(state.bp, current=state.bp.max),
         pain=pn.clear_temporary(state.pain),
         spirit=_restore_full(state.spirit),
-        mana=_restore_full(state.mana) if state.mana_enabled else state.mana,
+        mana=_restore_full(state.mana),
         slots={c: _restore_full(p) for c, p in state.slots.items()},
         resources={n: _restore_full(p) for n, p in state.resources.items()},
         charges=tuple(charges),

@@ -69,21 +69,21 @@ def set_temp_hp(ch, value=0):
 
 @command
 def spend_bp(ch, n=1):
-    """Spend BP by hand (temporary BP first)."""
-    if n < 0 or ch.bp_current + ch.temp_bp < n:
+    """Spend BP by hand (BP above max is ordinary BP)."""
+    if n < 0 or ch.bp_current < n:
         raise CommandError("not enough BP")
-    from_temp = min(n, ch.temp_bp)
-    new = replace(ch, temp_bp=ch.temp_bp - from_temp, bp_current=ch.bp_current - (n - from_temp))
+    new = replace(ch, bp_current=ch.bp_current - n)
     return commit(new, "spend_bp", "BP -%d" % n)
 
 
 @command
-def short_rest(ch, spends=(), other_heal=0, extra_bp=0, extra_temp_bp=0):
-    """Short rest: free gains, then spends [(option, {params}), ...], then 'Apply'."""
-    session = rs.start_short_rest(bridge.to_rest(ch), other_heal, extra_bp, extra_temp_bp)
+def short_rest(ch, spends=(), other_heal=0, extra_bp=0, keep_overcap=False):
+    """Short rest: free gains, then spends [(option, {params}), ...], then 'Apply'.
+    BP above max is lost at the end unless keep_overcap=True (package 8 C)."""
+    session = rs.start_short_rest(bridge.to_rest(ch), other_heal, extra_bp)
     for opt, params in spends:
         session = rs.spend(session, opt, **dict(params))
-    new = switch_off_items(bridge.from_rest(ch, rs.apply_short_rest(session)), SHORT)
+    new = switch_off_items(bridge.from_rest(ch, rs.apply_short_rest(session, keep_overcap)), SHORT)
     # rest.md [OWNER]: after the spends the short rest clears ALL temp HP
     new = replace(new, temp_hp=0, statuses=tuple(replace(s, temp_hp_left=0) for s in new.statuses))
     return commit(new, "short_rest", "short rest: %s" % (
@@ -93,11 +93,8 @@ def short_rest(ch, spends=(), other_heal=0, extra_bp=0, extra_temp_bp=0):
 @command
 def long_rest(ch):
     """Long rest (rest.md): also overload 0 and balance to max [OWNER confirmed]; all items off."""
+    # charges of statuses (rage 2/3) come back through the bridge as ability charges (buffs.md)
     new = switch_off_items(bridge.from_rest(ch, rs.long_rest(bridge.to_rest(ch))), LONG)
-    # buffs.md / rest.md: charges of statuses (rage 2/3) come back on the long rest
-    new = replace(new, statuses=tuple(
-        replace(s, charges=replace(s.charges, current=max(s.charges.current, s.charges.max)))
-        if s.charges is not None else s for s in new.statuses))
     new = replace(new, overload=0)
     new = replace(new, balance_current=max(new.balance_current, dv.balance_max(new)))
     return commit(new, "long_rest", "long rest")
