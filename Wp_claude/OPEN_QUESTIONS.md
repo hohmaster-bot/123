@@ -14,11 +14,11 @@ Q17 no refund for a specialized rank the level caught up with (skills.md),
 Q18 Unarmed combat attack/damage only on the unarmed attack, passives always (weapons.md),
 Q19 two hands only for a non-finesse one-handed weapon (combat.md),
 Q22 base point 100, max 10*level (training.md), Q24/Q25 flat layer, no negative layers (defense_layers.md),
+Q26 enhancement -> armor layer, other unlisted types -> flat as assumption (defense_layers.md),
 Q27 parry +1 per odd level from level 3, level 1 does not count (training.md),
 Q20 unarmed combat -4 until trained to Skilled (weapons.md), Q21 weight L = 1 L, N = N*10 L; quarterstaff is a double weapon; gauntlet zeros stay (catalog.md, weapons.md).
 
 ## Game rules (owner decides)
 - Q23 | Temp HP spend order. ASSUMPTION (owner, package 4): first the "by button" temp HP, then buff temp HP in order (resources.md). Stacking flag: a non-stacking buff adds only up to its amount over the current total. | as is | assumption
-- Q26 | Defense ladder: AC types without a layer of their own (enhancement, sacred, profane, racial...) are put into "flat" (the sum of layers must equal AC). Right? | flat | assumption
 - Q28 | Shields: "heavy and tower shields add their shield bonus to balance", tower "+2 parry". Is it the shield PROFICIENCY grade, or a heavy/tower shield held in a hand (or both: grade AND shield in hand)? | shield in hand + grade | open
 - Q29 | Professionalism 300: gives 1/2/3/4 specialized class skills. How does it relate to the "professionalism level" number (training.md)? Is it bought once, or each purchase raises the level by 1? | ? | open

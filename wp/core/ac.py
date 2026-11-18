@@ -57,7 +57,7 @@ def _dex(inp):
 
 
 # Layer order of the defense ladder (RULES/defense_layers.md). "flat" comes after armor:
-# untyped bonuses, types without their own layer, and ALL penalties (low Dex too) go there.
+# untyped bonuses, types without their own layer, and ALL negative parts go there.
 LAYER_TYPES = ("size", bo.DODGE, "insight", bo.MORALE, "competence", "luck", "circumstance",
                bo.DEFLECTION, bo.SHIELD, bo.ARMOR, bo.FLAT, bo.NATURAL)
 TYPED_LAYERS = tuple(t for t in LAYER_TYPES if t != bo.FLAT)
@@ -65,8 +65,10 @@ TYPED_LAYERS = tuple(t for t in LAYER_TYPES if t != bo.FLAT)
 
 def parts(inp, mode=FRONT, from_shield_side=False):
     """AC broken into layers: ((layer, value), ...) in LAYER_TYPES order; sum = AC - 10.
-    Typed layers are never below 0; their negative part and the low-Dex penalty go to "flat".
-    dodge includes the Dex bonus; armor holds max(armor, parry) in PARRY mode."""
+    Typed layers are never below 0; their negative part goes to "flat".
+    dodge = dodge bonuses + Dex mod (they add up); a negative sum goes to "flat" (defense_layers.md).
+    Flat-footed: the POSITIVE parts (dodge bonuses, Dex bonus) are lost, penalties stay.
+    armor holds max(armor, parry) in PARRY mode, plus enhancement bonuses to AC (owner, Q26)."""
     if mode not in (FRONT, FLANK, FLAT_FOOTED, PARRY, TOUCH):
         raise ValueError("unknown AC mode: %r" % (mode,))
 
@@ -78,7 +80,7 @@ def parts(inp, mode=FRONT, from_shield_side=False):
         use_shield = False
     drop = set()
     if mode == TOUCH:
-        drop |= {bo.ARMOR, bo.NATURAL, bo.SHIELD}
+        drop |= {bo.ARMOR, bo.NATURAL, bo.SHIELD, bo.ENHANCEMENT}
     if not use_shield:
         drop.add(bo.SHIELD)
 
@@ -88,9 +90,9 @@ def parts(inp, mode=FRONT, from_shield_side=False):
     items += [b for b in inp.bonuses if bo.applies(b, bo.AC)]
     items = [b for b in items if b.btype not in drop]
 
-    dex_penalty = min(0, _dex(inp))        # low-Dex penalty: always stays, goes to "flat"
     if mode == FLAT_FOOTED:
-        dex_dodge = dex_penalty            # Dex bonus and dodge are lost
+        # only the positive parts go: low-Dex penalty and dodge penalties stay
+        dex_dodge = min(0, _dex(inp)) + sum(min(0, int(b.value)) for b in items if b.btype == bo.DODGE)
     else:
         dex_dodge = _dex(inp) + bo.stack([b for b in items if b.btype == bo.DODGE])
         if inp.overloaded:
@@ -101,10 +103,14 @@ def parts(inp, mode=FRONT, from_shield_side=False):
         if t == "size":
             values[t] = inp.size_mod + bo.stack([b for b in items if b.btype == "size"])
         elif t == bo.DODGE:
-            values[t] = dex_dodge - dex_penalty
+            values[t] = dex_dodge
+        elif t == bo.ARMOR:
+            values[t] = (bo.stack([b for b in items if b.btype == bo.ARMOR])
+                         + bo.stack([b for b in items if b.btype == bo.ENHANCEMENT]))
         else:
             values[t] = bo.stack([b for b in items if b.btype == t])
-    flat = (dex_penalty + bo.stack([b for b in items if b.btype not in TYPED_LAYERS])
+    # types without a layer (sacred, profane...) are not shown in the ladder; in AC they go to "flat"
+    flat = (bo.stack([b for b in items if b.btype not in TYPED_LAYERS and b.btype != bo.ENHANCEMENT])
             + sum(min(0, v) for v in values.values()))
     return tuple((t, flat if t == bo.FLAT else max(0, values[t])) for t in LAYER_TYPES)
 
