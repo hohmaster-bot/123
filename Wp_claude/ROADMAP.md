@@ -32,7 +32,8 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   - item qualification purchase 50 * N;
   - +1 reaction 200 * new number of reactions;
   - max HP +1 for 50 up to class hit die * level + Con * level;
-  - professionalism 300 (1/2/3/4 specialized class skills), after Q29;
+  - professionalism 300 (1/2/3/4 specialized class skills), only for classes without their own (Q29 closed);
+    the "professionalism level" number is a placeholder: do not develop it;
   - new spell 20 + 10 * circle^2 (half for book / teacher / scroll classes);
   - spell mastery 25 * (1 + circle^2), three slots, identical upgrade 2nd time = 2 slots, metamagic = its circle;
   - seed 200 / sprout seed 200;

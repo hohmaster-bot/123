@@ -90,7 +90,9 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
 - Owner text (verbatim, package 4): "Профессионализм - 300 очков. Вы получаете специализированными 1/2/3/4 навыков из
   списка Вашего класса (для классов с 2+, 4+, 6+, 8+ скп). Если у класса прописана иной "профессионализм", то опция в
   классе заменяет данную опцию."
-  Open (Q29): how this one-time purchase relates to the "professionalism level" number above.
+  [OWNER, Q29] This 300-point option applies only IF THE CLASS HAS NO PROFESSIONALISM OF ITS OWN.
+  The "professionalism level" number above is a placeholder for classes without their own professionalism:
+  do NOT develop it further (no new code for it).
 - Cannot exceed character level.
 - Class abilities (ONLY class abilities) may reference professionalism level instead of character level.
 - Professionalism may also be a REQUIREMENT for activating items.
