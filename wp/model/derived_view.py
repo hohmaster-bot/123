@@ -188,7 +188,7 @@ def item_effects(ch):
     for it in _equipped(ch) + [i for i in _in_hands(ch) if not i.equipped]:
         for e in (it.effects_on if it.activated else it.effects_off):
             b = e.as_bonus(it.name, context(ch))
-            if it.groups and b.target in (bo.ATTACK, bo.DAMAGE):
+            if rec.attack_groups(it) and b.target in (bo.ATTACK, bo.DAMAGE):
                 continue
             out.append(b)
     return out

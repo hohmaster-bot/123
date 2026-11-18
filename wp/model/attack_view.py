@@ -105,7 +105,7 @@ def _item_bonuses(ch, item):
             continue
         for e in (it.effects_on if it.activated else it.effects_off):
             b = e.as_bonus(it.name, ctx)
-            if it.groups and b.target in (bo.ATTACK, bo.DAMAGE) and b.weapon is None:
+            if rec.attack_groups(it) and b.target in (bo.ATTACK, bo.DAMAGE) and b.weapon is None:
                 if item is None or it.iid != item.iid:
                     continue
                 b = replace(b, weapon=it.iid)

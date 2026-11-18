@@ -58,9 +58,11 @@ def add_attack(ch, iid="", group="", grip="one", stat="", rid=""):
             raise CommandError("a finesse weapon is held in one hand or the off-hand only (owner)")
     else:
         it = ch.item(iid)
-        if not it.groups:
+        groups = rec.attack_groups(it)     # a shield attacks as an improvised weapon (Contact) by default
+        if not groups:
             raise CommandError("%s is not a weapon" % it.name)
-        if group not in it.groups:
+        group = group or groups[0]
+        if group not in groups:
             raise CommandError("%s is not in group %r" % (it.name, group))
         if it.hands == 2 and grip != "two":
             raise CommandError("%s is two-handed" % it.name)

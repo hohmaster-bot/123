@@ -13,6 +13,7 @@ from wp.core import bonuses as bo  # noqa: E402
 from wp.commands import CommandError, dispatch  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
 from wp.model import ids  # noqa: E402
+from wp.model import attack_view as av  # noqa: E402
 from wp.core.effects import Status  # noqa: E402
 from wp.model.character import SHIELD, Character, Item  # noqa: E402
 
@@ -125,6 +126,36 @@ def _noname():
 
 S.case("e-slug", "ids.py: punctuation and spaces -> one underscore; empty -> 'id'", ("long_sword_2", "id"))(
     lambda: (ids.slug("  Long-Sword (2) "), ids.slug("!!")))
+
+
+# ---- G: a shield in the hand can attack (improvised, group Contact by default) ----
+def _sword_and_shield():
+    sw = Item("sw", "sword", kind="weapon", hands=1, groups=("blades",), damage_medium="1d8")
+    sh = Item("sh", "shield", kind=SHIELD, hands=1, shield=2, shield_type="heavy")
+    ch = Character(items=(sw, sh), bab=1)
+    for iid in ("sw", "sh"):
+        ch = dispatch(ch, "equip_hands", iid=iid).state
+    ch = dispatch(ch, "add_attack", iid="sw", group="blades").state
+    return dispatch(ch, "add_attack", iid="sh").state
+
+
+S.case("g-shield-attack", "owner pkg 5: shield + sword in hands; shield has a record (Contact), AC keeps the shield, hands 2",
+       (("sh", "contact"), 12, 2))(
+    lambda: (lambda c: (tuple((r.item, r.group) for r in c.attacks if r.item == "sh")[0], dv.ac(c), dv.hands_used(c)))(
+        _sword_and_shield()))
+S.case("g-shield-visible", "owner: the shield record is shown as an attack while the shield is in a hand", True)(
+    lambda: any(a.weapon == "sh" for a in av.all_attacks(_sword_and_shield())))
+
+
+@S.case("g-misc-no-attack", "a non-weapon, non-shield item still cannot attack", "rejected")
+def _misc():
+    ch = Character(items=(Item("t", "torch", kind="misc", hands=1),))
+    ch = dispatch(ch, "equip_hands", iid="t").state
+    try:
+        dispatch(ch, "add_attack", iid="t")
+    except CommandError:
+        return "rejected"
+    return "accepted"
 
 if __name__ == "__main__":
     sys.exit(S.run())

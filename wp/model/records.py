@@ -8,10 +8,10 @@
   automatically. Passive group bonuses (balance regen +1, parry...) come from the
   primary records' groups; "Unarmed combat" bonuses always work, even when armed.
 """
-from wp.catalog.weapons_catalog import BASIC, UNARMED_COMBAT
+from wp.catalog.weapons_catalog import BASIC, CONTACT, UNARMED_COMBAT
 from wp.core import bonuses as bo
 from wp.core import weapons as wpn
-from wp.model.character import AttackRecord
+from wp.model.character import SHIELD, AttackRecord
 
 UNARMED = "unarmed"
 MAX_PRIMARY = 2
@@ -28,6 +28,18 @@ def node(ch, gid):
 def is_basic(ch, gid):
     n = node(ch, gid)
     return gid == BASIC or (n is not None and n.weapon.basic)
+
+
+def is_shield(item):
+    return item.kind == SHIELD or bool(item.shield_type)
+
+
+def attack_groups(item):
+    """Groups an item can attack with: its weapon groups; a shield without groups attacks as an
+    improvised weapon of group Contact (owner, package 5). Other items: none."""
+    if item.groups:
+        return tuple(item.groups)
+    return (CONTACT,) if is_shield(item) else ()
 
 
 def in_hands_ids(ch):

@@ -64,6 +64,10 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   Light crossbow (1 gp, 1d6/1d8, 19-20, 80 ft, weight 1, P, 2H, HD 3, HP 2); Bolts x10 (1 sp, weight L, HD 0, HP 1, ammo).
 
 ## Weapon card details [OWNER]
+- Shield as a weapon [OWNER, package 5]: a shield can be used as a weapon, improvised (group "Contact") or as a
+  separate weapon with its own rules (then the card lists its groups). A shield in a hand has BOTH its shield bonus to
+  AC and an attack record; its hands are counted once. By default the shield's attack record is in group "Contact"
+  (improvised). Test: shield + sword in hands, the shield has an attack record, AC with the shield stays, 2 hands used.
 - Double weapon (quarterstaff): the card has two damage rows, one per end. A normal attack uses the TOP row.
   A double weapon counts as fit for two-weapon fighting; its other end counts as a light weapon.
   Quarterstaff "1d4/1d4 and 1d6/1d6" = small 1d4 on both ends, medium 1d6 on both ends.
