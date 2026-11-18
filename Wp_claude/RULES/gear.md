@@ -49,9 +49,21 @@
   effect system (D14); no code per kind, the number of kinds is not limited. An effect may carry dice and a text note.
 - Tests: sword +3 -> hardness +6, HP +3; armor +2 -> armor layer +2, hardness +4, HP +2; shield +1 -> shield bonus +1;
   "fire d6" stays an item effect.
-- Order (assumption, Q30): hardness = base with the weapon mastery percent, then +2*N.
-- Open (Q30): an item that needs activation (gear.md "+5 sword inactive = masterwork") - does its enchantment work
-  while not activated? Now: the enchantment always works.
+- [OWNER, Q30] Enchantment is an ACTIVATION effect. All bonuses of the enchantment level N (attack, damage, lucky
+  attack of a weapon; armor and shield bonus; hardness +2N; item max HP and current HP +N) count ONLY while the item is
+  activated.
+- A not activated item gives its base values (the item's own armor / shield bonus, weapon damage) plus its "not
+  activated" tab (e.g. masterwork +1 to attack; a special non-magic material writes its non-magic bonus there).
+- An item with no activation price is an ordinary item: always off, it cannot be activated (soft refusal), and its
+  enchantment never counts.
+- Extra weapon effects (fire d6 and the like) go into the "activated" tab and work only while activated.
+- Deactivation (the short rest for "day" items, the long rest for all) removes the enchantment bonuses.
+- Assumptions (OPEN_QUESTIONS): hardness = base with the weapon mastery percent, then +2N; hardness and HP from the
+  enchantment also count only while activated; current item HP = max - stored damage taken, so nothing is lost when
+  the item is switched off (switched off: max drops by N, the damage stays).
+- Tests: +5 sword not activated: attack +1 (masterwork tab), damage +0; activated: +5; no price -> cannot be
+  activated, no enchantment; +2 armor not activated -> base armor only; fire d6 only while activated; the short rest
+  switches a "day" item off and the enchantment is gone.
 
 ## Item codes / sharing [OWNER]
 - Any item/ability/etc -> code copied to clipboard. Code -> import as item (catalog import wanted, not built).

@@ -105,7 +105,7 @@ def _item_bonuses(ch, item):
     for it in ch.items:
         if not (it.equipped or it.in_hands):
             continue
-        for e in (it.effects_on if it.activated else it.effects_off):
+        for e in dv.item_tab(it):
             b = e.as_bonus(it.name, ctx)
             if rec.attack_groups(it) and b.target in (bo.ATTACK, bo.DAMAGE) and b.weapon is None:
                 if item is None or it.iid != item.iid:
@@ -127,23 +127,23 @@ def _group_bonuses(ch, record):
 
 
 def enchant_bonuses(item):
-    """Weapon enchantment N: +N enhancement to attack and damage of this weapon (gear.md).
-    A shield's enchantment raises its shield bonus instead (derived_view.shield_value)."""
-    if item is None or item.enchant <= 0 or rec.is_shield(item):
+    """Weapon enchantment N: +N enhancement to attack and damage of this weapon, ONLY while the
+    weapon is activated (gear.md, Q30). A shield's enchantment raises its shield bonus instead."""
+    n = weapon_enchant(item)
+    if n <= 0:
         return []
-    src = "enchant +%d" % item.enchant
-    return [bo.Bonus(item.enchant, bo.ENHANCEMENT, t, item.iid, src) for t in (bo.ATTACK, bo.DAMAGE)]
+    return [bo.Bonus(n, bo.ENHANCEMENT, t, item.iid, "enchant +%d" % n) for t in (bo.ATTACK, bo.DAMAGE)]
 
 
 def weapon_enchant(item):
-    return 0 if item is None or rec.is_shield(item) else item.enchant
+    return 0 if item is None or rec.is_shield(item) else dv.enchant(item)
 
 
 def extra_dice(item):
     """Dice parts of the weapon's active tab (any kind: fire, acid...): shown, not summed."""
     if item is None:
         return ()
-    return tuple((e.dice, e.note) for e in (item.effects_on if item.activated else item.effects_off)
+    return tuple((e.dice, e.note) for e in dv.item_tab(item)
                  if e.dice and e.target == bo.DAMAGE)
 
 

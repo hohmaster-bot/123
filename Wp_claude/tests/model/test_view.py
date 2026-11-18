@@ -87,7 +87,9 @@ S.case("ac", "defense.md: front 10+2(max dex)+4+2, flat-footed no Dex/shield, to
 def _tabs():
     it = Item("sw", "sword", equipped=True, effects_off=(Effect(bo.ATTACK, 1),),
               effects_on=(Effect(bo.ATTACK, 5, bo.ENHANCEMENT),))
-    on = Item("sw", "sword", equipped=True, effects_off=it.effects_off, effects_on=it.effects_on, activated=True)
+    # activatable item (Q30: an item without an activation price is always off)
+    on = Item("sw", "sword", equipped=True, effects_off=it.effects_off, effects_on=it.effects_on, activated=True,
+              activation_day=1)
     return (dv.total(Character(items=(it,)), bo.ATTACK), dv.total(Character(items=(on,)), bo.ATTACK))
 
 

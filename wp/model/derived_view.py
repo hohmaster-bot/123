@@ -59,14 +59,30 @@ def hands_used(ch):
     return sum(it.hands for it in _in_hands(ch))
 
 
+def item_active(it):
+    """Activated AND activatable. An item with no activation price is an ordinary item: always
+    off (gear.md [OWNER, Q30])."""
+    return it.activated and (it.activation_day > 0 or it.activation_decade > 0)
+
+
+def enchant(it):
+    """Enchantment level N counts ONLY while the item is activated (it is an activation effect, Q30)."""
+    return it.enchant if item_active(it) else 0
+
+
+def item_tab(it):
+    """The one acting tab (D17): "activated" while active, else "not activated"."""
+    return it.effects_on if item_active(it) else it.effects_off
+
+
 def armor_value(it):
-    """Armor bonus of one item: base + enchantment (gear.md, package 5)."""
-    return it.armor + it.enchant if it.armor > 0 else 0
+    """Armor bonus of one item: base + enchantment while activated (gear.md)."""
+    return it.armor + enchant(it) if it.armor > 0 else 0
 
 
 def shield_value(it):
-    """Shield bonus of one item: base + enchantment (gear.md, package 5)."""
-    return it.shield + it.enchant if it.shield > 0 else 0
+    """Shield bonus of one item: base + enchantment while activated (gear.md)."""
+    return it.shield + enchant(it) if it.shield > 0 else 0
 
 
 def armor_bonus(ch):
@@ -79,13 +95,14 @@ def shield_bonus(ch):
 
 
 def item_durability(it, picks=()):
-    """Final hardness (HD): base with weapon mastery percent, then +2 per enchantment level."""
-    return wpn.final_durability(it.durability, picks) + 2 * it.enchant
+    """Final hardness (HD): base with weapon mastery percent, then +2 per enchantment level
+    (only while activated: assumption, OPEN_QUESTIONS)."""
+    return wpn.final_durability(it.durability, picks) + 2 * enchant(it)
 
 
 def item_hp_max(it, picks=()):
-    """Final item HP: base + expert picks + 1 per enchantment level."""
-    return wpn.final_hp(it.hp, picks) + it.enchant
+    """Final item HP: base + expert picks + 1 per enchantment level (only while activated)."""
+    return wpn.final_hp(it.hp, picks) + enchant(it)
 
 
 def item_hp_current(it, picks=()):
@@ -210,7 +227,7 @@ def item_effects(ch):
     effects belong to its attack records (attack_view), not to every roll."""
     out = []
     for it in _equipped(ch) + [i for i in _in_hands(ch) if not i.equipped]:
-        for e in (it.effects_on if it.activated else it.effects_off):
+        for e in item_tab(it):
             b = e.as_bonus(it.name, context(ch))
             if rec.attack_groups(it) and b.target in (bo.ATTACK, bo.DAMAGE):
                 continue

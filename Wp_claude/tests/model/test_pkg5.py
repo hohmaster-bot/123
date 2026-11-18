@@ -2,6 +2,7 @@
 Run: python Wp_claude/tests/model/test_pkg5.py"""
 import os
 import sys
+from dataclasses import replace
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "core"))
@@ -159,48 +160,74 @@ def _misc():
     return "accepted"
 
 
-# ---- H: enchantment N of weapons, armor and shields ----
-def _sword(n, effects=()):
+# ---- H + Q30: enchantment N counts ONLY while the item is activated ----
+ON = dict(activated=True, active_until="short", activation_day=1)      # activated "day" item
+PRICED = dict(activation_day=1)                                         # activatable, switched off
+MWK = (Effect(bo.ATTACK, 1),)                                           # "not activated" tab: masterwork +1
+FIRE = (Effect(bo.DAMAGE, dice="1d6", note="fire"),)                    # "activated" tab: fire d6
+
+
+def _sword(n, state=PRICED, off=(), on=()):
     return Item("sw", "sword", kind="weapon", hands=1, in_hands=True, groups=("blades",), durability=10, hp=5,
-                enchant=n, effects_off=effects)
+                enchant=n, effects_off=off, effects_on=on, **state)
 
 
-def _attack(item):
-    ch = Character(items=(item,), bab=0)
-    ch = dispatch(ch, "add_attack", iid=item.iid, group="blades").state
+def _ch(item, **kw):
+    ch = Character(items=(item,), bab=0, spirit_current=5, **kw)
+    return dispatch(ch, "add_attack", iid=item.iid, group=item.groups[0] if item.groups else "").state
+
+
+def _atk(ch):
     return av.by_record(ch, ch.attacks[0].rid)
 
 
-S.case("h-sword-hd-hp", "gear.md [OWNER pkg 5]: sword +3 -> hardness +6, item HP +3 (10/5 -> 16/8)", (16, 8, 8))(
-    lambda: (dv.item_durability(_sword(3)), dv.item_hp_max(_sword(3)), dv.item_hp_current(_sword(3))))
-S.case("h-sword-attack", "gear.md: sword +3 -> attack +3, damage +3, lucky 20 -> 17", (3, 3, 17))(
-    lambda: (lambda a: (a.to_hit, a.damage, a.lucky))(_attack(_sword(3))))
-S.case("h-item-hp-current", "gear.md: current item HP = max - damage taken (+2 enchant: 7 - 3 = 4)", 4)(
-    lambda: dv.item_hp_current(Item("x", "x", hp=5, enchant=2, hp_damage=3)))
+S.case("q30-sword5-off", "gear.md [OWNER Q30]: +5 sword not activated: attack +1 (masterwork tab), damage +0, lucky 20",
+       (1, 0, 20))(lambda: (lambda a: (a.to_hit, a.damage, a.lucky))(_atk(_ch(_sword(5, off=MWK)))))
+S.case("q30-sword5-on", "gear.md [OWNER Q30]: +5 sword activated: attack +5, damage +5, lucky 15", (5, 5, 15))(
+    lambda: (lambda a: (a.to_hit, a.damage, a.lucky))(_atk(_ch(_sword(5, ON, off=MWK)))))
+S.case("q30-activate-command", "gear.md: activate_item on the +5 sword -> attack +5", 5)(
+    lambda: _atk(dispatch(_ch(_sword(5, off=MWK)), "activate_item", iid="sw").state).to_hit)
 
 
-def _armored(n):
-    arm = Item("ar", "chain", equipped=True, armor=4, durability=10, hp=20, enchant=n)
-    return Character(items=(arm,)), arm
+@S.case("q30-no-price", "gear.md [OWNER Q30]: no activation price -> soft refusal, always off, no enchantment",
+        (True, False, 1, 0))
+def _noprice():
+    it = _sword(5, state={}, off=MWK)
+    r = dispatch(_ch(it), "activate_item", iid="sw")
+    stored_on = _ch(replace(it, activated=True))        # even if stored as activated: no price -> off
+    return ("refused" in r.info, r.state.item("sw").activated, _atk(stored_on).to_hit, dv.enchant(stored_on.item("sw")))
 
 
-S.case("h-armor", "gear.md: armor +2 -> armor layer +2 (4 -> 6), hardness +4, HP +2", (6, 14, 22))(
-    lambda: (lambda c, a: (dict(acm.parts(dv.ac_input(c)))["armor"], dv.item_durability(a), dv.item_hp_max(a)))(
-        *_armored(2)))
-S.case("h-shield", "gear.md: shield +1 -> shield bonus +1 (2 -> 3)", 3)(
-    lambda: dv.shield_bonus(Character(items=(Item("sh", "shield", kind=SHIELD, hands=1, in_hands=True, shield=2,
-                                                  enchant=1),))))
+def _armor(state):
+    return Item("ar", "chain", equipped=True, armor=4, durability=10, hp=20, enchant=2, **state)
+
+
+S.case("q30-armor-off", "gear.md [OWNER Q30]: +2 armor not activated -> only the base armor bonus 4", 4)(
+    lambda: dict(acm.parts(dv.ac_input(Character(items=(_armor(PRICED),)))))["armor"])
+S.case("h-armor-on", "gear.md: +2 armor activated -> armor layer 6, hardness +4 (14), HP +2 (22)", (6, 14, 22))(
+    lambda: (lambda a: (dict(acm.parts(dv.ac_input(Character(items=(a,)))))["armor"], dv.item_durability(a),
+                        dv.item_hp_max(a)))(_armor(ON)))
+S.case("h-sword-hd-hp", "gear.md: +3 sword activated -> hardness +6, HP +3 (10/5 -> 16/8); off -> 10/5",
+       (16, 8, 10, 5))(
+    lambda: (dv.item_durability(_sword(3, ON)), dv.item_hp_max(_sword(3, ON)),
+             dv.item_durability(_sword(3)), dv.item_hp_max(_sword(3))))
+S.case("h-item-hp-current", "OPEN_QUESTIONS assumption: current HP from the stored damage (on 7-3=4, off 5-3=2, on again 4)",
+       (4, 2, 4))(
+    lambda: tuple(dv.item_hp_current(Item("x", "x", hp=5, enchant=2, hp_damage=3, **st)) for st in (ON, PRICED, ON)))
+S.case("h-shield", "gear.md: +1 shield activated -> shield bonus 3; off -> 2", (3, 2))(
+    lambda: tuple(dv.shield_bonus(Character(items=(Item("sh", "shield", kind=SHIELD, hands=1, in_hands=True, shield=2,
+                                                        enchant=1, **st),))) for st in (ON, PRICED)))
 S.case("h-shield-no-attack-bonus", "gear.md: a shield's enchantment raises the shield bonus, not its attack", 0)(
-    lambda: (lambda ch: av.by_record(ch, ch.attacks[0].rid).to_hit)(
-        dispatch(Character(items=(Item("sh", "shield", kind=SHIELD, hands=1, in_hands=True, shield=2, enchant=1),)),
-                 "add_attack", iid="sh").state))
-S.case("h-fire-is-an-effect", "D14 [OWNER pkg 5]: 'fire d6' is an ordinary item effect: shown as dice, damage number same",
-       ((("1d6", "fire"),), 0))(
-    lambda: (lambda a: (a.extra_dice, a.damage))(_attack(_sword(0, (Effect(bo.DAMAGE, dice="1d6", note="fire"),)))))
+    lambda: _atk(_ch(Item("sh", "shield", kind=SHIELD, hands=1, in_hands=True, shield=2, enchant=1, **ON))).to_hit)
+S.case("q30-fire-only-on", "gear.md [OWNER Q30]: 'fire d6' (activated tab) shows only while activated",
+       ((), (("1d6", "fire"),)))(
+    lambda: (_atk(_ch(_sword(0, on=FIRE))).extra_dice, _atk(_ch(_sword(0, ON, on=FIRE))).extra_dice))
+S.case("q30-short-rest-off", "gear.md: the short rest switches a 'day' item off -> enchantment gone (5 -> 1)", (5, 1))(
+    lambda: (lambda c: (_atk(c).to_hit, _atk(dispatch(c, "short_rest").state).to_hit))(
+        _ch(_sword(5, ON, off=MWK), hp_rolls=(8,), hp_current=8)))
 S.case("h-save-load", "D11: enchant, item damage, shield type and effect dice survive save/load", True)(
     lambda: (lambda c: cio.loads(cio.dumps(c)) == c)(Character(items=(
-        _sword(2, (Effect(bo.DAMAGE, dice="1d6", note="fire"),)),
-        Item("sh", "shield", kind=SHIELD, shield=2, shield_type="tower", hp_damage=1),))))
+        _sword(2, ON, on=FIRE), Item("sh", "shield", kind=SHIELD, shield=2, shield_type="tower", hp_damage=1),))))
 
 if __name__ == "__main__":
     sys.exit(S.run())
