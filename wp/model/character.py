@@ -83,7 +83,8 @@ class Item:
     hp: int = 0                        # item HP typed by the author (base)
     enchant: int = 0                   # enchantment level N (gear.md): weapon +N attack/damage/lucky,
                                        # armor/shield +N bonus; all: hardness +2N, item HP +N
-    hp_damage: int = 0                 # damage the item took; current item HP = max - damage
+    hp_current: Optional[int] = None   # CURRENT item HP (None = at max); see wp/model/items.py
+    destroyed: bool = False            # HP went below 0: destroyed for good (grey, cannot be activated)
     damage_small2: str = ""            # double weapon: second row (the other end)
     damage_medium2: str = ""
     double: bool = False               # double weapon (quarterstaff): two damage rows, one per end

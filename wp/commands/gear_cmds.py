@@ -4,6 +4,7 @@ from dataclasses import replace
 from wp.commands.base import CommandError, Result, command, commit
 from wp.core import effects as ef
 from wp.model import derived_view as dv
+from wp.model import items as itm
 from wp.model.character import LogEntry
 
 SHORT = "short"
@@ -14,17 +15,31 @@ UNTIL = {DAY: SHORT, DECADE: LONG}
 NOT_SET = "activation price not set"
 
 
-def _replace_item(ch, iid, **changes):
-    found = False
-    items = []
-    for it in ch.items:
-        if it.iid == iid:
-            it = replace(it, **changes)
-            found = True
-        items.append(it)
-    if not found:
-        raise CommandError("no item with id %r" % (iid,))
-    return replace(ch, items=tuple(items))
+def _put(ch, item):
+    return replace(ch, items=tuple(item if it.iid == item.iid else it for it in ch.items))
+
+
+@command
+def damage_item(ch, iid="", amount=0):
+    """Damage to an item's HP (gear.md, package 6). Below 0 -> destroyed for good."""
+    it = ch.item(iid)
+    if it.destroyed:
+        raise CommandError("destroyed: %s" % it.name)
+    if amount < 0:
+        raise CommandError("damage cannot be negative")
+    new = itm.damaged(it, amount)
+    return commit(_put(ch, new), "damage_item", "%s -%d HP -> %d (%s)" % (
+        it.name, amount, new.hp_current, itm.state(new)))
+
+
+@command
+def set_item_hp(ch, iid="", value=0):
+    """Manual item HP (edit mode). A destroyed item cannot be healed; below 0 -> destroyed."""
+    it = ch.item(iid)
+    if it.destroyed:
+        raise CommandError("destroyed: %s" % it.name)
+    new = itm.with_hp(it, value)
+    return commit(_put(ch, new), "set_item_hp", "%s HP = %d (%s)" % (it.name, new.hp_current, itm.state(new)))
 
 
 def _prices(item):
@@ -37,6 +52,8 @@ def activate_item(ch, iid="", kind=None):
     rest), each with its own price on the card (gear.md [OWNER]). No price set -> soft refusal
     (the sheet does not change). One price set -> that one works."""
     it = ch.item(iid)
+    if it.destroyed:
+        raise CommandError("destroyed: %s" % it.name)
     if it.activated:
         raise CommandError("already activated: %s" % it.name)
     prices = _prices(it)
@@ -52,8 +69,8 @@ def activate_item(ch, iid="", kind=None):
     spirit = prices[kind]
     if ch.spirit_current < spirit:
         raise CommandError("not enough spirit: need %d, have %d" % (spirit, ch.spirit_current))
-    new = replace(_replace_item(ch, iid, activated=True, active_until=UNTIL[kind]),
-                  spirit_current=ch.spirit_current - spirit)
+    on = replace(itm.switch(it, True), active_until=UNTIL[kind])        # enchanted: current HP +N
+    new = replace(_put(ch, on), spirit_current=ch.spirit_current - spirit)
     return commit(new, "activate_item", "%s activated for %d spirit (%s)" % (it.name, spirit, kind))
 
 
@@ -62,13 +79,12 @@ def deactivate_item(ch, iid=""):
     it = ch.item(iid)
     if not it.activated:
         raise CommandError("not activated: %s" % it.name)
-    return commit(_replace_item(ch, iid, activated=False, active_until=""), "deactivate_item",
-                  "%s deactivated" % it.name)
+    return commit(_put(ch, itm.switch(it, False)), "deactivate_item", "%s deactivated" % it.name)
 
 
 def switch_off_items(ch, rest_kind):
     """Short rest switches off "day" items; long rest switches off all."""
-    items = tuple(replace(it, activated=False, active_until="")
+    items = tuple(itm.switch(it, False)
                   if it.activated and (rest_kind == LONG or it.active_until == SHORT) else it
                   for it in ch.items)
     return replace(ch, items=items)

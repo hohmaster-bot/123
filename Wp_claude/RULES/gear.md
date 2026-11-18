@@ -58,9 +58,27 @@
   enchantment never counts.
 - Extra weapon effects (fire d6 and the like) go into the "activated" tab and work only while activated.
 - Deactivation (the short rest for "day" items, the long rest for all) removes the enchantment bonuses.
-- Assumptions (OPEN_QUESTIONS): hardness = base with the weapon mastery percent, then +2N; hardness and HP from the
-  enchantment also count only while activated; current item HP = max - stored damage taken, so nothing is lost when
-  the item is switched off (switched off: max drops by N, the damage stays).
+- Assumption (OPEN_QUESTIONS): hardness = base with the weapon mastery percent, then +2N, only while activated.
+
+## Item HP [OWNER, package 6, closes Q31]
+- Item HP is stored as the CURRENT number (not as "damage taken"; no migrations, D1).
+  Max = base max + HP from weapon mastery + N from enchantment (enchantment only while the item is activated).
+- Switching an enchanted item ON: current HP +N (the enchantment bonus, flat, not proportional).
+  Switching OFF: current HP * (new max / old max), rounded to nearest; a positive value is never rounded to 0
+  (switching off never breaks the item by itself).
+  Example: base 10, enchantment +3, active 13/13, damage 6 -> 7; off -> 7*10/13 = 5; on -> 8.
+- Broken = item HP <= 50% of max (and > 0).
+  Weapon: -2 to attack and damage with this weapon.
+  Armor and shield (a shield counts as armor): the AC bonus is halved, rounded down; the armor skill penalty doubles.
+- Item HP 0: the item does not work, no bonuses at all (no base values, no enchantment, no tabs).
+- Item HP below 0: destroyed for good (state "destroyed": cannot be activated, cannot be healed; stays in the list,
+  grey, removed only by hand).
+- Commands: damage_item(iid, amount), set_item_hp(iid, value) (manual, edit mode).
+- Repair and restoring item HP: the rules do not say (OPEN_QUESTIONS Q32).
+- Tests: the example above; a positive HP is not rounded to 0 when switching off; broken at exactly 50% and below,
+  not at 51%; broken sword -2 attack and damage; broken armor 5 -> 2, armor penalty x2; shield like armor; HP 0 gives
+  nothing; HP -1 destroyed and cannot be activated; a broken weapon shows -2 in the attack table.
+- An item without HP (no base HP and no current HP entered, e.g. a ring) is not tracked: always working.
 - Tests: +5 sword not activated: attack +1 (masterwork tab), damage +0; activated: +5; no price -> cannot be
   activated, no enchantment; +2 armor not activated -> base armor only; fire d6 only while activated; the short rest
   switches a "day" item off and the enchantment is gone.

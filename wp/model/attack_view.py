@@ -23,6 +23,7 @@ from wp.core import effects as ef
 from wp.core import pain as pn
 from wp.core import weapons as wpn
 from wp.model import derived_view as dv
+from wp.model import items as itm
 from wp.model import records as rec
 
 UNARMED = rec.UNARMED
@@ -56,6 +57,7 @@ class AttackView:
     parry_lines: Tuple[Line, ...]
     crit_hint: str = ""
     dice: Tuple[str, str] = ("", "")   # damage dice (small, medium) of the row used
+    item_state: str = "ok"             # items.py: ok / broken / not_working / destroyed
     lucky: int = 20                    # lucky attack threshold (mastery picks, enchantment)
     extra_dice: Tuple[Tuple[str, str], ...] = ()   # (dice, note) from the weapon's effects, e.g. ("1d6", "fire")
 
@@ -147,10 +149,18 @@ def extra_dice(item):
                  if e.dice and e.target == bo.DAMAGE)
 
 
+def broken_bonuses(item):
+    """Broken weapon: -2 to attack and damage with it (gear.md, package 6)."""
+    if item is None or not itm.broken(item):
+        return []
+    return [bo.Bonus(itm.BROKEN_PENALTY, bo.FLAT, t, item.iid, "broken") for t in (bo.ATTACK, bo.DAMAGE)]
+
+
 def drum(ch, record, item):
     out = list(ef.bonuses_from(ch.statuses, ch.in_combat, dv.context(ch)))
     out += _item_bonuses(ch, item)
     out += enchant_bonuses(item)
+    out += broken_bonuses(item)
     out += _group_bonuses(ch, record)
     out.append(replace(bo.morale(dv.morale_bonus(ch)), source="morale scale"))
     return out
@@ -208,7 +218,8 @@ def attack(ch, record):
                       damage=sum(x.value for x in dmg), damage_lines=tuple(dmg),
                       parry=p, parry_lines=parry_lines,
                       crit_hint=crit_hint(item.crit_mult if item is not None else 2),
-                      dice=dice_row(item, 1),
+                      dice=dice_row(item, 1) if item is None or itm.works(item) else ("", ""),
+                      item_state=itm.state(item) if item is not None else itm.OK,
                       lucky=wpn.lucky_threshold(rec.group_picks(ch, record.group), weapon_enchant(item)),
                       extra_dice=extra_dice(item))
 

@@ -79,6 +79,9 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
 ## Mastery bonuses in the final numbers [OWNER]
 - Weapon mastery bonuses stack with themselves by their own rules, then are added as FLAT to AC (parry), attack, damage.
 - They change the FINAL durability (hardness) and HP of the item, not the value the author typed into the item.
+- Item HP [OWNER, package 6]: the weapon's HP is stored as the CURRENT number; max = base + mastery HP + enchantment N
+  (while activated). Broken (HP <= 50% of max, > 0): -2 to attack and damage with the weapon. HP 0: the weapon does
+  not work. HP below 0: destroyed for good. Full rules: gear.md "Item HP".
   Durability: specialist +30%, expert +70% (they stack). Item HP: +1 per expert pick.
   Example: +30% and +70% picks -> +100% of the base durability.
 

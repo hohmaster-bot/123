@@ -211,9 +211,8 @@ S.case("h-sword-hd-hp", "gear.md: +3 sword activated -> hardness +6, HP +3 (10/5
        (16, 8, 10, 5))(
     lambda: (dv.item_durability(_sword(3, ON)), dv.item_hp_max(_sword(3, ON)),
              dv.item_durability(_sword(3)), dv.item_hp_max(_sword(3))))
-S.case("h-item-hp-current", "OPEN_QUESTIONS assumption: current HP from the stored damage (on 7-3=4, off 5-3=2, on again 4)",
-       (4, 2, 4))(
-    lambda: tuple(dv.item_hp_current(Item("x", "x", hp=5, enchant=2, hp_damage=3, **st)) for st in (ON, PRICED, ON)))
+S.case("h-item-hp-current", "gear.md [pkg 6]: current item HP is stored; not set = at max (on 7, off 5)", (7, 5))(
+    lambda: tuple(dv.item_hp_current(Item("x", "x", hp=5, enchant=2, **st)) for st in (ON, PRICED)))
 S.case("h-shield", "gear.md: +1 shield activated -> shield bonus 3; off -> 2", (3, 2))(
     lambda: tuple(dv.shield_bonus(Character(items=(Item("sh", "shield", kind=SHIELD, hands=1, in_hands=True, shield=2,
                                                         enchant=1, **st),))) for st in (ON, PRICED)))
@@ -227,7 +226,7 @@ S.case("q30-short-rest-off", "gear.md: the short rest switches a 'day' item off 
         _ch(_sword(5, ON, off=MWK), hp_rolls=(8,), hp_current=8)))
 S.case("h-save-load", "D11: enchant, item damage, shield type and effect dice survive save/load", True)(
     lambda: (lambda c: cio.loads(cio.dumps(c)) == c)(Character(items=(
-        _sword(2, ON, on=FIRE), Item("sh", "shield", kind=SHIELD, shield=2, shield_type="tower", hp_damage=1),))))
+        _sword(2, ON, on=FIRE), Item("sh", "shield", kind=SHIELD, shield=2, shield_type="tower", hp_current=1),))))
 
 if __name__ == "__main__":
     sys.exit(S.run())
