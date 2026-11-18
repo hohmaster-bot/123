@@ -74,11 +74,19 @@
 - Item HP below 0: destroyed for good (state "destroyed": cannot be activated, cannot be healed; stays in the list,
   grey, removed only by hand).
 - Commands: damage_item(iid, amount), set_item_hp(iid, value) (manual, edit mode).
-- Repair and restoring item HP: the rules do not say (OPEN_QUESTIONS Q32).
+- Repair [OWNER, Q32]: only by hand in edit mode (set_item_hp); there is no repair command.
+- [OWNER, package 7] Armor and a shield at item HP 0 cannot be put on: the equip command refuses with a clear message.
+  If such an item is already worn (its HP fell to 0 after damage), it counts as taken off: no AC bonus and no armor
+  skill penalty. A weapon at HP 0 can be held, but gives no bonuses and no damage dice.
+- A destroyed item (HP below 0) stays in the list, grey, gives nothing, cannot be activated or healed. Only the player
+  removes it by hand (command remove_item, works for any item). Items are never removed automatically.
 - Tests: the example above; a positive HP is not rounded to 0 when switching off; broken at exactly 50% and below,
   not at 51%; broken sword -2 attack and damage; broken armor 5 -> 2, armor penalty x2; shield like armor; HP 0 gives
   nothing; HP -1 destroyed and cannot be activated; a broken weapon shows -2 in the attack table.
 - An item without HP (no base HP and no current HP entered, e.g. a ring) is not tracked: always working.
+- Tests (package 7): armor at 0 HP -> equip refused; worn armor that drops to 0 -> AC without armor and no skill
+  penalty; a shield the same; a weapon at 0 HP is held without bonuses; a destroyed item stays in the list and is
+  removed only by remove_item; remove_item works for an ordinary item.
 - Tests: +5 sword not activated: attack +1 (masterwork tab), damage +0; activated: +5; no price -> cannot be
   activated, no enchantment; +2 armor not activated -> base armor only; fire d6 only while activated; the short rest
   switches a "day" item off and the enchantment is gone.

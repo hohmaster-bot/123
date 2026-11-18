@@ -112,5 +112,67 @@ S.case("no-hp-item-ok", "items.py: an item without HP (ring) is not tracked: alw
 S.case("save-load", "D11: current item HP and destroyed survive save/load", True)(
     lambda: (lambda c: cio.loads(cio.dumps(c)) == c)(ch_with(sword(hp_current=-1, destroyed=True))))
 
+# ---- package 7: HP 0 armor/shield, remove_item ----
+def refused(c, name, **kw):
+    try:
+        dispatch(c, name, **kw)
+    except CommandError:
+        return "rejected"
+    return "accepted"
+
+
+S.case("p7-armor0-equip", "gear.md [OWNER pkg 7]: armor at 0 HP cannot be put on; at 1 HP it can",
+       ("rejected", "accepted"))(
+    lambda: (refused(ch_with(armor(equipped=False, hp_current=0)), "equip_item", iid="ar"),
+             refused(ch_with(armor(equipped=False, hp_current=1)), "equip_item", iid="ar")))
+
+
+@S.case("p7-armor-drops-to-0", "gear.md: worn armor dropping to 0 counts as taken off: AC 10, no skill penalty",
+        ((15, -3), (10, 0)))
+def _drop():
+    c = dispatch(ch_with(armor(equipped=False)), "equip_item", iid="ar").state
+    before = (dv.ac(c), dv.armor_skill_penalty(c))
+    c = dispatch(c, "damage_item", iid="ar", amount=20).state
+    return (before, (dv.ac(c), dv.armor_skill_penalty(c)))
+
+
+def shield(**kw):
+    base = dict(kind=SHIELD, hands=1, shield=2, hp=10, shield_type="heavy")
+    base.update(kw)
+    return Item("sh", "shield", **base)
+
+
+@S.case("p7-shield", "gear.md: a shield the same: at 0 HP cannot be taken up; held one at 0 -> no shield bonus",
+        ("rejected", 12, 10))
+def _shield():
+    r = refused(ch_with(shield(hp_current=0)), "equip_hands", iid="sh")
+    c = dispatch(ch_with(shield()), "equip_hands", iid="sh").state
+    a = dv.ac(c)
+    c = dispatch(c, "damage_item", iid="sh", amount=10).state
+    return (r, a, dv.ac(c))
+
+
+S.case("p7-weapon0-held", "gear.md: a weapon at 0 HP can be held, gives no bonuses (enchant off, tab off)",
+       ("accepted", 0, ("", "")))(
+    lambda: (lambda c: (refused(c, "equip_hands", iid="sw"),
+                        _atk(dispatch(c, "equip_hands", iid="sw").state).to_hit,
+                        _atk(dispatch(c, "equip_hands", iid="sw").state).dice))(
+        ch_with(sword(in_hands=False, hp_current=0, enchant=0, damage_medium="1d8",
+                      effects_off=(itm_effect(),)))))
+
+
+@S.case("p7-destroyed-stays", "gear.md: a destroyed item stays in the list; only remove_item removes it (with its records)",
+        (True, False, 0))
+def _stays():
+    c = dispatch(ch_with(sword()), "add_attack", iid="sw", group="blades").state
+    c = dispatch(c, "damage_item", iid="sw", amount=50).state
+    stays = any(i.iid == "sw" for i in c.items)
+    c = dispatch(c, "remove_item", iid="sw").state
+    return (stays, any(i.iid == "sw" for i in c.items), len(c.attacks))
+
+
+S.case("p7-remove-ordinary", "gear.md: remove_item works for an ordinary item", ())(
+    lambda: dispatch(ch_with(Item("r", "ring")), "remove_item", iid="r").state.items)
+
 if __name__ == "__main__":
     sys.exit(S.run())

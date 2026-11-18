@@ -62,6 +62,11 @@ def works(it):
     return state(it) not in (NOT_WORKING, DESTROYED)
 
 
+def defensive(it):
+    """Armor or shield: at HP 0 it cannot be put on and a worn one counts as taken off (pkg 7)."""
+    return it.armor > 0 or it.shield > 0 or it.kind == "shield" or bool(it.shield_type)
+
+
 def broken(it):
     return state(it) == BROKEN
 

@@ -19,9 +19,9 @@ Q28 heavy/tower shield in hand adds its shield bonus to balance max; tower GRADE
 Q29 professionalism 300 only for classes without their own; the level number is a placeholder (training.md),
 Q30 enchantment = activation effect; no price -> ordinary item, always off (gear.md),
 Q31 item HP stored as the current number, on +N / off scaled, broken/0/destroyed (gear.md "Item HP"),
+Q32 item repair only by hand in edit mode (gear.md),
 Q27 parry +1 per odd level from level 3, level 1 does not count (training.md),
 Q20 unarmed combat -4 until trained to Skilled (weapons.md), Q21 weight L = 1 L, N = N*10 L; quarterstaff is a double weapon; gauntlet zeros stay (catalog.md, weapons.md).
 
 ## Game rules (owner decides)
 - Q23 | Temp HP spend order. ASSUMPTION (owner, package 4): first the "by button" temp HP, then buff temp HP in order (resources.md). Stacking flag: a non-stacking buff adds only up to its amount over the current total. | as is | assumption
-- Q32 | Item repair and restoring item HP: how (cost, time, skill check, rest)? Can a broken (HP > 0) item be repaired to full? Now only the manual set_item_hp (edit mode) exists; a destroyed item cannot be healed. | ? | open

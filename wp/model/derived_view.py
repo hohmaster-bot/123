@@ -47,8 +47,9 @@ def bp_pool(ch):
 
 
 def _equipped(ch):
-    """Worn on the doll (armor, rings...)."""
-    return [it for it in ch.items if it.equipped]
+    """Worn on the doll (armor, rings...). An item at HP 0 or destroyed counts as taken off:
+    no AC bonus, no armor skill penalty, no Dex cap, no tab (gear.md [OWNER pkg 7])."""
+    return [it for it in ch.items if it.equipped and itm.works(it)]
 
 
 def _in_hands(ch):
