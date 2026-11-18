@@ -35,6 +35,8 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
 - Code reading: parry = armor proficiency parry (0/2/4/6) + 1 per odd level + weapon mastery parry picks.
   [OWNER, Q27] Level 1 does NOT count: growth starts at level 3 (level 1 -> +0, 3 -> +1, 5 -> +2, 7 -> +3).
   Tests: none at level 1 -> parry 0; heavy at level 5 -> 6 + 2 = 8.
+- [OWNER, package 5] Parry comes from PROFICIENCY (armor categories 0/2/4/6, the "tower shields" grade +2), not from an
+  item in the hand. Tests: level 1, heavy armor + tower shields grade -> 8; level 3 -> 9; without shield proficiency -> 6.
 - Shields [OWNER, Q28]: the shield bonus (layer "shield") comes from the shield held in a hand. A shield card has a type:
   light / heavy / tower. Heavy and tower shields ALSO add their shield bonus to the balance max while in a hand
   (in the bag: no). Tests: heavy shield +2 in hand -> balance max +2; in the bag -> +0; light shield -> +0.

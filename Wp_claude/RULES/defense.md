@@ -6,6 +6,9 @@
 - Flat-footed ("in surprise"): AC without the Dex BONUS and without ALL dodge bonus; a penalty from low Dex stays [OWNER].
   Shield counts only if attack comes from shield side. Example: Dex -2: front AC 8, flat-footed 8.
 - Parry: same bonus type as armor. If no armor or parry > armor, player usually picks parry. Front only.
+  Parry value [OWNER, package 5] = armor proficiency (none 0, light 2, medium 4, heavy 6) + 1 per odd level from 3
+  + 2 for the "tower shields" proficiency grade + weapon mastery parry picks. It comes from PROFICIENCY, not from an
+  item in the hand (training.md).
 - Touch: ignores natural armor, shield, parry, armor bonuses.
 - Need UI toggle: shield bonus on/off in AC, or show small secondary number "AC with shield".
 

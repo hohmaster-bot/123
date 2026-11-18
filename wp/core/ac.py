@@ -37,16 +37,20 @@ class AcInput:
 
 
 # Parry from armor proficiency (training.md [OWNER pkg 4]): none 0, light 2, medium 4, heavy 6,
-# plus 1 on every odd level from 3 (3, 5, 7, ...; level 1 does not count, owner Q27).
+# plus 1 on every odd level from 3 (3, 5, 7, ...; level 1 does not count, owner Q27),
+# plus 2 for the "tower shields" proficiency grade. Parry comes from PROFICIENCY, not from an item.
 ARMOR_GRADE_PARRY = {"none": 0, "light": 2, "medium": 4, "heavy": 6}
+TOWER_GRADE = "tower"
+TOWER_GRADE_PARRY = 2
 
 
 def odd_level_parry(level):
     return max(0, (int(level) - 1) // 2)
 
 
-def base_parry(armor_grade, level):
-    return ARMOR_GRADE_PARRY[armor_grade] + odd_level_parry(level)
+def base_parry(armor_grade, level, shield_grade="none"):
+    tower = TOWER_GRADE_PARRY if shield_grade == TOWER_GRADE else 0
+    return ARMOR_GRADE_PARRY[armor_grade] + odd_level_parry(level) + tower
 
 
 def _dex(inp):

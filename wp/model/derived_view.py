@@ -210,8 +210,8 @@ def total(ch, target, weapon=None, skill=None):
 def ac_input(ch):
     eq = _equipped(ch)
     caps = [it.max_dex for it in eq if it.max_dex is not None]
-    # parry = armor proficiency + odd levels (training.md) + weapon mastery picks (weapons.md)
-    parry = acm.base_parry(ch.armor_grade, ch.level) + rec.passive(ch, "parry")
+    # parry = armor proficiency + odd levels + tower shield grade (training.md) + weapon mastery picks (weapons.md)
+    parry = acm.base_parry(ch.armor_grade, ch.level, ch.shield_grade) + rec.passive(ch, "parry")
     return acm.AcInput(dex_mod=ability_mod(ch, "dex"), armor=armor_bonus(ch), parry=parry,
                        natural=max([it.natural for it in eq] or [0]),
                        shield=shield_bonus(ch),

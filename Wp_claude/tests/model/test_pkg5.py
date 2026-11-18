@@ -67,5 +67,18 @@ S.case("c-heavy-in-bag", "training.md: heavy shield in the bag -> no balance bon
 S.case("c-tower-light", "training.md: tower +3 -> +3; light shield -> +0", (3, 0))(
     lambda: (dv.shield_balance_bonus(shield_char("tower", bonus=3)), dv.shield_balance_bonus(shield_char("light"))))
 
+
+# ---- F: parry from proficiency: armor 0/2/4/6, tower shields grade +2 ----
+def parry_of(level, shield_grade):
+    return dv.ac_input(Character(level=level, armor_grade="heavy", shield_grade=shield_grade)).parry
+
+
+S.case("f-parry-proficiency", "training.md / defense.md [OWNER pkg 5]: heavy + tower grade: L1 8, L3 9; no shield 6",
+       (8, 9, 6, 6))(
+    lambda: (parry_of(1, "tower"), parry_of(3, "tower"), parry_of(1, "none"), parry_of(1, "heavy")))
+S.case("f-tower-item-no-parry", "defense.md: a tower shield ITEM without the grade gives no parry", 6)(
+    lambda: dv.ac_input(Character(level=1, armor_grade="heavy", items=(
+        Item("t", "tower", kind=SHIELD, hands=1, in_hands=True, shield=4, shield_type="tower"),))).parry)
+
 if __name__ == "__main__":
     sys.exit(S.run())
