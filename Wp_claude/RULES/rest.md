@@ -5,7 +5,7 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 ## BP and balance [OWNER]
 - BP cap = ceil(max HP / 4) [OWNER, corrected]. Tests: 11->3, 15->4, 19->5, 20->5, 21->6.
 - Balance max = current armor bonus (worn armor only; PARRY gives NO balance) + current BP + temporary BP (e.g. given
-  narratively) [OWNER] + bonuses (race, class, other).
+  narratively) [OWNER] + bonuses (race, class, other) + the shield bonus of a heavy/tower shield in a hand (training.md).
   Example [OWNER]: 4 max HP -> BP 1; leather armor bonus 2; race +3 -> balance max 6.
   Note: BP is the CURRENT BP, so spending BP on short rest lowers balance max [confirmed by owner formula].
 - Balance regen per zero-initiative tick = current level + Con modifier + other (e.g. +1 from unarmed mastery), min 1.

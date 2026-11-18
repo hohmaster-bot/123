@@ -55,6 +55,7 @@ class Item:
     carried: bool = True               # False = left at the base (no weight)
     armor: int = 0                     # worn armor bonus
     shield: int = 0                    # shield bonus to AC: only while in hands (gear.md)
+    shield_type: str = ""              # shield card: "light" / "heavy" / "tower" ("" = not a shield)
     natural: int = 0
     max_dex: Optional[int] = None
     skill_penalty: int = 0             # armor penalty to Str/Dex skills (gear.md "Armor"), e.g. -2

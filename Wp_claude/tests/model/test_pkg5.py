@@ -10,6 +10,9 @@ from _runner import Suite  # noqa: E402
 from wp.core import ac as acm  # noqa: E402
 from wp.core import ac_layers as L  # noqa: E402
 from wp.core import bonuses as bo  # noqa: E402
+from wp.commands import CommandError, dispatch  # noqa: E402
+from wp.model import derived_view as dv  # noqa: E402
+from wp.model.character import SHIELD, Character, Item  # noqa: E402
 
 S = Suite("test_pkg5")
 
@@ -49,6 +52,20 @@ S.case("b-sacred-flat", "defense_layers.md: sacred +2 is not a layer; in AC it g
         layers(bonuses=(bo.Bonus(2, "sacred", bo.AC),))))
 S.case("b-enhancement-touch", "defense.md: touch ignores armor, so its enhancement too", 0)(
     lambda: layers(acm.TOUCH, armor=4, bonuses=(bo.Bonus(2, bo.ENHANCEMENT, bo.AC),))["armor"])
+
+
+# ---- C: shields: type on the card, heavy/tower add the shield bonus to balance max while in a hand ----
+def shield_char(stype, in_hands=True, bonus=2):
+    sh = Item("sh", "shield", kind=SHIELD, hands=1, in_hands=in_hands, shield=bonus, shield_type=stype)
+    return Character(hp_rolls=(8,), hp_current=8, bp_current=2, items=(sh,))
+
+
+S.case("c-heavy-in-hand", "training.md [OWNER Q28]: heavy shield +2 in hand -> balance max +2", 2)(
+    lambda: dv.balance_max(shield_char("heavy")) - dv.balance_max(shield_char("")))
+S.case("c-heavy-in-bag", "training.md: heavy shield in the bag -> no balance bonus", 0)(
+    lambda: dv.balance_max(shield_char("heavy", in_hands=False)) - dv.balance_max(shield_char("")))
+S.case("c-tower-light", "training.md: tower +3 -> +3; light shield -> +0", (3, 0))(
+    lambda: (dv.shield_balance_bonus(shield_char("tower", bonus=3)), dv.shield_balance_bonus(shield_char("light"))))
 
 if __name__ == "__main__":
     sys.exit(S.run())

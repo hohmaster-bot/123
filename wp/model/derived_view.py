@@ -68,9 +68,20 @@ def shield_bonus(ch):
     return max([it.shield for it in _in_hands(ch)] or [0])
 
 
+BALANCE_SHIELDS = ("heavy", "tower")
+
+
+def shield_balance_bonus(ch):
+    """Heavy and tower shields add their shield bonus to the balance max while held in a hand
+    (training.md [OWNER, Q28])."""
+    return max([it.shield for it in _in_hands(ch) if it.shield_type in BALANCE_SHIELDS] or [0])
+
+
 def balance_max_base(ch):
-    """Worn armor bonus + CURRENT BP + temporary BP (e.g. narrative) + bonuses (rest.md); parry gives none."""
-    return dv.balance_max(armor_bonus(ch), ch.bp_current + ch.temp_bp, ch.balance_bonus)
+    """Worn armor bonus + CURRENT BP + temporary BP (e.g. narrative) + heavy/tower shield in hand
+    + bonuses (rest.md, training.md); parry gives none."""
+    return dv.balance_max(armor_bonus(ch), ch.bp_current + ch.temp_bp,
+                          ch.balance_bonus + shield_balance_bonus(ch))
 
 
 def balance_max(ch):
