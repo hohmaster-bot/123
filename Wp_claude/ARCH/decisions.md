@@ -9,7 +9,7 @@ Status: A = accepted by owner, P = proposed (needs owner OK), X = superseded.
 | D4 | A | i18n: every UI string in locale files; code is ASCII only. | Owner. RU/EN switch; PowerShell can no longer corrupt code. |
 | D5 | A | Commands are the only mutation path: UI -> `dispatch(cmd)` -> validate -> mutate -> action_log -> `changed` signal. Resources get two ops: `restore` (gameplay: regen, heal, rest, tick; clamps to max) and `set` (manual/overfill; no clamp, flagged "over max"). Exceeding max is allowed (RULES/resources.md "Over max"). | One place for bounds, transactions, undo, refresh (A053, A059). |
 | D6 | A | Store base values only; derived values computed on read. | A087 (max inflation), legacy display fields. |
-| D7 | A | Stable ids for every entity (feats, spells, courts, buffs, chips...); no references by display name. | A045, A046, A088; renames orphan chip order/colors. |
+| D7 | A | Stable ids for every entity (feats, spells, courts, buffs, chips...); no references by display name. The player never types an id: the program makes it from the name (transliteration, a number on a collision; `wp/model/ids.py`) [OWNER pkg 5]. | A045, A046, A088; renames orphan chip order/colors. |
 | D8 | A | Docs for Claude in English; owner-facing docs in Russian. | Cyrillic costs noticeably more tokens. |
 | D9 | A | Split core into domain modules; step 1 = mixins (`c.method()` calls unchanged), protected by tests. | Smaller files to read; no big-bang rewrite. |
 | D10 | A | All new docs live in `Wp_claude/`; old docs go to `Wp_claude/archive/` later. | Owner. |

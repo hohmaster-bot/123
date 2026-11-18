@@ -9,6 +9,7 @@ from dataclasses import replace
 from wp.catalog.weapons_catalog import CONTACT, UNARMED_COMBAT
 from wp.commands.base import CommandError, command, commit
 from wp.model import derived_view as dv
+from wp.model import ids
 from wp.model import records as rec
 from wp.model.character import AttackRecord
 
@@ -67,7 +68,8 @@ def add_attack(ch, iid="", group="", grip="one", stat="", rid=""):
             raise CommandError("a two-handed weapon cannot be off-hand")
         if grip == "two" and it.finesse:
             raise CommandError("a finesse weapon is held in one hand or the off-hand only (owner)")
-    rid = rid or "%s:%s:%s" % (iid, group, grip)
+    if not rid:                        # made by the program (D7); a number is added on a collision
+        rid = ids.unique("%s:%s:%s" % (iid, group, grip), (r.rid for r in ch.attacks))
     if any(r.rid == rid for r in ch.attacks):
         raise CommandError("attack record already exists: %s" % rid)
     record = AttackRecord(rid=rid, item=iid, group=group, grip=grip, stat=stat)

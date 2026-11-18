@@ -12,6 +12,8 @@ from wp.core import ac_layers as L  # noqa: E402
 from wp.core import bonuses as bo  # noqa: E402
 from wp.commands import CommandError, dispatch  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
+from wp.model import ids  # noqa: E402
+from wp.core.effects import Status  # noqa: E402
 from wp.model.character import SHIELD, Character, Item  # noqa: E402
 
 S = Suite("test_pkg5")
@@ -91,6 +93,38 @@ S.case("f-parry-proficiency", "training.md / defense.md [OWNER pkg 5]: heavy + t
 S.case("f-tower-item-no-parry", "defense.md: a tower shield ITEM without the grade gives no parry", 6)(
     lambda: dv.ac_input(Character(level=1, armor_grade="heavy", items=(
         Item("t", "tower", kind=SHIELD, hands=1, in_hands=True, shield=4, shield_type="tower"),))).parry)
+
+
+# ---- E: ids are made by the program (D7) ----
+_RU_ELF = "".join(chr(c) for c in (1069, 1083, 1100, 1092, 1080, 1081, 1089, 1082, 1080, 1081))   # Elfiyskiy
+
+
+def _two_langs():
+    ch = Character(training=500)
+    ch = dispatch(ch, "buy_language", title=_RU_ELF).state
+    ch = dispatch(ch, "buy_language", title=_RU_ELF).state
+    return tuple(lang.lid for lang in ch.languages)
+
+
+S.case("e-language-no-id", "ARCH D7 [OWNER pkg 5]: language without id is bought; same name -> another id",
+       ("elfiyskiy", "elfiyskiy_2"))(_two_langs)
+S.case("e-status-no-id", "D7: two statuses 'Rage' without sid get rage and rage_2", ("rage", "rage_2"))(
+    lambda: (lambda c: tuple(s.sid for s in c.statuses))(
+        dispatch(dispatch(Character(), "add_status", status=Status("Rage"), ticks=3).state,
+                 "add_status", status=Status("Rage"), ticks=3).state))
+
+
+@S.case("e-language-no-name", "D7: a language with neither id nor name is refused", "rejected")
+def _noname():
+    try:
+        dispatch(Character(training=500), "buy_language")
+    except CommandError:
+        return "rejected"
+    return "accepted"
+
+
+S.case("e-slug", "ids.py: punctuation and spaces -> one underscore; empty -> 'id'", ("long_sword_2", "id"))(
+    lambda: (ids.slug("  Long-Sword (2) "), ids.slug("!!")))
 
 if __name__ == "__main__":
     sys.exit(S.run())

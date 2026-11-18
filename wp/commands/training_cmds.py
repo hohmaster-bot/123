@@ -8,6 +8,7 @@ from wp.core import skills as sk
 from wp.core import training as tr
 from wp.core import weapons as wpn
 from wp.model import derived_view as dv
+from wp.model import ids
 from wp.model.character import Language
 
 
@@ -99,8 +100,9 @@ def buy_armor_grade(ch, source=tr.TRAINING):
 @command
 def buy_language(ch, lid="", title="", native=False, projects=1, source=tr.TRAINING):
     """Language: non-native 30 * projects from the nearest native; native: first free, cheap 50 while natives < Int mod, else 100."""
-    if not lid:
-        raise CommandError("language needs a stable id")
+    if not lid and not title:
+        raise CommandError("language needs a name")
+    lid = lid or ids.make_id(title, (lang.lid for lang in ch.languages))    # the player never types an id (D7)
     if any(lang.lid == lid for lang in ch.languages):
         raise CommandError("language already known: %r" % (lid,))
     try:

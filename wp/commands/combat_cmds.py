@@ -8,6 +8,7 @@ from wp.core import magic as mg
 from wp.core import tick as tk
 from wp.model import bridge
 from wp.model import derived_view as dv
+from wp.model import ids
 
 
 @command
@@ -69,6 +70,8 @@ def add_status(ch, status=None, ticks=None):
     if not ef.can_activate(status):
         raise CommandError("no charges left: %s" % status.name)
     st = ef.activate(status, ticks)
+    if not st.sid:                     # the program makes the stable id from the name (D7)
+        st = replace(st, sid=ids.make_id(st.name, (s.sid for s in ch.statuses)))
     if ef.holds_temp_hp(st):
         before = dv.temp_hp_total(ch)
         gained = ef.apply_one_shot(st, before) - before

@@ -39,7 +39,6 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   - seed 200 / sprout seed 200;
   - make a known language native (50 / 100);
   - attention course +1 for 200 (adds to the stat bonus);
-  - heavy/tower shields add the shield bonus to balance, tower +2 parry (after Q28);
   - master weapon picks have no mechanics yet: reroll one d20, one attack per turn without the [attack] tag,
     once per combat restore all balance (free action); expert picks "ignore first vulnerability",
     "ignore 20% cover", "first ranged attack can be parried" are stored but have no effect in numbers.
