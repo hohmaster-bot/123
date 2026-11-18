@@ -20,6 +20,9 @@
 
 ## Bag
 - Everything not worn and not a weapon. Button "drop bag" excludes its weight until picked up again.
+- [OWNER, package 8] The button is the character flag ignore_bag_weight (default off, command set_ignore_bag_weight).
+  While on, the bag weight (carried, not worn, not in the hands, not a weapon) is not counted in the carried weight;
+  the weight view shows the flag. Tests: bag 30 + sword 20 + armor 50 + axe 15 = 115 L; flag on -> 85 L.
 
 ## Weight [OWNER]
 - Unit "balk" B: 5.9 B = 59 L. Stored as L.
@@ -39,6 +42,18 @@
 ## Armor [OWNER]
 - Skill penalty (Str/Dex skills), arcane spell failure chance (slot magic & mana, NOT ki-like abilities).
 - Weight, armor bonus. May slow. Mwk/special may reduce penalty (rarely give bonus).
+- A shield counts as armor: a shield held in a hand applies its Str/Dex skill penalty too [OWNER, package 8 R4].
+  Test: shield -2 in hand -> climb -2; in the bag -> 0; shield -2 + armor -3 -> -5.
+
+## Masterwork [OWNER, package 8]
+- An item flag "masterwork", independent of activation (weapons and armor may or may not be masterwork, activated or
+  not). Command set_item_masterwork.
+- Masterwork weapon: +1 to attack, type enhancement, so it does NOT stack with enchantment +N: same sign and type ->
+  the larger wins (+1 masterwork and +1 enchantment -> +1; +1 and +3 -> +3). Opposite signs of equal size cancel
+  (+1 masterwork and a -1 enhancement penalty -> 0). No damage, no lucky attack.
+- Masterwork armor / shield: its Str/Dex skill penalty is 1 smaller, never above 0 (-1 -> 0, 0 -> 0). Applied before a
+  broken item doubles it: -3 masterwork broken -> -4.
+- Item HP 0: masterwork gives nothing either.
 
 ## Enchantment [OWNER, package 5]
 - An item has an enchantment level N (weapons, armor, shields).
@@ -70,7 +85,14 @@
 - Broken = item HP <= 50% of max (and > 0).
   Weapon: -2 to attack and damage with this weapon.
   Armor and shield (a shield counts as armor): the AC bonus is halved, rounded down; the armor skill penalty doubles.
-- Item HP 0: the item does not work, no bonuses at all (no base values, no enchantment, no tabs).
+- Item HP 0: the item does not work, no bonuses at all (no base values, no enchantment, no tabs). [OWNER, package 8
+  R2] This includes an ACTIVATED item: +N attack/damage/lucky, armor/shield +N, hardness +2N and extra effects are all
+  gone. Test: +3 sword activated at HP 8/13: +3/+3, lucky 17, hardness 16; at HP 0: 0/0, lucky 20, hardness 10.
+- Mastery in item numbers [OWNER, package 8 R3]: the weapon mastery picks "weapon HP +1" and "durability +30% / +70%"
+  of the item's group change its max HP and hardness (weapons.md). The group is the one of the item's attack record
+  (its primary record, else its first record; never two groups at once; no record -> no picks). A shield attacks
+  through group Contact, so Contact picks reach a shield the same way. Tests: base 11 + HP pick -> 12 (6 of 12 is
+  broken, 6 of 11 is not); hardness 10 with +30% -> 13, with +30% and +70% -> 20.
 - Item HP below 0: destroyed for good (state "destroyed": cannot be activated, cannot be healed; stays in the list,
   grey, removed only by hand).
 - Commands: damage_item(iid, amount), set_item_hp(iid, value) (manual, edit mode).

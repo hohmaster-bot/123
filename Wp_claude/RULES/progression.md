@@ -2,6 +2,14 @@
 
 ## Level up [OWNER]
 - Hit die rolled OUTSIDE app, result entered; HP recorded.
+- Max HP [OWNER, package 8] = hit-die HP (level 1 = the maximum of the die, later levels = the value the player entered
+  at level up, editable, at most the die) + Con modifier * level (CURRENT Con: stat damage lowers it; negative
+  subtracts) + race bonus (may be 0) + other bonuses (feats, class, quirks, items); at least 1.
+  Training HP (50 per point, training.md) raise the hit-die HP only and never above die * level.
+  Tests: rolls 10+6+6, Con 8 (-1), race 2, other 1 -> 22; Con 1 at level 1 with roll 4 -> 1; Con 14 with 4 damage ->
+  mod 0; rolls 10+6 at d10: +1 for 50 -> 10+7; rolls 10+10 -> refused.
+- Balance regen follows the CURRENT Con live (also after stat damage in combat). Test: Con 12 -> 8 mid-combat: regen
+  3 -> 1, balance cap unchanged (9).
 - Training gained at level-up = 100 * new level. At creation (level 1) the player gets 1000 training [OWNER]. Spend on almost anything: e.g. raise HP (per level roll up to theoretical hit die max),
   weapon mastery, styles, etc. (list in old editor). Many training options already work.
 - Comfort can be exchanged for training.

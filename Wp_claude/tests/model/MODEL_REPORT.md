@@ -602,3 +602,13 @@ test_ascii_code: 65 files, non-ASCII 0
 - Решение: щит с HP 0, уже взятый в руку, продолжает занимать руку (он физически в руке), но ничего не даёт.
 - Тесты в `test_pkg6.py` (раздел «package 7»).
 
+
+# Пакет 8: исправления по REVIEW_REPORT_3 и решения владельца A-H
+- Подробно: `Wp_claude/tests/PACKAGE8_REPORT.md`. Тесты: `test_pkg8.py` (63), плюс правки в `core/test_rest.py`,
+  `core/test_effects.py`, `test_group_a.py`, `test_scenarios.py`, `test_pkg5.py`.
+- Убраны поля `Character.temp_bp` (БП выше максимума хранится просто как БП) и `Status.condition` (нет условия «только в бою»).
+- Новые поля: `Item.masterwork`, `Character.hit_die`, `hp_race`, `divine_slots`, `ignore_bag_weight`.
+- Новые команды: `set_status_duration`, `set_item_masterwork`, `set_ignore_bag_weight`, `buy_hp`, `set_hp_roll`;
+  у `short_rest` параметр `keep_overcap` (вместо `extra_temp_bp`).
+- Новые функции чтения: `records.attack_available`, `attack_view.all_records`, `derived_view.item_view`, `weight_view`,
+  `shield_proficient`; `dv.ac(..., flank_drops_shield, shield_enabled)`.

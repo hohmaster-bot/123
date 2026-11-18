@@ -14,7 +14,8 @@
 
 ## Cycle end button (idea) [OWNER]
 - Button "end of cycle" [OWNER]: adds Attention (1 + levels reached that are multiples of 3: 3, 6, 9... + 1 per drive
-  at level 4+) and burns unspent time points (OV). Nothing else. The cycle length is set by the GM (module).
+  at level 4+) and burns unspent time points (OV); it also drops BP above max (overcap, rest.md) [OWNER, package 8].
+  Nothing else. The cycle length is set by the GM (module).
   Example: level 7, two drives at 4+ -> 1 + 2 + 2 = 5.
 - The end of a cycle implies a long rest, but they are separate buttons: one never triggers the other [OWNER].
 - Attention is its own resource: no cap, never burns, accumulates.

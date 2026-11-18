@@ -40,6 +40,12 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
 - Shields [OWNER, Q28]: the shield bonus (layer "shield") comes from the shield held in a hand. A shield card has a type:
   light / heavy / tower. Heavy and tower shields ALSO add their shield bonus to the balance max while in a hand
   (in the bag: no). Tests: heavy shield +2 in hand -> balance max +2; in the bag -> +0; light shield -> +0.
+- Shield proficiency ranks [OWNER, package 8 D1] (buy_shield_grade, 100 per rank):
+  rank 0 (none) = cannot use shields; rank 1 (light) = light shields without penalty; rank 2 (heavy) = heavy shields
+  without penalty AND a heavy shield in hand adds its shield bonus to the balance max; rank 3 (tower) = tower shields
+  without penalty AND a tower shield in hand adds its shield bonus to the balance max AND parry +2 (from the grade,
+  counted once). Light shields never add balance. Below the shield's rank: no balance bonus; the non-proficiency
+  penalty itself has no number in RULES yet (OPEN_QUESTIONS Q34). Tests: every rank x light / heavy / tower.
 
 ## Languages [OWNER confirmed]
 - First native language free. Further native languages: buy with training or get narratively.
@@ -66,6 +72,7 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
 - "Квалификация с предметом - 50*N, где N - указанное в предмете число (требуется для специфических предметов, чтобы
   раскрыть их более потенциал)."
 - "Получить +1 реакцию - 200*новое число реакций." Test: 1 reaction -> 2nd costs 400.
+- [OWNER, package 8] Command buy_hp: +1 hit-die HP for 50, up to die * level (progression.md "Max HP").
 - "Увеличение макс хитов на 1 - 50 очков. Увеличивать макс хиты можно до капа, который можно было получить естественным
   образом (классовый КХП*уровень + ВЫН*уровень)." (КХП = class hit die, ВЫН = Con modifier.)
 - "Новое заклинание - 20 + 10*круг^2. Классы с книгой или возможностью изучить заклинание от учителя или из свитка

@@ -48,7 +48,13 @@
   penalty down to 0: effect "two-weapon penalty reduction" (a number; the final penalty is never below 0, never a bonus).
 - Feat "Two-Weapon Fighting" (base) is in the catalog (default price 200, editable). Improved and Greater versions are not added.
 - An attack record has the toggle "combination of two attacks" (available with two weapons in the hands or a double
-  weapon). When on, both attacks get the table penalties (feat? light/finesse off hand?). The second attack of a double
+  weapon). A weapon takes 1 or 2 hand slots.
+- Attack availability [OWNER, package 8]: setting the toggle is not checked against the hands; instead a record is
+  AVAILABLE only while every weapon it needs is in the hands (two-weapon: both weapons, in either hand order; double
+  weapon: the one weapon; an unarmed off-hand strike needs a free hand). An unavailable record tells which weapons it
+  needs and what is in the hands (ids, the UI greys it out and explains, e.g. "in hands: sword A, shield A").
+  Tests: A+B and B+A available; only A -> missing B; sword + shield -> missing B; double weapon in / out of hands;
+  a weapon in the bag -> unavailable. When on, both attacks get the table penalties (feat? light/finesse off hand?). The second attack of a double
   weapon uses the lower damage row. The view marks which attack is the main hand and which the off hand.
 
 ## Empty-hand parry [OWNER]

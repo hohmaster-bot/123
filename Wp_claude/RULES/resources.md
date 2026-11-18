@@ -6,7 +6,9 @@
 - Damage hits temp HP first. Absorbed part does NOT reduce balance.
 - Example: 3 temp HP, 7 damage -> temp 0, HP -4, balance -4.
 - [OWNER, package 4] Two kinds of temp HP:
-  - from a buff: given for N rounds, they live as long as the buff lives;
+  - from a buff: given for N rounds, they live as long as the buff lives; a buff "until end of combat" loses its temp HP
+    at the end of combat [OWNER, package 8 R1]. Test: such a buff gives 6 temp HP -> 6 in combat, 0 after end_combat.
+    An instant buff keeps nothing itself: its temp HP go to the "by button" pool (until the short rest);
   - "by button" (entered by hand): live until the SHORT rest; the end of combat does NOT clear them.
   The short rest clears all temp HP after its spends (rest.md).
 - Spend order (Q23, assumption): first the "by button" temp HP, then the buff temp HP (buffs in order).

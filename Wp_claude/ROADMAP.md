@@ -21,7 +21,10 @@ Test runner that can fail (done: baseline script). Golden tests from RULES. Fix 
 ## Phase 3 - nodes without visuals
 Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects (D14-D17), catalogs contract, i18n (D4), theme, panel registry.
 - Before Phase 4: the owner sends screen drawings with labels (A1, A2...), Claude turns them into screen descriptions.
-- Deferred (from REVIEW_REPORT, not done yet): final item hardness/HP from mastery in the model; spell mastery cost
+- Done in package 8: final item hardness/HP from mastery in the model (records.item_picks); max HP +1 for 50 (buy_hp);
+  attack availability (records.attack_available, attack_view.all_records); masterwork flag; bag weight flag;
+  BP overcap; shield proficiency ranks. Report: tests/PACKAGE8_REPORT.md.
+- Deferred (from REVIEW_REPORT, not done yet): spell mastery cost
   25 * (1 + circle^2); level-up command (+100 * level training, HP roll); comfort -> training command;
   OT removal commands (comfort, attention, injury removal, RL raise); weapon card data from the owner's table.
 - Rule exists, no code yet (package 4, training text; see training.md / progression.md / weapons.md):
@@ -31,7 +34,6 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   - new combat maneuver 250 (record of maneuvers per weapon branch);
   - item qualification purchase 50 * N;
   - +1 reaction 200 * new number of reactions;
-  - max HP +1 for 50 up to class hit die * level + Con * level;
   - professionalism 300 (1/2/3/4 specialized class skills), only for classes without their own (Q29 closed);
     the "professionalism level" number is a placeholder: do not develop it;
   - new spell 20 + 10 * circle^2 (half for book / teacher / scroll classes);

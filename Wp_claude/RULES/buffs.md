@@ -9,6 +9,13 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 ## Duration kinds
 - N ticks (zero-initiative ticks). Duration is typed in by hand as a number; no "level x minutes" formulas [OWNER].
   Long statuses are removed by hand.
+- [OWNER, package 8] Ticks, the zero-initiative phase and overload belong to the combat system. Long effects (5 min and
+  more) are not simulated: they sit on the panel and the player lowers their duration with ticks or by hand
+  (command set_status_duration; example: a spell lasting 10 min/level, the GM says 20 minutes passed, two ticks remove
+  20 minutes), or deletes the buff. DoT and regen tick exactly like buff durations: a DoT for N ticks hits N times and
+  ends. Tests: DoT -3 for 3 ticks -> 3 hits, then gone; regen 20 ticks set by hand to 2 -> 2 heals, then gone.
+- [OWNER, package 8] An N-ticks status needs its number: adding one without ticks is refused with a clear message.
+  A status id already on the sheet cannot be added a second time.
 - Until end of combat.
 - Narrative infinite: until the GM cancels.
 - Instant/one-shot (applied once, e.g. temp HP).
@@ -21,14 +28,17 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 ## Skills target [OWNER]
 - An effect may target one skill (e.g. +2 to Stealth only) or all skills.
 
-## Condition
-- "in combat only" or "out of combat only" (e.g. items giving skill bonuses outside combat).
+## Condition [OWNER, package 8]
+- There is NO "combat only" condition: a status works while it is active and not expired, in or out of combat.
+  The old "in combat / out of combat" field is removed (an "out of combat" item bonus is switched on/off by hand;
+  see OPEN_QUESTIONS Q36).
 
 ## Charges and activation
 - A buff source (ability/item) may have charges (e.g. rage 2/3). If placed on screen/slot, tapping activates it;
   shows remaining rounds and remaining charges.
 - Charges restore on long rest (rest.md) unless item without the "restore on long rest" checkbox.
-  Charges kept on a status (rage 2/3) are restored too.
+  Charges kept on a status (rage 2/3) are restored too, on the long rest AND by the short rest option
+  "restore charges" (2 BP) [OWNER, package 8]. Test: rage 0/3, short rest charges option -> 3/3.
 
 ## Stacking (see defense.md)
 - Same type: the value with the larger absolute value wins, equal absolute values give 0; only flat stacks

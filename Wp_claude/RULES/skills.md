@@ -23,7 +23,9 @@ skill = ranks + key stat mod + bonuses (race/class/items...) + armor penalty (if
 
 ## Training cost
 - Normal +1 rank: 20 * rank.
-- Make a skill Advanced: 40 + 20 per OTHER advanced skill. Advanced +1 rank: 15 * rank.
+- Make a skill Advanced: 40 + 20 per OTHER advanced skill; specialized skills count as advanced here (a skill goes
+  normal -> advanced -> specialized) [OWNER, package 8]. Advanced +1 rank: 15 * rank.
+  Test: 1 advanced + 2 specialized: the next advanced costs 40 + 20*3 = 100; specializing the advanced one 200 + 50*2 = 300.
 - Make a skill Specialized: 200 + 50 per OTHER specialized skill. Specialized +1 rank: 10 * rank.
 - "rank" in the cost = the NEW rank [OWNER]. Tests: normal 0->1 = 20, 2->3 = 60, 19->20 = 400; advanced 0->1 = 15; specialized: ranks above level only (e.g. level 5, rank 5->6 = 60).
 - Specialized ranks up to the character level are free/automatic; the 10*new_rank price applies only to ranks ABOVE the level [OWNER confirmed].
