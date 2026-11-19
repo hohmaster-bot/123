@@ -55,19 +55,23 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   stays in the container.
 - The CONTAINER is one list of every status of the character from every source (race, class, items, injuries, manual,
   catalog): a place to activate, remove, add new, take from the catalog.
-- Fields per entry: id, source, active, duration kind, charges (count, duration per charge = full_ticks, cost:
-  resource + amount; optional), hidden (DISPLAY ONLY: hidden on the panel but still active, still gives effects, still
+- Fields per entry: id, source, active, duration kind, charges (count, duration per charge = full_ticks; optional),
+  hidden (DISPLAY ONLY: hidden on the panel but still active, still gives effects, still
   ticks), favorite (pin for panel / screen), condition_tag.
 - Commands: activate_status(sid): with charges, one is spent and the status starts with the full duration per charge;
-  refused with a clear reason when no charge is left, when it is already active, or when the cost cannot be paid; an
-  entry without charges just becomes active. remove_status(sid): ends it now (inactive, remaining time cleared, its temp
+  refused with a clear reason when no charge is left or when it is already active; an entry without charges just
+  becomes active. remove_status(sid): ends it now (inactive, remaining time cleared, its temp
   HP gone), the entry stays. set_status_hidden, set_status_favorite. delete_status(sid): removes the entry entirely
   (by hand). add_status (catalog / by hand): a new entry starts INACTIVE unless the caller passes active=True.
 - Injuries and item effects are only SHOWN in the container view (kind "injury" / "item"); they keep working as
   injuries.md and gear.md say (item effects stay tied to item activation, Q2).
-- Assumptions (OPEN_QUESTIONS Q69, Q70): the activation cost may be paid in spirit, balance or mana; injuries have no
-  stable id, the view uses their list position.
-- Tests: activation with and without charges; refusals (no charge, already active, cost); remove early; a 3-tick status
+- A STATUS HAS NO COST [OWNER, package 12, Q69]. A status is only the display of things that already exist (abilities
+  with charges, spell / potion effects, debuffs, injuries). The ability or spell that creates it pays its own cost.
+  Activation spends one charge (if it has charges) and nothing else. Old files with a status cost load; the cost is
+  dropped.
+- Injuries in the view use their stable id (injuries.md, package 12, Q70).
+- Tests: activation with and without charges; refusals (no charge, already active); no cost (spirit unchanged);
+  remove early; a 3-tick status
   is active 2 ticks with its bonus and inactive after the 3rd; an inactive status does not tick; hidden still gives the
   bonus and ticks; favorite flag; charges restore as before (long rest yes, a free short rest no).
 

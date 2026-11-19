@@ -38,3 +38,17 @@ def unique(base, taken=()):
     while "%s_%d" % (base, n) in taken:
         n += 1
     return "%s_%d" % (base, n)
+
+
+def with_injury_ids(injuries):
+    """Every injury gets a stable id once (from its name, a number on a collision); existing ids never
+    change, so removing another injury keeps them (package 12, Q70)."""
+    from dataclasses import replace
+    taken = [j.jid for j in injuries if j.jid]
+    out = []
+    for j in injuries:
+        if not j.jid:
+            j = replace(j, jid=make_id(j.name or j.severity, taken))
+            taken.append(j.jid)
+        out.append(j)
+    return tuple(out)

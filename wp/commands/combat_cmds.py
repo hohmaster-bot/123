@@ -111,46 +111,17 @@ def pay_hp_cost(ch, amount=0):
         int(amount), rep.balance_loss, rep.overflow, rep.pain_added), {"report": rep})
 
 
-COST_RESOURCES = ("spirit", "balance", "mana")
-
-
-def _cost_check(ch, st):
-    """Refusal reason ("" = can pay) for the activation cost of a status (package 11 A)."""
-    if not st.cost_resource or st.cost_amount <= 0:
-        return ""
-    if st.cost_resource not in COST_RESOURCES:
-        return "unknown cost resource %r (allowed: %s)" % (st.cost_resource, ", ".join(COST_RESOURCES))
-    have = {"spirit": ch.spirit_current, "balance": ch.balance_current, "mana": ch.mana.current}[st.cost_resource]
-    if have < st.cost_amount:
-        return "cannot pay %d %s for %s (have %d)" % (st.cost_amount, st.cost_resource, st.name, have)
-    return ""
-
-
-def _pay_cost(ch, st):
-    if not st.cost_resource or st.cost_amount <= 0:
-        return ch
-    n = st.cost_amount
-    if st.cost_resource == "spirit":
-        return replace(ch, spirit_current=ch.spirit_current - n)
-    if st.cost_resource == "balance":
-        return replace(ch, balance_current=ch.balance_current - n)
-    return replace(ch, mana=replace(ch.mana, current=ch.mana.current - n))
-
-
 def _start(ch, st, ticks=None):
-    """Activate a status entry: refusals, charge, cost, full duration, one-shot part.
+    """Activate a status entry: refusals, charge, full duration, one-shot part. A status has NO cost of its
+    own (buffs.md, Q69): the ability or spell that creates it pays.
     Returns (new character, the started status). The status is NOT yet placed in ch.statuses."""
     if st.active:
         raise CommandError("status %s is already active" % st.name)
     if not ef.can_activate(st):
         raise CommandError("no charges left: %s" % st.name)
-    why = _cost_check(ch, st)
-    if why:
-        raise CommandError(why)
     started = ef.activate(st, ticks)
     if started.duration == ef.TICKS and started.remaining <= 0:
         raise CommandError("status %s lasts N ticks: give the number of ticks (> 0)" % st.name)
-    ch = _pay_cost(ch, st)
     if ef.holds_temp_hp(started):
         before = dv.temp_hp_total(ch)
         gained = ef.apply_one_shot(started, before) - before

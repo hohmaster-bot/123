@@ -75,9 +75,14 @@ def size_cmb(size):
     return SIZE_CMB[size]
 
 
-def speed(base_ft, bonus_ft=0, overloaded=False):
-    """Speed in feet = base + typed bonuses (target "speed"), overload -10 ft."""
-    return int(base_ft) + int(bonus_ft) + (OVERLOAD_SPEED_FT if overloaded else 0)
+def armor_slowdown(penalty_ft, reduction=0):
+    """Armor slowdown after reductions, never below 0 (gear.md, package 12)."""
+    return max(0, int(penalty_ft) - max(0, int(reduction)))
+
+
+def speed(base_ft, bonus_ft=0, overloaded=False, slowdown_ft=0):
+    """Speed in feet = base + typed bonuses (target "speed") - armor slowdown, overload -10 ft."""
+    return int(base_ft) + int(bonus_ft) - int(slowdown_ft) + (OVERLOAD_SPEED_FT if overloaded else 0)
 
 
 def morale_bonus(scale, combat_active=True):

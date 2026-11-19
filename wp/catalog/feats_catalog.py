@@ -30,6 +30,7 @@ class FeatTemplate:
     source: str = "default"
     effects: Tuple[Effect, ...] = ()   # copied to the sheet feat (package 11 D)
     granted_maneuvers: Tuple[str, ...] = ()
+    is_stance: bool = False
 
 
 @dataclass(frozen=True)
@@ -62,7 +63,8 @@ def parse(text):
                              desc=f.get("desc", ""), cost=int(f.get("cost", DEFAULT_COST)),
                              flags=tuple(f.get("flags", ())),
                              effects=tuple(_effect(e) for e in f.get("effects", ())),
-                             granted_maneuvers=tuple(f.get("granted_maneuvers", ()))) for f in data["feats"])
+                             granted_maneuvers=tuple(f.get("granted_maneuvers", ())),
+                             is_stance=bool(f.get("is_stance", False))) for f in data["feats"])
     ids = [t.fid for t in out]
     if len(ids) != len(set(ids)):
         raise ValueError("duplicate feat ids in the catalog file")

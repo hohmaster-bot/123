@@ -7,7 +7,7 @@ Status = buff = debuff = situational. A status holds:
   - no combat-only condition (owner, package 8): ticks are the combat clock; DoT, regen and
     buff durations all count down the same way, long effects are lowered by hand;
   - duration: N ticks (typed in by hand), until end of combat, infinite, instant;
-  - charges (current/max), duration per charge (full_ticks), optional activation cost;
+  - charges (current/max), duration per charge (full_ticks); no cost of its own (Q69);
     no charges left -> cannot activate;
   - flags: temp HP stacks, ignores iterative penalty.
 Container (buffs.md, package 11): a status is either ACTIVE or not; no on/off toggle, no pause.
@@ -33,6 +33,8 @@ TEMP_HP = "temp_hp"
 
 OVERLOAD = "overload"      # value source: the current overload number
 STAT_MOD = "stat_mod:"     # context key prefix: "stat_mod:str" = the CURRENT Str modifier
+ALL = "all"                # value "all": unlimited (e.g. ignore the armor slowdown completely, gear.md)
+ALL_VALUE = 10 ** 6        # what "all" resolves to: more than any real number on the sheet
 
 
 def stat_mod_key(stat):
@@ -55,6 +57,8 @@ class Effect:
         """The effect's number: a fixed value, a context value (current overload), or the current
         modifier of a stat times the multiplier (rounded down; a negative modifier stays negative)."""
         ctx = context or {}
+        if self.value == ALL:
+            return ALL_VALUE
         if self.stat_mod is not None:
             return int(math.floor(ctx.get(stat_mod_key(self.stat_mod), 0) * self.multiplier))
         if self.value_source is None:
@@ -90,8 +94,6 @@ class Status:
     source: str = ""
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only (no effect)
     full_ticks: int = 0                # full duration in ticks (per charge); used when activated
-    cost_resource: str = ""            # activation cost: "" (none) / "spirit" / "balance" / "mana"
-    cost_amount: int = 0
     hidden: bool = False               # DISPLAY ONLY: hidden on the panel, still active / ticking
     favorite: bool = False             # pinned for the panel / screen
 

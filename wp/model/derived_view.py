@@ -15,6 +15,7 @@ from wp.core import training as tr
 from wp.core import weapons as wpn
 from wp.core.damage import Pool
 from wp.model import items as itm
+from wp.model import stance_view as stv
 from wp.model import records as rec
 
 
@@ -366,10 +367,17 @@ def size_cmb(ch):
     return dv.size_cmb(ch.size)
 
 
+def armor_slowdown(ch):
+    """Slowdown of the worn armor (on the doll and working, the same items as the armor bonus; the largest
+    one counts, like the armor bonus), minus effects "armor_slowdown_reduction" (value "all" = none left)."""
+    pen = max([it.speed_penalty_ft for it in _equipped(ch)] or [0])
+    return dv.armor_slowdown(pen, total(ch, bo.SLOWDOWN_REDUCTION))
+
+
 def speed(ch):
     """Speed in feet = race base speed + typed bonuses (target "speed": items, abilities, statuses,
-    feats) + overload -10 ft (gear.md)."""
-    return dv.speed(ch.base_speed, total(ch, bo.SPEED), overloaded(ch))
+    feats) - armor slowdown + overload -10 ft (gear.md)."""
+    return dv.speed(ch.base_speed, total(ch, bo.SPEED), overloaded(ch), armor_slowdown(ch))
 
 
 def context(ch):
@@ -394,9 +402,10 @@ def item_effects(ch):
 
 
 def feat_bonuses(ch, ctx=None):
-    """Feat effects: permanent while the feat is owned (buffs.md / training.md, package 11 D)."""
+    """Feat effects: permanent while the feat is owned (package 11 D); a stance feat's effects only while
+    it is the active stance (package 12, Q74)."""
     ctx = context(ch) if ctx is None else ctx
-    return tuple(e.as_bonus(f.title or f.fid, ctx) for f in ch.feats for e in f.effects)
+    return tuple(e.as_bonus(f.title or f.fid, ctx) for f in ch.feats if stv.feat_applies(ch, f) for e in f.effects)
 
 
 def effect_bonuses(ch, ctx=None):

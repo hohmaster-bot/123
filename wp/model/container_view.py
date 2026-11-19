@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from typing import Optional, Tuple
 
 from wp.model import derived_view as dv
+from wp.model import ids
 
 STATUS = "status"
 INJURY = "injury"
@@ -28,7 +29,6 @@ class Entry:
     remaining: int = 0
     full_ticks: int = 0
     charges: Optional[Tuple[int, int]] = None    # (current, max)
-    cost: Optional[Tuple[str, int]] = None       # (resource, amount)
     hidden: bool = False
     favorite: bool = False
     condition_tag: str = "none"
@@ -45,15 +45,14 @@ def _status_entry(s):
     return Entry(kind=STATUS, eid=s.sid, name=s.name, source=s.source, active=s.active, duration=s.duration,
                  remaining=s.remaining, full_ticks=s.full_ticks,
                  charges=(s.charges.current, s.charges.max) if s.charges is not None else None,
-                 cost=(s.cost_resource, s.cost_amount) if s.cost_resource else None,
                  hidden=s.hidden, favorite=s.favorite, condition_tag=s.condition_tag, manageable=True)
 
 
 def _injury_entries(ch):
-    # injuries have no stable id in the model (OPEN_QUESTIONS Q70): the list position is used
-    return tuple(Entry(kind=INJURY, eid="injury:%d" % i, name=j.name or j.severity, source="injury",
+    # stable injury ids (package 12, Q70); an injury built by hand without an id gets one here for the view
+    return tuple(Entry(kind=INJURY, eid=j.jid, name=j.name or j.severity, source="injury",
                        active=True, charges=(j.charges.current, j.charges.max) if j.charges.max else None)
-                 for i, j in enumerate(ch.injuries))
+                 for j in ids.with_injury_ids(ch.injuries))
 
 
 def _item_entries(ch):

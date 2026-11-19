@@ -30,6 +30,7 @@ class Injury:
     heal_rating: int
     permanent: bool = False
     charges: Pool = Pool(0, 0)   # injury charges: never restored by rest
+    jid: str = ""                # stable id (D7), made by the program (wp/model/ids.py, package 12 Q70)
 
 
 def attention_value(str_mod):

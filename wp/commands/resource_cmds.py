@@ -8,6 +8,7 @@ from wp.core import rest as rs
 from wp.commands.gear_cmds import LONG, SHORT, switch_off_items
 from wp.model import bridge
 from wp.model import derived_view as dv
+from wp.model import ids
 
 # resource name -> (read pool, write current)
 _SCALAR = {
@@ -104,5 +105,5 @@ def long_rest(ch):
 def add_injury(ch, severity=inj.LIGHT, name=""):
     """Take an injury to remove OT (2 / 5 / 12)."""
     trauma, injury = inj.take_injury(ch.trauma, severity, name)
-    new = replace(ch, trauma=trauma, injuries=ch.injuries + (injury,))
+    new = replace(ch, trauma=trauma, injuries=ids.with_injury_ids(ch.injuries + (injury,)))
     return commit(new, "add_injury", "%s injury, OT %d -> %d" % (severity, ch.trauma, trauma))

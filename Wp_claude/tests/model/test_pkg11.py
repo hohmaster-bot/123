@@ -86,11 +86,9 @@ S.case("a-refuse-no-charge", "buffs.md: no charge left -> refused", "refused: no
     lambda: refused(added(rage(cur=0)), "activate_status", sid="rage"))
 S.case("a-refuse-active", "buffs.md: already active -> refused", "refused: status Haste is already active")(
     lambda: refused(run(added(haste()), ("activate_status", {"sid": "haste"})), "activate_status", sid="haste"))
-S.case("a-refuse-cost", "buffs.md: the cost cannot be paid (2 spirit, have 1) -> refused",
-       "refused: cannot pay 2 spirit for Haste (have 1)")(
-    lambda: refused(added(haste(cost_resource="spirit", cost_amount=2), spirit_current=1), "activate_status", sid="haste"))
-S.case("a-cost-paid", "buffs.md: activation pays the cost (spirit 5 -> 3)", 3)(
-    lambda: run(added(haste(cost_resource="spirit", cost_amount=2)), ("activate_status", {"sid": "haste"})).spirit_current)
+# pkg 12 (Q69): a status has no cost; activation spends nothing but a charge (spirit 5 stays 5).
+S.case("a-no-cost", "buffs.md [OWNER pkg 12, Q69]: a status has no cost: activation leaves spirit 5", 5)(
+    lambda: run(added(haste()), ("activate_status", {"sid": "haste"})).spirit_current)
 S.case("a-remove-early", "buffs.md: remove_status ends it now: inactive, time cleared, entry stays, bonus gone",
        (False, 0, 1, 0))(
     lambda: (lambda c: (st(c, "haste").active, st(c, "haste").remaining, len(c.statuses), dv.total(c, bo.ATTACK)))(
@@ -126,7 +124,7 @@ S.case("a-charges-long-rest", "rest.md (unchanged): the long rest restores statu
 S.case("a-charges-short-rest", "rest.md (unchanged): the short rest does not restore status charges (1 stays)", 1)(
     lambda: st(run(added(rage()), ("activate_status", {"sid": "rage"}), ("short_rest", {})), "rage").charges.current)
 S.case("a-container-kinds", "buffs.md: the container lists statuses, injuries and item effects",
-       (("status", "rage", True), ("injury", "injury:0", False), ("item", "ring", False)))(
+       (("status", "rage", True), ("injury", "cut", False), ("item", "ring", False)))(   # pkg 12 Q70: stable injury id
     lambda: tuple((e.kind, e.eid, e.manageable) for e in cv.container_view(hero(
         statuses=(rage(),), injuries=(Injury("cut", "light", 2),),
         items=(Item("ring", "ring", equipped=True, effects_off=ATK2),))).entries))
@@ -141,7 +139,7 @@ def _old_save():
     """A save written before package 11: statuses without the new fields still load."""
     d = json.loads(cio.dumps(hero(statuses=(haste(),))))
     for s in d["character"]["statuses"]:
-        for k in ("full_ticks", "cost_resource", "cost_amount", "hidden", "favorite"):
+        for k in ("full_ticks", "hidden", "favorite"):
             s.pop(k, None)
     return cio.loads(json.dumps(d)).statuses[0].full_ticks
 

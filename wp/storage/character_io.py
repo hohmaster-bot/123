@@ -12,6 +12,7 @@ then <path>.tmp replaces <path>. A failed write leaves the old file untouched.
 """
 import dataclasses
 import json
+from dataclasses import replace
 import os
 import shutil
 
@@ -23,6 +24,7 @@ from wp.core.rest import Charge
 from wp.core.skills import Skill
 from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
+from wp.model import ids
 from wp.model.character import (Ability, AttackRecord, Character, Feat, Item, Language, LogEntry,
                                 WeaponEntry)
 
@@ -33,7 +35,8 @@ BAK_SUFFIX = ".bak"
 
 # Fields that were removed from the model: an old file may still have them; they are dropped on load
 # (nothing is converted, the value is simply not used). Character.mana_level: package 10, Q49.
-DROPPED = {"Character": ("mana_level", "size_mod", "size_cmb")}   # read from old files, then ignored
+DROPPED = {"Character": ("mana_level", "size_mod", "size_cmb"),
+           "Status": ("cost_resource", "cost_amount")}   # read from old files, then ignored
 
 _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,
@@ -105,7 +108,8 @@ def loads(text):
         raise StorageError("broken character data: %s" % e)
     if not isinstance(ch, Character):
         raise StorageError("file does not contain a character")
-    return ch
+    # injuries saved before package 12 have no id: the program gives them one (owner, Q70)
+    return replace(ch, injuries=ids.with_injury_ids(ch.injuries))
 
 
 # -------------------------------------------------------------- disk I/O

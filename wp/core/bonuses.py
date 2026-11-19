@@ -51,6 +51,7 @@ TOUCH_ARMOR = "touch_armor"     # armor layer of the TOUCH AC only (package 10, 
 CRIT_RANGE = "crit_range"       # widens the crit range of a weapon by N (feats, combat.md "Crit")
 LUCKY = "lucky"                 # lucky attack die: no bonuses from ROLLS
 SPEED = "speed"                 # movement speed in feet (combat.md "Size and speed"); not a roll
+SLOWDOWN_REDUCTION = "armor_slowdown_reduction"   # reduces the worn armor slowdown (gear.md, package 12)
 CRIT = "crit"                   # crit confirmation die: no bonuses from ROLLS
 ROLLS = "rolls"                 # all rolls: attack, damage, saves, skills, initiative, CMB, maneuvers
 ROLL_TARGETS = {ATTACK, DAMAGE, SAVE, SKILL, INITIATIVE, CMB, MANEUVER}

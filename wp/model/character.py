@@ -143,6 +143,7 @@ class Feat:
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only
     effects: Tuple[Effect, ...] = ()   # permanent while the feat is owned (same structure as statuses)
     granted_maneuvers: Tuple[str, ...] = ()   # maneuver ids (used from package 12)
+    is_stance: bool = False            # a stance: its effects apply only while it is the active stance (Q74)
 
 
 @dataclass(frozen=True)
@@ -216,6 +217,7 @@ class Character:
     base_speed: int = 20               # race base speed in feet (derived speed = base + bonuses)
     save_base: Dict[str, int] = field(default_factory=lambda: {"fort": 0, "ref": 0, "will": 0})  # class table, by hand
     save_stats: Dict[str, str] = field(default_factory=lambda: {"fort": "con", "ref": "dex", "will": "wis"})
+    active_stance: Optional[str] = None   # feat id of the active stance (combat.md "Stances", Q74)
     ignore_bag_weight: bool = False    # bag weight not counted (gear.md "drop bag" button, package 8 E)
     log: Tuple[LogEntry, ...] = ()
 
