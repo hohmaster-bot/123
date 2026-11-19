@@ -9,7 +9,7 @@ What RULES give and what is an open question (OPEN_QUESTIONS Q55-Q60):
 - Initiative = Dex mod + typed bonuses (target "initiative") + pain + morale (Q56: morale list in
   defense.md does not name initiative; code keeps "ALL rolls").
 - CMB = BAB + Str mod (or the better of Str/Dex with the Finesse feat, combat.md) + size CMB mod
-  (Character.size_cmb, typed by hand, Q57) + typed bonuses (target "cmb", pain and morale: CMB is a roll).
+  (from Character.size: small -1, medium 0, large +1; package 11 C) + typed bonuses (target "cmb", pain and morale: CMB is a roll).
   Weapon-group bonuses to CMB are not added yet (Q58).
 - CMD = 10 + BAB + Str mod + Dex mod + size CMB mod + typed bonuses (target "cmd") (Q59). CMD is not a
   roll: no pain, no morale (resources.md "rolls with a die", defense.md morale list).
@@ -73,13 +73,13 @@ def cmb_stat(ch):
 
 def cmb(ch):
     st = cmb_stat(ch)
-    return _stat("cmb", [("bab", ch.bab), ("stat:" + st, dv.ability_mod(ch, st)), ("size", ch.size_cmb),
+    return _stat("cmb", [("bab", ch.bab), ("stat:" + st, dv.ability_mod(ch, st)), ("size", dv.size_cmb(ch)),
                          ("bonuses", _typed(ch, bo.CMB))])
 
 
 def cmd(ch):
     return _stat("cmd", [("base", CMD_BASE), ("bab", ch.bab), ("stat:str", dv.ability_mod(ch, "str")),
-                         ("stat:dex", dv.ability_mod(ch, "dex")), ("size", ch.size_cmb),
+                         ("stat:dex", dv.ability_mod(ch, "dex")), ("size", dv.size_cmb(ch)),
                          ("bonuses", _typed(ch, bo.CMD))])
 
 

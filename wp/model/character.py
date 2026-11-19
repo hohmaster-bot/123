@@ -210,8 +210,8 @@ class Character:
     armor_grade: str = "none"
     training: int = 1000
     base_slots: int = 5
-    size_mod: int = 0                  # size modifier to AC and attack (small +1, large -1 ...)
-    size_cmb: int = 0                  # size modifier to CMB / CMD, typed by hand (OPEN_QUESTIONS Q57)
+    size: str = "medium"               # race size: small / medium / large (mods derived, combat.md)
+    base_speed: int = 20               # race base speed in feet (derived speed = base + bonuses)
     save_base: Dict[str, int] = field(default_factory=lambda: {"fort": 0, "ref": 0, "will": 0})  # class table, by hand
     save_stats: Dict[str, str] = field(default_factory=lambda: {"fort": "con", "ref": "dex", "will": "wis"})
     ignore_bag_weight: bool = False    # bag weight not counted (gear.md "drop bag" button, package 8 E)

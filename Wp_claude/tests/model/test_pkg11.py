@@ -18,6 +18,7 @@ from wp.model import container_view as cv  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
 from wp.catalog import skills_catalog as sc  # noqa: E402
 from wp.model import attack_view as av  # noqa: E402
+from wp.model import stats_view as stv  # noqa: E402
 from wp.model.character import ABILITIES, Ability, Character, Item  # noqa: E402
 from wp.storage import character_io as cio  # noqa: E402
 
@@ -200,6 +201,46 @@ S.case("b-multiplier", "buffs.md: multiplier 2 -> Str +3 * 2 = 6 to attack", 6)(
     lambda: dv.total(with_status((Effect(bo.ATTACK, stat_mod="str", multiplier=2),), str=16), bo.ATTACK))
 S.case("b-ac-layer", "defense_layers.md: a dodge effect of +Wis mod (Wis 14 +2) raises the dodge layer -> AC 12", 12)(
     lambda: dv.ac(with_status((Effect(bo.AC, btype=bo.DODGE, stat_mod="wis"),), wis=14)))
+
+
+# ---- C: race size and speed ----
+def sized(size):
+    return hero(size=size, bab=2, abilities=abil(str=12, dex=12))
+
+
+S.case("c-sizes", "combat.md [OWNER pkg 11 C]: BAB 2, Str/Dex 12: (attack, AC, CMB, CMD) small (+1,12,2,13) medium (0,11,3,14) large (-1,10,4,15)",
+       ((1, 12, 2, 13), (0, 11, 3, 14), (-1, 10, 4, 15)))(
+    lambda: tuple((dv.size_mod(c), dv.ac(c), stv.cmb(c).total, stv.cmd(c).total)
+                  for c in (sized(z) for z in ("small", "medium", "large"))))
+S.case("c-size-in-attack", "combat.md: the unarmed attack of a small character gets +1 (BAB 2 + Str 1 + size 1 = 4)", 4)(
+    lambda: next(a for a in av.all_attacks(sized("small"))).to_hit)
+S.case("c-base-speed", "combat.md: base speed default 20 ft; a race with 30", (20, 30))(
+    lambda: (dv.speed(hero()), dv.speed(hero(base_speed=30))))
+S.case("c-speed-item", "combat.md: +10 ft from a worn item (target speed)", 30)(
+    lambda: dv.speed(hero(items=(Item("b", "boots", equipped=True, effects_off=(Effect(bo.SPEED, 10, "enhancement"),)),))))
+S.case("c-speed-status", "combat.md: a status -5 ft (slowed), only while active", (15, 20))(
+    lambda: (dv.speed(hero(statuses=(Status("slow", sid="s", effects=(Effect(bo.SPEED, -5),)),))),
+             dv.speed(hero(statuses=(Status("slow", sid="s", effects=(Effect(bo.SPEED, -5),), active=False),)))))
+S.case("c-speed-overload", "gear.md: overload -10 ft (20 -> 10)", (True, 10))(
+    lambda: (lambda c: (dv.overloaded(c), dv.speed(c)))(hero(items=(Item("rock", "rock", weight_l=300),))))
+S.case("c-speed-no-morale", "combat.md: speed is not a roll: morale and pain do not change it", 20)(
+    lambda: dv.speed(hero(in_combat=True, morale_scale=6)))
+S.case("c-set-size-refused", "combat.md: size is small / medium / large only", "refused: size must be one of small, medium, large")(
+    lambda: refused(hero(), "set_size", size="huge"))
+S.case("c-set-size", "set_size / set_base_speed commands", ("large", 30))(
+    lambda: (lambda c: (c.size, c.base_speed))(run(hero(), ("set_size", {"size": "large"}), ("set_base_speed", {"feet": 30}))))
+
+
+def _old_size_save():
+    d = json.loads(cio.dumps(hero()))
+    d["character"]["size_cmb"] = 1
+    d["character"]["size_mod"] = -1
+    c = cio.loads(json.dumps(d))
+    return (c.size, dv.size_mod(c))
+
+
+S.case("c-old-save", "D1/D11: an old file with size_mod / size_cmb loads; the fields are dropped (size medium)", ("medium", 0))(
+    _old_size_save)
 
 if __name__ == "__main__":
     sys.exit(S.run())

@@ -29,7 +29,7 @@
 - Load thresholds [OWNER confirmed]: base light 0-5.9 B, heavy to 10.9 B, above = overload.
   Both thresholds shift by Str MODIFIER (in B). Examples: +2 -> 7.9 / 12.9; -2 -> 3.9 / 8.9; +3 -> 8.9 / 13.9; -1 -> 4.9 / 9.9.
   Above heavy: drag only or drop something (overload icon).
-- Overload effect: dodge bonus to AC capped at +2; Dex gives dodge; speed -10 ft.
+- Overload effect: dodge bonus to AC capped at +2; Dex gives dodge; speed -10 ft. [package 11 C: the speed -10 ft is computed, combat.md "Size and speed"]
 - Abilities may ignore slowdown from armor/overload (editor/settings/doll section).
 
 ## Base (resource for strengthening) [OWNER]

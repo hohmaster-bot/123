@@ -3,6 +3,7 @@ from dataclasses import replace
 
 from wp.catalog import skills_catalog as sc
 from wp.commands.base import CommandError, command, commit
+from wp.core import derived as dvc
 from wp.core import training as tr
 from wp.model.character import Feat
 
@@ -37,3 +38,19 @@ def add_feat(ch, catalog=None, fid="", source="training"):
     feat = Feat(fid=fid, title=t.name, flags=t.flags, source=source, cost=price)
     new = replace(ch, feats=ch.feats + (feat,), training=left)
     return commit(new, "add_feat", "feat %s (%s, %d)" % (fid, source, price), {"cost": price})
+
+
+@command
+def set_size(ch, size="medium"):
+    """Race size: small / medium / large only (combat.md "Size and speed")."""
+    if size not in dvc.SIZES:
+        raise CommandError("size must be one of %s" % ", ".join(dvc.SIZES))
+    return commit(replace(ch, size=size), "set_size", "size %s" % size)
+
+
+@command
+def set_base_speed(ch, feet=20):
+    """Race base speed in feet (default 20)."""
+    if int(feet) < 0:
+        raise CommandError("speed cannot be negative")
+    return commit(replace(ch, base_speed=int(feet)), "set_base_speed", "base speed %d ft" % int(feet))

@@ -356,6 +356,22 @@ def morale_bonus(ch):
     return dv.morale_bonus(ch.morale_scale, ch.in_combat)
 
 
+def size_mod(ch):
+    """Size to attack and AC: small +1, medium 0, large -1 (combat.md)."""
+    return dv.size_mod(ch.size)
+
+
+def size_cmb(ch):
+    """Size to CMB and CMD: small -1, medium 0, large +1 (opposite sign, combat.md)."""
+    return dv.size_cmb(ch.size)
+
+
+def speed(ch):
+    """Speed in feet = race base speed + typed bonuses (target "speed": items, abilities, statuses,
+    feats) + overload -10 ft (gear.md)."""
+    return dv.speed(ch.base_speed, total(ch, bo.SPEED), overloaded(ch))
+
+
 def context(ch):
     """Values effects may read (buffs.md): the current overload and the CURRENT stat modifiers."""
     ctx = {ef.OVERLOAD: ch.overload}
@@ -398,7 +414,7 @@ def ac_input(ch, flank_drops_shield=True, shield_enabled=True):
     return acm.AcInput(dex_mod=ability_mod(ch, "dex"), armor=armor_bonus(ch), parry=parry,
                        natural=max([it.natural for it in eq] or [0]),
                        shield=shield_bonus(ch),
-                       size_mod=ch.size_mod, max_dex=min(caps) if caps else None,
+                       size_mod=size_mod(ch), max_dex=min(caps) if caps else None,
                        overloaded=overloaded(ch), shield_enabled=shield_enabled, touch_armor=touch_armor(ch),
                        flank_drops_shield=flank_drops_shield,
                        bonuses=tuple(b for b in all_bonuses(ch) if b.target == bo.AC))

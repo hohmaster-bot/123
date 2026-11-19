@@ -179,7 +179,7 @@ S.case("i-init", "pkg 10: Dex 14 (+2) + competence +2 -> 4; pain 1 -> 3; morale 
 
 # CMB and CMD.
 def man(**kw):
-    base = dict(bab=3, abilities=abil(str=16, dex=14), size_cmb=1)
+    base = dict(bab=3, abilities=abil(str=16, dex=14), size="large")   # pkg 11 C: large = size CMB +1
     base.update(kw)
     return hero(**base)
 
@@ -196,7 +196,7 @@ S.case("c-cmd", "pkg 10 Q59: 10 + BAB 3 + Str 3 + Dex 2 + size 1 + cmd +1 = 20; 
 
 # Size in the attack roll.
 S.case("z-size-attack", "combat.md (R9): size +1 -> attack +1; size -1 -> -1", (1, -1))(
-    lambda: (unarmed(hero(size_mod=1)).to_hit, unarmed(hero(size_mod=-1)).to_hit))
+    lambda: (unarmed(hero(size="small")).to_hit, unarmed(hero(size="large")).to_hit))   # pkg 11 C: small +1, large -1
 
 
 # Damage per pain (R6): damage = Str by grip + pain (-1 per pain) + race bonus (+N per pain) + typed.

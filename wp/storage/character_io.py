@@ -33,7 +33,7 @@ BAK_SUFFIX = ".bak"
 
 # Fields that were removed from the model: an old file may still have them; they are dropped on load
 # (nothing is converted, the value is simply not used). Character.mana_level: package 10, Q49.
-DROPPED = {"Character": ("mana_level",)}
+DROPPED = {"Character": ("mana_level", "size_mod", "size_cmb")}   # read from old files, then ignored
 
 _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,

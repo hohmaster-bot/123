@@ -99,9 +99,18 @@
 - Attack and CMB can use Dex instead of Str via option on the Attack/CMB or settings ("has finesse"):
   then the better of Str/Dex is used.
 - Size (small/medium/large) affects attack, CMB, CMD.
-  [package 10, R9] The attack roll gets the size modifier (Character.size_mod, the same number as the AC size layer).
-  CMB/CMD get the size CMB modifier (Character.size_cmb, typed by hand; OPEN_QUESTIONS Q57). Test: size +1 -> attack +1.
-- CMB / CMD in the sheet [package 10; open details Q58, Q59]:
+  [package 10, R9] The attack roll gets the size modifier (the same number as the AC size layer).
+## Size and speed [OWNER, package 11 C; closes Q57, Q66]
+- The race (the character's race fields) holds the size: small | medium | large only, and the base speed in feet
+  (default 20). The hand-typed size CMB field is removed (old files: dropped on read).
+- Size modifiers: attack and AC small +1, medium 0, large -1. CMB and CMD small -1, medium 0, large +1 (opposite sign).
+- Effect target "speed": typed bonuses / penalties from any source (items, abilities, statuses, feats), stacked by the
+  usual rules. Derived speed = base + bonuses; overload gives -10 ft (gear.md). Speed is not a roll: no pain, no morale.
+- One move = 1 action.
+- Not applied (OPEN_QUESTIONS Q72): the armor card field speed_penalty_ft (armor slowdown) is stored but not counted.
+- Tests: BAB 2, Str/Dex 12 -> (attack, AC, CMB, CMD) small (+1, 12, 2, 13), medium (0, 11, 3, 14), large (-1, 10, 4, 15);
+  base 20; +10 ft item -> 30; -5 ft status -> 15 (inactive: 20); overload -> 10.
+- CMB / CMD in the sheet [package 10; open details Q58 (package 12), Q59]:
   CMB = BAB + Str mod (with the Finesse feat: the better of Str / Dex) + size CMB mod + bonuses with target "cmb"
   + pain + morale (CMB is a roll). Weapon-group bonuses are not added yet (Q58).
   CMD = 10 + BAB + Str mod + Dex mod + size CMB mod + bonuses with target "cmd"; CMD is not a roll: no pain, no morale.

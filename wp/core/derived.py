@@ -59,6 +59,27 @@ def pain_from_hp(hp):
     return (-hp) // PAIN_HP_STEP
 
 
+# Size (combat.md "Size and speed", package 11 C): small / medium / large only.
+SIZES = ("small", "medium", "large")
+SIZE_MOD = {"small": 1, "medium": 0, "large": -1}       # attack and AC
+SIZE_CMB = {"small": -1, "medium": 0, "large": 1}       # CMB and CMD (opposite sign)
+BASE_SPEED_FT = 20
+OVERLOAD_SPEED_FT = -10                                  # gear.md: overload -10 ft
+
+
+def size_mod(size):
+    return SIZE_MOD[size]
+
+
+def size_cmb(size):
+    return SIZE_CMB[size]
+
+
+def speed(base_ft, bonus_ft=0, overloaded=False):
+    """Speed in feet = base + typed bonuses (target "speed"), overload -10 ft."""
+    return int(base_ft) + int(bonus_ft) + (OVERLOAD_SPEED_FT if overloaded else 0)
+
+
 def morale_bonus(scale, combat_active=True):
     """Morale bonus = trunc(scale / 2), scale clamped to -10..10.
 

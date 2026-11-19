@@ -241,8 +241,8 @@ def attack(ch, record):
     pain = pn.penalty(dv.pain_total(ch), ch.pain_profile)
 
     hit = [Line("bab", ch.bab), Line("stat:" + st, dv.ability_mod(ch, st))]
-    if ch.size_mod:
-        hit.append(Line("size", ch.size_mod))          # size affects attack (combat.md, R9)
+    if dv.size_mod(ch):
+        hit.append(Line("size", dv.size_mod(ch)))      # size affects attack (combat.md, R9)
     q = qualification(ch, record, item)
     if q:
         hit.append(Line("qualification", q))
