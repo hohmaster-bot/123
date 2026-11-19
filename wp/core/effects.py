@@ -71,6 +71,7 @@ class Status:
     temp_hp_left: int = 0              # temp HP given by this status, lasting as long as the status
     active: bool = True
     source: str = ""
+    condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only (no effect)
 
 
 # ------------------------------------------------------------- reading

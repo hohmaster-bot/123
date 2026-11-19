@@ -13,9 +13,14 @@
   armor/shield +N, hardness +2N) and no tabs (package 8, R2).
 - `picks` = weapon mastery picks of the group the item is used with (records.item_picks):
   "weapon HP +1" raises max HP, "durability +30% / +70%" raises hardness (package 8, R3).
-- Masterwork (flag, independent of activation): weapon +1 to attack as an ENHANCEMENT bonus
-  (does not stack with enchantment +N: the larger wins); armor/shield skill penalty -1 smaller
-  (never above 0). Applied before the broken doubling (package 8, D3).
+- Masterwork (flag): weapon +1 to attack as an ENHANCEMENT bonus, but it is OFF while the weapon's
+  enchantment +1 or higher is active (masterwork_state gives the reason id); armor/shield skill
+  penalty -1 smaller (never above 0) always, applied before the broken doubling (package 9 D).
+- Order of item numbers (package 9 F): own base, then enchantment N (only while activated), then
+  the mastery picks. Hardness = (base + 2N) * (100 + mastery percent) / 100, rounded down;
+  "+30%" and "+70%" add up (both = +100%, x2). Max HP = base + N + "HP +1" picks.
+- Notches (package 9 G): 1 notch = 1 item HP; notches = floor(damage / final hardness); a durable
+  item (default: armor and shields) loses at most 1 per attack; hardness 0 = no automatic notches.
 """
 from dataclasses import replace
 
@@ -28,6 +33,10 @@ DESTROYED = "destroyed"
 BROKEN_PENALTY = -2            # weapon: attack and damage with it
 MASTERWORK_ATTACK = 1          # masterwork weapon: +1 attack, type enhancement
 MASTERWORK_PENALTY_RELIEF = 1  # masterwork armor/shield: skill penalty 1 smaller
+# masterwork_state reason ids (data for the UI, no text)
+MW_NOT_MASTERWORK = "not_masterwork"
+MW_NOT_WORKING = "not_working"
+MW_ENCHANT_ACTIVE = "enchant_active"
 
 
 def item_active(it):
@@ -80,9 +89,22 @@ def broken(it, picks=()):
     return state(it, picks) == BROKEN
 
 
+def masterwork_state(it, picks=()):
+    """(active, reason id). Armor/shield: active whenever it works. Weapon: OFF while its
+    enchantment +1 or more is active (package 9 D); an activated tab without enchantment N
+    (an active ability like fire d6) does not switch it off."""
+    if not it.masterwork:
+        return False, MW_NOT_MASTERWORK
+    if not works(it, picks):
+        return False, MW_NOT_WORKING
+    if not defensive(it) and enchant(it, picks) >= 1:
+        return False, MW_ENCHANT_ACTIVE
+    return True, ""
+
+
 def masterwork_attack(it, picks=()):
-    """Masterwork weapon (not a shield): +1 attack (enhancement); nothing at HP 0."""
-    if not it.masterwork or defensive(it) or not works(it, picks):
+    """Masterwork weapon (not a shield): +1 attack (enhancement) while masterwork is active."""
+    if defensive(it) or not masterwork_state(it, picks)[0]:
         return 0
     return MASTERWORK_ATTACK
 
@@ -106,8 +128,23 @@ def tab(it, picks=()):
 
 
 def durability(it, picks=()):
-    """Final hardness: base with weapon mastery percent, then +2N while activated (assumption)."""
-    return wpn.final_durability(it.durability, picks) + 2 * enchant(it, picks)
+    """Final hardness: (base + 2N while activated) * (100 + mastery percent) / 100, down (package 9 F)."""
+    return wpn.final_durability(it.durability + 2 * enchant(it, picks), picks)
+
+
+def is_durable(it):
+    """Durable = at most 1 notch per attack; default: armor and shields yes, others no (package 9 G)."""
+    return defensive(it) if it.durable is None else bool(it.durable)
+
+
+def notches(it, damage, picks=()):
+    """Item HP lost to one attack: floor(damage / final hardness), at most 1 if durable;
+    None when the hardness is 0 or not set (no automatic notches: use damage_item)."""
+    h = durability(it, picks)
+    if h <= 0:
+        return None
+    n = max(0, int(damage)) // h
+    return min(1, n) if is_durable(it) else n
 
 
 def scale_off(cur, old_max, new_max):

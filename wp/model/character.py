@@ -59,6 +59,13 @@ class Item:
     natural: int = 0
     max_dex: Optional[int] = None
     skill_penalty: int = 0             # armor penalty to Str/Dex skills (gear.md "Armor"), e.g. -2
+    armor_type: str = ""               # armor category: "light" / "medium" / "heavy" (proficiency rank 1/2/3)
+    touch_bonus: int = 0               # armor bonus to TOUCH AC only (catalog column "touch AC"), worn armor
+    spell_penalty_mana: int = 0        # extra mana cost of every mana spell while worn / held (>= 0)
+    spell_failure_pct: int = 0         # spell failure chance while worn / held, 0..100
+    speed_penalty_ft: int = 0          # slowdown in ft (stored, no calculation yet)
+    durable: Optional[bool] = None     # loses at most 1 HP per attack; None = default (armor/shield yes)
+    condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only
     weight_l: int = 0
     count: int = 1                     # pieces (ammo: bolts...)
     effects_off: Tuple[Effect, ...] = ()   # tab "not activated" (D17)
@@ -106,6 +113,8 @@ class AttackRecord:
     primary: bool = False
     twf: bool = False                  # "combination of two attacks" toggle (two-weapon fighting)
     twf_off: str = ""                  # off-hand record id; "" = the other end of a double weapon
+    kind: str = "main"                 # "main" = the plain weapon attack; "maneuver" = built on base_record
+    base_record: str = ""              # maneuver: the main record it inherits from (group, stat, mastery)
 
 
 @dataclass(frozen=True)
@@ -130,6 +139,7 @@ class Feat:
     flags: Tuple[str, ...] = ()        # copied from the template, e.g. ("finesse",)
     source: str = "training"
     cost: int = 0
+    condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only
 
 
 @dataclass(frozen=True)
@@ -164,6 +174,8 @@ class Character:
     mana_enabled: bool = False
     caster: Optional[str] = None       # magic.MAGE / magic.SLOTS / None
     divine_slots: bool = False         # slots are divine casts (short rest option "divine casts")
+    spell_failure_mode: str = ""       # "cancel" / "zero_balance"; "" = default (divine: zero_balance)
+    mana_level: int = 0                # most one mana spell may cost (penalty included); 0 = not set
     slots: Dict[int, Pool] = field(default_factory=dict)
     resources: Dict[str, Pool] = field(default_factory=dict)
     charges: Tuple[Charge, ...] = ()
@@ -191,6 +203,7 @@ class Character:
     feats: Tuple[Feat, ...] = ()
     attacks: Tuple[AttackRecord, ...] = ()
     balance_cap_hits: int = 0          # hits this combat that lowered the balance cap (homerule)
+    balance_cap_start: Optional[int] = None   # balance cap taken at start_combat (snapshot); None = live
     ov: int = 0                        # time points (OV), no cap
     languages: Tuple[Language, ...] = ()
     shield_grade: str = "none"

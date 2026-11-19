@@ -49,6 +49,25 @@ def set_item_masterwork(ch, iid="", value=True):
                   "%s masterwork %s" % (it.name, "on" if value else "off"))
 
 
+TAGS = ("none", "combat_only", "out_of_combat_only")
+
+
+@command
+def set_condition_tag(ch, target="item", oid="", tag="none"):
+    """Display-only condition tag on an item / status / feat (package 9 E); changes no number."""
+    if tag not in TAGS:
+        raise CommandError("tag must be one of %s" % ", ".join(TAGS))
+    fields = {"item": ("items", "iid"), "status": ("statuses", "sid"), "feat": ("feats", "fid")}
+    if target not in fields:
+        raise CommandError("target must be item, status or feat")
+    name, key = fields[target]
+    rows = getattr(ch, name)
+    if not any(getattr(r, key) == oid for r in rows):
+        raise CommandError("no %s with id %r" % (target, oid))
+    rows = tuple(replace(r, condition_tag=tag) if getattr(r, key) == oid else r for r in rows)
+    return commit(replace(ch, **{name: rows}), "set_condition_tag", "%s %s tag %s" % (target, oid, tag))
+
+
 @command
 def set_ignore_bag_weight(ch, value=True):
     """While on, the bag's weight is not counted in the carried weight (derived_view.weight_view)."""

@@ -120,12 +120,36 @@ def group_picks(ch, gid):
     return n.picks if n is not None else ()
 
 
-def item_record(ch, iid):
-    """The attack record that ties an item to ONE weapon group: the item's primary record, else its
-    first record; None if the item has no record (package 8, R3: never two groups at once)."""
-    recs = [r for r in ch.attacks if r.item == iid]
+MAIN = "main"
+MANEUVER = "maneuver"
+KINDS = (MAIN, MANEUVER)
+
+
+def main_record(ch, iid):
+    """The item's MAIN attack record (kind "main", the plain weapon attack); None if it has none.
+    Several main records (data built by hand): the primary one, else the first (package 9 F)."""
+    recs = [r for r in ch.attacks if r.item == iid and r.kind == MAIN]
     marked = [r for r in recs if r.primary]
     return (marked or recs or [None])[0]
+
+
+def item_record(ch, iid):
+    """The record whose group and picks change the item's HP and hardness: its main record
+    (package 9 F; maneuvers never count)."""
+    return main_record(ch, iid)
+
+
+def resolved(ch, record):
+    """A maneuver inherits group and stat from its main record (package 9 F; its own modifiers come
+    in a later package). A main record is returned as is."""
+    if record.kind != MANEUVER:
+        return record
+    base = next((r for r in ch.attacks if r.rid == record.base_record), None)
+    if base is None:
+        return record
+    return AttackRecord(rid=record.rid, item=record.item, group=base.group, grip=record.grip,
+                        stat=base.stat, primary=record.primary, twf=record.twf, twf_off=record.twf_off,
+                        kind=MANEUVER, base_record=record.base_record)
 
 
 def item_picks(ch, item):

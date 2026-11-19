@@ -77,11 +77,12 @@ def default_overload(caster, circle, cast_actions=STANDARD_ACTION, from_item=Fal
 
 
 def cast_cost(caster, circle, cast_actions=STANDARD_ACTION, mana_cost=0, circle0_slots=0,
-              from_item=False, overload=None):
+              from_item=False, overload=None, extra_mana=0, extra_balance=0):
     """Cost of one cast. caster: MAGE or SLOTS. cast_actions: casting time in actions.
     circle0_slots: max circle-0 slots. overload: value typed in by hand (None = formula).
     from_item: spell from a magic item / consumable -> no overload, no balance,
-    no mana, no slot (the item pays; its spirit activation is separate)."""
+    no mana, no slot (the item pays; its spirit activation is separate).
+    extra_mana / extra_balance: armor spell penalty for a mage, split by the player (package 9 I)."""
     circle = int(circle)
     if not 0 <= circle <= 9:
         raise ValueError("circle must be 0..9")
@@ -97,7 +98,8 @@ def cast_cost(caster, circle, cast_actions=STANDARD_ACTION, mana_cost=0, circle0
         return CastCost(mana=0, balance=0, slot_circle=slot, overload=ov)
     if caster == MAGE:
         m = int(mana_cost)
-        return CastCost(mana=m, balance=m, slot_circle=None, overload=ov)
+        return CastCost(mana=m + max(0, int(extra_mana)), balance=m + max(0, int(extra_balance)),
+                        slot_circle=None, overload=ov)
     return CastCost(mana=0, balance=0, slot_circle=circle, overload=ov)
 
 

@@ -4,7 +4,7 @@
   FLANK        shield side: the shield bonus is ignored (option flank_drops_shield, default on).
   FLAT_FOOTED  no Dex bonus and no dodge (a low-Dex penalty stays); shield only from the shield side.
   PARRY        front only: armor slot uses max(armor, parry).
-  TOUCH        ignores natural armor, shield, parry and armor.
+  TOUCH        ignores natural armor, shield, parry and armor; only the armor's touch bonus counts.
 Overload caps Dex + dodge at +2. The shield bonus can be switched off.
 """
 from dataclasses import dataclass, field
@@ -34,6 +34,7 @@ class AcInput:
     overloaded: bool = False
     shield_enabled: bool = True    # UI toggle (also off after an attack with the shield)
     flank_drops_shield: bool = True    # checkbox: in FLANK mode the shield is dropped (attacker "may")
+    touch_armor: int = 0           # worn armor bonus to TOUCH AC only (armor layer in TOUCH mode)
     bonuses: Tuple[bo.Bonus, ...] = field(default_factory=tuple)  # effects on AC
 
 
@@ -96,6 +97,9 @@ def parts(inp, mode=FRONT, from_shield_side=False):
              bo.Bonus(inp.shield, bo.SHIELD, bo.AC, source="shield")]
     items += [b for b in inp.bonuses if bo.applies(b, bo.AC)]
     items = [b for b in items if b.btype not in drop]
+    if mode == TOUCH and inp.touch_armor > 0:
+        # armor "touch AC" column: the only armor part of the touch AC (package 9 H)
+        items.append(bo.Bonus(inp.touch_armor, bo.ARMOR, bo.AC, source="armor touch"))
 
     if mode == FLAT_FOOTED:
         # only the positive parts go: low-Dex penalty and dodge penalties stay

@@ -13,6 +13,7 @@ DAY = "day"                # until the end of the SHORT rest
 DECADE = "decade"          # until the end of the LONG rest
 UNTIL = {DAY: SHORT, DECADE: LONG}
 NOT_SET = "activation price not set"
+NO_HARDNESS = "item has no hardness: use damage_item"
 
 
 def _put(ch, item):
@@ -31,6 +32,26 @@ def damage_item(ch, iid="", amount=0):
     new = itm.damaged(it, amount, p)
     return commit(_put(ch, new), "damage_item", "%s -%d HP -> %d (%s)" % (
         it.name, amount, new.hp_current, itm.state(new, p)))
+
+
+@command
+def hit_item(ch, iid="", damage=0):
+    """An attack on an item (package 9 G): notches = floor(damage / final hardness), 1 notch = 1 item HP;
+    a durable item (armor, shield) loses at most 1. Hardness 0: no automatic notches, nothing changes
+    (soft refusal: use damage_item)."""
+    it = ch.item(iid)
+    if it.destroyed:
+        raise CommandError("destroyed: %s" % it.name)
+    if damage < 0:
+        raise CommandError("damage cannot be negative")
+    p = dv.picks(ch, it)
+    n = itm.notches(it, damage, p)
+    if n is None:
+        return Result(state=ch, entry=LogEntry("hit_item", NO_HARDNESS), events=(),
+                      info={"refused": NO_HARDNESS})
+    new = itm.damaged(it, n, p)
+    return commit(_put(ch, new), "hit_item", "%s hit %d -> %d notch(es), HP %d (%s)" % (
+        it.name, damage, n, new.hp_current, itm.state(new, p)), {"notches": n})
 
 
 @command
@@ -96,7 +117,9 @@ def switch_off_items(ch, rest_kind):
 def start_combat(ch):
     if ch.in_combat:
         raise CommandError("combat already active")
-    return commit(replace(ch, in_combat=True, balance_cap_hits=0), "start_combat", "combat started")
+    cap = dv.balance_max_base(ch)          # snapshot of the balance cap (package 9 C)
+    return commit(replace(ch, in_combat=True, balance_cap_hits=0, balance_cap_start=cap), "start_combat",
+                  "combat started, balance cap %d" % cap)
 
 
 @command
@@ -107,7 +130,7 @@ def end_combat(ch):
     (resources.md [OWNER]), morale scale reset to 0 (defense.md [OWNER])."""
     if not ch.in_combat:
         raise CommandError("no combat is active")
-    new = replace(ch, in_combat=False, overload=0, morale_scale=0, balance_cap_hits=0,
+    new = replace(ch, in_combat=False, overload=0, morale_scale=0, balance_cap_hits=0, balance_cap_start=None,
                   statuses=ef.end_combat(ch.statuses))
     return commit(new, "end_combat", "combat ended")
 

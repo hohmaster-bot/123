@@ -60,6 +60,7 @@ class AttackView:
     item_state: str = "ok"             # items.py: ok / broken / not_working / destroyed
     lucky: int = 20                    # lucky attack threshold (mastery picks, enchantment)
     extra_dice: Tuple[Tuple[str, str], ...] = ()   # (dice, note) from the weapon's effects, e.g. ("1d6", "fire")
+    kind: str = "main"                 # "main" / "maneuver" (records.KINDS)
     available: bool = True             # all weapons it needs are in the hands (records.attack_available)
     missing: Tuple[str, ...] = ()      # item ids that must be taken in hand
     in_hands: Tuple[str, ...] = ()     # item ids now in the hands
@@ -173,6 +174,7 @@ def drum(ch, record, item):
     out += enchant_bonuses(ch, item)
     out += broken_bonuses(ch, item)
     out += _group_bonuses(ch, record)
+    out += proficiency_penalty(ch)
     out.append(replace(bo.morale(dv.morale_bonus(ch)), source="morale scale"))
     return out
 
@@ -197,8 +199,16 @@ def qualification(ch, record, item):
 
 # --------------------------------------------------------------------- view
 
+def proficiency_penalty(ch):
+    """Armor worn / shields held without proficiency: their skill penalty (after masterwork, doubled
+    if broken) ALSO to every attack roll (package 9 B)."""
+    return [bo.Bonus(p, bo.FLAT, bo.ATTACK, source="not proficient: " + iid)
+            for iid, p in dv.non_proficient_penalties(ch) if p]
+
+
 def attack(ch, record):
-    """Breakdown for one attack record."""
+    """Breakdown for one attack record (a maneuver uses its main record's group and stat)."""
+    record = rec.resolved(ch, record)
     item = _item(ch, record)
     ids = scope_ids(record)
     st = attack_stat(ch, item, record)
@@ -234,7 +244,7 @@ def attack(ch, record):
                       item_state=itm.state(item, dv.picks(ch, item)) if item is not None else itm.OK,
                       lucky=wpn.lucky_threshold(rec.group_picks(ch, record.group), weapon_enchant(ch, item)),
                       extra_dice=extra_dice(ch, item),
-                      available=ok, missing=why["missing"], in_hands=why["in_hands"],
+                      kind=record.kind, available=ok, missing=why["missing"], in_hands=why["in_hands"],
                       drops_shield_ac=item is not None and rec.is_shield(item))
 
 

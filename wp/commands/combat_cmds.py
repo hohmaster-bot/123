@@ -9,6 +9,7 @@ from wp.core import tick as tk
 from wp.model import bridge
 from wp.model import derived_view as dv
 from wp.model import ids
+from wp.model import spell_view as sv
 
 
 @command
@@ -44,13 +45,22 @@ def damage_to_balance(ch, amount=0):
 
 @command
 def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=0, from_item=False,
-               overload=None):
-    """Cast: mana/slot, balance, overload (formula or typed value), concentration DC."""
+               overload=None, penalty_balance=0):
+    """Cast: mana/slot, balance, overload (formula or typed value), concentration DC.
+    Mage, circle 1+: the armor spell penalty (spell_view) is added; penalty_balance = the part of it
+    paid with balance (the rest with mana). Total capped at the mana level (package 9 I)."""
     if ch.caster is None and not from_item:
         raise CommandError("character is not a caster")
+    extra, capped = 0, False
+    if ch.caster == mg.MAGE and int(circle) > 0 and not from_item:
+        mana_cost, extra, capped = sv.capped_cost(ch, int(mana_cost), sv.mana_penalty(ch))
+    pb = int(penalty_balance)
+    if pb < 0 or pb > extra:
+        raise CommandError("penalty paid with balance must be 0..%d" % extra)
     c0 = ch.slots.get(0)
     cost = mg.cast_cost(ch.caster or mg.MAGE, circle, cast_actions, mana_cost,
-                        circle0_slots=c0.max if c0 else 0, from_item=from_item, overload=overload)
+                        circle0_slots=c0.max if c0 else 0, from_item=from_item, overload=overload,
+                        extra_mana=extra - pb, extra_balance=pb)
     if not mg.can_pay(bridge.to_caster(ch), cost):
         raise CommandError("not enough mana or slots")
     state, res = mg.cast(bridge.to_caster(ch), cost)
@@ -59,7 +69,42 @@ def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=0, from_
         circle, cost.mana, cost.balance, cost.overload)
     if res.concentration_dc:
         summary += ", concentration DC %d" % res.concentration_dc
-    return commit(new, "cast_spell", summary, {"cost": cost, "result": res})
+    if capped:
+        summary += ", capped at mana level %d" % ch.mana_level
+    return commit(new, "cast_spell", summary, {"cost": cost, "result": res, "penalty": extra, "capped": capped})
+
+
+@command
+def resolve_spell_failure(ch, failed=False):
+    """The player rolled the armor spell failure chance (the app rolls nothing). failed: mode "cancel"
+    -> the spell is not cast (resources stay spent, see OPEN_QUESTIONS); "zero_balance" -> the spell
+    works and the balance drops to 0 as an extra cost."""
+    mode = sv.failure_mode(ch)
+    if not failed:
+        return commit(ch, "resolve_spell_failure", "no failure", {"cast": True, "mode": mode})
+    if mode == sv.ZERO_BALANCE:
+        return commit(replace(ch, balance_current=0), "resolve_spell_failure",
+                      "failure: spell works, balance %d -> 0" % ch.balance_current, {"cast": True, "mode": mode})
+    return commit(ch, "resolve_spell_failure", "failure: spell not cast", {"cast": False, "mode": mode})
+
+
+@command
+def spend_balance(ch, n=0):
+    """Pay balance for a maneuver or ability (a payment, not damage: the cap does not drop)."""
+    n = int(n)
+    if n < 0 or n > max(0, ch.balance_current):
+        raise CommandError("not enough balance: need %d, have %d" % (n, ch.balance_current))
+    return commit(replace(ch, balance_current=ch.balance_current - n), "spend_balance", "balance -%d" % n)
+
+
+@command
+def pay_hp_cost(ch, amount=0):
+    """HP cost of an ability (package 9 C): paid from the CURRENT balance first (HP untouched); the
+    part over the balance -> OT and +1 pain like damage_to_balance; never lowers the balance cap."""
+    v, rep = dm.balance_hit(bridge.to_vitals(ch), int(amount))
+    new = bridge.from_vitals(ch, v, pain_source="HP cost overflow")
+    return commit(new, "pay_hp_cost", "HP cost %d: balance -%d, OT +%d, pain +%d" % (
+        int(amount), rep.balance_loss, rep.overflow, rep.pain_added), {"report": rep})
 
 
 @command

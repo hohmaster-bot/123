@@ -105,18 +105,29 @@ class ItemView:
     masterwork: bool
     skill_penalty: int
     group: str                         # group whose picks count ("" = none)
-    shield_proficient: bool = True
+    shield_proficient: bool = True     # kept name: True when the wearer is proficient (armor or shield)
+    masterwork_active: bool = False
+    masterwork_reason: str = ""        # items.MW_* id when masterwork is off ("" = active)
+    touch_bonus: int = 0               # bonus to touch AC (worn armor)
+    durable: bool = False              # at most 1 notch per attack
+    spell_penalty_mana: int = 0
+    spell_failure_pct: int = 0
+    condition_tag: str = "none"        # display only (package 9 E)
 
 
 def item_view(ch, iid):
     it = ch.item(iid)
     p = picks(ch, it)
     r = rec.item_record(ch, iid)
+    mw = itm.masterwork_state(it, p)
     return ItemView(iid=iid, state=itm.state(it, p), hp_current=itm.hp_current(it, p),
                     hp_max=itm.hp_max(it, p), durability=itm.durability(it, p),
                     enchant=itm.enchant(it, p), masterwork=it.masterwork,
                     skill_penalty=itm.skill_penalty(it, p), group=r.group if r is not None else "",
-                    shield_proficient=shield_proficient(ch, it))
+                    shield_proficient=proficient(ch, it),
+                    masterwork_active=mw[0], masterwork_reason=mw[1], touch_bonus=touch_value(it, p),
+                    durable=itm.is_durable(it), spell_penalty_mana=it.spell_penalty_mana,
+                    spell_failure_pct=it.spell_failure_pct, condition_tag=it.condition_tag)
 
 
 def _defense_value(it, base, p=()):
@@ -130,6 +141,18 @@ def _defense_value(it, base, p=()):
 
 def armor_value(it, p=()):
     return _defense_value(it, it.armor, p)
+
+
+def touch_value(it, p=()):
+    """Touch AC bonus of worn armor (package 9 H): like the armor bonus (0 at HP 0, broken halved
+    down) but no enchantment (see OPEN_QUESTIONS)."""
+    if it.touch_bonus <= 0 or not itm.works(it, p):
+        return 0
+    return it.touch_bonus // 2 if itm.broken(it, p) else it.touch_bonus
+
+
+def touch_armor(ch):
+    return max([touch_value(it, picks(ch, it)) for it in _equipped(ch)] or [0])
 
 
 def shield_value(it, p=()):
@@ -162,6 +185,33 @@ def shield_proficient(ch, it):
     return shield_rank(ch) >= SHIELD_NEED.get(it.shield_type, 1)
 
 
+# Armor proficiency (training.md): grade rank 0 none, 1 light, 2 medium, 3 heavy (package 9 B).
+ARMOR_RANK = {"none": 0, "light": 1, "medium": 2, "heavy": 3}
+ARMOR_NEED = {"": 1, "light": 1, "medium": 2, "heavy": 3}
+
+
+def is_armor(it):
+    return it.armor > 0 and not rec.is_shield(it)
+
+
+def armor_proficient(ch, it):
+    if not is_armor(it):
+        return True
+    return ARMOR_RANK[ch.armor_grade] >= ARMOR_NEED.get(it.armor_type, 1)
+
+
+def proficient(ch, it):
+    return shield_proficient(ch, it) and armor_proficient(ch, it)
+
+
+def non_proficient_penalties(ch):
+    """((iid, penalty), ...) of worn armor and held shields the character is not proficient in:
+    their skill penalty goes ALSO to every attack roll (package 9 B)."""
+    worn = [it for it in _equipped(ch) if is_armor(it) or rec.is_shield(it)]
+    held = [it for it in _in_hands(ch) if not it.equipped and rec.is_shield(it) and works(ch, it)]
+    return tuple((it.iid, itm.skill_penalty(it, picks(ch, it))) for it in worn + held if not proficient(ch, it))
+
+
 def shield_balance_bonus(ch):
     """Heavy and tower shields add their shield bonus to the balance max while held in a hand,
     only with the proficiency grade of that type (heavy: rank 2, tower: rank 3); light never
@@ -178,11 +228,13 @@ def balance_max_base(ch):
 
 
 def balance_max(ch):
-    """In combat the cap drops by 1 per hit that reached the balance (owner homerule);
-    out of combat it is the normal value."""
+    """Out of combat: the normal value. In combat: the SNAPSHOT taken at start_combat (package 9 C;
+    BP spent, armor on/off, Con or bonus changes do not move it) minus 1 per hit that reached the
+    balance or HP (owner homerule). No snapshot (sheet built by hand): the live value."""
     if not ch.in_combat:
         return balance_max_base(ch)
-    return max(0, balance_max_base(ch) - ch.balance_cap_hits)
+    start = balance_max_base(ch) if ch.balance_cap_start is None else ch.balance_cap_start
+    return max(0, start - ch.balance_cap_hits)
 
 
 def balance_pool(ch):
@@ -260,6 +312,13 @@ class WeightView:
     load: str
 
 
+def condition_tags(ch):
+    """Display-only condition tags (package 9 E) for the UI icons; no calculation reads them."""
+    return {"items": {it.iid: it.condition_tag for it in ch.items},
+            "statuses": {s.sid: s.condition_tag for s in ch.statuses},
+            "feats": {f.fid: f.condition_tag for f in ch.feats}}
+
+
 def weight_view(ch):
     return WeightView(carried_l=carried_weight_l(ch), bag_l=bag_weight_l(ch),
                       ignore_bag_weight=ch.ignore_bag_weight, load=load_status(ch))
@@ -333,7 +392,7 @@ def ac_input(ch, flank_drops_shield=True, shield_enabled=True):
                        natural=max([it.natural for it in eq] or [0]),
                        shield=shield_bonus(ch),
                        size_mod=ch.size_mod, max_dex=min(caps) if caps else None,
-                       overloaded=overloaded(ch), shield_enabled=shield_enabled,
+                       overloaded=overloaded(ch), shield_enabled=shield_enabled, touch_armor=touch_armor(ch),
                        flank_drops_shield=flank_drops_shield,
                        bonuses=tuple(b for b in all_bonuses(ch) if b.target == bo.AC))
 
