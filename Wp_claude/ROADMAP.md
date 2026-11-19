@@ -34,14 +34,15 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   favorite; container_view), stat-mod effect values, race size (small / medium / large) and base speed with derived
   speed, feats with effects (+ granted_maneuvers, remove_feat), character.schema.json reviewed
   (tests/SCHEMA_REVIEW.md) and deleted. Report: tests/PACKAGE11_REPORT.md.
-- Package 12 (planned): CMB per attack record (Q58): the sheet shows a general CMB without a weapon AND a CMB per
-  attack record with that record's group bonuses; the UI may use either or both. Feats' granted_maneuvers are read
-  by the maneuver list.
-- Package 12 (planned, moved from 11): REPLACES the item-bound maneuver records (kind "maneuver") with the character-level maneuver
-  list (combat.md "Maneuver list"); maneuver record stubs (name, base_record, to-hit mod, damage mod, action cost, balance cost,
-  spirit cost, tags, free note, generic custom resource counters like "Spark", forward-compatible unknown fields);
-  consumables (quantity decreases on use, at 0 grey and zero weight, manual delete); list of active attacks /
-  abilities of equipped items with buffs and charges.
+- Done in package 12: a status has no cost (Q69); armor slowdown with reduction (Q72); stable injury ids (Q70);
+  stances = feats with is_stance and active_stance (Q74); item-bound maneuver records removed; character-level
+  maneuver list by tags (maneuver_view); CMB per attack record (Q58). Report: tests/PACKAGE12_REPORT.md.
+- UI note (maneuvers): show only name, cost and numbers by default; everything else (description, tags, effects,
+  source, notes) in a collapsed details area, so the interface is not cluttered. Stances get their own visual element.
+- Package 13 (planned): consumables with a quantity (use decreases it; at 0 greyed and weightless; manual delete);
+  a list of active attacks and abilities of equipped items with their buffs and charges; injury commands (remove,
+  heal, RL...); then the missing commands below (level-up, comfort -> training, combat basics, qualification,
+  reactions, spells, spell mastery, seeds, native language, attention course...).
 - Deferred (from REVIEW_REPORT, not done yet): spell mastery cost
   25 * (1 + circle^2); level-up command (+100 * level training, HP roll); comfort -> training command;
   OT removal commands (comfort, attention, injury removal, RL raise); weapon card data from the owner's table.

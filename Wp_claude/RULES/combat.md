@@ -59,19 +59,43 @@
   weapon). A weapon takes 1 or 2 hand slots. When on, both attacks get the table penalties (feat? light/finesse off
   hand?). The second attack of a double weapon uses the lower damage row. The view marks which attack is the main
   hand and which the off hand.
-- Record kinds [OWNER, package 9, closes Q38]: an item's MAIN record (kind "main") is the plain weapon attack; its
-  group and picks are the ones that matter (also for item HP / hardness). Every other record of the item is a
-  "maneuver" with a reference to its main record (base_record): it inherits BAB, stat, mastery bonuses, pain etc. from
-  the main record and only adds its own modifiers (a later package). add_attack: the first record of an item is main,
-  later ones are maneuvers on it; a second main is refused; a maneuver with another group is refused; a main record
-  that maneuvers use cannot be removed first [OWNER, package 10: accepted, Q45]. Package 11 replaces these
-  item-bound maneuvers with the character-level maneuver list below.
-- Maneuver list [OWNER, package 10 design, closes Q44; built in package 11]: maneuvers live in a CHARACTER-level list,
+- Attack records [OWNER, package 12 B; replaces the package 9 record kinds]: every attack record of an item is a
+  main attack record (its own group, grip and stat). The item-bound "maneuver" records of packages 9-11 are removed;
+  old files drop them on load (D1). With several records of one item, the record whose group changes the item's HP
+  and hardness is the PRIMARY one, else the first (assumption Q76).
+- Maneuver list [OWNER, package 10 design, closes Q44; built in package 12]: maneuvers live in a CHARACTER-level list,
   not inside items. Each has: name, description, required tags (weapon groups, weapon kinds, unarmed), attack
   modifiers (to-hit, damage, other bonuses/penalties), cost in actions and in balance. A maneuver is AVAILABLE when a
   weapon in the hands has any matching tag (a weapon is in many groups, e.g. a long sword in "long swords" and "heavy
   weapons", so both maneuver lists open). It uses the numbers of that weapon's main attack. Losing the weapon never
   deletes it: it is only unavailable (grey).
+- Maneuver fields [OWNER, package 12 B]: id (made by the program), name, description, required_tags (weapon group ids,
+  weapon kind ids = the catalog card id of the weapon, and the special tag "unarmed"), tag_mode ("any" default |
+  "all"), modifiers (to_hit and damage numbers, untyped, plus an optional effects list in the usual effect structure,
+  applied to this maneuver's attack only with the usual stacking), cost_actions, cost_balance, cost_spirit (RECORD
+  ONLY: nothing is spent automatically), required_feat (optional feat id: unavailable unless the feat is owned; a
+  feat's granted_maneuvers ids are shown on the maneuver as "granted by"), condition_tag, favorite, source (free
+  label: style / class / feat), notes, extra (unknown future keys, kept on save/load, never interpreted).
+  Commands: add_maneuver, edit_maneuver (any field), remove_maneuver.
+- Weapon tags = all groups of the weapon (a shield without groups: Contact) + its own kind id. maneuver_view: for every
+  maneuver, available yes / no; ONE ENTRY PER matching weapon in the hands (numbers differ per weapon): to-hit and
+  damage = that weapon's main attack record numbers (BAB, stat, pain, the record group's mastery, enchantment...)
+  + the maneuver's modifiers, plus the CMB of that record. "unarmed" matches while the unarmed attack is possible: no
+  weapon (an item with weapon groups) in the hands. Unavailable -> reason ids: no_matching_weapon, feat_missing,
+  unarmed_not_possible, no_attack_record.
+- Assumptions (OPEN_QUESTIONS Q77-Q79): a shield or other item without weapon groups in the hand does not block
+  "unarmed"; a matching weapon without any attack record gives no numbers (no_attack_record); a maneuver with no
+  required tags fits any weapon in the hands and the unarmed attack.
+- Tests: tag any / all; one weapon in two groups opens both; the weapon kind id is a tag; two matching weapons -> two
+  entries (the expert one +3); numbers = main attack + modifiers; effects stack by type; unarmed with empty hands and
+  refused with a sword; required_feat; weapon put away -> unavailable but kept; costs not spent; save / load with extra.
+- What a combat STYLE can give [OWNER examples, package 12]: stances with restrictions, its own counters, maneuvers
+  costing actions / balance / spirit with their own damage or number of attacks, changed weapon properties (finesse,
+  free draw, damage die up), conditions on targets (vulnerability, burning), crit range overrides, start-of-round
+  effects. These are intentionally NOT modeled: the player writes a maneuver with a name, cost, modifiers and a
+  description and plays the rest by hand. The extra dict and the tags are the only stubs. Not built on purpose:
+  automatic spending of actions / balance / spirit, stance restrictions, custom counters (like "Spark"), target
+  conditions, start-of-round triggers, weapon property overrides.
 - Attack list [OWNER, package 10, closes Q37]: shows what is in the hands plus unarmed combat (all_attacks); the full
   list with unavailable records greyed out stays available (all_records). A "what is worn" tab with item pictures is
   an idea only (ROADMAP).
@@ -110,10 +134,14 @@
 - Not applied (OPEN_QUESTIONS Q72): the armor card field speed_penalty_ft (armor slowdown) is stored but not counted.
 - Tests: BAB 2, Str/Dex 12 -> (attack, AC, CMB, CMD) small (+1, 12, 2, 13), medium (0, 11, 3, 14), large (-1, 10, 4, 15);
   base 20; +10 ft item -> 30; -5 ft status -> 15 (inactive: 20); overload -> 10.
-- CMB / CMD in the sheet [package 10; open details Q58 (package 12), Q59]:
+- CMB / CMD in the sheet [package 10; Q58 and Q59 answered in package 12]:
   CMB = BAB + Str mod (with the Finesse feat: the better of Str / Dex) + size CMB mod + bonuses with target "cmb"
-  + pain + morale (CMB is a roll). Weapon-group bonuses are not added yet (Q58).
-  CMD = 10 + BAB + Str mod + Dex mod + size CMB mod + bonuses with target "cmd"; CMD is not a roll: no pain, no morale.
+  + pain + morale (CMB is a roll). This is the general CMB without a weapon.
+  CMB per attack record [OWNER, package 12 C, Q58]: every attack record view also shows its CMB = the general CMB
+  + the record group's mastery attack bonus (the same "attack +1" picks the record gets). The UI may use either or
+  both; a maneuver view shows the CMB of the matching weapon. Tests: two swords, one with mastery +3: CMB 7 and 4,
+  general 4; with pain 1 and morale scale 4 in combat: 8, 5, 5.
+  CMD [OWNER, Q59] = 10 + BAB + Str mod + Dex mod + size CMB mod + bonuses with target "cmd"; no pain, no morale.
   Tests: BAB 3, Str 16, size 1, +2 -> CMB 9 (pain 1 -> 8); Finesse and Dex 18 -> 8; CMD 10 + 3 + 3 + 2 + 1 + 1 = 20.
 
 ## Spells damage
@@ -124,3 +152,14 @@
 - Special feats with checkbox. One active stance at a time + one class stance (class stances not built).
 - Example: "defensive": +2 dodge, -4 attack (flat). Player toggles by hand at fight start.
 - No automatic stance prerequisites.
+- [OWNER, package 12, Q74; replaces earlier stance notes] A stance is a FEAT with the flag is_stance. The character
+  has one field active_stance (a feat id or none). Command set_active_stance(feat id | none): refused when the feat
+  is not owned or is not a stance. A stance feat's effects apply ONLY while it is the active stance; ordinary feats
+  always. No lock flag and no combat rule: the player decides when to change it; end_combat does not change it.
+  Removing the stance feat clears active_stance. Stances are NOT statuses in the container. The derived view lists the
+  stances and the active one (the UI gives stances their own visual element).
+- Not expressible with the current effect system (style "Me Liquescit": no dodge bonus to AC, cannot be flanked):
+  there is no effect that switches off a bonus type (no "block"), and "cannot be flanked" is no effect at all (the
+  flank is an AC mode the player picks). Not built now (package 12 report); the player plays these by hand.
+- Tests: the stance effect applies only while active; switching stances; refusals (not owned, not a stance); removing
+  the feat clears active_stance; end_combat keeps it; the view; not in the container.

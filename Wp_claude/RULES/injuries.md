@@ -16,6 +16,10 @@
 - Roleplay-only injuries are recorded but have no mechanics.
 - Permanent injury: separate row "Permanent injury". Cannot be healed normally; narrative removal only. Also feeds permanent pain (resources.md).
 - Injuries can be added manually. Catalog may provide templates (light/medium/heavy).
+- Injury id [OWNER, package 12, Q70]: every injury has a stable id made by the program from its name (a number on a
+  collision, the same scheme as other ids), stored on the injury and used by the status container view. Old files
+  load: injuries without an id get one on load. Ids of the other injuries never change when one is removed; a freed
+  id may be given to a new injury (assumption Q75). Injury commands (remove, heal...) come in package 13.
 
 ## Healing rating (RL) [OWNER]
 - Each injury has a Healing Rating. Once per cycle (a cycle = a large span of in-world time, e.g. a skip; narrative tool announced by the GM) the player rolls d12 in an outside app; roll <= RL means healed.

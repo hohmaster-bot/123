@@ -30,6 +30,13 @@
   Both thresholds shift by Str MODIFIER (in B). Examples: +2 -> 7.9 / 12.9; -2 -> 3.9 / 8.9; +3 -> 8.9 / 13.9; -1 -> 4.9 / 9.9.
   Above heavy: drag only or drop something (overload icon).
 - Overload effect: dodge bonus to AC capped at +2; Dex gives dodge; speed -10 ft. [package 11 C: the speed -10 ft is computed, combat.md "Size and speed"]
+- Armor slowdown [OWNER, package 12, Q72]: a WORN armor (on the doll, not at 0 HP: the same items as the armor bonus)
+  subtracts its speed_penalty_ft from the derived speed. Effect target "armor_slowdown_reduction" (feats, abilities,
+  statuses, items): a positive value reduces the slowdown, never below 0 slowdown in total; the value "all" ignores it
+  completely. The overload -10 ft stacks with it. Assumptions (OPEN_QUESTIONS Q80): with several worn items the
+  largest slowdown counts (like the armor bonus); a broken armor still slows fully.
+  Tests: worn 5 ft -> 15, in the bag 20; broken 15, at 0 HP 20; reduction 3 -> 18, 10 -> 20; "all" -> 20;
+  with overload -> 5.
 - Abilities may ignore slowdown from armor/overload (editor/settings/doll section).
 
 ## Base (resource for strengthening) [OWNER]
@@ -124,8 +131,9 @@
   R2] This includes an ACTIVATED item: +N attack/damage/lucky, armor/shield +N, hardness +2N and extra effects are all
   gone. Test: +3 sword activated at HP 8/13: +3/+3, lucky 17, hardness 16; at HP 0: 0/0, lucky 20, hardness 10.
 - Mastery in item numbers [OWNER, package 8 R3]: the weapon mastery picks "weapon HP +1" and "durability +30% / +70%"
-  of the item's group change its max HP and hardness (weapons.md). The group is the one of the item's MAIN attack
-  record (package 9: kind "main"; maneuvers never count; no main record -> no picks). A shield attacks
+  of the item's group change its max HP and hardness (weapons.md). The group is the one of the item's main attack
+  record (package 12: every record is a main record; with several, the primary one, else the first, Q76; no record ->
+  no picks). A shield attacks
   through group Contact, so Contact picks reach a shield the same way. Tests: base 11 + HP pick -> 12 (6 of 12 is
   broken, 6 of 11 is not); hardness 10 with +30% -> 13, with +30% and +70% -> 20.
 - Item HP below 0: destroyed for good (state "destroyed": cannot be activated, cannot be healed; stays in the list,
