@@ -44,16 +44,22 @@ def damage_to_balance(ch, amount=0):
 
 
 @command
-def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=0, from_item=False,
+def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=None, from_item=False,
                overload=None, penalty_balance=0):
     """Cast: mana/slot, balance, overload (formula or typed value), concentration DC.
-    Mage, circle 1+: the armor spell penalty (spell_view) is added; penalty_balance = the part of it
-    paid with balance (the rest with mana). Total capped at the mana level (package 9 I)."""
+    mana_cost None = the circle table (magic.CIRCLE_MANA). Mage, circle 1+: the armor spell penalty
+    (spell_view) is added; penalty_balance = the part of it paid with balance (the rest with mana).
+    Mage: cost + penalty above the mana level (= level) -> refused (package 10, Q49)."""
     if ch.caster is None and not from_item:
         raise CommandError("character is not a caster")
-    extra, capped = 0, False
-    if ch.caster == mg.MAGE and int(circle) > 0 and not from_item:
-        mana_cost, extra, capped = sv.capped_cost(ch, int(mana_cost), sv.mana_penalty(ch))
+    mana_cost = mg.circle_mana(circle) if mana_cost is None else int(mana_cost)
+    extra = 0
+    if ch.caster == mg.MAGE and not from_item:
+        if int(circle) > 0:
+            extra = sv.mana_penalty(ch)
+        why = sv.over_limit(ch, mana_cost, extra)
+        if why:
+            raise CommandError(why)
     pb = int(penalty_balance)
     if pb < 0 or pb > extra:
         raise CommandError("penalty paid with balance must be 0..%d" % extra)
@@ -69,9 +75,7 @@ def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=0, from_
         circle, cost.mana, cost.balance, cost.overload)
     if res.concentration_dc:
         summary += ", concentration DC %d" % res.concentration_dc
-    if capped:
-        summary += ", capped at mana level %d" % ch.mana_level
-    return commit(new, "cast_spell", summary, {"cost": cost, "result": res, "penalty": extra, "capped": capped})
+    return commit(new, "cast_spell", summary, {"cost": cost, "result": res, "penalty": extra})
 
 
 @command

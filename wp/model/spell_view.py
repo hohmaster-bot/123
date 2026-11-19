@@ -7,7 +7,8 @@ Computed on read (D6).
   (normal bonus entries: a feat with value -2 lowers the penalty by 2; a large negative value
   ignores it); floor 0; the failure chance is capped at 100.
 - Mana casters: the extra cost is added to every mana spell (circle 1+), paid in any mix of mana and
-  balance; one spell never costs more than the caster's mana level (Character.mana_level, 0 = not set).
+  balance. Mana level = the character's level (package 10, Q49): one spell (its cost + the armor
+  penalty) can cost at most that much mana; above it the spell cannot be cast (clear refusal).
 - Failure chance: slot casters always have it; mana casters only when the chance is > 0.
   The program rolls no dice: the player reports the roll (command resolve_spell_failure).
 - Failure mode: "cancel" (the spell is not cast) or "zero_balance" (the spell works, balance -> 0
@@ -77,11 +78,16 @@ def view(ch):
                      sources=tuple(it.iid for it in src if it.spell_penalty_mana > 0 or it.spell_failure_pct > 0))
 
 
-def capped_cost(ch, mana_cost, extra):
-    """(mana cost, extra, capped?) with the total never above the mana level (0 = no cap).
-    The penalty is cut first, then the spell's own cost (see OPEN_QUESTIONS)."""
-    level = ch.mana_level
-    if level <= 0 or mana_cost + extra <= level:
-        return mana_cost, extra, False
-    base = min(mana_cost, level)
-    return base, max(0, level - base), True
+def mana_level(ch):
+    """The most one spell may cost in mana, penalty included = the character's level (Q49)."""
+    return int(ch.level)
+
+
+def over_limit(ch, mana_cost, extra):
+    """None if the cast fits the mana level, else the refusal text (no silent cut)."""
+    lvl = mana_level(ch)
+    if mana_cost > lvl:
+        return "cannot cast: spell cost %d is above the mana level %d" % (mana_cost, lvl)
+    if mana_cost + extra > lvl:
+        return "cannot cast: spell cost %d + armor penalty %d is above the mana level %d" % (mana_cost, extra, lvl)
+    return None

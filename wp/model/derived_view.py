@@ -152,7 +152,11 @@ def touch_value(it, p=()):
 
 
 def touch_armor(ch):
-    return max([touch_value(it, picks(ch, it)) for it in _equipped(ch)] or [0])
+    """Armor layer of the touch AC: worn armor's touch bonus (as type armor) + effects with target
+    "touch_armor" (statuses, spells, items; package 10, Q46), stacked by the normal rules, >= 0."""
+    item = max([touch_value(it, picks(ch, it)) for it in _equipped(ch)] or [0])
+    effects = [b for b in all_bonuses(ch) if b.target == bo.TOUCH_ARMOR]
+    return max(0, bo.stack([bo.Bonus(item, bo.ARMOR, bo.TOUCH_ARMOR, source="armor touch")] + effects))
 
 
 def shield_value(it, p=()):

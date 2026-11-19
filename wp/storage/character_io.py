@@ -31,6 +31,10 @@ VERSION = 1
 TMP_SUFFIX = ".tmp"
 BAK_SUFFIX = ".bak"
 
+# Fields that were removed from the model: an old file may still have them; they are dropped on load
+# (nothing is converted, the value is simply not used). Character.mana_level: package 10, Q49.
+DROPPED = {"Character": ("mana_level",)}
+
 _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,
     NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry,
@@ -72,6 +76,7 @@ def _decode(v):
             raise StorageError("unknown record type in file: %r" % (name,))
         cls = _TYPES[name]
         known = {f.name for f in dataclasses.fields(cls)}
+        v = {k: x for k, x in v.items() if k not in DROPPED.get(name, ())}
         extra = set(v) - known - {"_t"}
         if extra:
             raise StorageError("unknown fields for %s: %s" % (name, ", ".join(sorted(extra))))

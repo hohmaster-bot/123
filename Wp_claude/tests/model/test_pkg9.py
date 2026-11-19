@@ -318,7 +318,7 @@ S.case("h-touch-not-worn", "pkg 9 H: not worn: touch 10", 10)(
 
 # ===================================================================== I. spell penalties
 def _caster(*items, **kw):
-    base = dict(caster=mg.MAGE, mana=Pool(10, 10), balance_current=6, balance_bonus=6, items=items)
+    base = dict(caster=mg.MAGE, mana=Pool(10, 10), balance_current=6, balance_bonus=6, items=items, level=5)
     base.update(kw)
     return hero(**base)
 
@@ -345,15 +345,15 @@ S.case("i-cap-100", "pkg 9 I: failure 60% + 60% -> 100", 100)(
 
 def _cast(ch, **kw):
     r = dispatch(ch, "cast_spell", circle=1, mana_cost=3, **kw)
-    return (r.state.mana.current, r.state.balance_current, r.info["penalty"], r.info["capped"])
+    return (r.state.mana.current, r.state.balance_current, r.info["penalty"], False)
 
 
 S.case("i-cast-mana", "classes_magic.md [OWNER pkg 9 I]: cost 3 + penalty 2 by mana: mana 10 -> 5, balance 6 -> 3",
        (5, 3, 2, False))(lambda: _cast(_caster(ARM)))
 S.case("i-cast-mix", "pkg 9 I: penalty 2 paid with balance: mana 7, balance 1", (7, 1, 2, False))(
     lambda: _cast(_caster(ARM), penalty_balance=2))
-S.case("i-cast-cap", "pkg 9 I: mana level 4: 3 + 2 capped to 4 -> penalty 1, reported", (6, 3, 1, True))(
-    lambda: _cast(_caster(ARM, mana_level=4)))
+S.case("i-cast-cap", "pkg 10 Q49: mana level = level 4: cost 3 + penalty 2 -> refused (no silent cut)", "refused")(
+    lambda: refused(lambda: _cast(_caster(ARM, level=4))))
 S.case("i-cast-no-armor", "pkg 9 I: no armor -> no penalty", (7, 3, 0, False))(lambda: _cast(_caster()))
 S.case("i-failure-applies", "pkg 9 I: slot caster always; mage only with chance > 0", (True, False, True))(
     lambda: (sv.view(_caster(caster=mg.SLOTS)).failure_applies, sv.view(_caster()).failure_applies,

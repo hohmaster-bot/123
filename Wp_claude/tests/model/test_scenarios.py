@@ -143,7 +143,8 @@ def _nonmage():
 @S.case("mage-balance-short", "classes_magic.md [OWNER]: balance 2, cost 5 -> OT 3, pain 1, DC 16",
         (0, 3, 1, 16))
 def _short_bal():
-    ch = hero(caster=mg.MAGE, mana=Pool(10, 10), mana_enabled=True, balance_current=2)
+    # level 5: a 5-mana spell fits the mana level (= level, package 10 Q49)
+    ch = hero(level=5, caster=mg.MAGE, mana=Pool(10, 10), mana_enabled=True, balance_current=2)
     r = dispatch(ch, "cast_spell", circle=3, mana_cost=5)
     s = r.state
     return (s.balance_current, s.trauma, dv.pain_total(s), r.info["result"].concentration_dc)

@@ -58,7 +58,8 @@ class AttackView:
     crit_hint: str = ""
     dice: Tuple[str, str] = ("", "")   # damage dice (small, medium) of the row used
     item_state: str = "ok"             # items.py: ok / broken / not_working / destroyed
-    lucky: int = 20                    # lucky attack threshold (mastery picks, enchantment)
+    lucky: int = 20                    # lucky attack threshold (mastery picks, enchantment, lucky effects)
+    crit_range: int = 20               # lowest d20 that threatens a crit (base, keen, picks, feats)
     extra_dice: Tuple[Tuple[str, str], ...] = ()   # (dice, note) from the weapon's effects, e.g. ("1d6", "fire")
     kind: str = "main"                 # "main" / "maneuver" (records.KINDS)
     available: bool = True             # all weapons it needs are in the hands (records.attack_available)
@@ -104,6 +105,10 @@ def attack_stat(ch, item, record):
     return DEFAULT_STAT
 
 
+# a weapon's own effects on these targets belong to that weapon only (lucky / crit range: package 10)
+WEAPON_TARGETS = (bo.ATTACK, bo.DAMAGE, bo.LUCKY, bo.CRIT_RANGE)
+
+
 def _item_bonuses(ch, item):
     """Worn/held items. This weapon's attack/damage effects are scoped to it; other
     weapons' attack/damage effects do not count for this record."""
@@ -114,7 +119,7 @@ def _item_bonuses(ch, item):
             continue
         for e in dv.item_tab(it, dv.picks(ch, it)):
             b = e.as_bonus(it.name, ctx)
-            if rec.attack_groups(it) and b.target in (bo.ATTACK, bo.DAMAGE) and b.weapon is None:
+            if rec.attack_groups(it) and b.target in WEAPON_TARGETS and b.weapon is None:
                 if item is None or it.iid != item.iid:
                     continue
                 b = replace(b, weapon=it.iid)
@@ -199,6 +204,26 @@ def qualification(ch, record, item):
 
 # --------------------------------------------------------------------- view
 
+def _scoped(bonuses, target, ids):
+    """Positive values of effects aimed at `target` for this weapon (or for every weapon)."""
+    return sum(max(0, int(b.value)) for b in bonuses
+               if b.target == target and (b.weapon is None or b.weapon in ids))
+
+
+def lucky_extra(bonuses, ids):
+    """+N to the lucky attack from class / race / feat / ability effects (target "lucky"), for this
+    weapon or all weapons (combat.md "Lucky attack"; package 10, R7)."""
+    return _scoped(bonuses, bo.LUCKY, ids)
+
+
+def crit_range(ch, record, item, bonuses, ids):
+    """Crit range shown on the attack (combat.md "Crit", package 10 R8): the weapon's base range, keen
+    doubles it, each mastery pick "crit +1" and each feat effect (target "crit_range") widen it by 1."""
+    base = item.crit_range if item is not None else 20
+    keen = item.keen if item is not None else False
+    return wpn.crit_threshold(base, keen, rec.group_picks(ch, record.group), _scoped(bonuses, bo.CRIT_RANGE, ids))
+
+
 def proficiency_penalty(ch):
     """Armor worn / shields held without proficiency: their skill penalty (after masterwork, doubled
     if broken) ALSO to every attack roll (package 9 B)."""
@@ -216,6 +241,8 @@ def attack(ch, record):
     pain = pn.penalty(dv.pain_total(ch), ch.pain_profile)
 
     hit = [Line("bab", ch.bab), Line("stat:" + st, dv.ability_mod(ch, st))]
+    if ch.size_mod:
+        hit.append(Line("size", ch.size_mod))          # size affects attack (combat.md, R9)
     q = qualification(ch, record, item)
     if q:
         hit.append(Line("qualification", q))
@@ -226,6 +253,9 @@ def attack(ch, record):
     dmg = [Line("str:" + record.grip, str_damage(dv.ability_mod(ch, "str"), record.grip))]
     if pain:
         dmg.append(Line("pain", pain))
+    race = pn.damage_bonus(dv.pain_total(ch), ch.pain_profile)
+    if race:
+        dmg.append(Line("pain: race bonus", race))   # resources.md: damage bonus per pain (R6)
     dmg += _typed_lines(bonuses, bo.DAMAGE, ids)
 
     p = wpn.mastery_flat(rec.group_picks(ch, record.group))["parry"]
@@ -242,7 +272,9 @@ def attack(ch, record):
                       crit_hint=crit_hint(item.crit_mult if item is not None else 2),
                       dice=dice_row(item, 1) if item is None or dv.works(ch, item) else ("", ""),
                       item_state=itm.state(item, dv.picks(ch, item)) if item is not None else itm.OK,
-                      lucky=wpn.lucky_threshold(rec.group_picks(ch, record.group), weapon_enchant(ch, item)),
+                      lucky=wpn.lucky_threshold(rec.group_picks(ch, record.group), weapon_enchant(ch, item),
+                                                lucky_extra(bonuses, ids)),
+                      crit_range=crit_range(ch, record, item, bonuses, ids),
                       extra_dice=extra_dice(ch, item),
                       kind=record.kind, available=ok, missing=why["missing"], in_hands=why["in_hands"],
                       drops_shield_ac=item is not None and rec.is_shield(item))

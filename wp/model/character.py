@@ -84,6 +84,7 @@ class Item:
     damage_medium: str = ""            # dice, medium size
     crit_range: int = 20               # lowest d20 that threatens
     crit_mult: int = 2
+    keen: bool = False                 # property "keen": doubles the BASE crit range (combat.md)
     range_ft: int = 0
     dmg_type: str = ""                 # P / S / B
     durability: int = 0                # hardness (HD) typed by the author (base)
@@ -175,7 +176,6 @@ class Character:
     caster: Optional[str] = None       # magic.MAGE / magic.SLOTS / None
     divine_slots: bool = False         # slots are divine casts (short rest option "divine casts")
     spell_failure_mode: str = ""       # "cancel" / "zero_balance"; "" = default (divine: zero_balance)
-    mana_level: int = 0                # most one mana spell may cost (penalty included); 0 = not set
     slots: Dict[int, Pool] = field(default_factory=dict)
     resources: Dict[str, Pool] = field(default_factory=dict)
     charges: Tuple[Charge, ...] = ()
@@ -210,7 +210,10 @@ class Character:
     armor_grade: str = "none"
     training: int = 1000
     base_slots: int = 5
-    size_mod: int = 0
+    size_mod: int = 0                  # size modifier to AC and attack (small +1, large -1 ...)
+    size_cmb: int = 0                  # size modifier to CMB / CMD, typed by hand (OPEN_QUESTIONS Q57)
+    save_base: Dict[str, int] = field(default_factory=lambda: {"fort": 0, "ref": 0, "will": 0})  # class table, by hand
+    save_stats: Dict[str, str] = field(default_factory=lambda: {"fort": "con", "ref": "dex", "will": "wis"})
     ignore_bag_weight: bool = False    # bag weight not counted (gear.md "drop bag" button, package 8 E)
     log: Tuple[LogEntry, ...] = ()
 

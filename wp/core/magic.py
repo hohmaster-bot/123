@@ -20,6 +20,12 @@ from wp.core.damage import Pool
 
 MAGE = "mana"
 SLOTS = "slots"
+# Mana cost by circle 0..9 (spells.md [OWNER, package 10]); a spell may state its own cost instead.
+CIRCLE_MANA = (0, 1, 3, 5, 7, 9, 11, 13, 15, 17)
+
+
+def circle_mana(circle):
+    return CIRCLE_MANA[int(circle)]
 
 
 @dataclass(frozen=True)
