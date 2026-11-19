@@ -26,6 +26,16 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 - A status/ability may read the CURRENT overload as its number. Example: bonus to attack and damage with natural weapons
   equal to the current overload.
 
+## Value from a stat modifier [OWNER, package 11 B; closes Q65]
+- An effect value is a plain number OR {stat_mod: <stat>, multiplier: 1 (default)}, computed on read from the CURRENT
+  stat modifier (stat damage changes it at once). Works for every effect target (skills, attacks, damage, saves, AC
+  layers, speed...) with the usual type / stacking rules.
+- It is a bonus ON TOP, never a replacement (e.g. "+Str mod to Intimidation" adds to the skill's own Cha).
+- A negative modifier gives a negative value, as is.
+- Assumption (OPEN_QUESTIONS Q71): a non-whole result (multiplier 0.5) is rounded down.
+- Tests: +Str to Intimidation (Str 16, Cha 12) -> 4; +Dex to damage (Dex 18) -> 4; Str 16 with 4 damage -> +1;
+  Str 6 -> -2; untyped +3 and +1 add up -> 4; competence +3 and +2 -> 3; multiplier 2 -> 6; dodge +Wis 14 -> AC 12.
+
 ## Skills target [OWNER]
 - An effect may target one skill (e.g. +2 to Stealth only) or all skills.
 

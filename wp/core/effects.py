@@ -16,6 +16,7 @@ duration makes it inactive and the entry stays. An inactive status gives no effe
 not tick. hidden / favorite are display only.
 Pure functions, frozen data.
 """
+import math
 from dataclasses import dataclass, replace
 from typing import Optional, Tuple
 
@@ -31,6 +32,11 @@ TEMP_HP = "temp_hp"
 
 
 OVERLOAD = "overload"      # value source: the current overload number
+STAT_MOD = "stat_mod:"     # context key prefix: "stat_mod:str" = the CURRENT Str modifier
+
+
+def stat_mod_key(stat):
+    return STAT_MOD + stat
 
 
 @dataclass(frozen=True)
@@ -42,12 +48,18 @@ class Effect:
     value_source: Optional[str] = None   # e.g. OVERLOAD: value = current overload
     dice: str = ""                     # extra dice (e.g. "1d6" on damage); not a number, shown as is
     note: str = ""                     # free text: "fire", "crit protection 25%" ... (any kind, D14)
+    stat_mod: Optional[str] = None     # value = CURRENT modifier of this stat * multiplier (buffs.md, Q65)
+    multiplier: float = 1
 
     def resolve(self, context=None):
-        """The effect's number: fixed value, or read from the context (buffs.md)."""
+        """The effect's number: a fixed value, a context value (current overload), or the current
+        modifier of a stat times the multiplier (rounded down; a negative modifier stays negative)."""
+        ctx = context or {}
+        if self.stat_mod is not None:
+            return int(math.floor(ctx.get(stat_mod_key(self.stat_mod), 0) * self.multiplier))
         if self.value_source is None:
             return int(self.value)
-        return int((context or {}).get(self.value_source, 0))
+        return int(ctx.get(self.value_source, 0))
 
     def as_bonus(self, source="", context=None):
         return bo.Bonus(self.resolve(context), self.btype, self.target, self.weapon, source)

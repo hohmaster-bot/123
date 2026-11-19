@@ -357,8 +357,11 @@ def morale_bonus(ch):
 
 
 def context(ch):
-    """Values effects may read (buffs.md): the current overload."""
-    return {ef.OVERLOAD: ch.overload}
+    """Values effects may read (buffs.md): the current overload and the CURRENT stat modifiers."""
+    ctx = {ef.OVERLOAD: ch.overload}
+    for name in ch.abilities:
+        ctx[ef.stat_mod_key(name)] = ability_mod(ch, name)
+    return ctx
 
 
 def item_effects(ch):

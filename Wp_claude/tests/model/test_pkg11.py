@@ -16,7 +16,9 @@ from wp.core.effects import Effect, Status  # noqa: E402
 from wp.core.injuries import Injury  # noqa: E402
 from wp.model import container_view as cv  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
-from wp.model.character import Character, Item  # noqa: E402
+from wp.catalog import skills_catalog as sc  # noqa: E402
+from wp.model import attack_view as av  # noqa: E402
+from wp.model.character import ABILITIES, Ability, Character, Item  # noqa: E402
 from wp.storage import character_io as cio  # noqa: E402
 
 S = Suite("test_pkg11")
@@ -142,6 +144,62 @@ def _old_save():
 
 
 S.case("a-old-save", "D11: an old save without the new status fields loads (defaults)", 0)(_old_save)
+
+
+# ---- B: stat-mod as an effect value (Q65) ----
+def abil(**scores):
+    return {a: Ability(base=scores.get(a, 10)) for a in ABILITIES}
+
+
+def with_status(effects, **scores):
+    cat = sc.load_default()
+    return hero(abilities=abil(**scores), skills=(sc.make_skill(cat, "intimidate"),),
+                statuses=(Status("x", sid="x", effects=effects),))
+
+
+STR_INTIM = (Effect(bo.skill_target("intimidate"), stat_mod="str"),)
+
+
+def intim(ch):
+    return dv.skill_bonus(ch, "intimidate")
+
+
+S.case("b-str-to-intimidate", "buffs.md [OWNER Q65]: +Str mod to Intimidation (Cha 12 +1, Str 16 +3) = 4; without 1",
+       (4, 1))(
+    lambda: (intim(with_status(STR_INTIM, str=16, cha=12)), intim(with_status((), str=16, cha=12))))
+
+
+def _sword_dmg(effects, **scores):
+    ch = with_status(effects, **scores)
+    ch = Character(**{**ch.__dict__, "items": (Item("sw", "sword", kind="weapon", hands=1, in_hands=True,
+                                                     groups=("blades",)),)})
+    ch = dispatch(ch, "add_attack", iid="sw", group="blades").state
+    return av.by_record(ch, ch.attacks[0].rid).damage
+
+
+S.case("b-dex-to-damage", "buffs.md: +Dex mod to damage (Dex 18 +4, Str 10): damage 4", 4)(
+    lambda: _sword_dmg((Effect(bo.DAMAGE, stat_mod="dex"),), dex=18))
+
+
+def _str_damaged():
+    ch = with_status(STR_INTIM, str=16, cha=12)
+    a = dict(ch.abilities)
+    a["str"] = Ability(base=16, damage=4)             # stat damage: Str 16 -> 12 (+1)
+    return intim(Character(**{**ch.__dict__, "abilities": a}))
+
+
+S.case("b-stat-damage", "buffs.md: read on the CURRENT modifier: Str 16 damaged by 4 -> +1, total 2", 2)(_str_damaged)
+S.case("b-negative-mod", "buffs.md: a negative modifier gives a negative value (Str 6 -> -2): Cha 12 +1 - 2 = -1", -1)(
+    lambda: intim(with_status(STR_INTIM, str=6, cha=12)))
+S.case("b-stacks-flat", "defense.md stacking: untyped stat-mod +3 and untyped +1 add up -> attack 4", 4)(
+    lambda: dv.total(with_status((Effect(bo.ATTACK, stat_mod="str"), Effect(bo.ATTACK, 1)), str=16), bo.ATTACK))
+S.case("b-typed-no-stack", "defense.md stacking: competence stat-mod +3 and competence +2 -> the larger, 3", 3)(
+    lambda: dv.total(with_status((Effect(bo.ATTACK, btype="competence", stat_mod="str"),
+                                  Effect(bo.ATTACK, 2, "competence")), str=16), bo.ATTACK))
+S.case("b-multiplier", "buffs.md: multiplier 2 -> Str +3 * 2 = 6 to attack", 6)(
+    lambda: dv.total(with_status((Effect(bo.ATTACK, stat_mod="str", multiplier=2),), str=16), bo.ATTACK))
+S.case("b-ac-layer", "defense_layers.md: a dodge effect of +Wis mod (Wis 14 +2) raises the dodge layer -> AC 12", 12)(
+    lambda: dv.ac(with_status((Effect(bo.AC, btype=bo.DODGE, stat_mod="wis"),), wis=14)))
 
 if __name__ == "__main__":
     sys.exit(S.run())
