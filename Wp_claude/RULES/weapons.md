@@ -84,6 +84,8 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   not work. HP below 0: destroyed for good. Full rules: gear.md "Item HP".
   Durability: specialist +30%, expert +70% (they stack). Item HP: +1 per expert pick.
   Example: +30% and +70% picks -> +100% of the base durability.
+  [OWNER, package 9] The percentages ADD (x2, not x1.3 x1.7) and apply after the enchantment: (base + 2N) * (100 + %).
+  Only the item's MAIN attack record's group counts (gear.md "Order of item numbers").
 
 ## Notes
 - This "qualification" is weapon level; item "Qualification N" in gear.md is a different mechanic (per-item, 50 training/level).

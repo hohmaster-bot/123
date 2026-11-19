@@ -49,6 +49,12 @@
 - Feat "Two-Weapon Fighting" (base) is in the catalog (default price 200, editable). Improved and Greater versions are not added.
 - An attack record has the toggle "combination of two attacks" (available with two weapons in the hands or a double
   weapon). A weapon takes 1 or 2 hand slots.
+- Record kinds [OWNER, package 9, closes Q38]: an item's MAIN record (kind "main") is the plain weapon attack; its
+  group and picks are the ones that matter (also for item HP / hardness). Every other record of the item is a
+  "maneuver" with a reference to its main record (base_record): it inherits BAB, stat, mastery bonuses, pain etc. from
+  the main record and only adds its own modifiers (a later package). add_attack: the first record of an item is main,
+  later ones are maneuvers on it; a second main is refused; a maneuver with another group is refused; a main record
+  that maneuvers use cannot be removed first (OPEN_QUESTIONS Q44, Q45).
 - Attack availability [OWNER, package 8]: setting the toggle is not checked against the hands; instead a record is
   AVAILABLE only while every weapon it needs is in the hands (two-weapon: both weapons, in either hand order; double
   weapon: the one weapon; an unarmed off-hand strike needs a free hand). An unavailable record tells which weapons it

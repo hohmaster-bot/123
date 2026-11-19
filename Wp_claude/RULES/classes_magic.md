@@ -36,6 +36,8 @@
   The app shows the DC at once: "Concentration DC = 10 + 2 * OT gained, otherwise the spell fails".
   Example: balance 2, cost 5 -> OT 3, pain 1, DC 16.
 - Spells from magic items and consumables give no overload and cost no balance [OWNER]. Item activation still costs spirit.
+- Armor and shield spell penalties (extra mana cost, failure chance, failure mode "cancel" / "zero_balance"):
+  gear.md "Armor" [OWNER, package 9].
 
 ## Racial damage absorbers [OWNER]
 - Absorption is 1:1; absorbed part does not hit balance (like temp HP). Other traits/classes/races may add other absorbers.

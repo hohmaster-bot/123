@@ -42,17 +42,41 @@
 ## Armor [OWNER]
 - Skill penalty (Str/Dex skills), arcane spell failure chance (slot magic & mana, NOT ki-like abilities).
 - Weight, armor bonus. May slow. Mwk/special may reduce penalty (rarely give bonus).
+- Touch AC bonus [OWNER, package 9 H]: armor may have a "touch AC" bonus (catalog column "touch AC"). It adds ONLY to
+  the touch AC, as the armor layer of the touch AC; it gives NO balance and does not change other AC types. Worn armor
+  only, same rules as the armor bonus (nothing at HP 0, halved down when broken); enchantment does not raise it
+  (OPEN_QUESTIONS Q46). Tests: armor 4 touch 2: touch 12, front 14, balance 4; broken: touch 11, front 12; HP 0: 10/10.
+- Spell casting penalties [OWNER, package 9 I]: armor and shields have spell_penalty_mana (extra mana cost, >= 0;
+  set 1 column "magic") and spell_failure_pct (0-100; "divine" / "spell failure" column). The numbers of worn armor and
+  held shields ADD UP, then effects with target "spell_penalty_mana" / "spell_failure_pct" (feats, class traits) change
+  them like normal bonus entries (a value -2 lowers by 2); never below 0; the chance at most 100.
+  - Mana casters: the extra cost is added to every mana spell (circle 1+), paid in any mix of mana and balance (the
+    player says how much from balance). One spell never costs more than the caster's mana level (capped, the cast
+    reports it). Source note: the "magic" penalty adds extra mana/balance cost in any combination.
+  - Failure: slot casters always have the failure chance; mana casters only if the chance > 0. The app rolls no dice:
+    the player reports the roll (command resolve_spell_failure). Failure mode of the caster (data): "cancel" = the
+    spell is not cast; "zero_balance" = the spell still works and the balance drops to 0 as an extra cost. Divine
+    casters default to "zero_balance" (source note: the "divine" penalty does not cancel the spell on failure but
+    zeroes all balance), others to "cancel".
+  - Tests: armor 2/20% + shield 1/15% -> 3 / 35%; shield in the bag not counted; feat -2 / -50% -> 1 / 0; 60% + 60% ->
+    100; mage cost 3 + 2: mana 10 -> 5, balance 6 -> 3; 2 paid with balance: mana 7, balance 1; mana level 4 -> capped;
+    failure modes.
 - A shield counts as armor: a shield held in a hand applies its Str/Dex skill penalty too [OWNER, package 8 R4].
   Test: shield -2 in hand -> climb -2; in the bag -> 0; shield -2 + armor -3 -> -5.
 
-## Masterwork [OWNER, package 8]
-- An item flag "masterwork", independent of activation (weapons and armor may or may not be masterwork, activated or
-  not). Command set_item_masterwork.
-- Masterwork weapon: +1 to attack, type enhancement, so it does NOT stack with enchantment +N: same sign and type ->
-  the larger wins (+1 masterwork and +1 enchantment -> +1; +1 and +3 -> +3). Opposite signs of equal size cancel
-  (+1 masterwork and a -1 enhancement penalty -> 0). No damage, no lucky attack.
-- Masterwork armor / shield: its Str/Dex skill penalty is 1 smaller, never above 0 (-1 -> 0, 0 -> 0). Applied before a
-  broken item doubles it: -3 masterwork broken -> -4.
+## Masterwork [OWNER, package 8; package 9 closes Q39, Q40]
+- An item flag "masterwork" (command set_item_masterwork). The flag is the ONLY way: masterwork is never written into
+  the "not activated" tab.
+- Masterwork weapon: +1 to attack, type enhancement. While the weapon is ACTIVATED with enchantment +1 or higher,
+  masterwork is OFF and cannot turn on (the item view shows masterwork_active = False with the reason id
+  "enchant_active"). Not activated, the weapon counts as masterwork. An activated tab without enchantment N (an active
+  ability like fire arrow 3/day) does not switch it off. Opposite signs of equal size cancel (+1 masterwork and a -1
+  enhancement penalty -> 0). No damage, no lucky attack. Tests: plain +1; +2 not activated +1; +2 activated: off, +2;
+  fire tab only: +1.
+- Masterwork armor / shield: its Str/Dex skill penalty is permanently 1 smaller, never above 0 (-1 -> 0, 0 -> 0),
+  whether activated or not. Enchantment on armor does not lower the penalty; both apply (enchantment adds AC,
+  masterwork lowers the penalty). Broken: masterwork -1 first, then x2 (-3 -> -2 -> -4). Test: +2 masterwork armor -3
+  activated: penalty -2, AC 10 + 4 + 2.
 - Item HP 0: masterwork gives nothing either.
 
 ## Enchantment [OWNER, package 5]
@@ -68,12 +92,16 @@
   attack of a weapon; armor and shield bonus; hardness +2N; item max HP and current HP +N) count ONLY while the item is
   activated.
 - A not activated item gives its base values (the item's own armor / shield bonus, weapon damage) plus its "not
-  activated" tab (e.g. masterwork +1 to attack; a special non-magic material writes its non-magic bonus there).
+  activated" tab (e.g. a special non-magic material writes its non-magic bonus there; masterwork is the item flag,
+  see "Masterwork").
 - An item with no activation price is an ordinary item: always off, it cannot be activated (soft refusal), and its
   enchantment never counts.
 - Extra weapon effects (fire d6 and the like) go into the "activated" tab and work only while activated.
 - Deactivation (the short rest for "day" items, the long rest for all) removes the enchantment bonuses.
-- Assumption (OPEN_QUESTIONS): hardness = base with the weapon mastery percent, then +2N, only while activated.
+- Order of item numbers [OWNER, package 9, closes Q38]: the item's own base first, then enchantment N (only while
+  activated), then the mastery picks. Hardness = (base + 2N) * (100 + mastery percent) / 100, rounded down; the picks
+  "+30%" and "+70%" are ADDITIVE (both = +100%, x2, not x1.3 x1.7). Max HP = base + N + "HP +1" picks.
+  Tests: hardness 5, +2 activated, +30% -> (5 + 4) * 1.3 = 11; +30% and +70% -> 18; not activated -> 10.
 
 ## Item HP [OWNER, package 6, closes Q31]
 - Item HP is stored as the CURRENT number (not as "damage taken"; no migrations, D1).
@@ -89,14 +117,20 @@
   R2] This includes an ACTIVATED item: +N attack/damage/lucky, armor/shield +N, hardness +2N and extra effects are all
   gone. Test: +3 sword activated at HP 8/13: +3/+3, lucky 17, hardness 16; at HP 0: 0/0, lucky 20, hardness 10.
 - Mastery in item numbers [OWNER, package 8 R3]: the weapon mastery picks "weapon HP +1" and "durability +30% / +70%"
-  of the item's group change its max HP and hardness (weapons.md). The group is the one of the item's attack record
-  (its primary record, else its first record; never two groups at once; no record -> no picks). A shield attacks
+  of the item's group change its max HP and hardness (weapons.md). The group is the one of the item's MAIN attack
+  record (package 9: kind "main"; maneuvers never count; no main record -> no picks). A shield attacks
   through group Contact, so Contact picks reach a shield the same way. Tests: base 11 + HP pick -> 12 (6 of 12 is
   broken, 6 of 11 is not); hardness 10 with +30% -> 13, with +30% and +70% -> 20.
 - Item HP below 0: destroyed for good (state "destroyed": cannot be activated, cannot be healed; stays in the list,
   grey, removed only by hand).
 - Commands: damage_item(iid, amount), set_item_hp(iid, value) (manual, edit mode).
 - Repair [OWNER, Q32]: only by hand in edit mode (set_item_hp); there is no repair command.
+- Notches [OWNER, package 9 G]: command hit_item(item, damage) (damage_item stays the raw HP change). 1 notch = 1 item
+  HP lost; notches = floor(damage / FINAL hardness) (base + 2N while activated + mastery). A durable item (flag; default
+  yes for armor and shields, no for others) loses at most 1 HP per attack (source note: armor and shields cannot take
+  more than one notch per attack). Hardness 0 or not set: no automatic notches, a clear refusal (use damage_item).
+  Tests: hardness 5: damage 4 / 5 / 9 / 10 -> 0 / 1 / 1 / 2; durable 10 -> 1; +2 activated (hardness 9): 17 -> 1,
+  18 -> 2; broken 5/10 hit 10 -> 3, then 15 -> 0.
 - [OWNER, package 7] Armor and a shield at item HP 0 cannot be put on: the equip command refuses with a clear message.
   If such an item is already worn (its HP fell to 0 after damage), it counts as taken off: no AC bonus and no armor
   skill penalty. A weapon at HP 0 can be held, but gives no bonuses and no damage dice.
@@ -109,7 +143,7 @@
 - Tests (package 7): armor at 0 HP -> equip refused; worn armor that drops to 0 -> AC without armor and no skill
   penalty; a shield the same; a weapon at 0 HP is held without bonuses; a destroyed item stays in the list and is
   removed only by remove_item; remove_item works for an ordinary item.
-- Tests: +5 sword not activated: attack +1 (masterwork tab), damage +0; activated: +5; no price -> cannot be
+- Tests: +5 masterwork sword not activated: attack +1 (masterwork flag), damage +0; activated: +5; no price -> cannot be
   activated, no enchantment; +2 armor not activated -> base armor only; fire d6 only while activated; the short rest
   switches a "day" item off and the enchantment is gone.
 
@@ -128,6 +162,6 @@
   Cost may also be stat damage, HP, etc.
 - Consumables: usually 1 spirit to activate.
 - Not activated items give fewer bonuses. Example: +5 magic sword (+5 attack, damage and lucky attack = enchant bonus):
-  inactive it is only a masterwork sword giving +1 attack, nothing else.
+  inactive it is only a masterwork sword (flag) giving +1 attack, nothing else.
 - Item activation data [OWNER, simplified]: item has two tabs: "not activated" and "activated". Either one set of effects or the other, never both.
   (An additive item just repeats the base effects in the activated tab.) No mode flag.

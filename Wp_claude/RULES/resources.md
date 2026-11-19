@@ -40,8 +40,17 @@ Spell Resistance is separate (vs spells, not a damage step).
   Then hits of 1 and 1 (balance not restored): each HP -1, pain +1, trauma +1 -> totals HP -12, pain 3, trauma 11.
 - Damage input: button "take damage" + optional DR/- and Resistance selector (by damage type) applied before the above.
   DR/Resistance come from the sheet's effects. [UI wish]
-- Balance cap in combat [OWNER homerule]: the balance max is recomputed at the start of combat (armor + current BP +
-  bonuses) and returns to normal after the combat. Each hit on the character lowers the cap by 1 until the end of
+- Balance cap in combat [OWNER homerule, package 9, closes Q35]: start of combat takes a SNAPSHOT of the balance max
+  (armor + current BP + bonuses at that moment). During combat the cap changes ONLY by hits (below); it does NOT change
+  from a max HP change (e.g. Con lowered), spending BP, taking armor off/on or any bonus change. End of combat
+  recomputes the cap from scratch and clears the snapshot. Balance REGEN stays live (current Con etc.).
+  Tests: snapshot 7 (armor 2 + BP 5); spend 2 BP -> 7; armor off -> 7; bonus +3 and Con 14 -> 8 -> 7 (regen 3 -> 1);
+  a hit -> 6; end of combat with BP 3 and no armor -> 3.
+- Paying balance (maneuvers, abilities: command spend_balance) is a payment, not damage: the cap does not drop.
+  More than the current balance cannot be paid (refused; OPEN_QUESTIONS Q43).
+- HP cost of an ability (command pay_hp_cost) [OWNER, package 9]: it lowers the CURRENT balance first, HP untouched;
+  the part above the balance -> OT and +1 pain like "damage to balance"; it never lowers the cap. Test: balance 7,
+  cost 9 -> balance 0, HP unchanged, OT +2, pain +1, cap 7; cost 3 -> balance 4, no OT, no pain. Each hit on the character lowers the cap by 1 until the end of
   combat, ONLY if the damage reached the balance (after percent, flat reductions, temp HP and analogs, HP were really
   lost). A fully blocked hit does not lower it. The current balance is NOT lowered by the cap drop. DoT does not lower
   the cap unless its effect has the flag "lowers cap". Counted only while combat is active; start and end of combat
@@ -100,6 +109,8 @@ After everyone acted, in this order [OWNER]:
 ## Spirit, mana, overload [OWNER]
 - Everyone has: HP, balance, balance regen, spirit, trauma points. Spirit pays item activations (1 spirit/day or 5 until the end of the cycle).
 - Spirit max [OWNER] = 5 + 5 * Cha modifier, never below 0 (Cha mod -1 or lower -> 0), plus bonuses/penalties by source.
+  [OWNER, package 9, closes Q33] Order: max(0, 5 + 5 * Cha mod) FIRST, THEN the bonuses (race, class, feats, other; may
+  be negative); the total is never below 0. Tests: Cha mod -2 (base -5 -> 0) + 3 = 3; + (-1) = 0; Cha mod +2 + 3 = 18.
   Not typed in by hand. Tests: Cha mod +2 -> 15; -1 -> 0; -2 -> 0; +2 with bonus +3 -> 18.
   The total after bonuses and penalties is never below 0 [OWNER] (Cha 8 with penalty -2 -> 0).
 - Casters (mage): mana instead of slots. Divine casters: slots.

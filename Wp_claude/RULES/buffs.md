@@ -30,8 +30,11 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 
 ## Condition [OWNER, package 8]
 - There is NO "combat only" condition: a status works while it is active and not expired, in or out of combat.
-  The old "in combat / out of combat" field is removed (an "out of combat" item bonus is switched on/off by hand;
-  see OPEN_QUESTIONS Q36).
+  The old "in combat / out of combat" field is removed (an "out of combat" item bonus is switched on/off by hand).
+- Condition tag [OWNER, package 9, closes Q36]: abilities (feats), items and statuses have an optional display-only
+  field condition_tag: none / combat_only / out_of_combat_only. It changes NO calculation; derived views show it so
+  the UI can draw an icon. The player sets it by hand (command set_condition_tag). Test: a tagged item and status give
+  the same numbers in and out of combat as untagged ones.
 
 ## Charges and activation
 - A buff source (ability/item) may have charges (e.g. rage 2/3). If placed on screen/slot, tapping activates it;

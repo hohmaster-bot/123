@@ -13,6 +13,13 @@
 - Weight in catalog rows [OWNER]: "L" = 1 L; a plain number N = N * 10 L (1 = 10 L = 1 B). The unit "B" is not
   written in the rows.
 - Skills: the default skill catalog ships with the app as data (skills_list.md, 45 templates); see skills.md "Skill catalog".
+- Armor and shields [OWNER, package 9]: two example data sets ship as data (wp/catalog/data/armor_set_1.json "Country
+  1", 8 rows; armor_set_2.json "Country 2", 15 rows). They are tables from a game, rules may differ per game: plain
+  selectable data sets, not hard rules; any file armor_set_*.json is one more set. Row fields: id, name, kind
+  (armor / shield), category (armor light / medium / heavy; shield light / heavy / tower), weight, price (text as
+  written), access_class (set 1 only), ac_bonus, touch_bonus, max_dex, skill_penalty (positive = penalty),
+  speed_penalty_ft, spell_penalty_mana, spell_failure_pct, special ("+" column of set 2), hardness, hp, durable.
+  English names for now; the owner adds Russian names later.
 - Shop is just a layer on the catalog [OWNER]: taking an item from the catalog can buy it at once (gold deducted automatically);
   taking a feat can buy it for training (only if the checkbox "pay with training" is on). Items only for gold.
   Old characters are not migrated (D1).

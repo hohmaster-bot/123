@@ -44,8 +44,14 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
   rank 0 (none) = cannot use shields; rank 1 (light) = light shields without penalty; rank 2 (heavy) = heavy shields
   without penalty AND a heavy shield in hand adds its shield bonus to the balance max; rank 3 (tower) = tower shields
   without penalty AND a tower shield in hand adds its shield bonus to the balance max AND parry +2 (from the grade,
-  counted once). Light shields never add balance. Below the shield's rank: no balance bonus; the non-proficiency
-  penalty itself has no number in RULES yet (OPEN_QUESTIONS Q34). Tests: every rank x light / heavy / tower.
+  counted once). Light shields never add balance. Below the shield's rank: no balance bonus. Tests: every rank x
+  light / heavy / tower.
+- Non-proficient armor / shield [OWNER, package 9, closes Q34]: wearing armor or holding a shield with a proficiency
+  rank below its type (armor: light 1, medium 2, heavy 3; shield: light 1, heavy 2, tower 3) applies its Str/Dex skill
+  penalty (after the masterwork reduction, doubled if broken) ALSO to every attack roll while worn / held. Proficient:
+  no attack penalty. An item without a category counts as light (OPEN_QUESTIONS Q42). Tests: every rank x type for
+  armor (-2) and shields (-3); masterwork -3 -> -2, broken -> -4; the weapon attack gets it too; a shield in the bag
+  gives none.
 
 ## Languages [OWNER confirmed]
 - First native language free. Further native languages: buy with training or get narratively.

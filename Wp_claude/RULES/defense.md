@@ -13,7 +13,8 @@
   Parry value [OWNER, package 5] = armor proficiency (none 0, light 2, medium 4, heavy 6) + 1 per odd level from 3
   + 2 for the "tower shields" proficiency grade + weapon mastery parry picks. It comes from PROFICIENCY, not from an
   item in the hand (training.md).
-- Touch: ignores natural armor, shield, parry, armor bonuses.
+- Touch: ignores natural armor, shield, parry, armor bonuses; only the armor's "touch AC" bonus counts, as the armor
+  layer of the touch AC (gear.md "Armor", package 9).
 - Need UI toggle: shield bonus on/off in AC, or show small secondary number "AC with shield".
 
 ## Typed bonus pools [OWNER]

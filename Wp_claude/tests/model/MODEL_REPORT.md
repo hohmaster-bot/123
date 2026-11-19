@@ -612,3 +612,12 @@ test_ascii_code: 65 files, non-ASCII 0
   у `short_rest` параметр `keep_overcap` (вместо `extra_temp_bp`).
 - Новые функции чтения: `records.attack_available`, `attack_view.all_records`, `derived_view.item_view`, `weight_view`,
   `shield_proficient`; `dv.ac(..., flank_drops_shield, shield_enabled)`.
+
+# Пакет 9: ответы владельца на Q33-Q40 и новые правила A-K
+- Подробно: `Wp_claude/tests/PACKAGE9_REPORT.md`. Тесты: `test_pkg9.py` (64).
+- Новые поля: `Item.armor_type`, `touch_bonus`, `spell_penalty_mana`, `spell_failure_pct`, `speed_penalty_ft`, `durable`,
+  `condition_tag` (также у `Status` и `Feat`); `AttackRecord.kind`, `base_record`; `Character.balance_cap_start`,
+  `spell_failure_mode`, `mana_level`.
+- Новые команды: `spend_balance`, `pay_hp_cost`, `hit_item`, `set_condition_tag`, `resolve_spell_failure`;
+  у `cast_spell` параметр `penalty_balance`.
+- Новые модули: `wp/model/spell_view.py` (штрафы магии от брони), `wp/catalog/armor_catalog.py` + данные `armor_set_1.json`, `armor_set_2.json`.

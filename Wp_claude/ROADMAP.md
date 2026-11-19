@@ -24,6 +24,15 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
 - Done in package 8: final item hardness/HP from mastery in the model (records.item_picks); max HP +1 for 50 (buy_hp);
   attack availability (records.attack_available, attack_view.all_records); masterwork flag; bag weight flag;
   BP overcap; shield proficiency ranks. Report: tests/PACKAGE8_REPORT.md.
+- Done in package 9: balance cap snapshot, spend_balance, pay_hp_cost; non-proficient armor/shield attack penalty;
+  masterwork rules; condition tag; main / maneuver record kinds; item number order; notches (hit_item, durable);
+  touch AC bonus; armor spell penalties and failure; armor / shield data sets. Report: tests/PACKAGE9_REPORT.md.
+- Package 10 (planned): sheet stats: saves, initiative, CMB/CMD, size in attack, racial damage per pain, lucky-attack
+  effects, crit range display.
+- Package 11 (planned): maneuver record stubs (name, base_record, to-hit mod, damage mod, action cost, balance cost,
+  spirit cost, tags, free note, generic custom resource counters like "Spark", forward-compatible unknown fields);
+  consumables (quantity decreases on use, at 0 grey and zero weight, manual delete); list of active attacks /
+  abilities of equipped items with buffs and charges.
 - Deferred (from REVIEW_REPORT, not done yet): spell mastery cost
   25 * (1 + circle^2); level-up command (+100 * level training, HP roll); comfort -> training command;
   OT removal commands (comfort, attention, injury removal, RL raise); weapon card data from the owner's table.
