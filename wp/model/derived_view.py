@@ -393,9 +393,21 @@ def item_effects(ch):
     return out
 
 
+def feat_bonuses(ch, ctx=None):
+    """Feat effects: permanent while the feat is owned (buffs.md / training.md, package 11 D)."""
+    ctx = context(ch) if ctx is None else ctx
+    return tuple(e.as_bonus(f.title or f.fid, ctx) for f in ch.feats for e in f.effects)
+
+
+def effect_bonuses(ch, ctx=None):
+    """Typed bonuses of active statuses and owned feats (not items: their tab rules differ)."""
+    ctx = context(ch) if ctx is None else ctx
+    return tuple(ef.bonuses_from(ch.statuses, ctx)) + feat_bonuses(ch, ctx)
+
+
 def all_bonuses(ch):
-    """Typed bonuses from statuses, items, morale and pain."""
-    out = list(ef.bonuses_from(ch.statuses, context(ch)))
+    """Typed bonuses from statuses, feats, items, morale and pain."""
+    out = list(effect_bonuses(ch))
     out += item_effects(ch)
     out.append(bo.morale(morale_bonus(ch)))
     out.append(pn.penalty_bonus(pain_total(ch), ch.pain_profile))

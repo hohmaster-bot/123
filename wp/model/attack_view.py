@@ -174,7 +174,7 @@ def broken_bonuses(ch, item):
 
 
 def drum(ch, record, item):
-    out = list(ef.bonuses_from(ch.statuses, dv.context(ch)))
+    out = list(dv.effect_bonuses(ch))
     out += _item_bonuses(ch, item)
     out += enchant_bonuses(ch, item)
     out += broken_bonuses(ch, item)

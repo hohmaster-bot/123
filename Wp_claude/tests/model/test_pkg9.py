@@ -22,7 +22,7 @@ from wp.model import derived_view as dv  # noqa: E402
 from wp.model import items as itm  # noqa: E402
 from wp.model import records as rec  # noqa: E402
 from wp.model import spell_view as sv  # noqa: E402
-from wp.model.character import SHIELD, Ability, AttackRecord, Character, Item, WeaponEntry  # noqa: E402
+from wp.model.character import SHIELD, Ability, AttackRecord, Character, Feat, Item, WeaponEntry  # noqa: E402
 
 S = Suite("test_pkg9")
 
@@ -332,8 +332,9 @@ S.case("i-sum", "gear.md [OWNER pkg 9 I]: armor 2/20% + shield 1/15% -> 3 and 35
 S.case("i-bag-shield", "pkg 9 I: shield in the bag does not count -> 2 / 20%", (2, 20))(
     lambda: (lambda v: (v.mana_penalty, v.failure_pct))(sv.view(_caster(ARM, replace(SHD, in_hands=False)))))
 def _reduced():
-    return _caster(ARM, SHD, statuses=(ef.Status("feat", sid="f", effects=(ef.Effect(sv.TARGET_MANA, -2),
-                                                                           ef.Effect(sv.TARGET_FAILURE, -50))),))
+    # package 11 D: the feat's reduction is a feat effect (it used to be entered as a status)
+    return _caster(ARM, SHD, feats=(Feat("feat", title="feat", effects=(ef.Effect(sv.TARGET_MANA, -2),
+                                                                      ef.Effect(sv.TARGET_FAILURE, -50))),))
 
 
 S.case("i-reduction", "pkg 9 I: feat -2 mana, -50% failure -> 1 and 0 (floor, also the raw chance)", (1, 0, 0, 3, 35))(

@@ -11,6 +11,8 @@ import os
 from dataclasses import dataclass, replace
 from typing import Tuple
 
+from wp.core.effects import Effect
+
 DEFAULT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "feats_default.json")
 FORMAT = "wipefinder.feats"
 DEFAULT_COST = 200
@@ -26,6 +28,8 @@ class FeatTemplate:
     cost: int = DEFAULT_COST
     flags: Tuple[str, ...] = ()
     source: str = "default"
+    effects: Tuple[Effect, ...] = ()   # copied to the sheet feat (package 11 D)
+    granted_maneuvers: Tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -39,13 +43,26 @@ class FeatCatalog:
         raise KeyError("no feat template %r" % (fid,))
 
 
+EFFECT_KEYS = ("target", "value", "btype", "weapon", "dice", "note", "stat_mod", "multiplier")
+
+
+def _effect(d):
+    """An effect in the catalog file: {"target": ..., "value": N | "stat_mod": "str", ...}."""
+    unknown = set(d) - set(EFFECT_KEYS)
+    if unknown:
+        raise ValueError("unknown effect fields in the feat catalog: %s" % ", ".join(sorted(unknown)))
+    return Effect(**d)
+
+
 def parse(text):
     data = json.loads(text)
     if data.get("format") != FORMAT:
         raise ValueError("not a WipeFinder feat catalog")
     out = tuple(FeatTemplate(fid=f["fid"], name=f["name"], name_en=f.get("name_en", ""),
                              desc=f.get("desc", ""), cost=int(f.get("cost", DEFAULT_COST)),
-                             flags=tuple(f.get("flags", ()))) for f in data["feats"])
+                             flags=tuple(f.get("flags", ())),
+                             effects=tuple(_effect(e) for e in f.get("effects", ())),
+                             granted_maneuvers=tuple(f.get("granted_maneuvers", ()))) for f in data["feats"])
     ids = [t.fid for t in out]
     if len(ids) != len(set(ids)):
         raise ValueError("duplicate feat ids in the catalog file")

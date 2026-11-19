@@ -225,18 +225,23 @@ def att(ch):
     return next(v for v in av.all_attacks(ch) if v.record == "r")
 
 
-def lucky(weapons=(), statuses=(), active=True):
-    c = hero(items=(sword(),), attacks=(AttackRecord("r", "sw", "blades"),), weapons=weapons, statuses=statuses)
+def feat(*effects, fid="feat"):
+    """Package 11 D: a feat's bonus is a feat effect (it used to be entered as a status)."""
+    return Feat(fid, title=fid, effects=tuple(effects))
+
+
+def lucky(weapons=(), feats=(), active=True):
+    c = hero(items=(sword(),), attacks=(AttackRecord("r", "sw", "blades"),), weapons=weapons, feats=feats)
     if active:
         c = run(c, ("activate_item", {"iid": "sw"}))
     return att(c).lucky
 
 
-FEAT_LUCKY = status(ef.Effect(bo.LUCKY, 1, weapon="sw"), sid="feat")
+FEAT_LUCKY = feat(ef.Effect(bo.LUCKY, 1, weapon="sw"))
 S.case("l-sources", "combat.md (R7): enchant 2 -> 18; + mastery pick -> 17; + feat +1 for this weapon -> 16", (18, 17, 16))(
     lambda: (lucky(), lucky(blades("lucky_1")), lucky(blades("lucky_1"), (FEAT_LUCKY,))))
 S.case("l-other-weapon", "combat.md: a feat +1 for ANOTHER weapon does not count -> 18", 18)(
-    lambda: lucky(statuses=(status(ef.Effect(bo.LUCKY, 1, weapon="axe"), sid="f2"),)))
+    lambda: lucky(feats=(feat(ef.Effect(bo.LUCKY, 1, weapon="axe"), fid="f2"),)))
 S.case("l-cap", "combat.md (Q60): mastery capped at 3; enchant 2 and feat 1 add on top: 20 - 3 - 2 - 1 = 14", 14)(
     lambda: lucky(blades("lucky_1", "lucky_1", "lucky_1", "lucky_1"), (FEAT_LUCKY,)))
 
@@ -247,8 +252,8 @@ def dagger(**kw):
     return Item("dg", "dagger", **base)
 
 
-def crit(item, weapons=(), statuses=()):
-    c = hero(items=(item,), attacks=(AttackRecord("r", "dg", "blades"),), weapons=weapons, statuses=statuses)
+def crit(item, weapons=(), feats=()):
+    c = hero(items=(item,), attacks=(AttackRecord("r", "dg", "blades"),), weapons=weapons, feats=feats)
     v = att(c)
     return (v.crit_range, v.crit_hint)
 
@@ -256,7 +261,7 @@ def crit(item, weapons=(), statuses=()):
 S.case("k-dagger", "combat.md (R8): dagger 19+ x2 -> 19, hint +0; pick crit +1 -> 18", ((19, "+0"), (18, "+0")))(
     lambda: (crit(dagger()), crit(dagger(), blades("crit_1"))))
 S.case("k-keen-feat", "combat.md: keen dagger 19+ -> 17; feat crit_range +1 -> 18", (17, 18))(
-    lambda: (crit(dagger(keen=True))[0], crit(dagger(), statuses=(status(ef.Effect(bo.CRIT_RANGE, 1, weapon="dg")),))[0]))
+    lambda: (crit(dagger(keen=True))[0], crit(dagger(), feats=(feat(ef.Effect(bo.CRIT_RANGE, 1, weapon="dg")),))[0]))
 
 if __name__ == "__main__":
     sys.exit(S.run())

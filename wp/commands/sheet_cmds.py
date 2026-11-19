@@ -35,7 +35,8 @@ def add_feat(ch, catalog=None, fid="", source="training"):
         left = tr.pay(ch.training, price, source)
     except ValueError as e:
         raise CommandError(str(e))
-    feat = Feat(fid=fid, title=t.name, flags=t.flags, source=source, cost=price)
+    feat = Feat(fid=fid, title=t.name, flags=t.flags, source=source, cost=price, effects=t.effects,
+                granted_maneuvers=t.granted_maneuvers)
     new = replace(ch, feats=ch.feats + (feat,), training=left)
     return commit(new, "add_feat", "feat %s (%s, %d)" % (fid, source, price), {"cost": price})
 
@@ -54,3 +55,11 @@ def set_base_speed(ch, feet=20):
     if int(feet) < 0:
         raise CommandError("speed cannot be negative")
     return commit(replace(ch, base_speed=int(feet)), "set_base_speed", "base speed %d ft" % int(feet))
+
+
+@command
+def remove_feat(ch, fid=""):
+    """Remove a feat from the sheet; its effects go with it. No training refund (the rules give none)."""
+    if not any(f.fid == fid for f in ch.feats):
+        raise CommandError("no feat %r on the sheet" % (fid,))
+    return commit(replace(ch, feats=tuple(f for f in ch.feats if f.fid != fid)), "remove_feat", "feat %s removed" % fid)

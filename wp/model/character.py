@@ -141,6 +141,8 @@ class Feat:
     source: str = "training"
     cost: int = 0
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only
+    effects: Tuple[Effect, ...] = ()   # permanent while the feat is owned (same structure as statuses)
+    granted_maneuvers: Tuple[str, ...] = ()   # maneuver ids (used from package 12)
 
 
 @dataclass(frozen=True)

@@ -19,7 +19,8 @@ from wp.model import derived_view as dv  # noqa: E402
 from wp.catalog import skills_catalog as sc  # noqa: E402
 from wp.model import attack_view as av  # noqa: E402
 from wp.model import stats_view as stv  # noqa: E402
-from wp.model.character import ABILITIES, Ability, Character, Item  # noqa: E402
+from wp.catalog import feats_catalog as fc  # noqa: E402
+from wp.model.character import ABILITIES, Ability, Character, Feat, Item  # noqa: E402
 from wp.storage import character_io as cio  # noqa: E402
 
 S = Suite("test_pkg11")
@@ -241,6 +242,49 @@ def _old_size_save():
 
 S.case("c-old-save", "D1/D11: an old file with size_mod / size_cmb loads; the fields are dropped (size medium)", ("medium", 0))(
     _old_size_save)
+
+
+# ---- D: feats with effects (Q68) ----
+def with_feat(*effects, **kw):
+    cat = sc.load_default()
+    base = dict(abilities=abil(str=16, dex=14), skills=(sc.make_skill(cat, "intimidate"),),
+                items=(Item("sw", "sword", kind="weapon", hands=1, in_hands=True, groups=("blades",)),),
+                feats=(Feat("ft", title="Feat", effects=effects),))
+    base.update(kw)
+    ch = dispatch(hero(**base), "add_attack", iid="sw", group="blades").state
+    return ch
+
+
+def _atk11(ch):
+    return av.by_record(ch, ch.attacks[0].rid)
+
+
+S.case("d-attack-damage", "training.md [OWNER pkg 11 D]: feat +1 attack, +2 damage reach the attack view (Str 16: 4 / 5)",
+       (4, 5))(
+    lambda: (lambda a: (a.to_hit, a.damage))(_atk11(with_feat(Effect(bo.ATTACK, 1), Effect(bo.DAMAGE, 2)))))
+S.case("d-skill-statmod", "pkg 11 D + B: feat +Str mod to Intimidation (Str 16 -> +3)", 3)(
+    lambda: dv.skill_bonus(with_feat(Effect(bo.skill_target("intimidate"), stat_mod="str")), "intimidate"))
+S.case("d-speed", "pkg 11 D: feat +10 ft speed -> 30", 30)(
+    lambda: dv.speed(with_feat(Effect(bo.SPEED, 10))))
+S.case("d-remove-feat", "pkg 11 D: removing the feat removes its effect (attack 4 -> 3)", (4, 3))(
+    lambda: (lambda c: (_atk11(c).to_hit, _atk11(run(c, ("remove_feat", {"fid": "ft"}))).to_hit))(
+        with_feat(Effect(bo.ATTACK, 1))))
+
+
+def _catalog_feat():
+    cat = fc.parse(json.dumps({"format": "wipefinder.feats", "version": 1, "feats": [
+        {"fid": "brute", "name": "Brute", "cost": 200, "granted_maneuvers": ["shove"],
+         "effects": [{"target": "attack", "value": 1}, {"target": "skill:intimidate", "stat_mod": "str"}]}]}))
+    ch = run(with_feat(), ("remove_feat", {"fid": "ft"}), ("add_feat", {"catalog": cat, "fid": "brute"}))
+    f = ch.feats[0]
+    return (len(f.effects), f.granted_maneuvers, _atk11(ch).to_hit, dv.skill_bonus(ch, "intimidate"))
+
+
+S.case("d-catalog", "catalog.md: a catalog feat carries effects and granted_maneuvers to the sheet", (2, ("shove",), 4, 3))(
+    _catalog_feat)
+S.case("d-feat-save-load", "D11: feat effects and granted_maneuvers survive save/load", True)(
+    lambda: (lambda c: cio.loads(cio.dumps(c)) == c)(hero(feats=(Feat("ft", effects=(Effect(bo.ATTACK, stat_mod="str"),),
+                                                                    granted_maneuvers=("trip",)),))))
 
 if __name__ == "__main__":
     sys.exit(S.run())

@@ -13,6 +13,13 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
   (old code wrongly spends for any source). Race and class abilities and feats can ALSO be bought with training.
 - Price is editable on any purchase except feats (feat price is entered by its author, default 200 [beta behavior]).
 - Feat "Finesse training" (finesse_training): 200 [OWNER confirmed].
+- Feats with effects [OWNER, package 11 D; closes Q68]: a feat has an effects list with the same structure as statuses
+  (buffs.md), permanent while the feat is owned: bonuses to parameters, skills, attacks, damage, speed, any part of the
+  sheet; values may be a stat modifier (buffs.md "Value from a stat modifier"). Removing the feat removes its effects
+  (command remove_feat; no training refund: the rules give none). A feat may hold granted_maneuvers (a list of
+  maneuver ids, used from package 12). Feats have NO toggle modes: "power attack" is a maneuver (package 12) and
+  stances already exist. Catalog feats carry their effects and granted_maneuvers to the sheet.
+  Tests: feat +1 attack / +2 damage reach the attack view; +Str to Intimidation; +10 ft speed; remove -> gone.
 
 ## Ability score cost
 - Score used for pricing = base + RACE bonus. Item and quirk bonuses do NOT raise the price; injuries usually do not lower it.

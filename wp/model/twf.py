@@ -49,8 +49,8 @@ def penalties(light_off, feat, reduction=0):
 
 
 def reduction(ch):
-    """Sum of twf_reduction effects of active statuses (class / race features)."""
-    bonuses = ef.bonuses_from(ch.statuses, dv.context(ch))
+    """Sum of twf_reduction effects of active statuses and feats (class / race features)."""
+    bonuses = dv.effect_bonuses(ch)
     return sum(b.value for b in bonuses if b.target == REDUCTION)
 
 
