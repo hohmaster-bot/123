@@ -15,7 +15,8 @@ Legacy tkinter code at repo root is reference only until replaced. Do not edit `
 - Game rules live in `Wp_claude/RULES/`. If code and RULES disagree, ask the owner; do not guess.
 - Numbers in RULES/ are tests. Never change RULES/ without the owner's consent.
 - UI wishes go only to `Wp_claude/UI_WISHES.md`, never into RULES/.
-- `character.schema.json` is the only data contract. Do not duplicate field lists in docs.
+- The data contract is the storage dataclasses: `wp/storage/character_io.py` and the types it registers
+  (`wp/model/character.py`, `wp/core/*`). Do not duplicate field lists in docs.
 - Do not claim tests ran unless you ran them in this session.
 
 ## Read only what the task needs
@@ -53,7 +54,7 @@ Test commands (each exits 1 on any failure, no pytest needed):
   `python Wp_claude/tests/core/test_pain.py`, `python Wp_claude/tests/core/test_tick.py`,
   `python Wp_claude/tests/core/test_statuses.py`, `python Wp_claude/tests/core/test_ac_layers.py` (status in CORE_REPORT.md)
 - model + commands: `python Wp_claude/tests/model/test_scenarios.py`, `python Wp_claude/tests/model/test_view.py`,
-  `python Wp_claude/tests/model/test_commands2.py`, `python Wp_claude/tests/model/test_skills_catalog.py`, `python Wp_claude/tests/model/test_attack.py`, `python Wp_claude/tests/model/test_cap_cycle.py`, `python Wp_claude/tests/model/test_weapon_catalog.py`, `python Wp_claude/tests/model/test_group_a.py`, `python Wp_claude/tests/model/test_group_b.py`, `python Wp_claude/tests/model/test_twf.py`, `python Wp_claude/tests/model/test_balance_damage.py`, `python Wp_claude/tests/model/test_pkg4.py`, `python Wp_claude/tests/model/test_pkg5.py`, `python Wp_claude/tests/model/test_pkg6.py`, `python Wp_claude/tests/model/test_pkg8.py`, `python Wp_claude/tests/model/test_pkg9.py`, `python Wp_claude/tests/model/test_pkg10.py`
+  `python Wp_claude/tests/model/test_commands2.py`, `python Wp_claude/tests/model/test_skills_catalog.py`, `python Wp_claude/tests/model/test_attack.py`, `python Wp_claude/tests/model/test_cap_cycle.py`, `python Wp_claude/tests/model/test_weapon_catalog.py`, `python Wp_claude/tests/model/test_group_a.py`, `python Wp_claude/tests/model/test_group_b.py`, `python Wp_claude/tests/model/test_twf.py`, `python Wp_claude/tests/model/test_balance_damage.py`, `python Wp_claude/tests/model/test_pkg4.py`, `python Wp_claude/tests/model/test_pkg5.py`, `python Wp_claude/tests/model/test_pkg6.py`, `python Wp_claude/tests/model/test_pkg8.py`, `python Wp_claude/tests/model/test_pkg9.py`, `python Wp_claude/tests/model/test_pkg10.py`, `python Wp_claude/tests/model/test_pkg11.py`
   (status in MODEL_REPORT.md)
 - storage: `python Wp_claude/tests/storage/test_character_io.py`; module size: `python Wp_claude/tests/test_module_size.py`
 - ASCII-only code: `python Wp_claude/tests/test_ascii_code.py` (wp/ and Wp_claude/tests/)
