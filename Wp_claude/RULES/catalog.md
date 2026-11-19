@@ -19,7 +19,9 @@
   (armor / shield), category (armor light / medium / heavy; shield light / heavy / tower), weight, price (text as
   written), access_class (set 1 only), ac_bonus, touch_bonus, max_dex, skill_penalty (positive = penalty),
   speed_penalty_ft, spell_penalty_mana, spell_failure_pct, special ("+" column of set 2), hardness, hp, durable.
-  English names for now; the owner adds Russian names later.
+  English names for now; the owner adds Russian names later. [OWNER, package 10, closes Q53] Set 1 "magic" numbers
+  are a positive extra mana cost (source -1 -> 1); weight "(1)" = 1 = 10 L as usual; access class and set 2 "+" are
+  data; rules per game may change.
 - Shop is just a layer on the catalog [OWNER]: taking an item from the catalog can buy it at once (gold deducted automatically);
   taking a feat can buy it for training (only if the checkbox "pay with training" is on). Items only for gold.
   Old characters are not migrated (D1).

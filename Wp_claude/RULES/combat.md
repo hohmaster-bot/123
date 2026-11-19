@@ -13,6 +13,10 @@
 - Notation 19+ / 20+ = threat range, x2. "x2/x3/x4" alone = crit on 20.
 - Weapon mastery can widen range by 2 (20 -> 18). Keen property or similar feat doubles base threat range.
 - Item must store: base crit + modifiers from mastery and properties. Crit range must be modifiable by feats.
+- [package 10, R8] The attack view shows the crit range: the weapon's base range, "keen" (item property) doubles the
+  BASE range, each mastery pick "crit +1" and each feat effect (target "crit_range", for this weapon) widen it by 1;
+  never below 2; next to the multiplier hint. Tests: dagger 19+ -> 19 (x2, hint +0); with "crit +1" -> 18; keen -> 17;
+  feat +1 -> 18.
 - The crit confirmation roll already includes bonuses and penalties (rolled by the player); the core does not touch it [OWNER].
 - Tooltip only (house-rule note, no calculation) when confirming a crit: x2 -> +0, x3 -> +4, x4 -> +8.
 
@@ -20,6 +24,10 @@
 - Separate die, no bonuses/penalties. Base 20.
 - +1 (lowers threshold) up to 3 times from mastery, plus X where X = weapon enchant level.
 - Class/race/feat/ability can add +N for a specific weapon.
+- [package 10, R7] Such an effect has target "lucky" (with a weapon id = that weapon only; no weapon id = every
+  weapon). The cap 3 is for MASTERY picks only, as written above (OPEN_QUESTIONS Q60). Tests: enchant +2 -> 18;
+  + one mastery pick -> 17; + a feat +1 for this weapon -> 16; a feat for another weapon -> no change; 4 mastery picks
+  (forced) + enchant 2 + feat 1 -> 20 - 3 - 2 - 1 = 14. Never below 2.
 
 ## Attack records [OWNER]
 - An attack record = weapon + chosen weapon group + grip (one hand, off-hand, two hands) + attack stat (default Str).
@@ -48,20 +56,31 @@
   penalty down to 0: effect "two-weapon penalty reduction" (a number; the final penalty is never below 0, never a bonus).
 - Feat "Two-Weapon Fighting" (base) is in the catalog (default price 200, editable). Improved and Greater versions are not added.
 - An attack record has the toggle "combination of two attacks" (available with two weapons in the hands or a double
-  weapon). A weapon takes 1 or 2 hand slots.
+  weapon). A weapon takes 1 or 2 hand slots. When on, both attacks get the table penalties (feat? light/finesse off
+  hand?). The second attack of a double weapon uses the lower damage row. The view marks which attack is the main
+  hand and which the off hand.
 - Record kinds [OWNER, package 9, closes Q38]: an item's MAIN record (kind "main") is the plain weapon attack; its
   group and picks are the ones that matter (also for item HP / hardness). Every other record of the item is a
   "maneuver" with a reference to its main record (base_record): it inherits BAB, stat, mastery bonuses, pain etc. from
   the main record and only adds its own modifiers (a later package). add_attack: the first record of an item is main,
   later ones are maneuvers on it; a second main is refused; a maneuver with another group is refused; a main record
-  that maneuvers use cannot be removed first (OPEN_QUESTIONS Q44, Q45).
+  that maneuvers use cannot be removed first [OWNER, package 10: accepted, Q45]. Package 11 replaces these
+  item-bound maneuvers with the character-level maneuver list below.
+- Maneuver list [OWNER, package 10 design, closes Q44; built in package 11]: maneuvers live in a CHARACTER-level list,
+  not inside items. Each has: name, description, required tags (weapon groups, weapon kinds, unarmed), attack
+  modifiers (to-hit, damage, other bonuses/penalties), cost in actions and in balance. A maneuver is AVAILABLE when a
+  weapon in the hands has any matching tag (a weapon is in many groups, e.g. a long sword in "long swords" and "heavy
+  weapons", so both maneuver lists open). It uses the numbers of that weapon's main attack. Losing the weapon never
+  deletes it: it is only unavailable (grey).
+- Attack list [OWNER, package 10, closes Q37]: shows what is in the hands plus unarmed combat (all_attacks); the full
+  list with unavailable records greyed out stays available (all_records). A "what is worn" tab with item pictures is
+  an idea only (ROADMAP).
 - Attack availability [OWNER, package 8]: setting the toggle is not checked against the hands; instead a record is
   AVAILABLE only while every weapon it needs is in the hands (two-weapon: both weapons, in either hand order; double
   weapon: the one weapon; an unarmed off-hand strike needs a free hand). An unavailable record tells which weapons it
   needs and what is in the hands (ids, the UI greys it out and explains, e.g. "in hands: sword A, shield A").
   Tests: A+B and B+A available; only A -> missing B; sword + shield -> missing B; double weapon in / out of hands;
-  a weapon in the bag -> unavailable. When on, both attacks get the table penalties (feat? light/finesse off hand?). The second attack of a double
-  weapon uses the lower damage row. The view marks which attack is the main hand and which the off hand.
+  a weapon in the bag -> unavailable.
 
 ## Empty-hand parry [OWNER]
 - Empty-hand parry and damage to balance [OWNER]: parrying with an empty hand is allowed. The player sees that the
@@ -80,6 +99,13 @@
 - Attack and CMB can use Dex instead of Str via option on the Attack/CMB or settings ("has finesse"):
   then the better of Str/Dex is used.
 - Size (small/medium/large) affects attack, CMB, CMD.
+  [package 10, R9] The attack roll gets the size modifier (Character.size_mod, the same number as the AC size layer).
+  CMB/CMD get the size CMB modifier (Character.size_cmb, typed by hand; OPEN_QUESTIONS Q57). Test: size +1 -> attack +1.
+- CMB / CMD in the sheet [package 10; open details Q58, Q59]:
+  CMB = BAB + Str mod (with the Finesse feat: the better of Str / Dex) + size CMB mod + bonuses with target "cmb"
+  + pain + morale (CMB is a roll). Weapon-group bonuses are not added yet (Q58).
+  CMD = 10 + BAB + Str mod + Dex mod + size CMB mod + bonuses with target "cmd"; CMD is not a roll: no pain, no morale.
+  Tests: BAB 3, Str 16, size 1, +2 -> CMB 9 (pain 1 -> 8); Finesse and Dex 18 -> 8; CMD 10 + 3 + 3 + 2 + 1 + 1 = 20.
 
 ## Spells damage
 - Standard PF, but dice damage is affected by morale and pain. Editor unfinished [BETA]:

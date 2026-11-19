@@ -621,3 +621,11 @@ test_ascii_code: 65 files, non-ASCII 0
 - Новые команды: `spend_balance`, `pay_hp_cost`, `hit_item`, `set_condition_tag`, `resolve_spell_failure`;
   у `cast_spell` параметр `penalty_balance`.
 - Новые модули: `wp/model/spell_view.py` (штрафы магии от брони), `wp/catalog/armor_catalog.py` + данные `armor_set_1.json`, `armor_set_2.json`.
+
+# Пакет 10: ответы на Q37-Q54 и показатели листа
+- Подробно: `Wp_claude/tests/PACKAGE10_REPORT.md`. Тесты: `test_pkg10.py` (30); правки в `test_pkg9.py` (уровень маны) и `test_scenarios.py`.
+- Новый модуль `wp/model/stats_view.py`: спасброски, инициатива, CMB, CMD.
+- Новые поля: `Character.save_base`, `save_stats`, `size_cmb`; `Item.keen`. Убрано `Character.mana_level`
+  (старый файл с ним читается, значение не используется: `character_io.DROPPED`).
+- Новые цели эффектов: `touch_armor`, `cmd`, `save:<id>`, `crit_range`; цель `lucky` теперь работает.
+- `AttackView.crit_range`; в атаке строки «size» и «pain: race bonus». Таблица маны по кругам `magic.CIRCLE_MANA`.

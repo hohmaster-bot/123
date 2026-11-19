@@ -44,18 +44,25 @@
 - Weight, armor bonus. May slow. Mwk/special may reduce penalty (rarely give bonus).
 - Touch AC bonus [OWNER, package 9 H]: armor may have a "touch AC" bonus (catalog column "touch AC"). It adds ONLY to
   the touch AC, as the armor layer of the touch AC; it gives NO balance and does not change other AC types. Worn armor
-  only, same rules as the armor bonus (nothing at HP 0, halved down when broken); enchantment does not raise it
-  (OPEN_QUESTIONS Q46). Tests: armor 4 touch 2: touch 12, front 14, balance 4; broken: touch 11, front 12; HP 0: 10/10.
+  only, same rules as the armor bonus (nothing at HP 0, halved down when broken); enchantment does NOT raise it
+  [OWNER, package 10, closes Q46]. Other sources may: effects with target "touch_armor" (statuses, spells, items,
+  feats) are typed bonuses to the armor layer of the touch AC only, stacked with the armor's touch bonus (type armor)
+  by the normal rules. Tests: touch 2 + flat +1 -> 13 (front 14); touch 2 + armor-type +3 -> 13; no armor, +2 -> 12;
+  +2 armor activated: front 16, touch 12. Tests: armor 4 touch 2: touch 12, front 14, balance 4; broken: touch 11, front 12; HP 0: 10/10.
 - Spell casting penalties [OWNER, package 9 I]: armor and shields have spell_penalty_mana (extra mana cost, >= 0;
   set 1 column "magic") and spell_failure_pct (0-100; "divine" / "spell failure" column). The numbers of worn armor and
   held shields ADD UP, then effects with target "spell_penalty_mana" / "spell_failure_pct" (feats, class traits) change
-  them like normal bonus entries (a value -2 lowers by 2); never below 0; the chance at most 100.
-  - Mana casters: the extra cost is added to every mana spell (circle 1+), paid in any mix of mana and balance (the
-    player says how much from balance). One spell never costs more than the caster's mana level (capped, the cast
-    reports it). Source note: the "magic" penalty adds extra mana/balance cost in any combination.
+  them like normal bonus entries (a value -2 lowers by 2; accepted Q47); never below 0; the chance at most 100.
+  - Mana casters: the extra cost is added to every mana spell (circle 1+; not cantrips, accepted Q50), paid in any
+    mix of mana and balance (the player says how much from balance; the spell's own cost stays mana = balance,
+    accepted Q48). Mana level = the character's level [OWNER, package 10, closes Q49]: one spell (its cost + the armor
+    penalty after reductions) can cost at most that much; above it the spell CANNOT be cast (clear refusal, no cut).
+    Tests: level 5, cost 3 + 2 -> cast; level 4 -> refused; level 4, cost 5 -> refused; level 4, penalty lowered to 1
+    -> cast. Source note: the "magic" penalty adds extra mana/balance cost in any combination.
   - Failure: slot casters always have the failure chance; mana casters only if the chance > 0. The app rolls no dice:
     the player reports the roll (command resolve_spell_failure). Failure mode of the caster (data): "cancel" = the
-    spell is not cast; "zero_balance" = the spell still works and the balance drops to 0 as an extra cost. Divine
+    spell is not cast and nothing paid is refunded [OWNER, package 10, closes Q51]; "zero_balance" = the spell still
+    works and the balance drops to 0 as an extra cost. A slot caster with chance 0 has nothing to roll (accepted Q52). Divine
     casters default to "zero_balance" (source note: the "divine" penalty does not cancel the spell on failure but
     zeroes all balance), others to "cancel".
   - Tests: armor 2/20% + shield 1/15% -> 3 / 35%; shield in the bag not counted; feat -2 / -50% -> 1 / 0; 60% + 60% ->

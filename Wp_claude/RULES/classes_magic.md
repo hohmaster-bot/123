@@ -24,6 +24,12 @@
 
 ## Spell cost [OWNER, confirmed]
 - Circles 0-9 as in Pathfinder. Mana cost per spell is whatever the spell says (1, 3, 5 ... by circle); entered per spell.
+  Circle table [OWNER, package 10]: circles 0-9 cost 0, 1, 3, 5, 7, 9, 11, 13, 15, 17 mana (used when no cost is typed).
+- Mana level [OWNER, package 10] = the character's level: one mana spell (cost + armor penalty) costs at most that
+  much (gear.md "Armor"). Checks (package 10 tests): table 0..17; overload = actions spent (usually 2), double for
+  non-mana spells (slots: divine, bardic) and cantrips; a mana spell costs balance = its mana cost; OT from a short
+  balance -> concentration DC 10 + 2 * OT or the spell fails; a spell from a magic item: no overload, no balance, no
+  mana (item activation still costs spirit).
 - Mage (mana user): balance cost = mana cost (0 mana -> 0 balance). Overload X = casting time in actions
   (standard action = 2, usually 2) [OWNER, changed]. Spell duration does not affect overload.
   Default from the formula; the player may type another value at the cast.

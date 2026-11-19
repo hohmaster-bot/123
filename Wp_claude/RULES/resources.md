@@ -40,21 +40,25 @@ Spell Resistance is separate (vs spells, not a damage step).
   Then hits of 1 and 1 (balance not restored): each HP -1, pain +1, trauma +1 -> totals HP -12, pain 3, trauma 11.
 - Damage input: button "take damage" + optional DR/- and Resistance selector (by damage type) applied before the above.
   DR/Resistance come from the sheet's effects. [UI wish]
-- Balance cap in combat [OWNER homerule, package 9, closes Q35]: start of combat takes a SNAPSHOT of the balance max
+- Balance cap in combat [OWNER homerule, package 9, closes Q35; the stored snapshot accepted, Q54]: start of combat
+  takes a SNAPSHOT of the balance max
   (armor + current BP + bonuses at that moment). During combat the cap changes ONLY by hits (below); it does NOT change
   from a max HP change (e.g. Con lowered), spending BP, taking armor off/on or any bonus change. End of combat
   recomputes the cap from scratch and clears the snapshot. Balance REGEN stays live (current Con etc.).
   Tests: snapshot 7 (armor 2 + BP 5); spend 2 BP -> 7; armor off -> 7; bonus +3 and Con 14 -> 8 -> 7 (regen 3 -> 1);
   a hit -> 6; end of combat with BP 3 and no armor -> 3.
-- Paying balance (maneuvers, abilities: command spend_balance) is a payment, not damage: the cap does not drop.
-  More than the current balance cannot be paid (refused; OPEN_QUESTIONS Q43).
-- HP cost of an ability (command pay_hp_cost) [OWNER, package 9]: it lowers the CURRENT balance first, HP untouched;
-  the part above the balance -> OT and +1 pain like "damage to balance"; it never lowers the cap. Test: balance 7,
-  cost 9 -> balance 0, HP unchanged, OT +2, pain +1, cap 7; cost 3 -> balance 4, no OT, no pain. Each hit on the character lowers the cap by 1 until the end of
+  Hits: Each hit on the character lowers the cap by 1 until the end of
   combat, ONLY if the damage reached the balance (after percent, flat reductions, temp HP and analogs, HP were really
   lost). A fully blocked hit does not lower it. The current balance is NOT lowered by the cap drop. DoT does not lower
   the cap unless its effect has the flag "lowers cap". Counted only while combat is active; start and end of combat
   reset the counter. Example: balance 6/6, hit 5 -> 1/6, then cap 5 -> 1/5.
+- Paying balance (maneuvers, abilities: command spend_balance) is a payment, not damage: the cap does not drop.
+  More than the current balance cannot be paid: refused [OWNER, package 10, closes Q43]; for rare exceptions the
+  player uses the "damage to balance" button.
+- HP cost of an ability (command pay_hp_cost) [OWNER, package 9]: it lowers the CURRENT balance first, HP untouched;
+  the part above the balance -> OT = the WHOLE overflow and +1 pain by the standard damage rules, exactly like
+  "damage to balance"; it never lowers the cap [OWNER, package 10, closes Q41]. Test: balance 7,
+  cost 9 -> balance 0, HP unchanged, OT +2, pain +1, cap 7; cost 3 -> balance 4, no OT, no pain.
 - Empty-hand parry and damage to balance [OWNER]: parrying with an empty hand is allowed. The player sees that the
   enemy roll landed in the parry number (armor/parry layer, defense_layers.md) and presses "take damage to balance".
   Command damage_to_balance(amount): the damage goes straight to the balance; HP are not touched; percent and DR are
@@ -70,6 +74,9 @@ Spell Resistance is separate (vs spells, not a damage step).
 - Death: total pain >= cap (default 8). The cap is changed by race, template, feat (e.g. 12; some have "pain gives no penalties").
 - Pain penalty: -1 to ALL rolls per pain (saves, damage, attacks, skills, anything with a die), EXCEPT the lucky attack.
   Races may ignore pain or morale, or get a damage bonus per pain.
+- [package 10, R6] Attack damage = Str mod by grip + pain penalty (-1 per pain) + race bonus (PainProfile
+  damage_per_pain * total pain) + typed bonuses. Tests (numbers by hand from this text): Str -2, pain 2, +1 per pain
+  -> -2 - 2 + 2 = -2; Str +2, pain 3, +1 per pain -> 2 - 3 + 3 = 2; the same without the race bonus -> -1.
 - In the editor one pain entry can be turned into a status (change the property of one pain).
 - Sources: balance overflow; ability costs; GM punishment; curses/injuries (permanent, not removed by rest);
   temporary (situational); +1 temporary pain per 3 FULL HP below 0.

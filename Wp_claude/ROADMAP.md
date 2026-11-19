@@ -27,9 +27,11 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
 - Done in package 9: balance cap snapshot, spend_balance, pay_hp_cost; non-proficient armor/shield attack penalty;
   masterwork rules; condition tag; main / maneuver record kinds; item number order; notches (hit_item, durable);
   touch AC bonus; armor spell penalties and failure; armor / shield data sets. Report: tests/PACKAGE9_REPORT.md.
-- Package 10 (planned): sheet stats: saves, initiative, CMB/CMD, size in attack, racial damage per pain, lucky-attack
-  effects, crit range display.
-- Package 11 (planned): maneuver record stubs (name, base_record, to-hit mod, damage mod, action cost, balance cost,
+- Done in package 10: saves, initiative, CMB/CMD (stats_view), size in attack, racial damage per pain, lucky-attack
+  effects, crit range display, touch_armor effects, mana level = level, circle cost table. Report:
+  tests/PACKAGE10_REPORT.md. Open details: OPEN_QUESTIONS Q55-Q68.
+- Package 11 (planned): REPLACES the item-bound maneuver records (kind "maneuver") with the character-level maneuver
+  list (combat.md "Maneuver list"); maneuver record stubs (name, base_record, to-hit mod, damage mod, action cost, balance cost,
   spirit cost, tags, free note, generic custom resource counters like "Spark", forward-compatible unknown fields);
   consumables (quantity decreases on use, at 0 grey and zero weight, manual delete); list of active attacks /
   abilities of equipped items with buffs and charges.
@@ -53,6 +55,18 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   - master weapon picks have no mechanics yet: reroll one d20, one attack per turn without the [attack] tag,
     once per combat restore all balance (free action); expert picks "ignore first vulnerability",
     "ignore 20% cover", "first ranged attack can be parried" are stored but have no effect in numbers.
+
+## Ideas and UI-layer plans (package 10, not built)
+- "What is worn" tab with item pictures (idea only).
+- Icon registry for the UI: every button / slot / spell has an icon id; a file path is resolved by id; the user can
+  override it; a placeholder when missing. Ready icon packs (e.g. game-icons.net: check the license, CC BY needs
+  attribution) and AI-drawn icons both go through the registry.
+- Library policy: libraries only in the UI layer, always behind a thin adapter, versions pinned; before writing
+  something from scratch run a spike to check whether a ready library fits; license check; a THIRD_PARTY_LICENSES
+  file at release. Candidates: PySide6-QtAds (docking panels, LGPL 2.1); a theme library only as a pattern for our
+  own QSS theme system; qtawesome (icon placeholders, check icon-set licenses); pytest-qt (UI tests).
+- Overlay: plain Qt window flags and a global hotkey, tested in the Phase 4 spike. It is not shown over exclusive
+  fullscreen, only over windowed / borderless games.
 
 ## Phase 4 - overlay spike
 PySide6: click-through, always-on-top, global hotkey, tray, multi-monitor.
