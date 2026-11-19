@@ -16,7 +16,12 @@ from wp.core.effects import Effect, Status  # noqa: E402
 from wp.model import container_view as cv  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
 from wp.model import stance_view as stv  # noqa: E402
-from wp.model.character import ABILITIES, Ability, Character, Feat, Item  # noqa: E402
+from wp.model import attack_view as av  # noqa: E402
+from wp.model import maneuver_view as mv  # noqa: E402
+from wp.model import stats_view as stats  # noqa: E402
+from wp.core.pain import PainEntry  # noqa: E402
+from wp.core.weapons import Pick, Weapon  # noqa: E402
+from wp.model.character import ABILITIES, Ability, AttackRecord, Character, Feat, Item, WeaponEntry  # noqa: E402
 from wp.storage import character_io as cio  # noqa: E402
 
 S = Suite("test_pkg12")
@@ -142,6 +147,128 @@ S.case("a4-not-in-container", "combat.md: stances are not statuses in the contai
     lambda: tuple(e for e in cv.container_view(stanced("iron")).entries))
 S.case("a4-save-load", "D11: is_stance and active_stance survive save/load", True)(
     lambda: (lambda c: cio.loads(cio.dumps(c)) == c)(stanced("iron")))
+
+# ---- B: maneuvers by tags ----
+def longsword(**kw):
+    base = dict(kind="weapon", hands=1, in_hands=True, groups=("long_swords", "heavy_weapons"), wkind="longsword")
+    base.update(kw)
+    return Item("ls", "long sword", **base)
+
+
+def axe(**kw):
+    base = dict(kind="weapon", hands=1, in_hands=True, groups=("axes",), wkind="handaxe")
+    base.update(kw)
+    return Item("ax", "hand axe", **base)
+
+
+EXPERT = WeaponEntry(Weapon("long_swords", grades=8), picks=(Pick(5, "attack_1"), Pick(6, "attack_1"), Pick(7, "attack_1")))
+RECS = (AttackRecord("r_ls", "ls", "long_swords"), AttackRecord("r_ax", "ax", "axes"))
+
+
+def fighter(items=None, **kw):
+    base = dict(bab=2, abilities=abil(str=14), items=items if items is not None else (longsword(),), attacks=RECS,
+                weapons=(EXPERT,))
+    base.update(kw)
+    return hero(**base)
+
+
+def man(ch, name, **fields):
+    return run(ch, ("add_maneuver", dict(name=name, **fields)))
+
+
+def view(ch, mid):
+    return next(v for v in mv.maneuver_view(ch) if v.mid == mid)
+
+
+S.case("b-tag-any", "combat.md [OWNER pkg 12 B]: tag_mode any: heavy_weapons OR polearms -> the long sword fits", True)(
+    lambda: view(man(fighter(), "Cleave", required_tags=("heavy_weapons", "polearms")), "cleave").available)
+S.case("b-tag-all", "combat.md: tag_mode all: long_swords AND heavy_weapons fits; long_swords AND axes does not",
+       (True, False))(
+    lambda: (view(man(fighter(), "A", required_tags=("long_swords", "heavy_weapons"), tag_mode="all"), "a").available,
+             view(man(fighter(), "B", required_tags=("long_swords", "axes"), tag_mode="all"), "b").available))
+S.case("b-two-groups", "combat.md: one weapon in two groups brings the maneuvers of both groups", (True, True))(
+    lambda: (lambda c: (view(c, "lunge").available, view(c, "smash").available))(
+        man(man(fighter(), "Lunge", required_tags=("long_swords",)), "Smash", required_tags=("heavy_weapons",))))
+S.case("b-kind-tag", "combat.md: the weapon kind id (catalog card) is a tag too", True)(
+    lambda: view(man(fighter(), "Half-sword", required_tags=("longsword",)), "half_sword").available)
+
+
+def _two():
+    c = man(fighter(items=(longsword(), axe())), "Feint", required_tags=("long_swords", "axes"))
+    return view(c, "feint")
+
+
+S.case("b-two-weapons", "combat.md: two matching weapons in hands -> two entries; the expert sword +3 higher",
+       (("ls", "ax"), 3))(
+    lambda: (lambda v: (tuple(w.item for w in v.weapons), v.weapons[0].to_hit - v.weapons[1].to_hit))(_two()))
+S.case("b-numbers", "combat.md: entry = the weapon's main attack + maneuver modifiers (+2 hit, -1 damage)", (2, -1))(
+    lambda: (lambda c: (view(c, "power").weapons[0].to_hit - av.by_record(c, "r_ls").to_hit,
+                        view(c, "power").weapons[0].damage - av.by_record(c, "r_ls").damage))(
+        man(fighter(), "Power", required_tags=("long_swords",), to_hit=2, damage=-1)))
+S.case("b-effects-stack", "combat.md: maneuver effects competence +2 (a competence +3 status wins) and insight +1 -> +4", 4)(
+    lambda: (lambda c: view(c, "aim").weapons[0].to_hit - av.by_record(replace(c, statuses=()), "r_ls").to_hit)(
+        man(fighter(statuses=(Status("s", sid="s", effects=(Effect(bo.ATTACK, 3, "competence"),)),)), "Aim",
+            required_tags=("long_swords",), effects=(Effect(bo.ATTACK, 2, "competence"), Effect(bo.ATTACK, 1, "insight")))))
+S.case("b-unarmed", "combat.md: tag unarmed fits with empty hands; with a sword in hand -> unarmed_not_possible",
+       ((True, "unarmed"), (False, ("unarmed_not_possible",))))(
+    lambda: (lambda vs: ((vs[0].available, vs[0].weapons[0].item), (vs[1].available, vs[1].reasons)))(
+        (view(man(fighter(items=()), "Jab", required_tags=("unarmed",)), "jab"),
+         view(man(fighter(), "Jab", required_tags=("unarmed",)), "jab"))))
+S.case("b-required-feat", "combat.md: required_feat missing -> unavailable (feat_missing); owned -> available",
+       ((False, ("feat_missing",)), (True, ())))(
+    lambda: tuple((v.available, v.reasons) for v in (
+        view(man(fighter(), "Riposte", required_tags=("long_swords",), required_feat="duelist"), "riposte"),
+        view(man(fighter(feats=(Feat("duelist", granted_maneuvers=("riposte",)),)), "Riposte",
+                 required_tags=("long_swords",), required_feat="duelist"), "riposte"))))
+S.case("b-granted-by", "training.md: a feat's granted_maneuvers id shows on the maneuver (granted_by)", ("duelist",))(
+    lambda: view(man(fighter(feats=(Feat("duelist", granted_maneuvers=("riposte",)),)), "Riposte"), "riposte").granted_by)
+S.case("b-weapon-gone", "combat.md: weapon put away -> unavailable (no_matching_weapon) but kept",
+       (False, ("no_matching_weapon",), 1))(
+    lambda: (lambda c: (view(c, "lunge").available, view(c, "lunge").reasons, len(c.maneuvers)))(
+        run(man(fighter(), "Lunge", required_tags=("long_swords",)), ("unequip_hands", {"iid": "ls"}))))
+S.case("b-cost-record-only", "combat.md: costs are shown, nothing is spent (balance 5, spirit 5 stay)", ((1, 2, 3), 5, 5))(
+    lambda: (lambda c: (view(c, "x").cost, c.balance_current, c.spirit_current))(
+        man(fighter(), "X", required_tags=("long_swords",), cost_actions=1, cost_balance=2, cost_spirit=3)))
+S.case("b-edit-remove", "combat.md: edit_maneuver sets fields; remove_maneuver removes it", (("axes",), "all", ()))(
+    lambda: (lambda c: (c.maneuvers[0].required_tags, c.maneuvers[0].tag_mode,
+                        run(c, ("remove_maneuver", {"mid": "x"})).maneuvers))(
+        run(man(fighter(), "X"), ("edit_maneuver", {"mid": "x", "required_tags": ["axes"], "tag_mode": "all"}))))
+S.case("b-edit-unknown", "combat.md: an unknown field is refused (future keys go into extra)",
+       "refused: unknown maneuver fields: spark (put future keys into extra)")(
+    lambda: refused(man(fighter(), "X"), "edit_maneuver", mid="x", spark=3))
+S.case("b-save-load", "D11: maneuvers with the extra dict survive save/load", True)(
+    lambda: (lambda c: cio.loads(cio.dumps(c)) == c)(
+        man(fighter(), "Spark strike", required_tags=("long_swords",), extra={"spark": 2, "steps": (1, 2)},
+            effects=(Effect(bo.ATTACK, stat_mod="str"),))))
+
+
+def _old_maneuver_record():
+    d = json.loads(cio.dumps(fighter()))
+    recs = d["character"]["attacks"]
+    first = dict(recs[0])
+    first.update(rid="old_m", kind="maneuver", base_record="r_ls")
+    recs.append(first)
+    recs[0]["kind"] = "main"
+    recs[0]["base_record"] = ""
+    return tuple(r.rid for r in cio.loads(json.dumps(d)).attacks)
+
+
+S.case("b-old-records", "D1: an old item-bound maneuver record is dropped on load; main records stay",
+       ("r_ls", "r_ax"))(_old_maneuver_record)
+
+
+# ---- C: CMB per attack record (Q58) ----
+def _cmbs(**kw):
+    c = fighter(items=(longsword(), axe()), **kw)
+    return (av.by_record(c, "r_ls").cmb, av.by_record(c, "r_ax").cmb, stats.cmb(c).total)
+
+
+S.case("c-cmb-two-swords", "combat.md [OWNER pkg 12 C, Q58]: expert record CMB +3 vs the other; sheet CMB unchanged "
+       "(BAB 2 + Str 2 = 4)", (7, 4, 4))(lambda: _cmbs())
+S.case("c-cmb-pain-morale", "combat.md: pain 1 and morale scale 4 in combat (+2) as the sheet CMB rule -> 8, 5, 5",
+       (8, 5, 5))(lambda: _cmbs(pain=(PainEntry(1),), morale_scale=4, in_combat=True))
+S.case("c-cmb-in-maneuver", "combat.md: a maneuver view shows the CMB of the matching weapon (7 / 4)", (7, 4))(
+    lambda: tuple(w.cmb for w in _two().weapons))
 
 if __name__ == "__main__":
     sys.exit(S.run())

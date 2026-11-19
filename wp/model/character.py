@@ -5,7 +5,7 @@ computed on read in derived_view.py. Every entity has a stable id (D7).
 Changes go only through wp.commands (D5): they return a NEW Character.
 """
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from wp.core.damage import Pool
 from wp.core.effects import Effect, Status
@@ -76,6 +76,7 @@ class Item:
     active_until: str = ""             # state while activated: "short" / "long"
     # weapon card (owner's table)
     groups: Tuple[str, ...] = ()       # weapon groups this weapon belongs to (any number)
+    wkind: str = ""                    # weapon kind id = the catalog card id (a maneuver tag, package 12 B)
     required_level: int = 0            # qualification level (weapons.md), from the card's qualification
     qualification: str = ""            # qualification as written in the owner's table
     finesse: bool = False              # column "F." of the table: finesse AND light (one flag, owner)
@@ -114,8 +115,29 @@ class AttackRecord:
     primary: bool = False
     twf: bool = False                  # "combination of two attacks" toggle (two-weapon fighting)
     twf_off: str = ""                  # off-hand record id; "" = the other end of a double weapon
-    kind: str = "main"                 # "main" = the plain weapon attack; "maneuver" = built on base_record
-    base_record: str = ""              # maneuver: the main record it inherits from (group, stat, mastery)
+
+
+@dataclass(frozen=True)
+class Maneuver:
+    """Character-level maneuver (combat.md "Maneuver list", package 12 B). Costs are RECORD ONLY:
+    nothing is spent automatically. extra keeps unknown future keys on save/load, never read."""
+    mid: str                           # stable id (made from the name)
+    name: str
+    description: str = ""
+    required_tags: Tuple[str, ...] = ()   # weapon group ids, weapon kind ids, the special tag "unarmed"
+    tag_mode: str = "any"              # "any" (default) / "all"
+    to_hit: int = 0                    # added to the weapon's main attack, this maneuver only
+    damage: int = 0
+    effects: Tuple[Effect, ...] = ()   # typed effects on this maneuver's attack only
+    cost_actions: int = 0
+    cost_balance: int = 0
+    cost_spirit: int = 0
+    required_feat: str = ""            # feat id; unavailable unless the feat is owned
+    condition_tag: str = "none"        # display only
+    favorite: bool = False
+    source: str = ""                   # free label: style / class / feat
+    notes: str = ""
+    extra: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -205,6 +227,7 @@ class Character:
     skills: Tuple[Skill, ...] = ()
     feats: Tuple[Feat, ...] = ()
     attacks: Tuple[AttackRecord, ...] = ()
+    maneuvers: Tuple[Maneuver, ...] = ()   # character-level maneuver list (combat.md, package 12 B)
     balance_cap_hits: int = 0          # hits this combat that lowered the balance cap (homerule)
     balance_cap_start: Optional[int] = None   # balance cap taken at start_combat (snapshot); None = live
     ov: int = 0                        # time points (OV), no cap

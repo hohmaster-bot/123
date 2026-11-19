@@ -219,27 +219,27 @@ S.case("e-tag-bad", "pkg 9 E: unknown tag -> refused", "refused")(
                                      tag="night_only")))
 
 
-# ===================================================================== F. record kind, item number order (Q38)
-@S.case("f-kinds", "combat.md [OWNER pkg 9 F]: first record main, second a maneuver on it, same group",
-        (("main", ""), ("maneuver", "sw:blades:one"), "blades"))
+# ===================================================================== F. records, item number order (Q38)
+# Package 12 B: item-bound maneuver records are gone; every record of an item is a main attack record.
+@S.case("f-kinds", "combat.md [OWNER pkg 12 B]: two records of one item are both plain (main) records, own ids",
+        (("sw:blades:one", "blades"), ("sw:blades:one_2", "blades")))
 def _kinds():
     c = run(hero(items=(sword(),)), ("add_attack", {"iid": "sw", "group": "blades"}), ("add_attack", {"iid": "sw"}))
-    a, b = c.attacks
-    return ((a.kind, a.base_record), (b.kind, b.base_record), b.group)
+    return tuple((r.rid, r.group) for r in c.attacks)
 
 
-S.case("f-second-main", "pkg 9 F: a second main record of one item -> refused", "refused")(
-    lambda: refused(lambda: run(hero(items=(sword(),)), ("add_attack", {"iid": "sw"}),
-                                ("add_attack", {"iid": "sw", "kind": "main"}))))
-S.case("f-remove-main", "pkg 9 F: removing a main record with maneuvers -> refused", "refused")(
-    lambda: refused(lambda: run(hero(items=(sword(),)), ("add_attack", {"iid": "sw"}), ("add_attack", {"iid": "sw"}),
-                                ("remove_attack", {"rid": "sw:blades:one"}))))
-S.case("f-main-picks-only", "pkg 9 F: only the MAIN record's group changes item HP (primary maneuver of axes ignored)",
-       (10, 11))(
+S.case("f-second-main", "pkg 12 B: a second record of one item is allowed (no maneuver kind any more)", 2)(
+    lambda: len(run(hero(items=(sword(),)), ("add_attack", {"iid": "sw"}), ("add_attack", {"iid": "sw"})).attacks))
+S.case("f-remove-main", "pkg 12 B: removing one record of an item keeps the other", ("sw:blades:one_2",))(
+    lambda: tuple(r.rid for r in run(hero(items=(sword(),)), ("add_attack", {"iid": "sw"}), ("add_attack", {"iid": "sw"}),
+                                     ("remove_attack", {"rid": "sw:blades:one"})).attacks))
+S.case("f-main-picks-only", "pkg 12 B (assumption Q76): with two records the PRIMARY one's group changes item HP "
+       "(axes primary with HP +1 -> 11); one record of blades with HP +1 -> 11",
+       (11, 11))(
     lambda: (dv.item_view(hero(items=(sword(groups=("blades", "axes")),),
                                weapons=(mastery("blades"), mastery("axes", "parry_1", "attack_1", "crit_1", "hp_1")),
                                attacks=(AttackRecord("m", "sw", "blades"),
-                                        AttackRecord("x", "sw", "axes", primary=True, kind="maneuver", base_record="m"))),
+                                        AttackRecord("x", "sw", "axes", primary=True))),
                           "sw").hp_max,
              dv.item_view(hero(items=(sword(),), weapons=(mastery("blades", "parry_1", "attack_1", "crit_1", "hp_1"),),
                                attacks=(AttackRecord("m", "sw", "blades"),)), "sw").hp_max))
@@ -259,11 +259,11 @@ S.case("f-order-both", "pkg 9 F: +30% and +70% add up: (5 + 4) * 200% = 18; HP 1
     lambda: _hard("durability_30", "attack_1", "crit_1", "durability_70", "hp_1"))
 S.case("f-order-off", "pkg 9 F: not activated: 5 * 200% = 10; HP 10 + 1 = 11", (10, 11))(
     lambda: _hard("durability_30", "attack_1", "crit_1", "durability_70", "hp_1", active=False))
-S.case("f-maneuver-view", "pkg 9 F: a maneuver's attack uses the main record's group and stat", ("blades", "dex"))(
+S.case("f-maneuver-view", "pkg 12 B: every record uses its OWN group and stat (no inheritance)", ("axes", "str"))(
     lambda: (lambda v: (v.group, v.stat))(next(
-        a for a in av.all_records(hero(items=(sword(),), attacks=(AttackRecord("m", "sw", "blades", stat="dex"),
-                                                                    AttackRecord("x", "sw", "axes", kind="maneuver",
-                                                                                 base_record="m"))))
+        a for a in av.all_records(hero(items=(sword(groups=("blades", "axes")),),
+                                       attacks=(AttackRecord("m", "sw", "blades", stat="dex"),
+                                                AttackRecord("x", "sw", "axes"))))
         if a.record == "x")))
 
 

@@ -47,28 +47,10 @@ def unequip_hands(ch, iid=""):
 
 
 @command
-def add_attack(ch, iid="", group="", grip="one", stat="", rid="", kind="", base_record=""):
+def add_attack(ch, iid="", group="", grip="one", stat="", rid=""):
     """New attack record. Weapon: the group must be one of the weapon's groups.
-    Unarmed: Unarmed combat (or Contact).
-    kind (package 9 F): "main" = the plain weapon attack (one per item); "maneuver" = built on the
-    item's main record (base_record; given or found). Default: main for the item's first record,
-    maneuver (on its main record) for every later one. A maneuver takes the main record's group."""
-    main = rec.main_record(ch, iid)
-    kind = kind or (rec.MAIN if main is None else rec.MANEUVER)
-    if kind not in rec.KINDS:
-        raise CommandError("record kind must be main or maneuver")
-    if kind == rec.MAIN and main is not None:
-        raise CommandError("%s already has a main attack record: %s" % (iid, main.rid))
-    if kind == rec.MANEUVER:
-        base_record = base_record or (main.rid if main is not None else "")
-        base = next((r for r in ch.attacks if r.rid == base_record), None)
-        if base is None or base.kind != rec.MAIN or base.item != iid:
-            raise CommandError("a maneuver needs the main record of the same item (base_record)")
-        if group and group != base.group:
-            raise CommandError("a maneuver uses the group of its main record (%s), not %r" % (base.group, group))
-        group = base.group
-    else:
-        base_record = ""
+    Unarmed: Unarmed combat (or Contact). Every record is a main attack record (package 12 B);
+    maneuvers live in the character's maneuver list (maneuver_cmds)."""
     if grip not in GRIPS:
         raise CommandError("grip must be one, off or two")
     if iid == rec.UNARMED:
@@ -95,15 +77,12 @@ def add_attack(ch, iid="", group="", grip="one", stat="", rid="", kind="", base_
         rid = ids.unique("%s:%s:%s" % (iid, group, grip), (r.rid for r in ch.attacks))
     if any(r.rid == rid for r in ch.attacks):
         raise CommandError("attack record already exists: %s" % rid)
-    record = AttackRecord(rid=rid, item=iid, group=group, grip=grip, stat=stat, kind=kind, base_record=base_record)
-    return commit(replace(ch, attacks=ch.attacks + (record,)), "add_attack", "attack %s (%s)" % (rid, kind))
+    record = AttackRecord(rid=rid, item=iid, group=group, grip=grip, stat=stat)
+    return commit(replace(ch, attacks=ch.attacks + (record,)), "add_attack", "attack %s" % rid)
 
 
 @command
 def remove_attack(ch, rid=""):
-    users = [r.rid for r in ch.attacks if r.base_record == rid]
-    if users:
-        raise CommandError("record %s is the base of maneuvers %s: remove them first" % (rid, ", ".join(users)))
     left = tuple(r for r in ch.attacks if r.rid != rid)
     if len(left) == len(ch.attacks):
         raise CommandError("no attack record %r" % (rid,))

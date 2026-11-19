@@ -144,4 +144,4 @@ def is_light(item):
 def make_item(catalog, wid, iid):
     """An Item from a weapon card."""
     w = catalog.weapon(wid)
-    return Item(iid=iid, name=w.name, **dict(w.fields))
+    return Item(iid=iid, name=w.name, wkind=wid, **dict(w.fields))

@@ -25,7 +25,7 @@ from wp.core.skills import Skill
 from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
 from wp.model import ids
-from wp.model.character import (Ability, AttackRecord, Character, Feat, Item, Language, LogEntry,
+from wp.model.character import (Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
                                 WeaponEntry)
 
 FORMAT = "wipefinder.character"
@@ -36,11 +36,18 @@ BAK_SUFFIX = ".bak"
 # Fields that were removed from the model: an old file may still have them; they are dropped on load
 # (nothing is converted, the value is simply not used). Character.mana_level: package 10, Q49.
 DROPPED = {"Character": ("mana_level", "size_mod", "size_cmb"),
-           "Status": ("cost_resource", "cost_amount")}   # read from old files, then ignored
+           "Status": ("cost_resource", "cost_amount"),
+           "AttackRecord": ("kind", "base_record")}
+_SKIP = object()               # a record not read at all (see _skipped)
+
+
+def _skipped(name, v):
+    """Item-bound maneuver records (kind "maneuver", packages 9-11) are dropped on load (package 12 B, D1)."""
+    return name == "AttackRecord" and v.get("kind") == "maneuver"   # read from old files, then ignored
 
 _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,
-    NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry,
+    NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
     WeaponEntry)}
 
 
@@ -70,7 +77,7 @@ def _encode(v):
 
 def _decode(v):
     if isinstance(v, list):
-        return tuple(_decode(x) for x in v)
+        return tuple(x for x in (_decode(x) for x in v) if x is not _SKIP)
     if isinstance(v, dict):
         if "_dict" in v:
             return {_decode(k): _decode(x) for k, x in v["_dict"]}
@@ -78,6 +85,8 @@ def _decode(v):
         if name not in _TYPES:
             raise StorageError("unknown record type in file: %r" % (name,))
         cls = _TYPES[name]
+        if _skipped(name, v):
+            return _SKIP
         known = {f.name for f in dataclasses.fields(cls)}
         v = {k: x for k, x in v.items() if k not in DROPPED.get(name, ())}
         extra = set(v) - known - {"_t"}

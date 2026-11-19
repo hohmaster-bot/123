@@ -25,6 +25,7 @@ from wp.core import weapons as wpn
 from wp.model import derived_view as dv
 from wp.model import items as itm
 from wp.model import records as rec
+from wp.model import stats_view as stv
 
 UNARMED = rec.UNARMED
 ONE = "one"
@@ -61,7 +62,7 @@ class AttackView:
     lucky: int = 20                    # lucky attack threshold (mastery picks, enchantment, lucky effects)
     crit_range: int = 20               # lowest d20 that threatens a crit (base, keen, picks, feats)
     extra_dice: Tuple[Tuple[str, str], ...] = ()   # (dice, note) from the weapon's effects, e.g. ("1d6", "fire")
-    kind: str = "main"                 # "main" / "maneuver" (records.KINDS)
+    cmb: int = 0                       # CMB with this record: sheet CMB + the record group's mastery attack (Q58)
     available: bool = True             # all weapons it needs are in the hands (records.attack_available)
     missing: Tuple[str, ...] = ()      # item ids that must be taken in hand
     in_hands: Tuple[str, ...] = ()     # item ids now in the hands
@@ -231,13 +232,20 @@ def proficiency_penalty(ch):
             for iid, p in dv.non_proficient_penalties(ch) if p]
 
 
-def attack(ch, record):
-    """Breakdown for one attack record (a maneuver uses its main record's group and stat)."""
-    record = rec.resolved(ch, record)
+def record_cmb(ch, record):
+    """CMB with this record (combat.md, package 12 C, Q58): the sheet CMB (BAB + Str / Finesse rule + size +
+    typed "cmb" bonuses + pain + morale) + the mastery attack bonus of the record's group (the same "attack +1"
+    picks the record gets)."""
+    return stv.cmb(ch).total + wpn.mastery_flat(rec.group_picks(ch, record.group))["attack"]
+
+
+def attack(ch, record, extra=()):
+    """Breakdown for one attack record. extra: more typed bonuses for this attack only (a maneuver's
+    own modifiers and effects, maneuver_view)."""
     item = _item(ch, record)
     ids = scope_ids(record)
     st = attack_stat(ch, item, record)
-    bonuses = drum(ch, record, item)
+    bonuses = drum(ch, record, item) + list(extra)
     pain = pn.penalty(dv.pain_total(ch), ch.pain_profile)
 
     hit = [Line("bab", ch.bab), Line("stat:" + st, dv.ability_mod(ch, st))]
@@ -275,8 +283,8 @@ def attack(ch, record):
                       lucky=wpn.lucky_threshold(rec.group_picks(ch, record.group), weapon_enchant(ch, item),
                                                 lucky_extra(bonuses, ids)),
                       crit_range=crit_range(ch, record, item, bonuses, ids),
-                      extra_dice=extra_dice(ch, item),
-                      kind=record.kind, available=ok, missing=why["missing"], in_hands=why["in_hands"],
+                      extra_dice=extra_dice(ch, item), cmb=record_cmb(ch, record),
+                      available=ok, missing=why["missing"], in_hands=why["in_hands"],
                       drops_shield_ac=item is not None and rec.is_shield(item))
 
 
