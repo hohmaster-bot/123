@@ -7,8 +7,13 @@ Status = buff = debuff = situational. A status holds:
   - no combat-only condition (owner, package 8): ticks are the combat clock; DoT, regen and
     buff durations all count down the same way, long effects are lowered by hand;
   - duration: N ticks (typed in by hand), until end of combat, infinite, instant;
-  - charges (current/max); no charges left -> cannot activate;
-  - flags: temp HP stacks, ignores iterative penalty; active / off.
+  - charges (current/max), duration per charge (full_ticks), optional activation cost;
+    no charges left -> cannot activate;
+  - flags: temp HP stacks, ignores iterative penalty.
+Container (buffs.md, package 11): a status is either ACTIVE or not; no on/off toggle, no pause.
+An active status with a duration runs it out (ticks) unless removed by hand; the end of its
+duration makes it inactive and the entry stays. An inactive status gives no effects and does
+not tick. hidden / favorite are display only.
 Pure functions, frozen data.
 """
 from dataclasses import dataclass, replace
@@ -72,6 +77,11 @@ class Status:
     active: bool = True
     source: str = ""
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only (no effect)
+    full_ticks: int = 0                # full duration in ticks (per charge); used when activated
+    cost_resource: str = ""            # activation cost: "" (none) / "spirit" / "balance" / "mana"
+    cost_amount: int = 0
+    hidden: bool = False               # DISPLAY ONLY: hidden on the panel, still active / ticking
+    favorite: bool = False             # pinned for the panel / screen
 
 
 # ------------------------------------------------------------- reading
@@ -114,12 +124,20 @@ def activate(status, ticks=None):
     charges = status.charges
     if charges is not None:
         charges = replace(charges, current=charges.current - 1)
-    remaining = status.remaining if ticks is None else int(ticks)
+    if ticks is not None:
+        remaining = int(ticks)
+    else:
+        remaining = status.full_ticks or status.remaining
     return replace(status, charges=charges, active=True, remaining=remaining)
 
 
+def deactivate(status):
+    """End the status now: inactive, no time left, its temp HP gone; the entry stays."""
+    return replace(status, active=False, remaining=0, temp_hp_left=0)
+
+
 def set_active(status, on):
-    return replace(status, active=bool(on))
+    return replace(status, active=True) if on else deactivate(status)
 
 
 def apply_temp_hp(current_temp, amount, stacks):
@@ -137,28 +155,28 @@ def apply_one_shot(status, temp_hp):
 
 
 def tick_duration(status):
-    """Duration -1 for TICKS statuses. Returns the status, or None if it expired."""
-    if status.duration != TICKS:
+    """Duration -1 for an ACTIVE TICKS status; at 0 it becomes inactive (the entry stays).
+    An inactive status does not tick."""
+    if status.duration != TICKS or not status.active:
         return status
     left = status.remaining - 1
     if left <= 0:
-        return None
+        return deactivate(status)
     return replace(status, remaining=left)
 
 
+def expired_now(before, after):
+    return before.active and not after.active
+
+
 def tick_all(statuses):
-    """Step 1 of the zero-initiative phase: durations -1, expired removed."""
-    out = []
-    for s in statuses:
-        t = tick_duration(s)
-        if t is not None:
-            out.append(t)
-    return tuple(out)
+    """Step 1 of the zero-initiative phase: durations -1; expired ones become inactive."""
+    return tuple(tick_duration(s) for s in statuses)
 
 
 def end_combat(statuses):
-    """Remove 'until end of combat' statuses."""
-    return tuple(s for s in statuses if s.duration != END_OF_COMBAT)
+    """'Until end of combat' statuses become inactive (entries stay)."""
+    return tuple(deactivate(s) if s.duration == END_OF_COMBAT and s.active else s for s in statuses)
 
 
 def holds_temp_hp(status):

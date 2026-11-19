@@ -60,13 +60,13 @@ S.case("dr-zeroes", "owner: a hit zeroed by DR does not lower the cap", (6, 6))(
 # DoT: bleed 2 per tick, no flag -> cap stays 6 (balance: 6 is max, regen nothing, bleed 2 -> 4).
 S.case("dot-no-flag", "owner: DoT does not lower the cap by default", (4, 6))(
     lambda: bal(run(fighter(), IN,
-                    ("add_status", {"status": Status("bleed", sid="b", per_tick_hp=-2, duration=ef.TICKS), "ticks": 3}),
+                    ("add_status", {"active": True, "status": Status("bleed", sid="b", per_tick_hp=-2, duration=ef.TICKS), "ticks": 3}),
                     ("tick", {}))))
 
 # DoT with the flag "lowers cap": cap 6 - 1 = 5.
 S.case("dot-flag", "owner: DoT with the flag lowers the cap", (4, 5))(
     lambda: bal(run(fighter(), IN,
-                    ("add_status", {"status": Status("burn", sid="b", per_tick_hp=-2, duration=ef.TICKS,
+                    ("add_status", {"active": True, "status": Status("burn", sid="b", per_tick_hp=-2, duration=ef.TICKS,
                                                      lowers_balance_cap=True), "ticks": 3}),
                     ("tick", {}))))
 

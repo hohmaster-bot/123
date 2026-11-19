@@ -14,6 +14,7 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   (command set_status_duration; example: a spell lasting 10 min/level, the GM says 20 minutes passed, two ticks remove
   20 minutes), or deletes the buff. DoT and regen tick exactly like buff durations: a DoT for N ticks hits N times and
   ends. Tests: DoT -3 for 3 ticks -> 3 hits, then gone; regen 20 ticks set by hand to 2 -> 2 heals, then gone.
+  ("Gone" = inactive since package 11: the entry stays in the container.)
 - [OWNER, package 8] An N-ticks status needs its number: adding one without ticks is refused with a clear message.
   A status id already on the sheet cannot be added a second time.
 - Until end of combat.
@@ -35,6 +36,30 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   field condition_tag: none / combat_only / out_of_combat_only. It changes NO calculation; derived views show it so
   the UI can draw an icon. The player sets it by hand (command set_condition_tag). Test: a tagged item and status give
   the same numbers in and out of combat as untagged ones.
+
+## Status container [OWNER, package 11 A; closes Q63]
+- A status is either ACTIVE or not. There is NO on/off toggle and NO pause.
+- A status with a duration runs its full duration (ticks by the rules above) unless the player removes it earlier by
+  hand (narrative reasons). A status with no duration (e.g. a situational bonus) stays active until the player removes it.
+- An inactive status gives no effects and does not tick. The end of the duration makes the status inactive; the entry
+  stays in the container.
+- The CONTAINER is one list of every status of the character from every source (race, class, items, injuries, manual,
+  catalog): a place to activate, remove, add new, take from the catalog.
+- Fields per entry: id, source, active, duration kind, charges (count, duration per charge = full_ticks, cost:
+  resource + amount; optional), hidden (DISPLAY ONLY: hidden on the panel but still active, still gives effects, still
+  ticks), favorite (pin for panel / screen), condition_tag.
+- Commands: activate_status(sid): with charges, one is spent and the status starts with the full duration per charge;
+  refused with a clear reason when no charge is left, when it is already active, or when the cost cannot be paid; an
+  entry without charges just becomes active. remove_status(sid): ends it now (inactive, remaining time cleared, its temp
+  HP gone), the entry stays. set_status_hidden, set_status_favorite. delete_status(sid): removes the entry entirely
+  (by hand). add_status (catalog / by hand): a new entry starts INACTIVE unless the caller passes active=True.
+- Injuries and item effects are only SHOWN in the container view (kind "injury" / "item"); they keep working as
+  injuries.md and gear.md say (item effects stay tied to item activation, Q2).
+- Assumptions (OPEN_QUESTIONS Q69, Q70): the activation cost may be paid in spirit, balance or mana; injuries have no
+  stable id, the view uses their list position.
+- Tests: activation with and without charges; refusals (no charge, already active, cost); remove early; a 3-tick status
+  is active 2 ticks with its bonus and inactive after the 3rd; an inactive status does not tick; hidden still gives the
+  bonus and ticks; favorite flag; charges restore as before (long rest yes, a free short rest no).
 
 ## Charges and activation
 - A buff source (ability/item) may have charges (e.g. rage 2/3). If placed on screen/slot, tapping activates it;

@@ -186,13 +186,13 @@ S.case("deactivate", "gear.md: player switches it off", (False, 1))(
 
 
 # End of combat.
-@S.case("end-combat", "resources.md / buffs.md: button temp HP stay (pkg 4), end-of-combat statuses removed, "
-        "overload 0 and morale scale 0 [OWNER]", (False, 5, ("curse",), 0, 0))
+@S.case("end-combat", "resources.md / buffs.md: button temp HP stay (pkg 4), end-of-combat statuses end "
+        "(pkg 11 A: inactive, entry stays), overload 0 and morale scale 0 [OWNER]", (False, 5, ("curse",), 0, 0))
 def _end():
     ch = Character(temp_hp=5, overload=3, morale_scale=6,
                    statuses=(Status("haste", sid="h", duration=ef.END_OF_COMBAT), Status("curse", sid="c")))
     ch = run(ch, ("start_combat", {}), ("end_combat", {}))
-    return (ch.in_combat, ch.temp_hp, tuple(s.name for s in ch.statuses), ch.overload, ch.morale_scale)
+    return (ch.in_combat, ch.temp_hp, tuple(s.name for s in ch.statuses if s.active), ch.overload, ch.morale_scale)
 
 
 S.case("end-combat-not-active", "end_combat without combat is rejected", "rejected")(

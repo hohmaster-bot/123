@@ -77,14 +77,14 @@ def atk(ch, rid="r"):
 @S.case("r1-eoc-temp-hp", "resources.md / buffs.md [OWNER pkg 8 R1]: eoc buff temp HP 6 -> 0 after end_combat", (6, 0))
 def _r1():
     st = ef.Status("guard", duration=ef.END_OF_COMBAT, one_shot=(ef.OneShot(ef.TEMP_HP, 6),))
-    c = run(hero(in_combat=True), ("add_status", {"status": st}))
+    c = run(hero(in_combat=True), ("add_status", {"active": True, "status": st}))
     a = dv.temp_hp_total(c)
     return (a, dv.temp_hp_total(run(c, ("end_combat", {}))))
 
 
 S.case("r1-instant-temp-hp", "resources.md: instant temp HP go to the button pool, kept after combat", 6)(
     lambda: dv.temp_hp_total(run(hero(in_combat=True),
-                                 ("add_status", {"status": ef.Status("pot", duration=ef.INSTANT,
+                                 ("add_status", {"active": True, "status": ef.Status("pot", duration=ef.INSTANT,
                                                                      one_shot=(ef.OneShot(ef.TEMP_HP, 6),))}),
                                  ("end_combat", {}))))
 
@@ -204,11 +204,11 @@ S.case("m13-spirit-neg-cha-bonus", "resources.md [OWNER]: Cha -2 -> base 0, bonu
 
 # Validation: duplicate status id; N-ticks status without a number.
 S.case("val-dup-sid", "pkg 8: a status id already on the sheet -> refused", "refused")(
-    lambda: refused(lambda: dispatch(hero(statuses=(ef.Status("haste", sid="h"),)), "add_status",
+    lambda: refused(lambda: dispatch(hero(statuses=(ef.Status("haste", sid="h"),)), "add_status", active=True,
                                      status=ef.Status("haste", sid="h"))))
 S.case("val-ticks-no-number", "pkg 8: N-ticks status with no number -> refused; with ticks=3 ok", ("refused", 3))(
-    lambda: (refused(lambda: dispatch(hero(), "add_status", status=ef.Status("b", duration=ef.TICKS))),
-             run(hero(), ("add_status", {"status": ef.Status("b", duration=ef.TICKS), "ticks": 3})).statuses[0].remaining))
+    lambda: (refused(lambda: dispatch(hero(), "add_status", active=True, status=ef.Status("b", duration=ef.TICKS))),
+             run(hero(), ("add_status", {"active": True, "status": ef.Status("b", duration=ef.TICKS), "ticks": 3})).statuses[0].remaining))
 
 # Flank: checkbox "flank drops shield" (default on).
 S.case("flank-option", "defense.md [OWNER pkg 8]: flank shield 2: default 10, checkbox off 12, front 12", (10, 12, 12))(
@@ -358,7 +358,7 @@ def _ticks(ch, n):
     out = []
     for _ in range(n):
         ch = run(ch, ("tick", {}))
-        out.append((ch.hp_current, len(ch.statuses)))
+        out.append((ch.hp_current, sum(1 for s in ch.statuses if s.active)))   # pkg 11 A: entry stays inactive
     return out
 
 
@@ -371,9 +371,9 @@ S.case("g-long-manual", "buffs.md [OWNER pkg 8 G]: 20-tick regen lowered by hand
     lambda: _ticks(run(hero(hp_current=10, statuses=(ef.Status("regen", sid="g", per_tick_hp=2, duration=ef.TICKS,
                                                                remaining=20),)),
                        ("set_status_duration", {"sid": "g", "remaining": 2})), 3))
-S.case("g-manual-zero", "pkg 8 G: set duration 0 removes the status", ())(
-    lambda: run(hero(statuses=(ef.Status("x", sid="x", duration=ef.TICKS, remaining=5),)),
-                ("set_status_duration", {"sid": "x", "remaining": 0})).statuses)
+S.case("g-manual-zero", "pkg 8 G: set duration 0 ends the status (pkg 11 A: inactive, entry stays)", (("x", False, 0),))(
+    lambda: tuple((s.sid, s.active, s.remaining) for s in run(hero(statuses=(ef.Status("x", sid="x", duration=ef.TICKS, remaining=5),)),
+                ("set_status_duration", {"sid": "x", "remaining": 0})).statuses))
 
 
 # ===================================================================== H. max HP

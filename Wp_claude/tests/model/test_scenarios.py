@@ -98,9 +98,9 @@ def _death():
 @S.case("combat-dot", "resources.md [OWNER]: bleed 3 rounds = 3 hits; balance first", (14, (), 0))
 def _dot():
     bleed = Status("bleed", sid="s1", per_tick_hp=-2, duration=ef.TICKS)
-    ch = run(hero(balance_current=0), ("add_status", {"status": bleed, "ticks": 3}),
+    ch = run(hero(balance_current=0), ("add_status", {"active": True, "status": bleed, "ticks": 3}),
              ("tick", {}), ("tick", {}), ("tick", {}), ("tick", {}))
-    return (ch.hp_current, ch.statuses, ch.trauma)
+    return (ch.hp_current, tuple(s for s in ch.statuses if s.active), ch.trauma)   # pkg 11 A: entry stays inactive
 
 
 # classes_magic.md [OWNER, changed]: mage overload 2, non-mage 4; -1 per tick, regen blocked.
@@ -191,7 +191,7 @@ def _inj():
 @S.case("no-charges", "buffs.md: no charges left -> cannot activate", "rejected")
 def _charges():
     try:
-        dispatch(hero(), "add_status", status=Status("rage", sid="r", charges=Pool(0, 3)))
+        dispatch(hero(), "add_status", active=True, status=Status("rage", sid="r", charges=Pool(0, 3)))
     except CommandError:
         return "rejected"
     return "allowed"

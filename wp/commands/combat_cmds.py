@@ -111,55 +111,140 @@ def pay_hp_cost(ch, amount=0):
         int(amount), rep.balance_loss, rep.overflow, rep.pain_added), {"report": rep})
 
 
+COST_RESOURCES = ("spirit", "balance", "mana")
+
+
+def _cost_check(ch, st):
+    """Refusal reason ("" = can pay) for the activation cost of a status (package 11 A)."""
+    if not st.cost_resource or st.cost_amount <= 0:
+        return ""
+    if st.cost_resource not in COST_RESOURCES:
+        return "unknown cost resource %r (allowed: %s)" % (st.cost_resource, ", ".join(COST_RESOURCES))
+    have = {"spirit": ch.spirit_current, "balance": ch.balance_current, "mana": ch.mana.current}[st.cost_resource]
+    if have < st.cost_amount:
+        return "cannot pay %d %s for %s (have %d)" % (st.cost_amount, st.cost_resource, st.name, have)
+    return ""
+
+
+def _pay_cost(ch, st):
+    if not st.cost_resource or st.cost_amount <= 0:
+        return ch
+    n = st.cost_amount
+    if st.cost_resource == "spirit":
+        return replace(ch, spirit_current=ch.spirit_current - n)
+    if st.cost_resource == "balance":
+        return replace(ch, balance_current=ch.balance_current - n)
+    return replace(ch, mana=replace(ch.mana, current=ch.mana.current - n))
+
+
+def _start(ch, st, ticks=None):
+    """Activate a status entry: refusals, charge, cost, full duration, one-shot part.
+    Returns (new character, the started status). The status is NOT yet placed in ch.statuses."""
+    if st.active:
+        raise CommandError("status %s is already active" % st.name)
+    if not ef.can_activate(st):
+        raise CommandError("no charges left: %s" % st.name)
+    why = _cost_check(ch, st)
+    if why:
+        raise CommandError(why)
+    started = ef.activate(st, ticks)
+    if started.duration == ef.TICKS and started.remaining <= 0:
+        raise CommandError("status %s lasts N ticks: give the number of ticks (> 0)" % st.name)
+    ch = _pay_cost(ch, st)
+    if ef.holds_temp_hp(started):
+        before = dv.temp_hp_total(ch)
+        gained = ef.apply_one_shot(started, before) - before
+        started = replace(started, temp_hp_left=started.temp_hp_left + max(0, gained))
+    else:
+        ch = replace(ch, temp_hp=ef.apply_one_shot(started, ch.temp_hp))
+    if started.duration == ef.INSTANT:
+        started = ef.deactivate(started)   # applied once; the entry stays in the container
+    return ch, started
+
+
+def _put_status(ch, st):
+    return replace(ch, statuses=tuple(st if s.sid == st.sid else s for s in ch.statuses))
+
+
+def _find(ch, sid):
+    st = next((s for s in ch.statuses if s.sid == sid), None)
+    if st is None:
+        raise CommandError("no status with id %r" % (sid,))
+    return st
+
+
 @command
-def add_status(ch, status=None, ticks=None):
-    """Activate a status: spend a charge, apply the one-shot part, keep the timed part."""
+def add_status(ch, status=None, ticks=None, active=False):
+    """Add a status to the container (from the catalog or by hand). A new entry starts INACTIVE
+    unless active=True; then it is started like activate_status (charge, cost, duration)."""
     if status is None:
         raise CommandError("no status given")
-    if not ef.can_activate(status):
-        raise CommandError("no charges left: %s" % status.name)
-    st = ef.activate(status, ticks)
-    if st.duration == ef.TICKS and st.remaining <= 0:
-        raise CommandError("status %s lasts N ticks: give the number of ticks (> 0)" % st.name)
-    if st.sid and any(s.sid == st.sid for s in ch.statuses):
-        raise CommandError("a status with id %r is already on the sheet" % (st.sid,))
+    if status.sid and any(s.sid == status.sid for s in ch.statuses):
+        raise CommandError("a status with id %r is already on the sheet" % (status.sid,))
+    st = status
     if not st.sid:                     # the program makes the stable id from the name (D7)
         st = replace(st, sid=ids.make_id(st.name, (s.sid for s in ch.statuses)))
-    if ef.holds_temp_hp(st):
-        before = dv.temp_hp_total(ch)
-        gained = ef.apply_one_shot(st, before) - before
-        st = replace(st, temp_hp_left=st.temp_hp_left + max(0, gained))
-        temp = ch.temp_hp
-    else:
-        temp = ef.apply_one_shot(st, ch.temp_hp)
-    kept = ch.statuses if st.duration == ef.INSTANT else ch.statuses + (st,)
-    new = replace(ch, statuses=kept, temp_hp=temp)
-    return commit(new, "add_status", "status %s" % st.name)
+    if ticks is not None and not st.full_ticks:
+        st = replace(st, full_ticks=int(ticks))
+    st = ef.deactivate(st)
+    if active:
+        ch, st = _start(ch, st, ticks)
+    new = replace(ch, statuses=ch.statuses + (st,))
+    return commit(new, "add_status", "status %s added (%s)" % (st.name, "active" if st.active else "inactive"))
+
+
+@command
+def activate_status(ch, sid="", ticks=None):
+    """Start an inactive status: one charge is spent (if it has charges) and it runs its full duration."""
+    st = _find(ch, sid)
+    ch2, started = _start(ch, st, ticks)
+    return commit(_put_status(ch2, started), "activate_status", "status %s active" % st.name)
 
 
 @command
 def set_status_duration(ch, sid="", remaining=0):
     """Set the ticks left of an N-ticks status by hand (buffs.md [OWNER pkg 8]: long effects are not
-    simulated; the player lowers them by ticks or by hand). 0 or less removes the status."""
-    st = next((s for s in ch.statuses if s.sid == sid), None)
-    if st is None:
-        raise CommandError("no status with id %r" % (sid,))
+    simulated; the player lowers them by ticks or by hand). 0 or less ends it (inactive, entry stays)."""
+    st = _find(ch, sid)
     if st.duration != ef.TICKS:
         raise CommandError("status %s has no tick duration" % st.name)
     remaining = int(remaining)
     if remaining <= 0:
-        kept = tuple(s for s in ch.statuses if s.sid != sid)
-        return commit(replace(ch, statuses=kept), "set_status_duration", "status %s removed" % st.name)
-    statuses = tuple(replace(s, remaining=remaining) if s.sid == sid else s for s in ch.statuses)
-    return commit(replace(ch, statuses=statuses), "set_status_duration", "status %s: %d ticks" % (st.name, remaining))
+        return commit(_put_status(ch, ef.deactivate(st)), "set_status_duration", "status %s ended" % st.name)
+    return commit(_put_status(ch, replace(st, remaining=remaining)), "set_status_duration",
+                  "status %s: %d ticks" % (st.name, remaining))
 
 
 @command
 def remove_status(ch, sid=""):
-    left = tuple(s for s in ch.statuses if s.sid != sid)
-    if len(left) == len(ch.statuses):
-        raise CommandError("no status with id %r" % (sid,))
-    return commit(replace(ch, statuses=left), "remove_status", "status %s removed" % sid)
+    """End an active status now (narrative reasons): inactive, time cleared; the entry stays."""
+    st = _find(ch, sid)
+    if not st.active:
+        raise CommandError("status %s is not active" % st.name)
+    return commit(_put_status(ch, ef.deactivate(st)), "remove_status", "status %s ended" % st.name)
+
+
+@command
+def delete_status(ch, sid=""):
+    """Remove the entry from the container entirely (by hand)."""
+    st = _find(ch, sid)
+    return commit(replace(ch, statuses=tuple(s for s in ch.statuses if s.sid != sid)), "delete_status",
+                  "status %s deleted" % st.name)
+
+
+@command
+def set_status_hidden(ch, sid="", value=True):
+    """Display only: a hidden status still gives effects and ticks."""
+    st = _find(ch, sid)
+    return commit(_put_status(ch, replace(st, hidden=bool(value))), "set_status_hidden",
+                  "status %s hidden %s" % (st.name, "on" if value else "off"))
+
+
+@command
+def set_status_favorite(ch, sid="", value=True):
+    st = _find(ch, sid)
+    return commit(_put_status(ch, replace(st, favorite=bool(value))), "set_status_favorite",
+                  "status %s favorite %s" % (st.name, "on" if value else "off"))
 
 
 @command

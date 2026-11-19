@@ -38,11 +38,11 @@ S.case("duration-down", "resources.md step 1: durations -1", 2)(
     lambda: zero_initiative(state())[0].statuses[0].remaining)
 
 
-@S.case("expired-removed", "resources.md step 1: expired statuses removed (last bleed still hits)",
-        ((), ("bleed",), 18))
+@S.case("expired-removed", "resources.md step 1: expired statuses end (pkg 11 A: inactive, entry stays; last bleed still hits)",
+        ((False,), ("bleed",), 18))
 def _expired():
     s, r = zero_initiative(state(statuses=(Status("bleed", per_tick_hp=-2, duration=ef.TICKS, remaining=1),)))
-    return (s.statuses, r.expired, s.vitals.hp.current)
+    return (tuple(x.active for x in s.statuses), r.expired, s.vitals.hp.current)
 
 
 @S.case("bleed-3-rounds", "resources.md [OWNER]: bleed for 3 rounds hits exactly 3 times", (14, ()))
@@ -53,7 +53,7 @@ def _bleed3():
         before = s.vitals.hp.current
         s, _ = zero_initiative(s)
         hits.append(before - s.vitals.hp.current)
-    return (s.vitals.hp.current, s.statuses) if hits == [2, 2, 2, 0] else hits
+    return (s.vitals.hp.current, tuple(x for x in s.statuses if x.active)) if hits == [2, 2, 2, 0] else hits
 
 
 @S.case("overload-falls", "resources.md [OWNER]: overload -1 per tick, gone at 0", (3, 2, 1, 0, 0))

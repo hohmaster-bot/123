@@ -280,7 +280,7 @@ def natives(ch):
 
 def temp_hp_total(ch):
     """Temp HP 'until the end of combat' + temp HP held by statuses with their own duration."""
-    return ch.temp_hp + sum(s.temp_hp_left for s in ch.statuses)
+    return ch.temp_hp + sum(s.temp_hp_left for s in ch.statuses if s.active)
 
 
 def comfort_max(ch):

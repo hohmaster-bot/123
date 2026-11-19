@@ -55,11 +55,11 @@ def _neg():
 S.case("buff-n-rounds", "resources.md [OWNER pkg 4]: buff temp HP live N rounds (N = 3)", (5, 5, 0))(
     lambda: (lambda c1: (dv.temp_hp_total(c1), dv.temp_hp_total(run(c1, ("tick", {}))),
                          dv.temp_hp_total(run(c1, ("tick", {}), ("tick", {}), ("tick", {})))))(
-        run(hero(), ("add_status", {"status": buff(), "ticks": 3}))))
+        run(hero(), ("add_status", {"active": True, "status": buff(), "ticks": 3}))))
 # Q23 assumption: button first. Button 4 + buff 5, hit 6 -> button 0, buff 3.
 S.case("order-button-first", "OPEN_QUESTIONS Q23 assumption: button temp HP spent first", (0, 3))(
     lambda: (lambda c: (c.temp_hp, c.statuses[0].temp_hp_left))(
-        run(hero(), ("set_temp_hp", {"value": 4}), ("add_status", {"status": buff(), "ticks": 3}),
+        run(hero(), ("set_temp_hp", {"value": 4}), ("add_status", {"active": True, "status": buff(), "ticks": 3}),
             ("take_damage", {"amount": 6}))))
 
 

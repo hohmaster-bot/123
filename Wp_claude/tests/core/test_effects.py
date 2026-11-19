@@ -37,13 +37,13 @@ def _no_charges():
 
 # buffs.md Duration: drops by 1 each zero-initiative phase; manual number.
 S.case("duration-tick", "buffs.md: duration -1 per tick", 7)(lambda: ef.tick_duration(RAGE).remaining)
-S.case("duration-expire", "buffs.md: last tick removes the status", ())(
-    lambda: ef.tick_all([Status("x", duration=ef.TICKS, remaining=1)]))
+S.case("duration-expire", "buffs.md [pkg 11 A]: the last tick makes the status inactive, the entry stays", (("x", False, 0),))(
+    lambda: tuple((s.name, s.active, s.remaining) for s in ef.tick_all([Status("x", duration=ef.TICKS, remaining=1)])))
 S.case("duration-manual", "buffs.md [OWNER]: duration typed by hand", 12)(
     lambda: ef.activate(Status("haste", duration=ef.TICKS), ticks=12).remaining)
-S.case("end-of-combat", "buffs.md: until end of combat", ("narr",))(
-    lambda: tuple(s.name for s in ef.end_combat([Status("eoc", duration=ef.END_OF_COMBAT),
-                                                 Status("narr", duration=ef.INFINITE)])))
+S.case("end-of-combat", "buffs.md: until end of combat (pkg 11 A: eoc inactive, entry stays)", (("eoc", False), ("narr", True)))(
+    lambda: tuple((s.name, s.active) for s in ef.end_combat([Status("eoc", duration=ef.END_OF_COMBAT),
+                                                            Status("narr", duration=ef.INFINITE)])))
 S.case("infinite-no-tick", "buffs.md: narrative infinite does not tick", ef.INFINITE)(
     lambda: ef.tick_duration(Status("curse")).duration)
 S.case("instant-not-kept", "buffs.md: instant one-shot is not kept", ())(

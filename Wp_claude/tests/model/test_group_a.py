@@ -79,24 +79,24 @@ def _a3():
 @S.case("a4-temp-hp-duration", "resources.md [OWNER pkg 4]: end of combat clears no temp HP", (9, 9))
 def _a4():
     buff = Status("aid", sid="aid", one_shot=(OneShot(ef.TEMP_HP, 5),), duration=ef.TICKS, temp_hp_stacks=True)
-    ch = run(hero(temp_hp=4), ("start_combat", {}), ("add_status", {"status": buff, "ticks": 3}))
+    ch = run(hero(temp_hp=4), ("start_combat", {}), ("add_status", {"active": True, "status": buff, "ticks": 3}))
     before = dv.temp_hp_total(ch)
     return (before, dv.temp_hp_total(run(ch, ("end_combat", {}))))
 
 
 # The buff's temp HP disappear when the buff expires: 1 tick left -> tick -> 0.
 S.case("a4-temp-hp-expire", "owner: temp HP go away with the buff", 0)(
-    lambda: dv.temp_hp_total(run(hero(), ("add_status", {"status": Status("aid", sid="a", one_shot=(OneShot(ef.TEMP_HP, 5),),
+    lambda: dv.temp_hp_total(run(hero(), ("add_status", {"active": True, "status": Status("aid", sid="a", one_shot=(OneShot(ef.TEMP_HP, 5),),
                                                                            duration=ef.TICKS), "ticks": 1}), ("tick", {}))))
 # Damage takes the combat pool first, then the buff: pool 4 + buff 5, hit 6 -> pool 0, buff 3.
 S.case("a4-temp-hp-order", "resources.md Q23 assumption: button temp HP are used before buff temp HP", (0, 3))(
     lambda: (lambda c: (c.temp_hp, c.statuses[0].temp_hp_left))(
-        run(hero(temp_hp=4), ("add_status", {"status": Status("aid", sid="a", one_shot=(OneShot(ef.TEMP_HP, 5),),
+        run(hero(temp_hp=4), ("add_status", {"active": True, "status": Status("aid", sid="a", one_shot=(OneShot(ef.TEMP_HP, 5),),
                                                               duration=ef.TICKS, temp_hp_stacks=True), "ticks": 3}),
             ("take_damage", {"amount": 6}))))
 # Short rest after the spends clears ALL temp HP.
 S.case("a4-short-rest-clears", "rest.md [OWNER]: short rest clears all temp HP", 0)(
-    lambda: dv.temp_hp_total(run(hero(temp_hp=4), ("add_status", {"status": Status(
+    lambda: dv.temp_hp_total(run(hero(temp_hp=4), ("add_status", {"active": True, "status": Status(
         "aid", sid="a", one_shot=(OneShot(ef.TEMP_HP, 5),), duration=ef.TICKS, temp_hp_stacks=True), "ticks": 3}),
         ("short_rest", {}))))
 

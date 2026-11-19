@@ -33,7 +33,7 @@ def _spend_temp(ch, left):
     used -= take
     statuses = []
     for s in ch.statuses:
-        t = min(used, s.temp_hp_left)
+        t = min(used, s.temp_hp_left) if s.active else 0
         used -= t
         statuses.append(replace(s, temp_hp_left=s.temp_hp_left - t) if t else s)
     return temp, tuple(statuses)
@@ -102,12 +102,12 @@ def to_tick(ch):
 
 
 def from_tick(ch, t):
-    """Statuses after the tick (expired removed, with their temp HP), then vitals."""
-    kept = {s.sid for s in t.statuses}
-    left = {s.sid: s for s in ch.statuses}
-    statuses = tuple(replace(s, temp_hp_left=left[s.sid].temp_hp_left) if s.sid in left else s
-                     for s in t.statuses)
-    gone = sum(s.temp_hp_left for s in ch.statuses if s.sid not in kept)
+    """Statuses after the tick (expired ones inactive, their temp HP gone), then vitals.
+    tick_all keeps the order and the number of entries."""
+    pairs = tuple(zip(ch.statuses, t.statuses))
+    statuses = tuple(after if not after.active else replace(after, temp_hp_left=before.temp_hp_left)
+                     for before, after in pairs)
+    gone = sum(before.temp_hp_left for before, after in pairs if before.active and not after.active)
     base = replace(ch, statuses=statuses)
     v = replace(t.vitals, temp_hp=max(0, t.vitals.temp_hp - gone))
     ch = from_vitals(base, v, pain_source="tick: balance overflow")

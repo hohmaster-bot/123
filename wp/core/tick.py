@@ -1,7 +1,7 @@
 """Zero-initiative phase (RULES/resources.md "Zero initiative phase").
 
 After everyone acted:
-  1. statuses lose 1 duration (expired ones are removed);
+  1. active statuses lose 1 duration (expired ones become inactive; inactive ones do not tick);
   2. balance restoration (forbidden while overload > 0);
   3. DoT damage and heal per tick (balance FIRST, then DoT: best for the player);
      the negative-HP state loss (dying / resting) is applied here like a DoT.
@@ -45,8 +45,7 @@ def zero_initiative(state, reductions=None):
 
     # 1) durations
     new_statuses = ef.tick_all(state.statuses)
-    expired = tuple(s.name for s in state.statuses
-                    if s.duration == ef.TICKS and ef.tick_duration(s) is None)
+    expired = tuple(a.name for a, b in zip(state.statuses, new_statuses) if ef.expired_now(a, b))
     steps.append("durations")
 
     # 2) balance
