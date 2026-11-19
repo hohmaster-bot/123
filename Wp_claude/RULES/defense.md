@@ -30,20 +30,21 @@
   Heroism +4 morale on attacks with morale scale -1 -> attacks +4, everything else -1.
 - Example: +1 enchanted sword, "magic weapon" status gives +1 enchant -> result +1, not +2.
 
-## Saves and initiative [package 10; open details Q55, Q56, Q61]
-- Save (Fort, Ref, Will) = base (typed by hand from the class table, like BAB; Q61) + stat mod (the stat of each save
-  is data: default Fort Con, Ref Dex, Will Wis as in the legacy program, Q55) + typed bonuses (target "save" = all
+## Saves and initiative [package 10; Q55, Q56, Q61 answered in package 11]
+- Save (Fort, Ref, Will) = base (typed by hand, like BAB [OWNER, Q61]) + stat mod ([OWNER, Q55] Fort Con, Ref Dex,
+  Will Wis, as in PF; stored as data) + typed bonuses (target "save" = all
   saves, "save:fort" / "save:ref" / "save:will" = one save; stacked by the normal rules) + pain + morale.
   Tests: base 3/1/2 with Con 14, Dex 12, Wis 8 -> 5/2/1; +1 resistance to all and +2 resistance to Fort -> Fort 7,
   Ref 3, Will 2; pain 2 -> -2 each; morale scale 4 in combat -> +2 each.
-- Initiative = Dex mod + typed bonuses (target "initiative") + pain (resources.md: every roll with a die) + morale
-  (Q56: the morale list here does not name initiative; the code keeps "ALL rolls"). Test: Dex 14 + 2 competence -> 4;
-  pain 1 -> 3; morale scale 2 in combat -> 5.
+- Initiative = Dex mod + typed bonuses (target "initiative") + pain (resources.md: every roll with a die) + morale.
+  [OWNER, Q56] Morale applies to initiative. Morale exists only in combat and starts at 0, so the initiative roll
+  before combat has no morale; a reroll during combat includes it. Test: Dex 14 + 2 competence -> 4; pain 1 -> 3;
+  morale scale 2 in combat -> 5; the same scale out of combat -> 4.
 
 ## Morale (battle) [OWNER]
 - Scale is physically -10..+10. A class effect may "count morale X higher at the player's choice".
   Bonuses and penalties to morale (typed bonuses) are not limited by the scale.
-- Bonus to ALL rolls (skills, saves, attacks, maneuvers, CMB, damage), type "morale";
+- Bonus to ALL rolls (skills, saves, attacks, maneuvers, CMB, damage, initiative [Q56]), type "morale";
   NOT to the lucky attack die, the crit die or AC.
 - bonus = trunc(scale / 2): -10 -> -5, +10 -> +5, +/-1 per 2 steps.
 - Only while combat is active. One button start/end combat (text switches). Inactive -> morale ignored.

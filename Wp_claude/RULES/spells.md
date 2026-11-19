@@ -11,4 +11,4 @@ A spell is: name + damage (if any) + range or AoE (if any) + optional effect (bo
 - A cantrip (cost 0) with +1 circle costs 2, so it is available from level 2 (the per-spell limit = level of mana,
   classes_magic.md "Mana level").
 - Slot casters use a slot of the needed circle; the same per-spell limit applies.
-- Assumption (OPEN_QUESTIONS Q62): each further +1 circle adds another +2 mana.
+- [OWNER, Q62 accepted] Each further +1 circle adds another +2 mana.

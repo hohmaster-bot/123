@@ -8,6 +8,8 @@ skill = ranks + key stat mod + bonuses (race/class/items...) + armor penalty (if
 ## Categories
 - Normal: default for ALL skills (even 0 ranks). Ranks cannot exceed character level.
 - Advanced (formerly "class skill"): +3 to the roll, cheaper ranks. Gained via training, specialization, lenses, loot, etc.
+  [OWNER, Q64] Advanced ranks are capped by the character level too (like normal); only specialized have no cap.
+  Test: level 2, advanced rank 2 -> 3 refused.
 - Specialized: only an advanced skill can become specialized. No rank cap; ranks auto rise to character level (floor = level);
   more ranks bought with training above the level limit (cheapest). Twice per cycle after a roll: take 13 or reroll.
   Gained by training (expensive) or class feat "Professionalism" (TBD, cheaper).

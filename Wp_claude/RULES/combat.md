@@ -25,7 +25,7 @@
 - +1 (lowers threshold) up to 3 times from mastery, plus X where X = weapon enchant level.
 - Class/race/feat/ability can add +N for a specific weapon.
 - [package 10, R7] Such an effect has target "lucky" (with a weapon id = that weapon only; no weapon id = every
-  weapon). The cap 3 is for MASTERY picks only, as written above (OPEN_QUESTIONS Q60). Tests: enchant +2 -> 18;
+  weapon). The cap 3 is for MASTERY picks only, as written above [OWNER, Q60: keep as written]. Tests: enchant +2 -> 18;
   + one mastery pick -> 17; + a feat +1 for this weapon -> 16; a feat for another weapon -> no change; 4 mastery picks
   (forced) + enchant 2 + feat 1 -> 20 - 3 - 2 - 1 = 14. Never below 2.
 
