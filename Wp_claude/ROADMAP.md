@@ -30,7 +30,14 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
 - Done in package 10: saves, initiative, CMB/CMD (stats_view), size in attack, racial damage per pain, lucky-attack
   effects, crit range display, touch_armor effects, mana level = level, circle cost table. Report:
   tests/PACKAGE10_REPORT.md. Open details: OPEN_QUESTIONS Q55-Q68.
-- Package 11 (planned): REPLACES the item-bound maneuver records (kind "maneuver") with the character-level maneuver
+- Done in package 11: status container (active only, no toggle / pause; activate / remove / delete / hidden /
+  favorite; container_view), stat-mod effect values, race size (small / medium / large) and base speed with derived
+  speed, feats with effects (+ granted_maneuvers, remove_feat), character.schema.json reviewed
+  (tests/SCHEMA_REVIEW.md) and deleted. Report: tests/PACKAGE11_REPORT.md.
+- Package 12 (planned): CMB per attack record (Q58): the sheet shows a general CMB without a weapon AND a CMB per
+  attack record with that record's group bonuses; the UI may use either or both. Feats' granted_maneuvers are read
+  by the maneuver list.
+- Package 12 (planned, moved from 11): REPLACES the item-bound maneuver records (kind "maneuver") with the character-level maneuver
   list (combat.md "Maneuver list"); maneuver record stubs (name, base_record, to-hit mod, damage mod, action cost, balance cost,
   spirit cost, tags, free note, generic custom resource counters like "Spark", forward-compatible unknown fields);
   consumables (quantity decreases on use, at 0 grey and zero weight, manual delete); list of active attacks /
@@ -55,6 +62,12 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   - master weapon picks have no mechanics yet: reroll one d20, one attack per turn without the [attack] tag,
     once per combat restore all balance (free action); expert picks "ignore first vulnerability",
     "ignore 20% cover", "first ranged attack can be parried" are stored but have no effect in numbers.
+
+## Class system (future, Q61; not built)
+- No multiclass. A class has flags for BAB growth and stat growth, and a good or poor progression per save
+  (good grows to 12, poor to 6 by level 20).
+- PF-like defaults (ASSUMPTION, to confirm when built): good save = 2 + level / 2, poor save = level / 3 (rounded down).
+- Until then base saves and BAB are typed by hand.
 
 ## Ideas and UI-layer plans (package 10, not built)
 - "What is worn" tab with item pictures (idea only).

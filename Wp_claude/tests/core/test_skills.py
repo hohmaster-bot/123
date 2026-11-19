@@ -32,7 +32,7 @@ def _cap():
     return "allowed"
 
 
-@S.case("advanced-cap", "owner: advanced ranks cannot exceed level either", "rejected")
+@S.case("advanced-cap", "skills.md [OWNER Q64]: advanced ranks cannot exceed level either", "rejected")
 def _adv_cap():
     try:
         sk.rank_step_cost(sk.ADVANCED, 4, 3)

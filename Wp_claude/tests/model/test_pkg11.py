@@ -19,6 +19,7 @@ from wp.model import derived_view as dv  # noqa: E402
 from wp.catalog import skills_catalog as sc  # noqa: E402
 from wp.model import attack_view as av  # noqa: E402
 from wp.model import stats_view as stv  # noqa: E402
+from wp.core import skills as sk  # noqa: E402
 from wp.catalog import feats_catalog as fc  # noqa: E402
 from wp.model.character import ABILITIES, Ability, Character, Feat, Item  # noqa: E402
 from wp.storage import character_io as cio  # noqa: E402
@@ -285,6 +286,27 @@ S.case("d-catalog", "catalog.md: a catalog feat carries effects and granted_mane
 S.case("d-feat-save-load", "D11: feat effects and granted_maneuvers survive save/load", True)(
     lambda: (lambda c: cio.loads(cio.dumps(c)) == c)(hero(feats=(Feat("ft", effects=(Effect(bo.ATTACK, stat_mod="str"),),
                                                                     granted_maneuvers=("trip",)),))))
+
+
+# ---- owner answers recorded in RULES ----
+S.case("q56-initiative-morale", "defense.md [OWNER Q56]: Dex 14 +2 competence = 4; morale scale 2 in combat 5, out of combat 4",
+       (5, 4))(
+    lambda: tuple(stv.initiative(hero(abilities=abil(dex=14), morale_scale=2, in_combat=c,
+                                      statuses=(Status("c", sid="c", effects=(Effect(bo.INITIATIVE, 2, "competence"),)),))).total
+                  for c in (True, False)))
+
+
+def _adv(new_rank, level):
+    try:
+        return sk.rank_step_cost(sk.ADVANCED, new_rank, level)
+    except ValueError:
+        return "refused"
+
+
+S.case("q64-advanced-cap", "skills.md [OWNER Q64]: level 2, advanced rank 2 -> 3 refused; 1 -> 2 costs 30", ("refused", 30))(
+    lambda: (_adv(3, 2), _adv(2, 2)))
+S.case("q55-save-stats", "defense.md [OWNER Q55]: Fort Con, Ref Dex, Will Wis", {"fort": "con", "ref": "dex", "will": "wis"})(
+    lambda: dict(Character().save_stats))
 
 if __name__ == "__main__":
     sys.exit(S.run())
