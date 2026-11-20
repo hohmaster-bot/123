@@ -10,6 +10,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "core"))
 from _runner import Suite  # noqa: E402
 
+from wp.model.notebook import Drive
 from wp.core import effects as ef  # noqa: E402
 from wp.core import skills as sk  # noqa: E402
 from wp.core.damage import Pool  # noqa: E402
@@ -39,7 +40,7 @@ def sample():
         weapons=(WeaponEntry(Weapon("w1", 2, 1, grades=5, parents=("w0",)), "long swords",
                              (Pick(5, "parry_1"),)),),
         skills=(sk.Skill("arcana", "int", sk.ADVANCED, 3),), languages=(Language("l1", "Common", True),),
-        drives={"growth": 4}, attention=3, spirit_current=4, shield_grade="light",
+        drives=(Drive("growth", "Growth", 4),), attention=3, spirit_current=4, shield_grade="light",
         attacks=(AttackRecord("r1", "i1", "w1", "one", primary=True),), balance_cap_hits=2, ov=5)
 
 
@@ -149,15 +150,11 @@ def _other():
     return "loaded"
 
 
-@S.case("unknown-field", "D1: unknown field is an error, not silently dropped", True)
+@S.case("unknown-field", "CLAUDE.md [OWNER, package 16 A8]: an unknown field is dropped on load (no migration)", True)
 def _field():
     data = json.loads(cio.dumps(Character()))
     data["character"]["hp_max"] = 99
-    try:
-        cio.loads(json.dumps(data))
-    except cio.StorageError as e:
-        return "hp_max" in str(e)
-    return False
+    return cio.loads(json.dumps(data)) == Character()
 
 
 if __name__ == "__main__":

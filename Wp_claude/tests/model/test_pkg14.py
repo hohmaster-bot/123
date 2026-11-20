@@ -185,8 +185,8 @@ def _con_change():
             low.pools[0].current)
 
 
-S.case("c-clamp", "buffs.md: Con 16 -> 12 lowers the max 13 -> 11 on read; current is read clamped to 11 (stored 13 stays)",
-       (13, 13, 11, 11, 13))(_con_change)
+S.case("c-clamp", "buffs.md: Con 16 -> 12 lowers the max 13 -> 11 on read; the current 13 stays and is shown over max "
+       "(package 16 A6, owner: no clamp)", (13, 13, 11, 13, 13))(_con_change)
 S.case("c-bad-pool-formula", "buffs.md: a bad formula is refused when added",
        "refused: bad pool max formula 'con_mod +': unexpected end")(
     lambda: refused(hero(), "add_pool", name="X", max="con_mod +"))
@@ -353,12 +353,12 @@ S.case("h-limit", "resources.md: log_limit 2 keeps the last two entries (seq 5, 
 
 
 def _sequence_limit():
-    return hero(rules_settings=rules(log_limit=2))
+    return hero(rules_settings=rules(log_limit=2), in_combat=True, combat_round=1)   # a tick changes the round
 
 
 S.case("h-rest-status-injury", "resources.md: rests, statuses, injuries, stance, pools are logged with their kinds",
        ("status", "injury", "charges", "stance", "rest"))(
-    lambda: tuple(e.kind for e in run(hero(feats=(Feat("st", is_stance=True),), pools=(pool("ki", 3),), trauma=10),
+    lambda: tuple(e.kind for e in run(hero(feats=(Feat("st", is_stance=True),), pools=(pool("ki", 3),), trauma=10, temp_hp=2),
                                       ("add_status", {"status": Status("s", sid="s")}), ("add_injury", {"name": "cut"}),
                                       ("spend_pool", {"pid": "ki"}), ("set_active_stance", {"fid": "st"}),
                                       ("short_rest", {})).log))

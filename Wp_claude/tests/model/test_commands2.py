@@ -9,6 +9,7 @@ from _runner import Suite  # noqa: E402
 
 from dataclasses import replace  # noqa: E402
 
+from wp.model.notebook import Drive
 from wp.commands import CommandError, dispatch  # noqa: E402
 from wp.core import effects as ef  # noqa: E402
 from wp.core.effects import Effect, Status  # noqa: E402
@@ -50,7 +51,7 @@ S.case("spirit-long-rest", "rest.md: long rest restores all spirit (to the deriv
     lambda: run(Character(abilities=ab(cha=14)), ("long_rest", {})).spirit_current)
 
 # narrative.md Attention [OWNER]: 1 + levels 3,6,9... + 1 per drive at 4+.
-_CH7 = Character(level=7, hp_rolls=(8,) * 7, hp_current=8, drives={"growth": 4, "triumph": 5, "pleasure": 3},
+_CH7 = Character(level=7, hp_rolls=(8,) * 7, hp_current=8, drives=(Drive("growth", "g", 4), Drive("triumph", "t", 5), Drive("pleasure", "p", 3)),
                  attention=1)
 S.case("attention-example", "narrative.md Example [OWNER]: level 7, two drives 4+ -> 5", 5)(
     lambda: dv.attention_per_cycle(_CH7))

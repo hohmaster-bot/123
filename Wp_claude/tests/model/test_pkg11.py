@@ -21,7 +21,8 @@ from wp.model import attack_view as av  # noqa: E402
 from wp.model import stats_view as stv  # noqa: E402
 from wp.core import skills as sk  # noqa: E402
 from wp.catalog import feats_catalog as fc  # noqa: E402
-from wp.model.character import ABILITIES, Ability, Character, Feat, Item  # noqa: E402
+from dataclasses import replace  # noqa: E402
+from wp.model.character import ABILITIES, Ability, Character, Feat, Item, Usage  # noqa: E402
 from wp.storage import character_io as cio  # noqa: E402
 
 S = Suite("test_pkg11")
@@ -119,8 +120,10 @@ S.case("a-favorite", "buffs.md: favorite flag -> container favorites list", ("ha
     lambda: cv.container_view(run(added(haste(), rage()), ("set_status_favorite", {"sid": "haste"}))).favorites)
 S.case("a-delete", "buffs.md: delete_status removes the entry from the container", ("rage",))(
     lambda: tuple(s.sid for s in run(added(haste(), rage()), ("delete_status", {"sid": "haste"})).statuses))
-S.case("a-charges-long-rest", "rest.md (unchanged): the long rest restores status charges (1/3 -> 3/3)", 3)(
-    lambda: st(run(added(rage()), ("activate_status", {"sid": "rage"}), ("long_rest", {})), "rage").charges.current)
+S.case("a-charges-long-rest", "rest.md: the long rest restores status charges (1/3 -> 3/3) of a status whose source "
+       "restores on the long rest (Q108, package 16 G3)", 3)(
+    lambda: st(run(replace(added(replace(rage(), source_ref="feat:rage_feat")), feats=(Feat("rage_feat", usage=Usage(recharge="long_rest")),)), ("activate_status", {"sid": "rage"}),
+                   ("long_rest", {})), "rage").charges.current)
 S.case("a-charges-short-rest", "rest.md (unchanged): the short rest does not restore status charges (1 stays)", 1)(
     lambda: st(run(added(rage()), ("activate_status", {"sid": "rage"}), ("short_rest", {})), "rage").charges.current)
 S.case("a-container-kinds", "buffs.md: the container lists statuses, injuries and item effects",

@@ -106,8 +106,8 @@ S.case("q49-slots-no-limit", "pkg 10 Q49: the level limit is for mana casters; a
     lambda: run(hero(caster=mg.SLOTS, slots={3: Pool(1, 1)}), ("cast_spell", {"circle": 3})).slots[3].current)
 
 
-@S.case("q49-old-file", "pkg 10 Q49: an old file with mana_level still loads (value not used); other unknown fields fail",
-        ("loaded", "error"))
+@S.case("q49-old-file", "pkg 10 Q49: an old file with mana_level still loads (value not used); other unknown fields are "
+        "dropped too (package 16 A8, owner)", ("loaded", "loaded"))
 def _old_file():
     import json
     data = json.loads(cio.dumps(hero()))

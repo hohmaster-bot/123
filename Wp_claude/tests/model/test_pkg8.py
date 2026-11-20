@@ -20,8 +20,8 @@ from wp.core.weapons import Pick, Weapon  # noqa: E402
 from wp.model import attack_view as av  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
 from wp.model import records as rec  # noqa: E402
-from wp.model.character import (SHIELD, Ability, AttackRecord, Character, Item,  # noqa: E402
-                                WeaponEntry)
+from wp.model.character import (SHIELD, Ability, AttackRecord, Character, Feat, Item,  # noqa: E402
+                                Usage, WeaponEntry)
 
 S = Suite("test_pkg8")
 
@@ -180,8 +180,8 @@ def _rage(cur):
 S.case("r16-status-charges", "rest.md / buffs.md [OWNER pkg 8 R16]: short rest charges option: rage 0/3 -> 3/3", 3)(
     lambda: run(hero(bp_current=5, statuses=(_rage(0),)),
                 ("short_rest", {"spends": [(rs.OPT_CHARGES, {})]})).statuses[0].charges.current)
-S.case("r16-long-rest", "buffs.md: long rest restores status charges 1/3 -> 3/3", 3)(
-    lambda: run(hero(statuses=(_rage(1),)), ("long_rest", {})).statuses[0].charges.current)
+S.case("r16-long-rest", "buffs.md: long rest restores status charges 1/3 -> 3/3 (source restores on the long rest, Q108)", 3)(
+    lambda: run(hero(statuses=(replace(_rage(1), source_ref="feat:rage_feat"),), feats=(Feat("rage_feat", usage=Usage(recharge="long_rest")),)), ("long_rest", {})).statuses[0].charges.current)
 S.case("r16-sheet-charges-kept", "rest.md: sheet charges stay separate from status charges", (1, 1))(
     lambda: (lambda c: (len(c.charges), len(c.statuses)))(
         run(hero(statuses=(_rage(0),), charges=(rs.Charge("ki", rs.ABILITY, Pool(0, 2)),)), ("long_rest", {}))))

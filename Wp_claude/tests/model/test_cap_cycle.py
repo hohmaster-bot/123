@@ -7,6 +7,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "core"))
 from _runner import Suite  # noqa: E402
 
+from wp.model.notebook import Drive
 from wp.commands import CommandError, dispatch  # noqa: E402
 from wp.core import effects as ef  # noqa: E402
 from wp.core.damage import PHYSICAL, Reductions  # noqa: E402
@@ -93,7 +94,7 @@ S.case("current-not-lowered", "owner: lowering the cap does not lower the curren
 # Attention 3, OV 4; gain = 1 + 7 // 3 + 2 drives at 4+ = 1 + 2 + 2 = 5 -> Attention 8, OV 0.
 @S.case("end-cycle", "narrative.md [OWNER]: attention +5, OV burned", (8, 0, 5))
 def _cycle():
-    ch = Character(level=7, hp_rolls=(8,) * 7, attention=3, ov=4, drives={"a": 4, "b": 5, "c": 1})
+    ch = Character(level=7, hp_rolls=(8,) * 7, attention=3, ov=4, drives=(Drive("a", "a", 4), Drive("b", "b", 5), Drive("c", "c", 1)))
     r = dispatch(ch, "end_cycle")
     return (r.state.attention, r.state.ov, r.info["gain"])
 

@@ -22,7 +22,7 @@ from wp.core.damage import PHYSICAL, DamagePart, Pool, Reductions, Vitals, take_
 from wp.core.effects import Effect, OneShot, Status  # noqa: E402
 from wp.core.weapons import Pick  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
-from wp.model.character import Ability, Character, Item  # noqa: E402
+from wp.model.character import Ability, Character, Feat, Item, Usage  # noqa: E402
 
 S = Suite("test_group_a")
 
@@ -47,8 +47,10 @@ def hero(**kw):
 
 
 # A1: rage 2/3 (charges on the status) -> long rest -> 3/3.
-S.case("a1-status-charges", "buffs.md / rest.md: long rest restores status charges (rage 2/3 -> 3/3)", 3)(
-    lambda: run(hero(statuses=(Status("rage", sid="r", charges=Pool(2, 3)),)), ("long_rest", {})).statuses[0].charges.current)
+S.case("a1-status-charges", "buffs.md / rest.md: long rest restores status charges (rage 2/3 -> 3/3) when the source "
+       "restores on the long rest (Q108, package 16 G3)", 3)(
+    lambda: run(hero(statuses=(Status("rage", sid="r", charges=Pool(2, 3), source_ref="feat:rage_feat"),),
+                     feats=(Feat("rage_feat", usage=Usage(recharge="long_rest")),)), ("long_rest", {})).statuses[0].charges.current)
 
 # A2: HP 10 with state "dying" -> tick -> no HP loss (HP >= 0), state cleared.
 S.case("a2-dying-at-positive-hp", "resources.md: states only while HP < 0", (20, None))(
