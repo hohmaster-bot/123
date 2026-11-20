@@ -1,5 +1,7 @@
-# Modes (D3)
+# Modes (D3, D20)
 
+Exactly TWO modes: Classic and Lite (D20). There is no split mode. The overlay is not a separate mode:
+it lives inside Lite (Lite = overlay; it is switched on there).
 Two exclusive modes over the same core state. Exactly one is active. Enabling one disables the other.
 Each mode has its own settings (separate profiles, nothing shared except language/theme if the owner wants).
 Both modes have an edit mode; it works differently in each.
@@ -10,14 +12,14 @@ Both modes have an edit mode; it works differently in each.
 - Global hotkey shows/hides it: Ctrl+Shift+W.
 - Edit mode: forms and lists inside the sheet.
 
-## Overlay (light)
+## Lite (the overlay)
 - Frameless always-on-top panels on the desktop. Empty space is click-through.
 - Panels are user-chosen: chip groups, action buttons, log, mini-stats. Each has position, size, opacity.
 - Lock mode (clicks only) vs edit mode (drag/resize/choose panels).
-- Classic and Overlay (light) have different interfaces and different editors; no shared editor window.
+- Classic and Lite have different interfaces and different editors; no shared editor window.
 
 ## Tray
-Switch mode (Classic <-> Overlay), toggle overlay edit mode, quit.
+Switch mode (Classic <-> Lite), toggle Lite (overlay) edit mode, quit.
 
 ## Panel contract
 - A panel type = id + factory + config schema, registered in a panel registry.
@@ -25,7 +27,8 @@ Switch mode (Classic <-> Overlay), toggle overlay edit mode, quit.
 - Panel types may be reused by both modes; placement and config are per mode.
 
 ## UI profile (per user, not per character)
-Two independent blocks: `classic` and `overlay` (panels, positions per monitor, opacity, hotkeys), plus language and theme.
+Two independent blocks: `classic` and `lite` (Lite = the overlay: panels, positions per monitor, opacity, hotkeys), plus
+language (RU / EN, D4) and theme.
 
 ## Risks for the spike
 - Exclusive-fullscreen games draw above any overlay; borderless/windowed are fine.

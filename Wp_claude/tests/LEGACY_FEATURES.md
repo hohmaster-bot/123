@@ -113,7 +113,7 @@
 | Чипы ресурсов (БП, комфорт, внимание, время) | `settings.show_*_chip`; `chips.py`, `gui_chips.py` | нет (UI) |  | UI позже |
 | Фильтр чипов, порядок, цвета, позиции, перетаскивание | `settings.chips_*`; `gui_editors.py` `build` | нет (UI) |  | UI позже |
 | Прозрачность окон (меню, центр, чипы, журнал, кнопки) | `settings.alpha_*` | нет (UI) |  | UI позже |
-| Режим окон (classic / split / split_pinned), открытие окна (центр / у меню / у курсора), магнит к меню, «Закрывать предыдущее окно» | `gui_split.py`, `gui_windows.py`; `settings.ui_layout_mode`, `window_open_mode`, `pin_editor_to_menu`, `close_prev_window` | нет (UI) |  | UI позже |
+| Режим окон (classic / split / split_pinned), открытие окна (центр / у меню / у курсора), магнит к меню, «Закрывать предыдущее окно» | `gui_split.py`, `gui_windows.py`; `settings.ui_layout_mode`, `window_open_mode`, `pin_editor_to_menu`, `close_prev_window` | нет (UI) | Режим split убран: только Classic и Lite (D20) | UI позже |
 | Оверлей поверх игры (клики сквозь) | `gui_desktop.py` | нет (UI) | Фаза 4 | UI позже |
 | Горячие клавиши (урон, лечение, баланс, боль, мораль, комфорт, временные HP) | `settings.hotkeys` | нет (UI) |  | UI позже |
 | Сворачивание в трей | `gui_menu.py` / `minimize_to_tray_on_close` | нет (UI) |  | UI позже |

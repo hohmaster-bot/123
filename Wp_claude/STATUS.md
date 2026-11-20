@@ -17,7 +17,8 @@ kinds, master counters). Last report: `Wp_claude/tests/PACKAGE17_REPORT.md`.
 1. Phase 3 data / settings: rule constants from code to data, settings domains, wp/i18n texts for refusal reasons,
    theme, panel registry, a status catalog.
 2. The AC-zones package (RULES/ac_zones.md) once the owner gives the full table.
-3. Phase 4 overlay spike, Phase 5 UI, Phase 6 release; the class system later.
+3. Phase 4 Lite (overlay) spike, Phase 5 UI (two modes: Classic and Lite, D20; RU / EN, D4), Phase 6 release;
+   the class system later.
 
 ## Known gaps (rule exists, no code)
 - Weapon picks without a number that are not once-per-combat are stored only (one attack without the tag, ignore

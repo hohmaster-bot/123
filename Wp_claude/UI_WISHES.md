@@ -13,6 +13,8 @@ Kept apart from RULES/. Nothing here changes numbers.
 - Skill tier marks in work mode: normal none, advanced one star, specialized two stars (or diamond). Show only final bonus (ranks optional) outside edit/training mode.
 - Skills auto-sorted by key stat; sort can be disabled or changed.
 - Three modes: Play / Training / Edit (RULES/training.md).
+- Exactly two UI modes: Classic and Lite (D20). No split mode. The overlay lives inside Lite and is switched on there.
+- Language switch RU / EN (D4): texts from wp/i18n/ru.json and en.json; Russian only for now.
 - Abilities/feats/items: field "source" and a separate field "cost".
 - Quirks: a separate tab, plain list.
 - "Spend comfort for training" and the attention course sit next to each other.

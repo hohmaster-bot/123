@@ -1,6 +1,7 @@
 # WIPEFINDER - instructions for Claude
 
-Goal: a correct, fully tested rules core for the WipeFinder character sheet, then a Qt (PySide6) sheet and overlay.
+Goal: a correct, fully tested rules core for the WipeFinder character sheet, then a Qt (PySide6) UI with two modes, Classic and
+Lite (the overlay lives in Lite, D20).
 Character sheet + desktop overlay for a homebrew PF1-based TTRPG. Python 3, Windows.
 Owner is not a programmer: reply in Russian, plain words, one question at a time with a recommendation.
 
@@ -11,7 +12,8 @@ Plan: `Wp_claude/ROADMAP.md`. Legacy tkinter code at repo root is reference only
 ## Hard rules
 - No migrations; on load unknown fields are dropped; anything not working is unfinished work or a bug.
   Never write migration or legacy-conversion code.
-- Code files are ASCII only. All UI text lives in locale files (`wp/i18n/*.json`).
+- Code files are ASCII only. All UI text lives in locale files (`wp/i18n/ru.json`, `wp/i18n/en.json`; RU / EN switch,
+  D4; Russian only until Phase 3 or later).
 - UI never mutates the character directly; only through commands (`Wp_claude/ARCH/decisions.md` D5).
 - Store base values only; derived values are computed on read, never written back.
 - Game rules live in `Wp_claude/RULES/`. If code and RULES disagree, ask the owner; do not guess.

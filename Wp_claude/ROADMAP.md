@@ -20,7 +20,8 @@ Finished-package history: ARCH/history.md.
 Test runner that can fail (done: baseline script). Golden tests from RULES. Fix core bugs. Split core into modules (D9).
 
 ## Phase 3 - nodes without visuals
-Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects (D14-D17), catalogs contract, i18n (D4), theme, panel registry.
+Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects (D14-D17), catalogs contract, i18n (D4: RU / EN switch, wp/i18n/ru.json and en.json, refusal reason ids as keys; Russian only
+until then), theme, panel registry.
 - Before Phase 4: the owner sends screen drawings with labels (A1, A2...), Claude turns them into screen descriptions.
 - UI note (maneuvers): show only name, cost and numbers by default; everything else (description, tags, effects,
   source, notes) in a collapsed details area, so the interface is not cluttered. Stances get their own visual element.
@@ -30,9 +31,10 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   1. Phase 3 data / settings: rule constants still in code -> data files, settings domains (D13), wp/i18n texts for
      the refusal reason ids, theme, panel registry; a status catalog (buffs.md).
   2. The AC-zones package (RULES/ac_zones.md) once the owner gives the full table.
-  3. Phase 4 overlay spike, Phase 5 UI, Phase 6 release.
+  3. Phase 4 Lite (overlay) spike, Phase 5 UI (two modes: Classic and Lite, D20), Phase 6 release.
   4. Class system later (below).
-- Not built on purpose (owner, package 17): XP, money, start / end of session (narrative only).
+- Q122 CLOSED (owner, package 17): XP and money are narrative; there is no "start session" or "end session" button,
+  only the end of cycle. Not built on purpose.
 - Rule exists, no code yet: weapon picks without a numeric effect that are not once-per-combat (one attack per turn
   without the [attack] tag, ignore the first vulnerability, ignore 20% cover) are stored only; what an item
   qualification unlocks (Q109); principles, PDF export, journal revert (not in RULES yet).
@@ -52,14 +54,15 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   something from scratch run a spike to check whether a ready library fits; license check; a THIRD_PARTY_LICENSES
   file at release. Candidates: PySide6-QtAds (docking panels, LGPL 2.1); a theme library only as a pattern for our
   own QSS theme system; qtawesome (icon placeholders, check icon-set licenses); pytest-qt (UI tests).
-- Overlay: plain Qt window flags and a global hotkey, tested in the Phase 4 spike. It is not shown over exclusive
+- Overlay (inside Lite, D20): plain Qt window flags and a global hotkey, tested in the Phase 4 spike. It is not shown over exclusive
   fullscreen, only over windowed / borderless games.
 
-## Phase 4 - overlay spike
-PySide6: click-through, always-on-top, global hotkey, tray, multi-monitor.
+## Phase 4 - Lite (overlay) spike
+PySide6: click-through, always-on-top, global hotkey, tray, multi-monitor. The overlay is part of Lite (D20).
 
 ## Phase 5 - UI
-Sheet, then overlay panels, then editors (see `UI_WISHES.md`), incl. pain editor and morale scale editor. Delete tkinter.
+Exactly two modes: Classic and Lite (D20; no split mode). Sheet (Classic), then Lite panels (the overlay), then editors
+(see `UI_WISHES.md`), incl. pain editor and morale scale editor. RU / EN switch (D4). Delete tkinter.
 
 ## Phase 6 - release v1.0
 Archive old docs, final cleanup.
