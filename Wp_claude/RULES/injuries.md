@@ -9,6 +9,10 @@
   * Attention: 1 attention removes max(2, Str modifier) OT [OWNER; 'strength mod' = Str modifier, confirmed by parallel RL wording].
   * Other ways exist (manual).
 - Rules text lives in the wiki: UI should link (small icon) from relevant tabs. [UI wish]
+- Commands [package 15]: add_injury (take an injury: -2 / -5 / -12 OT), remove_ot_comfort(n) (-3 OT per comfort),
+  remove_ot_attention(n) (-(max(2, Str mod) + attention course) OT per attention), raise_heal_rating(injury_id)
+  (1 attention -> RL + max(2, Str mod) + attention course). OT never below 0; refused without OT, comfort or
+  attention.
 
 ## Injury [OWNER]
 - Standard injury: penalty for N sessions, usually physical. Effects (generic effect system):

@@ -125,7 +125,16 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 - The tick payment happens in the zero-initiative phase at the duration step, BEFORE the duration drops. If it cannot
   pay, the status ends at once (inactive, the entry stays) and does not act in this tick (Q84). The player may remove
   it earlier by hand: then nothing more is paid and there is no effect.
-- A status whose duration ends in a tick still pays in that tick (payment before the duration step; assumption Q95).
+- [OWNER, package 15, Q95] A per-round status that lasts D rounds pays for exactly D rounds in total: the activation
+  pays round 1; a tick pays for the next round only if the status will still be active after that tick; the tick on
+  which the duration ends pays nothing. Examples: aura of 3 rounds at 1 Ki costs 3 Ki; duration 1 costs 1 Ki at the
+  activation and ends at the first tick without paying. A status without a duration pays at every tick.
+  Acting rounds (checked, package 15 report): a duration-D status gives its bonuses in the activation round and the
+  next D-1 rounds (D rounds), and its per-tick part (DoT / heal / restore) acts on ticks 1..D (D times, also on the
+  tick it ends). A 1-round buff is active in the round it was activated in.
+- [OWNER, Q97] Statuses have NO recharge field: the charges of a status follow the rule of its SOURCE (feat, race,
+  pool, item); a plain buff without a source has no recharge rule. (Open: the long rest still restores every status's
+  charges, package 8 rule: Q108.)
 - A status has no other cost (Q69).
 - Tests: pool 3 at 1 per round gives exactly 3 rounds (activation 2, ticks 1 and 0, the 3rd tick ends it); own source
   2 per round, charges 4 -> activation 2; refused when the source cannot pay; monk aura, cursed darkness (3 per round),

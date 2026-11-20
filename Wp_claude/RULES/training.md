@@ -72,7 +72,7 @@ Old beta had no real edit or training mode: just an "add X" button. The new app 
 - Old code compared with the Int SCORE (not the modifier): bug.
 - Tests: Int mod 2, natives 1 -> next native 50; natives 2 -> 100. Int mod 3, natives 2 -> 50; natives 3 -> 100. Int mod 1, natives 1 -> 100.
 
-## Other purchases [OWNER, package 4, verbatim; rule only, no code yet]
+## Other purchases [OWNER, package 4, verbatim; commands since package 15, see below]
 - "Каждый уважающий себя приключенец старается держать себя в форме, оттачивать свое владение оружием, изучать
   подходящие заклинания и подобное. Для этого раз он может обменивать комфорт очки тренировок по курсу (ЛВЛ+1)*5."
   ((level+1)*5 = 5 + 5*level, same as "Comfort for training" above.)
@@ -130,3 +130,35 @@ Narrative options (entered by hand when relevant):
 1. Get Wis (min 1) quests from courts until the next long rest.
 2. Story power options: IGNORE for now (owner).
 - Resources implied: time points (OV, narrative, burn at end of cycle), base points as fractions. Professionalism level: see above.
+
+## Purchase and progression commands [package 15]
+Every command validates, spends training (a non-training source spends nothing), refuses with a reason, is journaled,
+and never refunds. Prices are the constants of wp/core/training.py (data, not scattered literals).
+- level_up(hp_roll): level +1, training +100 * the NEW level (progression.md), the hit-die roll of the new level
+  (1..die; set_hp_roll edits it later). Refused without a roll or outside 1..die. RULES give no level cap (Q103). The
+  current HP are not raised (Q111).
+- exchange_comfort(n): n comfort -> n * (level + 1) * 5 training. Refused above the comfort the character has. An
+  item / class bonus to the rate has no field yet (Q107).
+- buy_attention_course: +1 for 200; it adds to the stat bonus of EVERY attention conversion (OV, OT removal, RL raise:
+  assumption Q102).
+- buy_reaction: 200 * the new number of reactions (1 -> 2 costs 400, 2 -> 3 costs 600). Character.reactions starts at 1.
+- buy_seed(name): 200, a new seed (id from the name); sprout_seed(seed_id): 200, refused twice (the quirk itself is
+  narrative).
+- make_language_native(lid): first native free, 50 while natives < Int mod, else 100; refused when already native.
+- promote_skill(name, to_tier): normal -> advanced 40 + 20 * other advanced or specialized; advanced -> specialized
+  200 + 50 * other specialized; normal -> specialized pays both; refused for the same or a lower tier (skills.md).
+- buy_professionalism(skills, class_skill_points): 300; class skill points 2+ / 4+ / 6+ / 8+ -> exactly 1 / 2 / 3 / 4
+  chosen skills become specialized; refused below 2 points, for a wrong number of skills, for an already specialized
+  skill, and a second time (assumption Q105). "Only classes without their own professionalism" and "skills from the
+  class list" cannot be checked yet: there is no class data (Q104).
+- learn_spell(name, circle, discount): 20 + 10 * circle^2, half with discount (a class with a book, or learning from a
+  teacher or a scroll); circle 0..9. A minimal spell record (id, name, circle, source, cost, upgrades).
+- buy_spell_upgrade(spid, name, metamagic): 25 * (1 + circle^2) per upgrade; three slots per spell; an upgrade takes 1
+  slot, the second identical one 2 (each further identical one 1 more: Q106); a metamagic takes slots = its circles;
+  refused when the slots do not fit.
+- buy_combat_basics(wid): 50 / 100 / 150 for scale 1 / 2 / 3, once per node, refused for Basic/simple (weapons.md).
+- buy_maneuver(name, ...): 250, an entry in the maneuver list (edit its tags and numbers with edit_maneuver). Its
+  `source` parameter is the purchase source, so the maneuver's own source label is set with edit_maneuver (Q112).
+- buy_item_qualification(iid): 50 * N (N = Item.qualification_n); refused without N or twice. What the qualification
+  unlocks is not modelled (Q109).
+- Tests: package 15 (test_pkg15.py), every price with the numbers above.

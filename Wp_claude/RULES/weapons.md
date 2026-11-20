@@ -34,6 +34,9 @@ Expert I-IV (levels 8-11): one pick each, from expert or specialist lists.
 - Weapon HP +1; durability +70% (stacks with specialist); damage +3; ignore first vulnerability in a fight; ignore 20% cover;
   lucky attack +1; first ranged attack each round can be parried.
 Master (12): one pick from master, expert or specialist lists.
+[package 15] Picks without a numeric effect are STORED ONLY (no mechanics): reroll one d20, one attack per turn
+without the [attack] tag, once per combat restore all balance as a free action, ignore the first vulnerability,
+ignore 20% cover, the first ranged attack can be parried. Combat basics are bought with buy_combat_basics.
 - Reroll one d20 with this weapon; one attack per turn without [attack] tag; once per fight free action: restore all balance.
 Repeat limits: a specialist bonus may be picked again (2nd time) from expert level; 3rd time at master.
 An expert bonus may be picked a 2nd time at master.

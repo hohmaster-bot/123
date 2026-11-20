@@ -17,7 +17,7 @@ This is a DRAFT of the owner's future AC-by-direction scheme. Nothing here is bu
 | Shield | Cells with the shield bonus |
 |---|---|
 | buckler | 1, 2, 4 |
-| light shield | 1, 2, 3, 4 |
+| light shield | 1, 2, 3, 4, 7 (package 15, Q93; was 1, 2, 3, 4) |
 | heavy shield | 1, 2, 3, 4, 7 |
 | tower shield | 1, 2, 3, 4, 7 |
 - Shield in the RIGHT hand: mirror the cells: 1<->3, 4<->6, 7<->9.
@@ -36,7 +36,11 @@ This is a DRAFT of the owner's future AC-by-direction scheme. Nothing here is bu
 - Every cell shows BOTH values: Full and Parry (parrying is the player's choice and may be done with an empty hand).
 - The current flank / flat-footed / shield-side modes later become PRESETS of cells.
 
-## Open items (OPEN_QUESTIONS Q93)
-- The owner's remark: "the side with no weapon has full AC without the shield". Which cells is that, and how does it
-  combine with the shield coverage table above?
-- The full owner table is still to come (then an AC-zones package, ROADMAP).
+## Parry and shields [OWNER, package 15, closes Q93]
+- Parry is possible with anything held: a weapon, a stick, a torch, an improvised weapon ("junk": the Contact group
+  bonuses apply to improvised weapons), or unarmed with the Unarmed combat / Contact bonuses. Parry cells: 1, 2, 3.
+- There is NO special "side with no weapon".
+- A shield gives its bonus only in the cells it covers (shield in the LEFT hand; mirror for the right hand: 1<->3,
+  4<->6, 7<->9): buckler 1, 2, 4; every other shield (light, heavy, tower) 1, 2, 3, 4, 7. Cells 6, 8, 9 never get a
+  shield bonus. (The light-shield row of the table above was changed accordingly.)
+- The cell logic is NOT implemented yet (a later, data-driven package).

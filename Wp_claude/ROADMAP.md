@@ -50,10 +50,11 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   Report: tests/PACKAGE14_REPORT.md.
 - Owner goal: FULL control over bonuses and rules through settings. For now every NEW rule constant or switch goes into
   Character.rules_settings (data) instead of code.
-- Package 15 (planned): the missing commands: level up (+100 * level training, HP roll), comfort -> training exchange,
-  OT removal (comfort, attention, injury, RL raise), skill advancement and specialization commands, professionalism,
-  spell learning and spell mastery, combat basics, item qualification, reactions, seeds, native language, attention
-  course, and the rest of the "rule exists, no code yet" list below.
+- Done in package 15: Q95 (a D-round status pays for D rounds), the missing commands: level_up, exchange_comfort,
+  remove_ot_comfort, remove_ot_attention, raise_heal_rating, buy_attention_course, buy_reaction, buy_seed, sprout_seed,
+  make_language_native, promote_skill, buy_professionalism, learn_spell, buy_spell_upgrade, buy_combat_basics,
+  buy_maneuver, buy_item_qualification; minimal Spell / SpellUpgrade / Seed records. Report: tests/PACKAGE15_REPORT.md.
+- NEXT: an independent review of the whole core by a fresh session, then package 16.
 - Package 16 (planned): the remaining "core" items of tests/LEGACY_FEATURES.md (ranged / thrown attack flags, own
   damage stat and damage multiplier, master counters, XP and level threshold, start session, money, base contents,
   quirks / courts / quests / lens / principles, character templates, PDF export, journal revert).
@@ -61,23 +62,11 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
 - Deferred (from REVIEW_REPORT, not done yet): spell mastery cost
   25 * (1 + circle^2); level-up command (+100 * level training, HP roll); comfort -> training command;
   OT removal commands (comfort, attention, injury removal, RL raise); weapon card data from the owner's table.
-- Rule exists, no code yet (package 4, training text; see training.md / progression.md / weapons.md):
-  - comfort -> training command (rate (level+1)*5 exists in core);
-  - level-up command (+100 * level training);
-  - combat basics purchase command (cost 50/100/150 exists in core);
-  - new combat maneuver 250 (record of maneuvers per weapon branch);
-  - item qualification purchase 50 * N;
-  - +1 reaction 200 * new number of reactions;
-  - professionalism 300 (1/2/3/4 specialized class skills), only for classes without their own (Q29 closed);
-    the "professionalism level" number is a placeholder: do not develop it;
-  - new spell 20 + 10 * circle^2 (half for book / teacher / scroll classes);
-  - spell mastery 25 * (1 + circle^2), three slots, identical upgrade 2nd time = 2 slots, metamagic = its circle;
-  - seed 200 / sprout seed 200;
-  - make a known language native (50 / 100);
-  - attention course +1 for 200 (adds to the stat bonus);
-  - master weapon picks have no mechanics yet: reroll one d20, one attack per turn without the [attack] tag,
-    once per combat restore all balance (free action); expert picks "ignore first vulnerability",
-    "ignore 20% cover", "first ranged attack can be parried" are stored but have no effect in numbers.
+- Rule exists, no code yet (what is left after package 15):
+  - master / expert weapon picks without numeric effect are stored only: reroll one d20, one attack per turn without
+    the [attack] tag, once per combat restore all balance (free action), ignore the first vulnerability, ignore 20%
+    cover, the first ranged attack can be parried;
+  - attention options 2 and 4 (Q110); what an item qualification unlocks (Q109).
 
 ## Class system (future, Q61; not built)
 - No multiclass. A class has flags for BAB growth and stat growth, and a good or poor progression per save
