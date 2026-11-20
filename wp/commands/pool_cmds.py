@@ -8,6 +8,7 @@ from dataclasses import replace
 from wp.commands.base import CommandError, command, commit
 from wp.core import formula as fm
 from wp.model import formulas as fx
+from wp.model import blocks as blk
 from wp.model import ids
 from wp.model import pool_view as pv
 from wp.model.character import ResourcePool
@@ -92,5 +93,7 @@ def spend_pool(ch, pid="", n=1):
 @command
 def restore_pool(ch, pid=""):
     p = _find(ch, pid)
+    if blk.restore_blocked(ch, "pool:" + pid):
+        raise CommandError("restoring %s is blocked by %s" % (p.name, ", ".join(blk.restore_block_reasons(ch, "pool:" + pid))))
     m = pv.max_of(ch, p)
     return commit(_put(ch, replace(p, current=m)), "restore_pool", "%s restored to %d" % (p.name, m))

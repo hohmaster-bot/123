@@ -17,8 +17,8 @@ not tick. hidden / favorite are display only.
 Pure functions, frozen data.
 """
 import math
-from dataclasses import dataclass, replace
-from typing import Optional, Tuple
+from dataclasses import dataclass, field, replace
+from typing import Dict, Optional, Tuple
 
 from wp.core import bonuses as bo
 from wp.core import formula as fm
@@ -56,6 +56,8 @@ class Effect:
     block_type: str = ""               # block_bonus: bonus type or "any" (package 13 B)
     block_scope: Tuple[str, ...] = ()  # block_bonus: ("all",) (default when empty) or targets
     block_stats: Tuple[str, ...] = ()  # block_stat_bonus: stat names or ("all",)
+    block_actions: Tuple[str, ...] = ()    # block_action: attack / move / spell_cast / heal / any (package 14 F)
+    block_resources: Tuple[str, ...] = ()  # block_restore: hp / mana / spirit / balance / pool:<id> / any
 
     def resolve(self, context=None):
         """The effect's number: a fixed value, a context value (current overload), or the current
@@ -105,6 +107,7 @@ class Status:
     full_ticks: int = 0                # full duration in ticks (per charge); used when activated
     charge_source: str = "own"         # per-round payment from: "own" (its charges) or a pool id (package 13 C)
     charge_per_round: int = 0          # paid every tick while active; cannot pay -> the status ends
+    per_tick_restore: Dict[str, int] = field(default_factory=dict)   # {mana|spirit|balance|pool:<id>: n} per tick (pkg 14 F)
     hidden: bool = False               # DISPLAY ONLY: hidden on the panel, still active / ticking
     favorite: bool = False             # pinned for the panel / screen
 

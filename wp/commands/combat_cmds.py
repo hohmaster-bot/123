@@ -11,7 +11,9 @@ from wp.model import derived_view as dv
 from wp.model import ids
 from wp.core import formula as fm
 from wp.model import formulas as fx
+from wp.model import blocks as blk
 from wp.model import pool_view as pv
+from wp.model import restores as rst
 from wp.model import spell_view as sv
 
 
@@ -53,6 +55,9 @@ def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=None, fr
     mana_cost None = the circle table (magic.CIRCLE_MANA). Mage, circle 1+: the armor spell penalty
     (spell_view) is added; penalty_balance = the part of it paid with balance (the rest with mana).
     Mage: cost + penalty above the mana level (= level) -> refused (package 10, Q49)."""
+    why = blk.action_block_reasons(ch, "spell_cast")
+    if why:
+        raise CommandError("casting is blocked by %s" % ", ".join(why))
     if ch.caster is None and not from_item:
         raise CommandError("character is not a caster")
     mana_cost = mg.circle_mana(circle) if mana_cost is None else int(mana_cost)
@@ -74,6 +79,8 @@ def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=None, fr
         raise CommandError("not enough mana or slots")
     state, res = mg.cast(bridge.to_caster(ch), cost)
     new = bridge.from_caster(ch, state)
+    if not ch.rules_settings.overload_enabled:     # rule switch: the overload counter is not applied (pkg 14 G)
+        new = replace(new, overload=ch.overload)
     summary = "circle %d: mana -%d, balance -%d, overload +%d" % (
         circle, cost.mana, cost.balance, cost.overload)
     if res.concentration_dc:
@@ -142,6 +149,7 @@ def _start(ch, st, ticks=None):
     started = ef.activate(st, ticks, cost)
     if started.duration == ef.TICKS and started.remaining <= 0:
         raise CommandError("status %s lasts N ticks: give the number of ticks (> 0)" % st.name)
+    ch = rst.one_shot(ch, started)             # one-shot resources at activation (package 14 F)
     if ef.holds_temp_hp(started):
         before = dv.temp_hp_total(ch)
         gained = ef.apply_one_shot(started, before) - before
@@ -174,6 +182,9 @@ def add_status(ch, status=None, ticks=None, active=False):
         fx.validate_effects(status.effects)     # formula values are checked when added (package 14 C)
     except fm.FormulaError as e:
         raise CommandError("bad effect formula in %s: %s" % (status.name, e))
+    bad = [r for r in status.per_tick_restore if not rst.valid(r)]
+    if bad:
+        raise CommandError("unknown per-tick restore resources: %s (use mana, spirit, balance, pool:<id>)" % ", ".join(bad))
     if status.sid and any(s.sid == status.sid for s in ch.statuses):
         raise CommandError("a status with id %r is already on the sheet" % (status.sid,))
     st = status
@@ -246,7 +257,7 @@ def set_status_favorite(ch, sid="", value=True):
 def tick(ch, reductions=None):
     """Zero-initiative phase: durations, balance, DoT, overload -1."""
     t, rep = tk.zero_initiative(bridge.to_tick(ch), reductions)
-    new = bridge.from_tick(ch, t)
+    new = rst.per_tick(bridge.from_tick(ch, t), rep.acted)     # restore by effect (package 14 F)
     if ch.in_combat and rep.cap_hits:
         new = replace(new, balance_cap_hits=new.balance_cap_hits + rep.cap_hits)
     return commit(new, "tick", "balance +%d, dot %d, heal %d, expired %s" % (

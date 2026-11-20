@@ -44,15 +44,45 @@ def _of(ch, target):
     return [(src, e) for src, e in active_effects(ch) if e.target == target]
 
 
+ACTIONS = ("attack", "move", "spell_cast", "heal")
+RESOURCES = ("hp", "mana", "spirit", "balance")
+
+
+def restore_block_reasons(ch, resource):
+    """Source ids of block_restore effects for this resource ("hp", "mana", "spirit", "balance", "pool:<id>")
+    or "any"; block_balance_regen is the balance case (old name kept as an alias, package 14 F)."""
+    out = [src for src, e in _of(ch, bo.BLOCK_RESTORE) if ANY in e.block_resources or resource in e.block_resources]
+    if resource == "balance":
+        out += [src for src, _ in _of(ch, bo.BLOCK_REGEN)]
+    return tuple(out)
+
+
+def restore_blocked(ch, resource):
+    return bool(restore_block_reasons(ch, resource))
+
+
 def regen_block_reasons(ch):
-    """Why the balance does not regenerate now: "overload" (overload > 0) and the source ids of
-    block_balance_regen effects."""
-    out = [OVERLOAD_REASON] if ch.overload > 0 else []
-    return tuple(out + [src for src, _ in _of(ch, bo.BLOCK_REGEN)])
+    """Why the balance does not regenerate now: "overload" (overload > 0, while the overload switch is on) and the
+    source ids of block_balance_regen / block_restore balance effects."""
+    out = [OVERLOAD_REASON] if ch.overload > 0 and ch.rules_settings.overload_enabled else []
+    return tuple(out + list(restore_block_reasons(ch, "balance")))
 
 
 def regen_blocked_by_effect(ch):
-    return bool(_of(ch, bo.BLOCK_REGEN))
+    return restore_blocked(ch, "balance")
+
+
+def blocked_actions(ch):
+    """{action: (source ids)} for every blocked action (block_action effects; "any" blocks all)."""
+    out = {}
+    for src, e in _of(ch, bo.BLOCK_ACTION):
+        for a in (ACTIONS if ANY in e.block_actions else e.block_actions):
+            out.setdefault(a, []).append(src)
+    return {a: tuple(v) for a, v in out.items()}
+
+
+def action_block_reasons(ch, action):
+    return blocked_actions(ch).get(action, ())
 
 
 def cannot_be_flanked(ch):

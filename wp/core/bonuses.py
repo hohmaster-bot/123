@@ -57,6 +57,8 @@ BLOCK_REGEN = "block_balance_regen"
 BLOCK_BONUS = "block_bonus"
 BLOCK_STAT = "block_stat_bonus"
 NO_FLANK = "cannot_be_flanked"
+BLOCK_ACTION = "block_action"         # package 14 F: Effect.block_actions
+BLOCK_RESTORE = "block_restore"       # package 14 F: Effect.block_resources (block_balance_regen = balance)
 CRIT = "crit"                   # crit confirmation die: no bonuses from ROLLS
 ROLLS = "rolls"                 # all rolls: attack, damage, saves, skills, initiative, CMB, maneuvers
 ROLL_TARGETS = {ATTACK, DAMAGE, SAVE, SKILL, INITIATIVE, CMB, MANEUVER}

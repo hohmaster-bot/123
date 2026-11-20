@@ -5,6 +5,7 @@ from wp.commands import pool_cmds
 from wp.commands.base import CommandError, Result, command, commit
 from wp.core import effects as ef
 from wp.model import derived_view as dv
+from wp.model import restores as rst
 from wp.model import items as itm
 from wp.model.character import LogEntry
 
@@ -119,7 +120,7 @@ def start_combat(ch):
     if ch.in_combat:
         raise CommandError("combat already active")
     cap = dv.balance_max_base(ch)          # snapshot of the balance cap (package 9 C)
-    ch = pool_cmds.restore_by(ch, pool_cmds.COMBAT_START)   # pools with restore "combat_start" (package 13 C)
+    ch = rst.guard(ch, pool_cmds.restore_by(ch, pool_cmds.COMBAT_START))   # "combat_start" pools; restore blocks
     return commit(replace(ch, in_combat=True, balance_cap_hits=0, balance_cap_start=cap), "start_combat",
                   "combat started, balance cap %d" % cap)
 

@@ -9,7 +9,9 @@ from wp.commands import pool_cmds as pools
 from wp.commands.gear_cmds import LONG, SHORT, switch_off_items
 from wp.model import bridge
 from wp.model import derived_view as dv
+from wp.model import blocks as blk
 from wp.model import ids
+from wp.model import restores as rst
 
 # resource name -> (read pool, write current)
 _SCALAR = {
@@ -47,6 +49,10 @@ def restore(ch, resource="hp", amount=0):
     """Gameplay restore: never above max (an over-max value is kept)."""
     if amount < 0:
         raise CommandError("amount must be >= 0")
+    if resource == "hp" and blk.action_block_reasons(ch, "heal"):
+        raise CommandError("healing is blocked by %s" % ", ".join(blk.action_block_reasons(ch, "heal")))
+    if blk.restore_blocked(ch, resource):
+        raise CommandError("restoring %s is blocked by %s" % (resource, ", ".join(blk.restore_block_reasons(ch, resource))))
     before = _get(ch, resource)
     after = dm.restore(before, amount)
     return commit(_put(ch, resource, after), "restore", "%s %d -> %d" % (
@@ -89,6 +95,7 @@ def short_rest(ch, spends=(), other_heal=0, extra_bp=0, keep_overcap=False):
     # rest.md [OWNER]: after the spends the short rest clears ALL temp HP
     new = replace(new, temp_hp=0, statuses=tuple(replace(s, temp_hp_left=0) for s in new.statuses))
     new = pools.restore_by(new, pools.SHORT_REST)      # resource pools with restore "short_rest" (package 13 C)
+    new = rst.guard(ch, rst.rest_hp(ch, new))           # rest HP switch, then restore blocks (package 14 F, G)
     return commit(new, "short_rest", "short rest: %s" % (
         ", ".join(o for o, _ in spends) or "free gains only"))
 
@@ -102,6 +109,7 @@ def long_rest(ch):
     new = replace(new, balance_current=max(new.balance_current, dv.balance_max(new)))
     # a long rest includes a short one: "long_rest" and "short_rest" pools (package 14, Q88)
     new = pools.restore_by(pools.restore_by(new, pools.LONG_REST), pools.SHORT_REST)
+    new = rst.guard(ch, rst.rest_hp(ch, new))           # rest HP switch, then restore blocks (package 14 F, G)
     return commit(new, "long_rest", "long rest")
 
 

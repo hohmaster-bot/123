@@ -101,7 +101,9 @@ def to_tick(ch):
     return TickState(vitals=to_vitals(ch), statuses=ch.statuses, overload=ch.overload,
                      balance_regen=dv.balance_regen(ch), negative_state=ch.negative_state,
                      traits=ch.traits, regen_blocked=blk.regen_blocked_by_effect(ch),
-                     pools={p.pid: pv.current(ch, p) for p in ch.pools})
+                     pools={p.pid: pv.current(ch, p) for p in ch.pools},
+                     heal_blocked=blk.restore_blocked(ch, "hp"), hp_regen=ch.rules_settings.hp_regen_per_tick,
+                     overload_enabled=ch.rules_settings.overload_enabled)
 
 
 def from_tick(ch, t):
