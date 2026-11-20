@@ -36,7 +36,7 @@ def get(ch, res):
     if res == "hp":
         return ch.hp_current, dv.hp_max(ch)
     if res == "mana":
-        return ch.mana.current, ch.mana.max
+        return ch.mana.current, dv.mana_max(ch)
     if res == "spirit":
         return ch.spirit_current, dv.spirit_max(ch)
     if res == "balance":

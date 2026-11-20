@@ -23,22 +23,22 @@ _FIELDS = tuple(f.name for f in dataclasses.fields(ResourcePool) if f.name != "p
 
 def _check(p):
     if not p.name:
-        raise CommandError("a pool needs a name")
+        raise CommandError("a pool needs a name", "pool_needs_name")
     if p.restore not in RESTORES:
-        raise CommandError("restore must be one of %s" % ", ".join(RESTORES))
+        raise CommandError("restore must be one of %s" % ", ".join(RESTORES), "restore_must_one", values=", ".join(RESTORES))
     try:
         fx.validate(p.max)             # a number or a formula (package 14 C)
     except fm.FormulaError as e:
-        raise CommandError("bad pool max formula %r: %s" % (p.max, e))
+        raise CommandError("bad pool max formula %r: %s" % (p.max, e), "bad_pool_max_formula", values=(p.max, e))
     if (not isinstance(p.max, str) and p.max < 0) or p.current < 0:
-        raise CommandError("pool values cannot be negative")
+        raise CommandError("pool values cannot be negative", "pool_values_cannot_negative")
     return p
 
 
 def _find(ch, pid):
     p = next((x for x in ch.pools if x.pid == pid), None)
     if p is None:
-        raise CommandError("no pool %r" % (pid,))
+        raise CommandError("no pool %r" % (pid,), "no_pool", values=(pid,))
     return p
 
 
@@ -48,7 +48,8 @@ def _put(ch, p):
 
 def restore_by(ch, rule):
     """Pools with this restore rule go back to max (called by short_rest, long_rest, start_combat)."""
-    return replace(ch, pools=tuple(replace(p, current=pv.max_of(ch, p)) if p.restore == rule else p for p in ch.pools))
+    return replace(ch, pools=tuple(replace(p, current=max(p.current, pv.max_of(ch, p))) if p.restore == rule else p
+                                   for p in ch.pools))   # an over-max value is not lowered ("Over max")
 
 
 @command
@@ -67,7 +68,7 @@ def add_pool(ch, name="", max=0, current=None, restore=MANUAL):
 def edit_pool(ch, pid="", **fields):
     unknown = set(fields) - set(_FIELDS)
     if unknown:
-        raise CommandError("unknown pool fields: %s" % ", ".join(sorted(unknown)))
+        raise CommandError("unknown pool fields: %s" % ", ".join(sorted(unknown)), "unknown_pool_fields", values=", ".join(sorted(unknown)))
     p = _check(replace(_find(ch, pid), **fields))
     return commit(_put(ch, p), "edit_pool", "pool %s: %s" % (p.name, ", ".join(sorted(fields)) or "no change"))
 
@@ -83,10 +84,10 @@ def spend_pool(ch, pid="", n=1):
     p = _find(ch, pid)
     n = int(n)
     if n < 0:
-        raise CommandError("cannot spend a negative amount")
-    have = pv.current(ch, p)               # clamped to the max on read
+        raise CommandError("cannot spend a negative amount", "cannot_spend_negative_amount")
+    have = pv.current(ch, p)               # as stored (over max kept, package 16 A6)
     if have - n < 0:
-        raise CommandError("not enough %s: need %d, have %d" % (p.name, n, have))
+        raise CommandError("not enough %s: need %d, have %d" % (p.name, n, have), "not_enough_need_have", values=(p.name, n, have))
     return commit(_put(ch, replace(p, current=have - n)), "spend_pool", "%s -%d" % (p.name, n))
 
 
@@ -94,6 +95,6 @@ def spend_pool(ch, pid="", n=1):
 def restore_pool(ch, pid=""):
     p = _find(ch, pid)
     if blk.restore_blocked(ch, "pool:" + pid):
-        raise CommandError("restoring %s is blocked by %s" % (p.name, ", ".join(blk.restore_block_reasons(ch, "pool:" + pid))))
-    m = pv.max_of(ch, p)
+        raise CommandError("restoring %s is blocked by %s" % (p.name, ", ".join(blk.restore_block_reasons(ch, "pool:" + pid))), "restoring_blocked", values=(p.name, ", ".join(blk.restore_block_reasons(ch, "pool:" + pid))))
+    m = max(p.current, pv.max_of(ch, p))   # an over-max value is not lowered
     return commit(_put(ch, replace(p, current=m)), "restore_pool", "%s restored to %d" % (p.name, m))

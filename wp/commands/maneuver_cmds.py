@@ -20,25 +20,25 @@ _FIELDS = tuple(f.name for f in dataclasses.fields(Maneuver) if f.name != "mid")
 
 def _check(m):
     if not m.name:
-        raise CommandError("a maneuver needs a name")
+        raise CommandError("a maneuver needs a name", "maneuver_needs_name")
     if m.tag_mode not in TAG_MODES:
-        raise CommandError("tag_mode must be any or all")
+        raise CommandError("tag_mode must be any or all", "tag_mode_must_any")
     if m.condition_tag not in TAGS:
-        raise CommandError("condition_tag must be one of %s" % ", ".join(TAGS))
+        raise CommandError("condition_tag must be one of %s" % ", ".join(TAGS), "condition_tag_must_one", values=", ".join(TAGS))
     try:
         fx.validate_effects(m.effects)      # formula values are checked when added / edited (package 14 C)
     except fm.FormulaError as e:
-        raise CommandError("bad effect formula in %s: %s" % (m.name, e))
+        raise CommandError("bad effect formula in %s: %s" % (m.name, e), "bad_effect_formula", values=(m.name, e))
     for n in ("to_hit", "damage", "cost_actions", "cost_balance", "cost_spirit"):
         if not isinstance(getattr(m, n), int) or isinstance(getattr(m, n), bool):
-            raise CommandError("%s must be a whole number" % n)
+            raise CommandError("%s must be a whole number" % n, "must_whole_number", values=(n,))
     return m
 
 
 def _clean(fields):
     unknown = set(fields) - set(_FIELDS)
     if unknown:
-        raise CommandError("unknown maneuver fields: %s (put future keys into extra)" % ", ".join(sorted(unknown)))
+        raise CommandError("unknown maneuver fields: %s (put future keys into extra)" % ", ".join(sorted(unknown)), "unknown_maneuver_fields_put", values=", ".join(sorted(unknown)))
     out = dict(fields)
     for n in _TUPLES:
         if n in out:
@@ -59,7 +59,7 @@ def add_maneuver(ch, name="", **fields):
 def _find(ch, mid):
     m = next((x for x in ch.maneuvers if x.mid == mid), None)
     if m is None:
-        raise CommandError("no maneuver %r" % (mid,))
+        raise CommandError("no maneuver %r" % (mid,), "no_maneuver", values=(mid,))
     return m
 
 

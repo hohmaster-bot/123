@@ -1,0 +1,31 @@
+{
+  "format": "wipefinder.sheet_targets",
+  "note": "Effect targets of sheet numbers added in package 16 (A2, D, G). Older targets (ac, attack, damage, save, save:<id>, skill, skill:<id>, initiative, cmb, cmd, speed, crit_range, lucky, touch_armor, armor_slowdown_reduction, spell_penalty_mana, spell_failure_pct, twf_reduction, block_*) are in RULES/buffs.md. A target with ':' takes an id after it.",
+  "targets": {
+    "stat:": "ability score (stat:str ... stat:cha): typed bonuses stack by the normal rules; the modifier and everything built on it follow",
+    "hp_max": "max HP",
+    "extra_hit_dice": "one extra hit die per effect; the value is the HP of that die; it counts max(1, value + current Con mod) like every die",
+    "bp_max": "max BP",
+    "balance_max": "balance max (also inside the start-of-combat snapshot)",
+    "balance_regen": "balance regen per tick",
+    "spirit_max": "max spirit",
+    "mana_max": "max mana",
+    "slots:": "max spell slots of one circle (slots:1 ... slots:9, slots:0 = cantrips)",
+    "pool_max:": "max of one resource pool (pool_max:<pool id>)",
+    "comfort_max": "max comfort",
+    "comfort_rate_bonus": "training per comfort point in exchange_comfort",
+    "parry": "parry layer",
+    "max_dex": "Dex cap of the worn armor (only when a cap exists)",
+    "armor_skill_penalty": "added to the armor skill penalty (positive = smaller penalty, never above 0)",
+    "load_mod": "added to the Str modifier used for the load thresholds",
+    "reactions": "reactions per round",
+    "base_slots": "base slots",
+    "attention_per_cycle": "attention at the end of a cycle",
+    "crit_mult": "crit multiplier (weapon id = that weapon only)",
+    "iterative_penalty": "makes every step of the iterative penalty smaller (a step never goes above 0)",
+    "dr": "damage reduction vs physical damage; Effect.note = the bypass text (narrative only)",
+    "resist:": "flat resistance to one damage type (resist:fire ...)",
+    "spell_resistance": "spell resistance (shown only, not a damage step)",
+    "spell_price_discount": "training subtracted from a new spell's price after the spellbook half; minimum 1"
+  }
+}

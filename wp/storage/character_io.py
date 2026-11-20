@@ -25,6 +25,8 @@ from wp.core.skills import Skill
 from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
 from wp.model import ids
+from wp.model.notebook import Court, Drive, Lens, Quest, Quirk, Story
+from wp.model.template import Template
 from wp.model.character import (Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
                                 ResourcePool, RulesSettings, Seed, Spell, SpellUpgrade, Usage, WeaponEntry)
 
@@ -53,7 +55,8 @@ def _skipped(name, v):
 _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,
     NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
-    ResourcePool, RulesSettings, Seed, Spell, SpellUpgrade, Usage, WeaponEntry)}
+    ResourcePool, RulesSettings, Seed, Spell, SpellUpgrade, Usage, WeaponEntry,
+    Court, Drive, Lens, Quest, Quirk, Story, Template)}
 
 
 class StorageError(Exception):
@@ -80,6 +83,10 @@ def _encode(v):
     raise StorageError("cannot save value of type %s" % type(v).__name__)
 
 
+def _tuple_field(f):
+    return f.default is not dataclasses.MISSING and isinstance(f.default, tuple)
+
+
 def _decode(v):
     if isinstance(v, list):
         return tuple(x for x in (_decode(x) for x in v) if x is not _SKIP)
@@ -92,12 +99,18 @@ def _decode(v):
         cls = _TYPES[name]
         if _skipped(name, v):
             return _SKIP
-        known = {f.name for f in dataclasses.fields(cls)}
-        v = {k: x for k, x in v.items() if k not in DROPPED.get(name, ())}
-        extra = set(v) - known - {"_t"}
-        if extra:
-            raise StorageError("unknown fields for %s: %s" % (name, ", ".join(sorted(extra))))
-        return cls(**{k: _decode(x) for k, x in v.items() if k != "_t"})
+        fields = {f.name: f for f in dataclasses.fields(cls)}
+        # unknown fields are dropped on load (no migrations; CLAUDE.md, package 16 A8); a field whose stored kind
+        # no longer fits (a dict where the model now keeps a list of records) is dropped the same way
+        out = {}
+        for k, x in v.items():
+            if k == "_t" or k not in fields or k in DROPPED.get(name, ()):
+                continue
+            val = _decode(x)
+            if isinstance(val, dict) and _tuple_field(fields[k]):
+                continue
+            out[k] = val
+        return cls(**out)
     return v
 
 

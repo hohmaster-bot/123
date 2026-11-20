@@ -24,6 +24,13 @@ SLOTS = "slots"
 CIRCLE_MANA = (0, 1, 3, 5, 7, 9, 11, 13, 15, 17)
 
 
+CIRCLES = tuple(range(len(CIRCLE_MANA)))   # valid circles 0..9 (package 16 B: no circle 10 or above)
+
+
+def valid_circle(circle):
+    return isinstance(circle, int) and not isinstance(circle, bool) and circle in CIRCLES
+
+
 def circle_mana(circle):
     return CIRCLE_MANA[int(circle)]
 

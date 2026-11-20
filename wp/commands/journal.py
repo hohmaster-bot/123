@@ -19,16 +19,20 @@ KIND = {
                "set_status_hidden", "set_status_favorite"),
     "charges": ("spend_charge", "set_charges", "restore_charges", "spend_pool", "restore_pool", "add_pool",
                 "edit_pool", "remove_pool", "spend_bp"),
-    "rest": ("short_rest", "long_rest"),
+    "rest": ("short_rest", "long_rest", "long_rest_end_combat"),
     "injury": ("add_injury", "remove_injury"),
     "stance": ("set_active_stance",),
-    "combat": ("start_combat", "end_combat", "tick"),
+    "combat": ("start_combat", "end_combat", "tick", "use_attack", "set_iterative_count"),
     "purchase": ("buy_ability", "buy_skill_rank", "buy_hp", "buy_weapon_grade", "buy_base_slot", "buy_shield_grade",
                  "buy_armor_grade", "buy_language", "buy_combat_basics", "buy_maneuver", "buy_item_qualification",
                  "buy_attention_course", "buy_reaction", "buy_seed", "sprout_seed", "make_language_native",
-                 "promote_skill", "buy_professionalism", "learn_spell", "buy_spell_upgrade", "add_feat"),
+                 "promote_skill", "buy_professionalism", "learn_spell", "buy_spell_upgrade", "add_feat",
+                 "attention_to_training", "attention_to_base_points"),
     "progression": ("level_up", "exchange_comfort", "set_hp_roll"),
     "ot": ("remove_ot_comfort", "remove_ot_attention", "raise_heal_rating"),
+    "edit": ("edit_sheet", "edit_ability", "edit_rules", "add_entry", "edit_entry", "remove_entry"),
+    "notebook": ("add_note", "change_lens", "set_drive_level", "burn_quirk"),
+    "template": ("add_template", "remove_template"),
 }
 _BY_COMMAND = {c: k for k, cmds in KIND.items() for c in cmds}
 OTHER = "other"

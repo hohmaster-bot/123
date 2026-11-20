@@ -28,18 +28,18 @@ _POOLS = ("mana",)
 def _get(ch, name):
     if name in _SCALAR:
         return _SCALAR[name][0](ch)
-    if name in _POOLS:
-        return getattr(ch, name)
+    if name == "mana":
+        return dv.mana_pool(ch)          # with the effect "mana_max" (package 16 A2)
     if name in ch.resources:
         return ch.resources[name]
-    raise CommandError("unknown resource: %r" % (name,))
+    raise CommandError("unknown resource: %r" % (name,), "unknown_resource", values=(name,))
 
 
 def _put(ch, name, pool):
     if name in _SCALAR:
         return replace(ch, **{_SCALAR[name][1]: pool.current})
-    if name in _POOLS:
-        return replace(ch, **{name: pool})
+    if name == "mana":
+        return replace(ch, mana=replace(ch.mana, current=pool.current))
     res = dict(ch.resources)
     res[name] = pool
     return replace(ch, resources=res)
@@ -49,11 +49,11 @@ def _put(ch, name, pool):
 def restore(ch, resource="hp", amount=0):
     """Gameplay restore: never above max (an over-max value is kept)."""
     if amount < 0:
-        raise CommandError("amount must be >= 0")
+        raise CommandError("amount must be >= 0", "amount_must_0")
     if resource == "hp" and blk.action_block_reasons(ch, "heal"):
-        raise CommandError("healing is blocked by %s" % ", ".join(blk.action_block_reasons(ch, "heal")))
+        raise CommandError("healing is blocked by %s" % ", ".join(blk.action_block_reasons(ch, "heal")), "healing_blocked", values=", ".join(blk.action_block_reasons(ch, "heal")))
     if blk.restore_blocked(ch, resource):
-        raise CommandError("restoring %s is blocked by %s" % (resource, ", ".join(blk.restore_block_reasons(ch, resource))))
+        raise CommandError("restoring %s is blocked by %s" % (resource, ", ".join(blk.restore_block_reasons(ch, resource))), "restoring_blocked", values=(resource, ", ".join(blk.restore_block_reasons(ch, resource))))
     before = _get(ch, resource)
     after = dm.restore(before, amount)
     return commit(_put(ch, resource, after), "restore", "%s %d -> %d" % (
@@ -72,7 +72,7 @@ def set_value(ch, resource="hp", value=0):
 def set_temp_hp(ch, value=0):
     """Temp HP "by button" (resources.md [OWNER]): set by hand, live until the short rest."""
     if value < 0:
-        raise CommandError("temp HP cannot be negative")
+        raise CommandError("temp HP cannot be negative", "temp_hp_cannot_negative")
     return commit(replace(ch, temp_hp=int(value)), "set_temp_hp", "temp HP (button) = %d" % int(value))
 
 
@@ -80,7 +80,7 @@ def set_temp_hp(ch, value=0):
 def spend_bp(ch, n=1):
     """Spend BP by hand (BP above max is ordinary BP)."""
     if n < 0 or ch.bp_current < n:
-        raise CommandError("not enough BP")
+        raise CommandError("not enough BP", "not_enough_bp")
     new = replace(ch, bp_current=ch.bp_current - n)
     return commit(new, "spend_bp", "BP -%d" % n)
 
@@ -98,13 +98,32 @@ def short_rest(ch, spends=(), other_heal=0, extra_bp=0, keep_overcap=False):
     new = pools.restore_by(new, pools.SHORT_REST)      # resource pools with restore "short_rest" (package 13 C)
     new = rst.guard(ch, rst.rest_hp(ch, new))           # rest HP switch, then restore blocks (package 14 F, G)
     new = us.recharge(new, us.SHORT_REST)               # usage charges (package 14 B)
+    new = us.status_recharge(ch, new, (us.SHORT_REST,))  # statuses follow their source (Q108)
     return commit(new, "short_rest", "short rest: %s" % (
         ", ".join(o for o, _ in spends) or "free gains only"))
 
 
+COMBAT_ACTIVE = "combat_active"
+
+
 @command
 def long_rest(ch):
-    """Long rest (rest.md): also overload 0 and balance to max [OWNER confirmed]; all items off."""
+    """Long rest (rest.md): also overload 0 and balance to max [OWNER confirmed]; all items off.
+    Refused during combat (package 16 A5, reason combat_active): the UI asks "end combat?" and then calls
+    long_rest_end_combat."""
+    if ch.in_combat:
+        raise CommandError("a long rest is not possible during combat: end the combat first", COMBAT_ACTIVE)
+    return _long_rest(ch)
+
+
+@command
+def long_rest_end_combat(ch):
+    """End the combat (exactly like end_combat), then the long rest (package 16 A5)."""
+    from wp.commands.gear_cmds import end_combat_state
+    return _long_rest(end_combat_state(ch) if ch.in_combat else ch, "long_rest_end_combat")
+
+
+def _long_rest(ch, name="long_rest"):
     # charges of statuses (rage 2/3) come back through the bridge as ability charges (buffs.md)
     new = switch_off_items(bridge.from_rest(ch, rs.long_rest(bridge.to_rest(ch))), LONG)
     new = replace(new, overload=0)
@@ -113,7 +132,9 @@ def long_rest(ch):
     new = pools.restore_by(pools.restore_by(new, pools.LONG_REST), pools.SHORT_REST)
     new = rst.guard(ch, rst.rest_hp(ch, new))           # rest HP switch, then restore blocks (package 14 F, G)
     new = us.recharge(new, us.LONG_REST, us.SHORT_REST)  # usage charges (package 14 B, Q96)
-    return commit(new, "long_rest", "long rest")
+    # status charges follow their SOURCE; a status without a source is not refilled (Q108, package 16 G3)
+    new = us.status_recharge(ch, new, (us.LONG_REST, us.SHORT_REST), revert=True)
+    return commit(new, name, "long rest")
 
 
 @command
@@ -131,5 +152,5 @@ def remove_injury(ch, injury_id=""):
     given again to a later injury (the counter stays)."""
     left = tuple(j for j in ch.injuries if j.jid != injury_id)
     if len(left) == len(ch.injuries):
-        raise CommandError("no injury with id %r" % (injury_id,))
+        raise CommandError("no injury with id %r" % (injury_id,), "no_injury_id", values=(injury_id,))
     return commit(replace(ch, injuries=left), "remove_injury", "injury %s removed" % injury_id)

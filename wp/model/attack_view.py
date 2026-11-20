@@ -24,6 +24,7 @@ from wp.core import pain as pn
 from wp.core import weapons as wpn
 from wp.model import blocks as blk
 from wp.model import derived_view as dv
+from wp.model import iterative as itv
 from wp.model import items as itm
 from wp.model import records as rec
 from wp.model import stats_view as stv
@@ -62,12 +63,14 @@ class AttackView:
     item_state: str = "ok"             # items.py: ok / broken / not_working / destroyed
     lucky: int = 20                    # lucky attack threshold (mastery picks, enchantment, lucky effects)
     crit_range: int = 20               # lowest d20 that threatens a crit (base, keen, picks, feats)
+    crit_mult: int = 2                 # weapon multiplier + effects "crit_mult" (package 16 A2)
     extra_dice: Tuple[Tuple[str, str], ...] = ()   # (dice, note) from the weapon's effects, e.g. ("1d6", "fire")
     cmb: int = 0                       # CMB with this record: sheet CMB + the record group's mastery attack (Q58)
     available: bool = True             # all weapons it needs are in the hands (records.attack_available)
     missing: Tuple[str, ...] = ()      # item ids that must be taken in hand
     in_hands: Tuple[str, ...] = ()     # item ids now in the hands
     drops_shield_ac: bool = False      # attacking with a shield: no shield bonus to AC until the next turn
+    iterative: int = 0                 # iterative penalty of the next attack (its own to-hit line, package 16 C)
 
 
 # ------------------------------------------------------------------ helpers
@@ -218,6 +221,9 @@ def lucky_extra(bonuses, ids):
     return _scoped(bonuses, bo.LUCKY, ids)
 
 
+CRIT_MULT = "crit_mult"
+
+
 def crit_range(ch, record, item, bonuses, ids):
     """Crit range shown on the attack (combat.md "Crit", package 10 R8): the weapon's base range, keen
     doubles it, each mastery pick "crit +1" and each feat effect (target "crit_range") widen it by 1."""
@@ -257,6 +263,9 @@ def attack(ch, record, extra=()):
         hit.append(Line("qualification", q))
     if pain:
         hit.append(Line("pain", pain))
+    it_pen = itv.penalty(ch, record)
+    if it_pen:
+        hit.append(Line("iterative", it_pen))       # combat.md: a separate negative line (package 16 C)
     hit += _typed_lines(blk.unblocked(ch, bonuses, bo.ATTACK), bo.ATTACK, ids)
 
     dmg = [Line("str:" + record.grip, str_damage(dv.ability_mod(ch, "str"), record.grip))]
@@ -279,6 +288,8 @@ def attack(ch, record, extra=()):
                       damage=sum(x.value for x in dmg), damage_lines=tuple(dmg),
                       parry=p, parry_lines=parry_lines,
                       crit_hint=crit_hint(item.crit_mult if item is not None else 2),
+                      crit_mult=(item.crit_mult if item is not None else 2)
+                      + _scoped(blk.unblocked(ch, bonuses, CRIT_MULT), CRIT_MULT, ids),
                       dice=dice_row(item, 1) if item is None or dv.works(ch, item) else ("", ""),
                       item_state=itm.state(item, dv.picks(ch, item)) if item is not None else itm.OK,
                       lucky=wpn.lucky_threshold(rec.group_picks(ch, record.group), weapon_enchant(ch, item),
@@ -286,7 +297,7 @@ def attack(ch, record, extra=()):
                       crit_range=crit_range(ch, record, item, blk.unblocked(ch, bonuses, bo.CRIT_RANGE), ids),
                       extra_dice=extra_dice(ch, item), cmb=record_cmb(ch, record),
                       available=ok, missing=why["missing"], in_hands=why["in_hands"],
-                      drops_shield_ac=item is not None and rec.is_shield(item))
+                      drops_shield_ac=item is not None and rec.is_shield(item), iterative=it_pen)
 
 
 def dice_row(item, row):

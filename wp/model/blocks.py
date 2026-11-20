@@ -35,8 +35,12 @@ def active_effects(ch):
     for it in ch.items:
         if it.equipped or it.in_hands:
             out += [(it.iid, e) for e in dv.item_tab(it, dv.picks(ch, it))]
+    for it in dv.at_base(ch):              # base contents give their effects (gear.md "Base", package 16)
+        out += [(it.iid, e) for e in dv.item_tab(it, dv.picks(ch, it))]
     for j in ch.injuries:                  # injuries carry effects while they exist (package 14 D)
         out += [(j.jid or j.name, e) for e in j.effects]
+    for src, effects in dv.other_sources(ch):   # quirks not burned, templates (package 16)
+        out += [(src, e) for e in effects]
     return out
 
 

@@ -9,14 +9,18 @@ from typing import Any, Dict, Optional, Tuple
 
 from wp.core.damage import Pool
 from wp.core.effects import Effect, Status
+from wp.core.frozen import freeze_fields
 from wp.core.injuries import Injury
 from wp.core.pain import PainEntry, PainProfile
 from wp.core.rest import Charge
 from wp.core.skills import Skill
 from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
+from wp.model.notebook import Court, Drive, Lens, Quest, Quirk, Story
+from wp.model.template import Template
 
 ABILITIES = ("str", "dex", "con", "int", "wis", "cha")
+DICT_FIELDS = ("abilities", "slots", "resources", "save_base", "save_stats")
 
 
 @dataclass(frozen=True)
@@ -73,7 +77,7 @@ class Item:
     touch_bonus: int = 0               # armor bonus to TOUCH AC only (catalog column "touch AC"), worn armor
     spell_penalty_mana: int = 0        # extra mana cost of every mana spell while worn / held (>= 0)
     spell_failure_pct: int = 0         # spell failure chance while worn / held, 0..100
-    speed_penalty_ft: int = 0          # slowdown in ft (stored, no calculation yet)
+    speed_penalty_ft: int = 0          # armor slowdown in ft (body_view.armor_slowdown, gear.md)
     durable: Optional[bool] = None     # loses at most 1 HP per attack; None = default (armor/shield yes)
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only
     weight_l: int = 0
@@ -117,6 +121,9 @@ class Item:
     no_parry: bool = False             # cannot parry with it (spiked gauntlets = parry with an empty hand)
     damage_text: str = ""              # damage as written in the table when it is not a simple small/medium pair
     variable: Tuple[str, ...] = ()     # fields the table gives as "Vary." (left empty on purpose)
+    slot: str = ""                     # doll slot id (wp/catalog/data/doll_slots.json); "" = no slot (package 16 E)
+    base_slot_cost: int = 1            # base slots taken while left at the base (gear.md "Base"; grey items 0)
+    source: str = ""                   # where it came from (loot, shop, template:<id>...), a label
 
 
 @dataclass(frozen=True)
@@ -131,6 +138,7 @@ class AttackRecord:
     twf: bool = False                  # "combination of two attacks" toggle (two-weapon fighting)
     twf_off: str = ""                  # off-hand record id; "" = the other end of a double weapon
     usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
+    iterative_step: Optional[int] = None   # own iterative step (e.g. -3); None = rules_settings (package 16 C)
 
 
 @dataclass(frozen=True)
@@ -156,6 +164,9 @@ class Maneuver:
     extra: Dict[str, Any] = field(default_factory=dict)
     usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
 
+    def __post_init__(self):
+        freeze_fields(self, ("extra",))
+
 
 @dataclass(frozen=True)
 class RulesSettings:
@@ -169,6 +180,7 @@ class RulesSettings:
     hp_regen_per_tick: int = 0         # HP healed every zero-initiative tick
     overload_enabled: bool = True      # False: the overload counter is never applied and never blocks regen
     log_limit: int = 0                 # journal: keep the last N entries (0 = unlimited, package 14 H)
+    iterative_step: int = -5           # iterative attack penalty per step (combat.md, package 16 C)
 
 
 @dataclass(frozen=True)
@@ -177,8 +189,9 @@ class ResourcePool:
     pid: str                           # stable id (made from the name)
     name: str
     max: Any = 0                       # a number or a formula string (buffs.md "Formulas", package 14 C)
-    current: int = 0                   # stored; read clamped to the max (pool_view.current)
+    current: int = 0                   # stored and shown as is (above the max allowed, package 16 A6)
     restore: str = "manual"            # short_rest / long_rest / combat_start / manual: restores to max
+    source: str = ""                   # "template:<id>" when a template added it (package 16 G6)
 
 
 @dataclass(frozen=True)
@@ -247,6 +260,9 @@ class LogEntry:
     result: Dict[str, Any] = field(default_factory=dict)
     round: int = 0                     # combat round (0 = not in combat)
 
+    def __post_init__(self):
+        freeze_fields(self, ("params", "result"))
+
 
 @dataclass(frozen=True)
 class Character:
@@ -282,7 +298,14 @@ class Character:
     comfort_bonus: int = 0
     attention: int = 0                 # no maximum (narrative.md)
     attention_course: int = 0          # +1 per 200 training: adds to every attention conversion (package 15)
-    drives: Dict[str, int] = field(default_factory=dict)   # drive id -> level
+    drives: Tuple[Drive, ...] = ()     # narrative drives, level 0..5 (package 16 F)
+    quests: Tuple[Quest, ...] = ()
+    stories: Tuple[Story, ...] = ()
+    courts: Tuple[Court, ...] = ()
+    quirks: Tuple[Quirk, ...] = ()
+    lenses: Tuple[Lens, ...] = ()
+    templates: Tuple[Template, ...] = ()   # ability sources with effects, dice, feats, pools, statuses (pkg 16 G6)
+    base_points_tenths: int = 0        # fractional base points from attention option 4, in tenths (10 = 1 slot)
     # pain, trauma, overload
     pain: Tuple[PainEntry, ...] = ()
     pain_profile: PainProfile = PainProfile()
@@ -305,7 +328,7 @@ class Character:
     attacks: Tuple[AttackRecord, ...] = ()
     maneuvers: Tuple[Maneuver, ...] = ()
     pools: Tuple[ResourcePool, ...] = ()   # resource pools (package 13 C)
-    rules_settings: RulesSettings = RulesSettings()   # rule switches as data (package 14 G)   # character-level maneuver list (combat.md, package 12 B)
+    rules_settings: RulesSettings = RulesSettings()   # rule switches as data (package 14 G)
     balance_cap_hits: int = 0          # hits this combat that lowered the balance cap (homerule)
     balance_cap_start: Optional[int] = None   # balance cap taken at start_combat (snapshot); None = live
     ov: int = 0                        # time points (OV), no cap
@@ -327,6 +350,11 @@ class Character:
     log: Tuple[LogEntry, ...] = ()
     log_seq: int = 0                   # last journal order number (package 14 H)
     combat_round: int = 0              # 1 at start_combat, +1 per tick in combat, 0 out of combat
+    iterative_count: int = 0           # attacks used in this round's series (package 16 C); tick / end_combat: 0
+
+    def __post_init__(self):
+        # dict fields are read-only mappings (package 16 A7): no in-place change without a command
+        freeze_fields(self, DICT_FIELDS)
 
     def ability(self, name):
         return self.abilities[name]

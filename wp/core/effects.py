@@ -22,6 +22,7 @@ from typing import Dict, Optional, Tuple
 
 from wp.core import bonuses as bo
 from wp.core import formula as fm
+from wp.core.frozen import freeze_fields
 from wp.core.damage import Pool
 
 TICKS = "ticks"
@@ -58,6 +59,7 @@ class Effect:
     block_stats: Tuple[str, ...] = ()  # block_stat_bonus: stat names or ("all",)
     block_actions: Tuple[str, ...] = ()    # block_action: attack / move / spell_cast / heal / any (package 14 F)
     block_resources: Tuple[str, ...] = ()  # block_restore: hp / mana / spirit / balance / pool:<id> / any
+    when_iterative: str = ""            # behaviour while an iterative penalty exists: STORED ONLY (package 16 C)
 
     def resolve(self, context=None):
         """The effect's number: a fixed value, a context value (current overload), or the current
@@ -104,6 +106,8 @@ class Status:
     active: bool = True
     source: str = ""
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only (no effect)
+    source_ref: str = ""               # charges follow this source (feat:<id> / item:<id> / pool:<id> / attack:<id> /
+                                       # maneuver:<id> / template:<id>); "" = no recharge by rests (Q108, package 16 G3)
     full_ticks: int = 0                # full duration in ticks (per charge); used when activated
     charge_source: str = "own"         # per-round payment from: "own" (its charges) or a pool id (package 13 C)
     charge_per_round: int = 0          # paid every tick while active; cannot pay -> the status ends
@@ -112,6 +116,9 @@ class Status:
     cooldown_current: int = 0          # rounds left; the tick lowers it by 1
     hidden: bool = False               # DISPLAY ONLY: hidden on the panel, still active / ticking
     favorite: bool = False             # pinned for the panel / screen
+
+    def __post_init__(self):
+        freeze_fields(self, ("per_tick_restore",))     # read-only (package 16 A7)
 
 
 # ------------------------------------------------------------- reading

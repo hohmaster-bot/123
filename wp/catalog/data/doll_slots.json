@@ -1,0 +1,29 @@
+{
+  "format": "wipefinder.doll_slots",
+  "note": "The 22 doll slots of RULES/doll.md (owner list; editable). 'hands' is the shared two-hand slot (equip_hands, at most 2 hands); every other slot holds ONE worn item.",
+  "hands": "hands",
+  "slots": [
+    ["hands", "Hands"],
+    ["armor", "Armor / clothes"],
+    ["belt", "Belt"],
+    ["body", "Body"],
+    ["chest", "Chest"],
+    ["eyes", "Eyes"],
+    ["gloves", "Hands (gloves)"],
+    ["head", "Head"],
+    ["neck", "Neck"],
+    ["fingers", "Fingers"],
+    ["back", "Back"],
+    ["shoulders", "Shoulders"],
+    ["legs", "Legs"],
+    ["feet", "Feet"],
+    ["belt_pouch", "Belt pouch (unload)"],
+    ["companion", "Combat companion / squire"],
+    ["pet", "Pet / familiar"],
+    ["modifier", "Modifier"],
+    ["craft_tools", "Craft tools"],
+    ["camp_tools", "Camp tools"],
+    ["magic_components", "Magic components"],
+    ["worship_item", "Worship item"]
+  ]
+}

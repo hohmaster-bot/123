@@ -10,10 +10,22 @@ from typing import Any, Dict, Tuple
 from wp.model.character import LogEntry
 
 CHANGED = "changed"
+INVALID = "invalid_value"          # reason of a plain ValueError from the core
+NOT_FOUND = "not_found"            # reason of a KeyError (unknown id)
+UNKNOWN_COMMAND = "unknown_command"
 
 
 class CommandError(ValueError):
-    """Validation failed: the state is unchanged."""
+    """Validation failed: the state is unchanged (package 16 A4).
+
+    reason: a stable id of the refusal kind (the UI picks its text by it later; the English text stays for now).
+    params: numbers / ids for that text; "values" = the arguments of the English message, in order."""
+
+    def __init__(self, text="", reason=INVALID, **params):
+        super().__init__(text)
+        self.text = text
+        self.reason = reason or INVALID
+        self.params = dict(params)
 
 
 @dataclass(frozen=True)
@@ -49,14 +61,18 @@ def command(fn):
 def dispatch(ch, cmd, listeners=(), /, **params):
     """Run a command by name; on success notify listeners(result)."""
     if cmd not in REGISTRY:
-        raise CommandError("unknown command: %r" % (cmd,))
+        raise CommandError("unknown command: %r" % (cmd,), UNKNOWN_COMMAND, command=cmd)
     try:
         result = REGISTRY[cmd](ch, **params)
     except CommandError:
         raise
-    except (ValueError, KeyError) as e:
-        raise CommandError(str(e))
-    if CHANGED in result.events:       # read-only / refused-softly commands are not logged
+    except KeyError as e:
+        raise CommandError(str(e), NOT_FOUND)
+    except ValueError as e:
+        raise CommandError(str(e), INVALID)
+    if CHANGED in result.events and result.state == ch:
+        result = replace(result, events=tuple(e for e in result.events if e != CHANGED))   # no-op: not logged (F7)
+    if CHANGED in result.events:       # read-only / refused-softly / no-op commands are not logged
         from wp.commands import journal
         result = journal.record(ch, result, cmd, params)
     for listener in listeners:

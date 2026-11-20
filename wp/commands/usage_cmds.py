@@ -6,13 +6,13 @@ from wp.model import usage as us
 
 def _owner(ch, kind, oid):
     if kind not in us.KINDS:
-        raise CommandError("owner kind must be one of %s" % ", ".join(us.KINDS))
+        raise CommandError("owner kind must be one of %s" % ", ".join(us.KINDS), "owner_kind_must_one", values=", ".join(us.KINDS))
     owner = us.find(ch, kind, oid)
     if owner is None:
-        raise CommandError("no %s with id %r" % (kind, oid))
+        raise CommandError("no %s with id %r" % (kind, oid), "not_found", values=(kind, oid))
     c = us.charges(kind, owner)
     if c is None:
-        raise CommandError("%s %s has no charges" % (kind, oid))
+        raise CommandError("%s %s has no charges" % (kind, oid), "has_no_charges", values=(kind, oid))
     return owner, c
 
 
@@ -21,12 +21,12 @@ def spend_charge(ch, owner_kind="item", owner_id="", n=1):
     owner, (cur, _) = _owner(ch, owner_kind, owner_id)
     n = int(n)
     if n < 1:
-        raise CommandError("spend at least 1")
+        raise CommandError("spend at least 1", "spend_least_1")
     cool, rounds = us.cooldown(owner_kind, owner)
     if cool > 0:
-        raise CommandError("%s %s is on cooldown (%d rounds left)" % (owner_kind, owner_id, cool))
+        raise CommandError("%s %s is on cooldown (%d rounds left)" % (owner_kind, owner_id, cool), "cooldown_rounds_left", values=(owner_kind, owner_id, cool))
     if cur - n < 0:
-        raise CommandError("not enough charges: have %d, spend %d" % (cur, n))
+        raise CommandError("not enough charges: have %d, spend %d" % (cur, n), "not_enough_charges_have", values=(cur, n))
     owner = us.with_values(owner_kind, owner, current=cur - n, cool=rounds if rounds > 0 else None)
     return commit(us.put(ch, owner_kind, owner), "spend_charge", "%s %s -%d" % (owner_kind, owner_id, n),
                   {"left": cur - n, "cooldown": rounds})
@@ -37,7 +37,7 @@ def set_charges(ch, owner_kind="item", owner_id="", value=0):
     owner, (_, mx) = _owner(ch, owner_kind, owner_id)
     value = int(value)
     if value < 0 or value > mx:
-        raise CommandError("charges must be 0..%d" % mx)
+        raise CommandError("charges must be 0..%d" % mx, "charges_must_0", values=(mx,))
     return commit(us.put(ch, owner_kind, us.with_values(owner_kind, owner, current=value)), "set_charges",
                   "%s %s = %d" % (owner_kind, owner_id, value))
 

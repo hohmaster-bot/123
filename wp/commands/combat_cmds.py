@@ -7,6 +7,7 @@ from wp.core import effects as ef
 from wp.core import magic as mg
 from wp.core import tick as tk
 from wp.model import bridge
+from wp.model import defense_view as dfv
 from wp.model import derived_view as dv
 from wp.model import ids
 from wp.core import formula as fm
@@ -19,14 +20,17 @@ from wp.model import spell_view as sv
 
 
 @command
-def take_damage(ch, amount=0, dtype=dm.PHYSICAL, parts=None, reductions=None):
-    """One hit: amount of dtype, or several typed parts [(amount, dtype), ...]."""
+def take_damage(ch, amount=0, dtype=dm.PHYSICAL, parts=None, reductions=None, skip=()):
+    """One hit: amount of dtype, or several typed parts [(amount, dtype), ...]. The sheet's DR and resistances
+    (effects "dr", "resist:<type>", package 16 D) apply per part; skip = the reductions the player switched off
+    for this hit ("dr", "resist:fire"...); `reductions` = extra values typed by the caller (the larger one counts)."""
     if parts is None:
         parts = [(amount, dtype)]
     hit = [dm.DamagePart(int(a), t) for a, t in parts]
     if any(p.amount < 0 for p in hit):
-        raise CommandError("damage must be >= 0")
-    v, rep = dm.take_hit(bridge.to_vitals(ch), hit, reductions)
+        raise CommandError("damage must be >= 0", "damage_must_0")
+    red = dfv.reductions(ch, [p.dtype for p in hit], tuple(skip), reductions)
+    v, rep = dm.take_hit(bridge.to_vitals(ch), hit, red)
     new = bridge.from_vitals(ch, v)
     if ch.in_combat and rep.hp_loss > 0:
         # owner homerule: a hit that reached HP/balance lowers the balance cap by 1 this combat
@@ -56,11 +60,13 @@ def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=None, fr
     mana_cost None = the circle table (magic.CIRCLE_MANA). Mage, circle 1+: the armor spell penalty
     (spell_view) is added; penalty_balance = the part of it paid with balance (the rest with mana).
     Mage: cost + penalty above the mana level (= level) -> refused (package 10, Q49)."""
+    if not mg.valid_circle(circle):
+        raise CommandError("circle must be 0..%d" % mg.CIRCLES[-1], "circle_out_of_range", values=(circle,))
     why = blk.action_block_reasons(ch, "spell_cast")
     if why:
-        raise CommandError("casting is blocked by %s" % ", ".join(why))
+        raise CommandError("casting is blocked by %s" % ", ".join(why), "casting_blocked", values=", ".join(why))
     if ch.caster is None and not from_item:
-        raise CommandError("character is not a caster")
+        raise CommandError("character is not a caster", "character_not_caster")
     mana_cost = mg.circle_mana(circle) if mana_cost is None else int(mana_cost)
     extra = 0
     if ch.caster == mg.MAGE and not from_item:
@@ -68,16 +74,16 @@ def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=None, fr
             extra = sv.mana_penalty(ch)
         why = sv.over_limit(ch, mana_cost, extra)
         if why:
-            raise CommandError(why)
+            raise CommandError(why, "over_mana_level")
     pb = int(penalty_balance)
     if pb < 0 or pb > extra:
-        raise CommandError("penalty paid with balance must be 0..%d" % extra)
+        raise CommandError("penalty paid with balance must be 0..%d" % extra, "penalty_paid_balance_must", values=(extra,))
     c0 = ch.slots.get(0)
     cost = mg.cast_cost(ch.caster or mg.MAGE, circle, cast_actions, mana_cost,
                         circle0_slots=c0.max if c0 else 0, from_item=from_item, overload=overload,
                         extra_mana=extra - pb, extra_balance=pb)
     if not mg.can_pay(bridge.to_caster(ch), cost):
-        raise CommandError("not enough mana or slots")
+        raise CommandError("not enough mana or slots", "not_enough_mana_slots")
     state, res = mg.cast(bridge.to_caster(ch), cost)
     new = bridge.from_caster(ch, state)
     if not ch.rules_settings.overload_enabled:     # rule switch: the overload counter is not applied (pkg 14 G)
@@ -108,7 +114,7 @@ def spend_balance(ch, n=0):
     """Pay balance for a maneuver or ability (a payment, not damage: the cap does not drop)."""
     n = int(n)
     if n < 0 or n > max(0, ch.balance_current):
-        raise CommandError("not enough balance: need %d, have %d" % (n, ch.balance_current))
+        raise CommandError("not enough balance: need %d, have %d" % (n, ch.balance_current), "not_enough_balance_need", values=(n, ch.balance_current))
     return commit(replace(ch, balance_current=ch.balance_current - n), "spend_balance", "balance -%d" % n)
 
 
@@ -127,9 +133,9 @@ def _start(ch, st, ticks=None):
     own (buffs.md, Q69): the ability or spell that creates it pays.
     Returns (new character, the started status). The status is NOT yet placed in ch.statuses."""
     if st.active:
-        raise CommandError("status %s is already active" % st.name)
+        raise CommandError("status %s is already active" % st.name, "status_already_active", values=(st.name,))
     if not ef.can_activate(st):
-        raise CommandError("no charges left: %s" % st.name)
+        raise CommandError("no charges left: %s" % st.name, "no_charges_left", values=(st.name,))
     cost = 1
     if st.charge_per_round > 0:
         # package 14 A (Q83/Q91): the activation pays the FIRST round; every tick pays the next one
@@ -137,19 +143,20 @@ def _start(ch, st, ticks=None):
         if st.charge_source == ef.OWN:
             if st.charges is None or st.charges.current < n:
                 raise CommandError("not enough charges for %s: need %d per round, have %d" % (
+                    st.name, n, st.charges.current if st.charges is not None else 0), "not_enough_charges_need", values=(
                     st.name, n, st.charges.current if st.charges is not None else 0))
             cost = n                       # instead of the usual single charge
         else:
             pool = next((p for p in ch.pools if p.pid == st.charge_source), None)
             if pool is None:
-                raise CommandError("status %s pays from pool %r, which does not exist" % (st.name, st.charge_source))
+                raise CommandError("status %s pays from pool %r, which does not exist" % (st.name, st.charge_source), "status_pays_from_pool", values=(st.name, st.charge_source))
             have = pv.current(ch, pool)
             if have < n:
-                raise CommandError("not enough %s for %s: need %d per round, have %d" % (pool.name, st.name, n, have))
+                raise CommandError("not enough %s for %s: need %d per round, have %d" % (pool.name, st.name, n, have), "not_enough_need_per", values=(pool.name, st.name, n, have))
             ch = replace(ch, pools=tuple(replace(p, current=have - n) if p.pid == pool.pid else p for p in ch.pools))
     started = ef.activate(st, ticks, cost)
     if started.duration == ef.TICKS and started.remaining <= 0:
-        raise CommandError("status %s lasts N ticks: give the number of ticks (> 0)" % st.name)
+        raise CommandError("status %s lasts N ticks: give the number of ticks (> 0)" % st.name, "status_lasts_n_ticks", values=(st.name,))
     ch = rst.one_shot(ch, started)             # one-shot resources at activation (package 14 F)
     if ef.holds_temp_hp(started):
         before = dv.temp_hp_total(ch)
@@ -169,7 +176,7 @@ def _put_status(ch, st):
 def _find(ch, sid):
     st = next((s for s in ch.statuses if s.sid == sid), None)
     if st is None:
-        raise CommandError("no status with id %r" % (sid,))
+        raise CommandError("no status with id %r" % (sid,), "no_status_id", values=(sid,))
     return st
 
 
@@ -178,16 +185,16 @@ def add_status(ch, status=None, ticks=None, active=False):
     """Add a status to the container (from the catalog or by hand). A new entry starts INACTIVE
     unless active=True; then it is started like activate_status (charge, cost, duration)."""
     if status is None:
-        raise CommandError("no status given")
+        raise CommandError("no status given", "no_status_given")
     try:
         fx.validate_effects(status.effects)     # formula values are checked when added (package 14 C)
     except fm.FormulaError as e:
-        raise CommandError("bad effect formula in %s: %s" % (status.name, e))
+        raise CommandError("bad effect formula in %s: %s" % (status.name, e), "bad_effect_formula", values=(status.name, e))
     bad = [r for r in status.per_tick_restore if not rst.valid(r)]
     if bad:
-        raise CommandError("unknown per-tick restore resources: %s (use mana, spirit, balance, pool:<id>)" % ", ".join(bad))
+        raise CommandError("unknown per-tick restore resources: %s (use mana, spirit, balance, pool:<id>)" % ", ".join(bad), "unknown_per_tick_restore", values=", ".join(bad))
     if status.sid and any(s.sid == status.sid for s in ch.statuses):
-        raise CommandError("a status with id %r is already on the sheet" % (status.sid,))
+        raise CommandError("a status with id %r is already on the sheet" % (status.sid,), "status_id_already_sheet", values=(status.sid,))
     st = status
     if not st.sid:                     # the program makes the stable id from the name (D7)
         st = replace(st, sid=ids.make_id(st.name, (s.sid for s in ch.statuses)))
@@ -214,7 +221,7 @@ def set_status_duration(ch, sid="", remaining=0):
     simulated; the player lowers them by ticks or by hand). 0 or less ends it (inactive, entry stays)."""
     st = _find(ch, sid)
     if st.duration != ef.TICKS:
-        raise CommandError("status %s has no tick duration" % st.name)
+        raise CommandError("status %s has no tick duration" % st.name, "status_has_no_tick", values=(st.name,))
     remaining = int(remaining)
     if remaining <= 0:
         return commit(_put_status(ch, ef.deactivate(st)), "set_status_duration", "status %s ended" % st.name)
@@ -227,7 +234,7 @@ def remove_status(ch, sid=""):
     """End an active status now (narrative reasons): inactive, time cleared; the entry stays."""
     st = _find(ch, sid)
     if not st.active:
-        raise CommandError("status %s is not active" % st.name)
+        raise CommandError("status %s is not active" % st.name, "status_not_active", values=(st.name,))
     return commit(_put_status(ch, ef.deactivate(st)), "remove_status", "status %s ended" % st.name)
 
 
@@ -260,6 +267,7 @@ def tick(ch, reductions=None):
     t, rep = tk.zero_initiative(bridge.to_tick(ch), reductions)
     new = rst.per_tick(bridge.from_tick(ch, t), rep.acted)     # restore by effect (package 14 F)
     new = us.tick_cooldowns(new)                               # cooldowns -1 (package 14 B)
+    new = replace(new, iterative_count=0)                      # a new round: the iterative series starts again (pkg 16 C)
     if ch.in_combat:
         new = replace(new, combat_round=ch.combat_round + 1)   # the next round starts (journal, package 14 H)
     if ch.in_combat and rep.cap_hits:

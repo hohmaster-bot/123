@@ -1,0 +1,7 @@
+{
+  "format": "wipefinder.damage_types",
+  "note": "Damage types (package 16 D, owner list; editable). 'physical' = the types DR works on; the old code default type 'physical' also counts as physical.",
+  "types": ["piercing", "slashing", "bludgeoning", "fire", "water", "lightning", "acid", "sound", "force", "positive",
+            "negative", "pure"],
+  "physical": ["piercing", "slashing", "bludgeoning", "physical"]
+}

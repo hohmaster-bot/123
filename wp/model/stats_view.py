@@ -1,7 +1,7 @@
 """Sheet stats: saves, initiative, CMB, CMD (package 10; RULES defense.md, combat.md, resources.md,
 classes_magic.md). Computed on read (D6).
 
-What RULES give and what is an open question (OPEN_QUESTIONS Q55-Q60):
+What RULES give (Q55-Q60 were answered by the owner in package 11, ARCH/decision_log.md):
 - Save = base (typed by hand from the class table, like BAB) + stat mod + typed bonuses (target "save"
   for all saves, "save:fort" / "save:ref" / "save:will" for one) + pain (resources.md: all rolls)
   + morale (defense.md: saves). The stat of each save is DATA (Character.save_stats), default as in the

@@ -20,6 +20,7 @@ from wp.model import blocks as blk
 from wp.model import items as itm
 from wp.model import stance_view as stv
 from wp.model import records as rec
+from wp.model import sheet_targets as stg
 from wp.model.body_view import (armor_slowdown, is_dead, morale_bonus, pain_penalty,  # noqa: F401
                                 pain_profile, pain_total, size_cmb, size_mod, speed)
 from wp.model.load_view import (WeightView, bag_weight_l, carried_weight_l, condition_tags,  # noqa: F401
@@ -29,7 +30,12 @@ from wp.model.load_view import (WeightView, bag_weight_l, carried_weight_l, cond
 # ----------------------------------------------------------------- abilities
 
 def ability_current(ch, name):
-    return ch.ability(name).current
+    """Stored current score + effects with target "stat:<name>" (package 16 A2; typed bonuses, normal stacking)."""
+    return ch.ability(name).current + stg.stat_bonus(ch, name)
+
+
+def ability_max(ch, name):
+    return ch.ability(name).score_max + stg.stat_bonus(ch, name)
 
 
 def ability_mod(ch, name):
@@ -52,10 +58,19 @@ def hit_die_cap(ch):
     return ch.hit_die * ch.level
 
 
+def hit_dice(ch):
+    """Every hit die of the sheet: the class rolls (one per level) + one die per effect "extra_hit_dice" (templates,
+    races, items...; its value = the HP of that die). No level cap on extra dice (package 16 G1)."""
+    extra = [e.resolve(context(ch)) for _, e in blk.active_effects(ch) if e.target == stg.EXTRA_DICE]
+    return tuple(ch.hp_rolls) + tuple(d for t in ch.templates for d in t.hit_dice) + tuple(int(v) for v in extra)
+
+
 def hp_max(ch):
-    """Hit-die HP + CURRENT Con mod * level (negative subtracts) + race bonus + other bonuses,
-    at least 1 (package 8 H)."""
-    return max(1, hit_die_hp(ch) + ability_mod(ch, "con") * ch.level + ch.hp_race + ch.hp_bonus)
+    """Sum over the hit dice of max(1, die HP + CURRENT Con mod) (package 16 G1, owner) + race bonus + other
+    bonuses + effects "hp_max"; at least 1."""
+    con = ability_mod(ch, "con")
+    dice = sum(max(1, d + con) for d in hit_dice(ch))
+    return max(1, dice + ch.hp_race + ch.hp_bonus + stg.value(ch, "hp_max"))
 
 
 def hp_pool(ch):
@@ -63,7 +78,7 @@ def hp_pool(ch):
 
 
 def bp_max(ch):
-    return dv.bp_cap(hp_max(ch)) + ch.bp_bonus
+    return dv.bp_cap(hp_max(ch)) + ch.bp_bonus + stg.value(ch, "bp_max")
 
 
 def bp_pool(ch):
@@ -240,7 +255,7 @@ def balance_max_base(ch):
     """Worn armor bonus + CURRENT BP (BP above max included: overcap, package 8 C)
     + heavy/tower shield in hand + bonuses (rest.md, training.md); parry gives none."""
     return dv.balance_max(armor_bonus(ch), ch.bp_current,
-                          ch.balance_bonus + shield_balance_bonus(ch))
+                          ch.balance_bonus + shield_balance_bonus(ch) + stg.value(ch, "balance_max"))
 
 
 def balance_max(ch):
@@ -260,7 +275,7 @@ def balance_pool(ch):
 def balance_regen(ch):
     """Level + Con mod + other (incl. passive group bonus 'balance regen +1' from the
     primary attack records and Unarmed combat), min 1."""
-    other = ch.balance_regen_bonus + rec.passive(ch, "balance_regen")
+    other = ch.balance_regen_bonus + rec.passive(ch, "balance_regen") + stg.value(ch, "balance_regen")
     return dv.balance_regen(ch.level, ability_mod(ch, "con"), other)
 
 
@@ -271,7 +286,7 @@ SPIRIT_PER_CHA = 5
 def spirit_max(ch):
     """5 + 5 * Cha mod, never below 0, then bonuses/penalties by source; the total is never below 0."""
     base = max(0, SPIRIT_BASE + SPIRIT_PER_CHA * ability_mod(ch, "cha"))
-    return max(0, base + sum(v for _, v in ch.spirit_bonuses))
+    return max(0, base + sum(v for _, v in ch.spirit_bonuses) + stg.value(ch, "spirit_max"))
 
 
 def spirit_pool(ch):
@@ -283,7 +298,8 @@ ATTENTION_DRIVE_LEVEL = 4
 
 def attention_per_cycle(ch):
     """1 + levels reached that are multiples of 3 + 1 per drive at level 4+ (narrative.md)."""
-    return 1 + ch.level // 3 + sum(1 for v in ch.drives.values() if v >= ATTENTION_DRIVE_LEVEL)
+    return (1 + ch.level // 3 + sum(1 for d in ch.drives if d.level >= ATTENTION_DRIVE_LEVEL)
+            + stg.value(ch, "attention_per_cycle"))
 
 
 def natives(ch):
@@ -296,7 +312,7 @@ def temp_hp_total(ch):
 
 
 def comfort_max(ch):
-    return tr.comfort_max(ch.level, ch.comfort_bonus)
+    return tr.comfort_max(ch.level, ch.comfort_bonus + stg.value(ch, "comfort_max"))
 
 
 def comfort_pool(ch):
@@ -314,13 +330,14 @@ def context(ch):
     return ctx
 
 
-def item_effects(ch):
+def item_effects(ch, ctx=None):
     """Exactly one tab acts per worn or held item (D17). A weapon's own attack/damage
     effects belong to its attack records (attack_view), not to every roll."""
     out = []
-    for it in _equipped(ch) + [i for i in _in_hands(ch) if not i.equipped]:
+    ctx = context(ch) if ctx is None else ctx
+    for it in _equipped(ch) + [i for i in _in_hands(ch) if not i.equipped] + at_base(ch):
         for e in item_tab(it, picks(ch, it)):
-            b = e.as_bonus(it.name, context(ch))
+            b = e.as_bonus(it.name, ctx)
             if rec.attack_groups(it) and b.target in (bo.ATTACK, bo.DAMAGE):
                 continue
             out.append(b)
@@ -338,7 +355,14 @@ def effect_bonuses(ch, ctx=None):
     """Typed bonuses of active statuses, owned feats and injuries (not items: their tab rules differ)."""
     ctx = context(ch) if ctx is None else ctx
     injuries = tuple(e.as_bonus(j.name or j.jid, ctx) for j in ch.injuries for e in j.effects)   # package 14 D
-    return tuple(ef.bonuses_from(ch.statuses, ctx)) + feat_bonuses(ch, ctx) + injuries
+    extra = tuple(e.as_bonus(src, ctx) for src, effects in other_sources(ch) for e in effects)   # quirks, templates
+    return tuple(ef.bonuses_from(ch.statuses, ctx)) + feat_bonuses(ch, ctx) + injuries + extra
+
+
+def other_sources(ch):
+    """(source id, effects) of quirks that are not burned and of templates (package 16 F, G6)."""
+    return ([(q.kid, q.effects) for q in ch.quirks if not q.burned]
+            + [(t.tid, t.effects) for t in ch.templates])
 
 
 def all_bonuses(ch):
@@ -359,11 +383,11 @@ def ac_input(ch, flank_drops_shield=True, shield_enabled=True):
     eq = _equipped(ch)
     caps = [it.max_dex for it in eq if it.max_dex is not None]
     # parry = armor proficiency + odd levels + tower shield grade (training.md) + weapon mastery picks (weapons.md)
-    parry = acm.base_parry(ch.armor_grade, ch.level, ch.shield_grade) + rec.passive(ch, "parry")
+    parry = acm.base_parry(ch.armor_grade, ch.level, ch.shield_grade) + rec.passive(ch, "parry") + stg.value(ch, "parry")
     return acm.AcInput(dex_mod=ability_mod(ch, "dex"), armor=armor_bonus(ch), parry=parry,
                        natural=max([it.natural for it in eq] or [0]),
                        shield=shield_bonus(ch),
-                       size_mod=size_mod(ch), max_dex=min(caps) if caps else None,
+                       size_mod=size_mod(ch), max_dex=min(caps) + stg.value(ch, "max_dex") if caps else None,
                        overloaded=overloaded(ch), shield_enabled=shield_enabled, touch_armor=touch_armor(ch),
                        flank_drops_shield=flank_drops_shield,
                        bonuses=tuple(b for b in all_bonuses(ch) if b.target == bo.AC),
@@ -391,7 +415,8 @@ def armor_skill_penalty(ch):
     """Penalty to Str/Dex skills (gear.md 'Armor'): worn items + shields held in a hand (a shield
     counts as armor, package 8 R4); masterwork -1 smaller, broken doubled (items.skill_penalty)."""
     held = [it for it in _in_hands(ch) if not it.equipped and rec.is_shield(it)]
-    return sum(itm.skill_penalty(it, picks(ch, it)) for it in _equipped(ch) + held)
+    pen = sum(itm.skill_penalty(it, picks(ch, it)) for it in _equipped(ch) + held)
+    return min(0, pen + stg.value(ch, "armor_skill_penalty")) if pen < 0 else pen
 
 
 def skill_bonus(ch, name):
@@ -404,3 +429,7 @@ def skill_bonus(ch, name):
 
 def weapon_level(ch, wid):
     return wpn.level(ch.weapon_catalog(), wid)
+
+
+from wp.model.sheet_numbers import (at_base, base_slots, base_used, base_view, comfort_rate_bonus,  # noqa: E402,F401
+                                    mana_max, mana_pool, reactions, slot_pool, slot_pools)

@@ -17,7 +17,7 @@ OVERFLOW = "balance overflow"
 
 def _absorber_pool(ch, name):
     if name == "mana":
-        return ch.mana
+        return dv.mana_pool(ch)
     return ch.resources[name]
 
 
@@ -45,7 +45,7 @@ def from_vitals(ch, v, pain_source=OVERFLOW):
     """Write HP, balance, temp HP, absorbers, OT back; new pain becomes an entry."""
     mana, resources = ch.mana, dict(ch.resources)
     for a in v.absorbers:
-        if a.name == "mana":
+        if a.name == "mana":   # the current only (the stored max is the base value)
             mana = replace(mana, current=a.current)
         else:
             resources[a.name] = replace(resources[a.name], current=a.current)
@@ -68,8 +68,8 @@ def _status_charges(ch):
 def to_rest(ch):
     stats = {n: Pool(a.current, a.score_max) for n, a in ch.abilities.items()}
     return rs.RestState(level=ch.level, hp=dv.hp_pool(ch), bp=dv.bp_pool(ch),
-                        pain=ch.pain, spirit=dv.spirit_pool(ch), mana=ch.mana, mana_enabled=ch.mana_enabled,
-                        divine=ch.divine_slots, slots=dict(ch.slots), resources=dict(ch.resources),
+                        pain=ch.pain, spirit=dv.spirit_pool(ch), mana=dv.mana_pool(ch), mana_enabled=ch.mana_enabled,
+                        divine=ch.divine_slots, slots=dv.slot_pools(ch), resources=dict(ch.resources),
                         charges=ch.charges + _status_charges(ch),
                         stats=stats, trauma=ch.trauma, comfort=dv.comfort_pool(ch))
 
@@ -82,18 +82,28 @@ def from_rest(ch, s):
     statuses = tuple(replace(st, charges=back[st.sid]) if st.charges is not None and st.sid in back else st
                      for st in ch.statuses)
     return replace(ch, hp_current=s.hp.current, bp_current=s.bp.current,
-                   pain=s.pain, spirit_current=s.spirit.current, mana=s.mana, slots=dict(s.slots),
+                   pain=s.pain, spirit_current=s.spirit.current, mana=_cur(ch.mana, s.mana), slots=_slots_back(ch, s.slots),
                    resources=dict(s.resources), charges=own, abilities=abilities, statuses=statuses)
 
 
+def _cur(stored, pool):
+    """Write back the CURRENT only: the stored max stays the base value (effects "mana_max" / "slots:<n>" are
+    added on read, package 16 A2)."""
+    return replace(stored, current=pool.current)
+
+
+def _slots_back(ch, slots):
+    return {c: _cur(ch.slots[c], p) if c in ch.slots else p for c, p in slots.items()}
+
+
 def to_caster(ch):
-    return CasterState(mana=ch.mana, balance=dv.balance_pool(ch), slots=dict(ch.slots),
+    return CasterState(mana=dv.mana_pool(ch), balance=dv.balance_pool(ch), slots=dv.slot_pools(ch),
                        overload=ch.overload, pain=0, trauma=ch.trauma)
 
 
 def from_caster(ch, c):
     pain = pn.add(ch.pain, c.pain, "spell: balance short") if c.pain else ch.pain
-    return replace(ch, mana=c.mana, balance_current=c.balance.current, slots=dict(c.slots),
+    return replace(ch, mana=_cur(ch.mana, c.mana), balance_current=c.balance.current, slots=_slots_back(ch, c.slots),
                    overload=c.overload, trauma=c.trauma, pain=pain)
 
 

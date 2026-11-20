@@ -11,6 +11,7 @@ from dataclasses import replace
 
 from wp.commands.base import CommandError, command, commit
 from wp.model import derived_view as dv
+from wp.model import doll
 from wp.model import items as itm
 
 
@@ -22,15 +23,30 @@ def check_wearable(ch, it):
     """Armor or a shield at item HP 0 / destroyed cannot be put on (gear.md [OWNER pkg 7])."""
     if itm.defensive(it) and not dv.works(ch, it):
         raise CommandError("%s cannot be put on: item HP %d (%s)" % (
+            it.name, itm.hp_current(it), "destroyed" if it.destroyed else "repair it first"), "cannot_put_item_hp", values=(
             it.name, itm.hp_current(it), "destroyed" if it.destroyed else "repair it first"))
 
 
 @command
-def equip_item(ch, iid=""):
+def equip_item(ch, iid="", swap=False):
+    """Wear an item. With a doll slot (Item.slot, doll.md): one item per slot; an occupied slot is refused (reason
+    slot_occupied) unless swap=True, which takes the other item off (it stays in the bag). The hands slot is
+    equip_hands (package 16 E)."""
     it = ch.item(iid)
     if it.equipped:
-        raise CommandError("%s is already worn" % it.name)
+        raise CommandError("%s is already worn" % it.name, "already_worn", values=(it.name,))
     check_wearable(ch, it)
+    if it.slot:
+        if it.slot not in doll.SLOT_IDS:
+            raise CommandError("unknown doll slot %r" % (it.slot,), "unknown_slot", values=(it.slot,))
+        if it.slot == doll.HANDS:
+            raise CommandError("%s goes into the hands: use equip_hands" % it.name, "use_hands", values=(it.name,))
+        other = doll.occupant(ch, it.slot, iid)
+        if other is not None and not swap:
+            raise CommandError("slot %s is taken by %s" % (it.slot, other.name), "slot_occupied",
+                               values=(it.slot, other.name), slot=it.slot, item=other.iid)
+        if other is not None:
+            ch = _put(ch, replace(other, equipped=False))
     return commit(_put(ch, replace(it, equipped=True)), "equip_item", "%s worn" % it.name)
 
 
@@ -38,7 +54,7 @@ def equip_item(ch, iid=""):
 def unequip_item(ch, iid=""):
     it = ch.item(iid)
     if not it.equipped:
-        raise CommandError("%s is not worn" % it.name)
+        raise CommandError("%s is not worn" % it.name, "not_worn", values=(it.name,))
     return commit(_put(ch, replace(it, equipped=False)), "unequip_item", "%s taken off" % it.name)
 
 
@@ -56,14 +72,14 @@ TAGS = ("none", "combat_only", "out_of_combat_only")
 def set_condition_tag(ch, target="item", oid="", tag="none"):
     """Display-only condition tag on an item / status / feat (package 9 E); changes no number."""
     if tag not in TAGS:
-        raise CommandError("tag must be one of %s" % ", ".join(TAGS))
+        raise CommandError("tag must be one of %s" % ", ".join(TAGS), "tag_must_one", values=", ".join(TAGS))
     fields = {"item": ("items", "iid"), "status": ("statuses", "sid"), "feat": ("feats", "fid")}
     if target not in fields:
-        raise CommandError("target must be item, status or feat")
+        raise CommandError("target must be item, status or feat", "target_must_item_status")
     name, key = fields[target]
     rows = getattr(ch, name)
     if not any(getattr(r, key) == oid for r in rows):
-        raise CommandError("no %s with id %r" % (target, oid))
+        raise CommandError("no %s with id %r" % (target, oid), "not_found", values=(target, oid))
     rows = tuple(replace(r, condition_tag=tag) if getattr(r, key) == oid else r for r in rows)
     return commit(replace(ch, **{name: rows}), "set_condition_tag", "%s %s tag %s" % (target, oid, tag))
 
@@ -79,8 +95,10 @@ def set_ignore_bag_weight(ch, value=True):
 def remove_item(ch, iid=""):
     """Remove an item from the list (only by hand; destroyed items too)."""
     it = ch.item(iid)
-    new = replace(ch, items=tuple(i for i in ch.items if i.iid != iid),
-                  attacks=tuple(r for r in ch.attacks if r.item != iid))
+    gone = {r.rid for r in ch.attacks if r.item == iid}
+    # a two-weapon record whose off-hand record goes with the item loses the combination (review 4, F6)
+    left = tuple(replace(r, twf=False, twf_off="") if r.twf_off in gone else r for r in ch.attacks if r.rid not in gone)
+    new = replace(ch, items=tuple(i for i in ch.items if i.iid != iid), attacks=left)
     return commit(new, "remove_item", "%s removed" % it.name)
 
 
@@ -92,17 +110,17 @@ def use_consumable(ch, iid="", n=1):
     it = ch.item(iid)
     n = int(n)
     if not it.consumable:
-        raise CommandError("%s is not a consumable" % it.name)
+        raise CommandError("%s is not a consumable" % it.name, "not_consumable", values=(it.name,))
     if n < 1:
-        raise CommandError("use at least 1")
+        raise CommandError("use at least 1", "use_least_1")
     if it.quantity - n < 0:
-        raise CommandError("not enough %s: have %d, use %d" % (it.name, it.quantity, n))
+        raise CommandError("not enough %s: have %d, use %d" % (it.name, it.quantity, n), "not_enough_have_use", values=(it.name, it.quantity, n))
     new = _put(ch, replace(it, quantity=it.quantity - n))
     if it.on_use_status:
         from wp.commands import combat_cmds as cc
         st = next((s for s in new.statuses if s.sid == it.on_use_status), None)
         if st is None:
-            raise CommandError("%s activates status %r, which is not on the sheet" % (it.name, it.on_use_status))
+            raise CommandError("%s activates status %r, which is not on the sheet" % (it.name, it.on_use_status), "activates_status_which_not", values=(it.name, it.on_use_status))
         new, started = cc._start(new, st)
         new = cc._put_status(new, started)
     return commit(new, "use_consumable", "%s -%d (%d left)" % (it.name, n, it.quantity - n))

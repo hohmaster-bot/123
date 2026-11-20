@@ -89,3 +89,38 @@ def recharge(ch, *rules):
             continue
         ch = put(ch, kind, with_values(kind, x, current=x.usage.charges_max))
     return ch
+
+
+# ------------------------------------------------ status charges follow their source (Q108, package 16 G3)
+SOURCE_KINDS = {"feat": "feats", "item": "items", "attack": "attacks", "maneuver": "maneuvers", "pool": "pools",
+                "template": "templates"}
+
+
+def source_rule(ch, status):
+    """The recharge rule a status's charges follow: the rule of its source (Status.source_ref "kind:id"): a feat /
+    item / attack record / maneuver -> its Usage.recharge; a pool -> its restore rule; a template or a missing
+    source -> None (no recharge). A status without a source has no rule (buffs.md Q97)."""
+    kind, _, oid = status.source_ref.partition(":")
+    if kind not in SOURCE_KINDS or not oid:
+        return None
+    if kind == "pool":
+        p = next((p for p in ch.pools if p.pid == oid), None)
+        return p.restore if p is not None else None
+    if kind == "template":
+        return None
+    owner = find(ch, kind, oid)
+    return owner.usage.recharge if owner is not None and owner.usage is not None else None
+
+
+def status_recharge(before, after, rules, revert=False):
+    """Status charges after a rest / start_combat: a status whose source rule is in `rules` goes to max; with
+    revert=True every other status keeps the charges it had BEFORE (the long rest no longer refills them)."""
+    old = {s.sid: s for s in before.statuses}
+    out = []
+    for s in after.statuses:
+        if s.charges is not None and source_rule(after, s) in rules:
+            s = replace(s, charges=replace(s.charges, current=max(s.charges.current, s.charges.max)))
+        elif revert and s.charges is not None and s.sid in old and old[s.sid].charges is not None:
+            s = replace(s, charges=old[s.sid].charges)
+        out.append(s)
+    return replace(after, statuses=tuple(out))

@@ -153,6 +153,15 @@ def attention_base_points(attention, int_mod):
     return _tenths(per * int(attention))
 
 
+BASE_POINT_TENTHS_PER_INT = 2        # option 4: 0.2 * Int mod per attention = 2 tenths per Int mod
+BASE_POINT_TENTHS_MIN = 4            # minimum 0.4 per attention
+
+
+def attention_base_tenths(attention, int_mod):
+    """Option 4 in TENTHS of a base point (integers, fractions never lost): per attention max(4, 2 * Int mod)."""
+    return max(BASE_POINT_TENTHS_MIN, BASE_POINT_TENTHS_PER_INT * int(int_mod)) * int(attention)
+
+
 def professionalism_ok(new_level, char_level):
     """Professionalism level cannot exceed character level."""
     return int(new_level) <= int(char_level)
@@ -170,11 +179,16 @@ def qualification_cost(n):
     return QUALIFICATION_STEP * int(n)
 
 
-def spell_cost(circle, discount=False):
-    """New spell = 20 + 10 * circle^2; book / teacher / scroll classes pay half (circle 2 -> 60, 30)."""
+SPELL_MIN_PRICE = 1
+
+
+def spell_cost(circle, discount=False, minus=0):
+    """New spell = 20 + 10 * circle^2; book / teacher / scroll classes pay half, rounded down (circle 2 -> 60, 30);
+    then minus `minus` (effects "spell_price_discount", package 16 G5); never below 1."""
     c = int(circle)
     cost = SPELL_BASE + SPELL_PER_CIRCLE_SQ * c * c
-    return cost // SPELL_DISCOUNT_DIVISOR if discount else cost
+    cost = cost // SPELL_DISCOUNT_DIVISOR if discount else cost
+    return max(SPELL_MIN_PRICE, cost - max(0, int(minus)))
 
 
 def mastery_cost(circle):

@@ -43,7 +43,8 @@ def weight_view(ch):
 
 
 def load_status(ch):
-    return cdv.load_status(carried_weight_l(ch), dv.ability_mod(ch, "str"))
+    from wp.model import sheet_targets as stg
+    return cdv.load_status(carried_weight_l(ch), dv.ability_mod(ch, "str") + stg.value(ch, "load_mod"))
 
 
 def overloaded(ch):

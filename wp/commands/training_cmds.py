@@ -16,7 +16,7 @@ def _pay(ch, cost, source):
     try:
         return tr.pay(ch.training, cost, source)
     except ValueError as e:
-        raise CommandError(str(e))
+        raise CommandError(str(e), "rule_refused")
 
 
 @command
@@ -37,12 +37,12 @@ def buy_skill_rank(ch, name="", target=None, source=tr.TRAINING):
     skills = list(ch.skills)
     i = next((k for k, s in enumerate(skills) if s.name == name), None)
     if i is None:
-        raise CommandError("no skill %r" % (name,))
+        raise CommandError("no skill %r" % (name,), "no_skill", values=(name,))
     s = skills[i]
     have = sk.effective_ranks(s, ch.level)
     target = have + 1 if target is None else int(target)
     if target <= have:
-        raise CommandError("%s already has rank %d" % (name, have))
+        raise CommandError("%s already has rank %d" % (name, have), "already_has_rank", values=(name, have))
     cost = sk.ranks_cost(s.tier, have, target, ch.level)
     skills[i] = replace(s, ranks=target)
     new = replace(ch, skills=tuple(skills), training=_pay(ch, cost, source))
@@ -55,7 +55,7 @@ def buy_hp(ch, source=tr.TRAINING):
     goes to the first level whose roll is below the die."""
     i = next((k for k, v in enumerate(ch.hp_rolls) if v < ch.hit_die), None)
     if i is None or dv.hit_die_hp(ch) >= dv.hit_die_cap(ch):
-        raise CommandError("hit-die HP already at the cap %d" % dv.hit_die_cap(ch))
+        raise CommandError("hit-die HP already at the cap %d" % dv.hit_die_cap(ch), "hit_die_hp_already", values=(dv.hit_die_cap(ch),))
     rolls = ch.hp_rolls[:i] + (ch.hp_rolls[i] + 1,) + ch.hp_rolls[i + 1:]
     new = replace(ch, hp_rolls=rolls, training=_pay(ch, tr.HP_POINT_COST, source))
     return commit(new, "buy_hp", "hit-die HP +1 (level %d) for %d" % (i + 1, tr.HP_POINT_COST),
@@ -67,9 +67,9 @@ def set_hp_roll(ch, level=1, value=1):
     """Edit the hit-die HP of one level (progression.md): 1..die (no resources spent)."""
     level, value = int(level), int(value)
     if not 1 <= level <= len(ch.hp_rolls):
-        raise CommandError("no hit-die roll for level %d" % level)
+        raise CommandError("no hit-die roll for level %d" % level, "no_hit_die_roll", values=(level,))
     if not 1 <= value <= ch.hit_die:
-        raise CommandError("hit-die HP must be 1..%d" % ch.hit_die)
+        raise CommandError("hit-die HP must be 1..%d" % ch.hit_die, "hit_die_hp_must", values=(ch.hit_die,))
     rolls = ch.hp_rolls[:level - 1] + (value,) + ch.hp_rolls[level:]
     return commit(replace(ch, hp_rolls=rolls), "set_hp_roll", "level %d hit-die HP = %d" % (level, value))
 
@@ -78,11 +78,11 @@ def set_hp_roll(ch, level=1, value=1):
 def buy_weapon_grade(ch, wid="", source=tr.TRAINING):
     catalog = ch.weapon_catalog()
     if wid not in catalog:
-        raise CommandError("no weapon %r" % (wid,))
+        raise CommandError("no weapon %r" % (wid,), "no_weapon", values=(wid,))
     if catalog[wid].basic:
-        raise CommandError("group Basic/simple cannot be trained")
+        raise CommandError("group Basic/simple cannot be trained", "group_basic_simple_cannot")
     if wpn.level(catalog, wid) >= wpn.MAX_LEVEL:
-        raise CommandError("weapon already at level 12")
+        raise CommandError("weapon already at level 12", "weapon_already_level_12")
     cost = wpn.grade_cost(catalog, wid)
     entries = tuple(replace(e, weapon=replace(e.weapon, grades=e.weapon.grades + 1))
                     if e.weapon.name == wid else e for e in ch.weapons)
@@ -100,7 +100,7 @@ def buy_base_slot(ch, source=tr.TRAINING):
 def _next_grade(grades, current):
     i = grades.index(current)
     if i >= len(grades) - 1:
-        raise CommandError("already at max grade")
+        raise CommandError("already at max grade", "already_max_grade")
     return grades[i + 1]
 
 
@@ -126,14 +126,14 @@ def buy_armor_grade(ch, source=tr.TRAINING):
 def buy_language(ch, lid="", title="", native=False, projects=1, source=tr.TRAINING):
     """Language: non-native 30 * projects from the nearest native; native: first free, cheap 50 while natives < Int mod, else 100."""
     if not lid and not title:
-        raise CommandError("language needs a name")
+        raise CommandError("language needs a name", "language_needs_name")
     lid = lid or ids.make_id(title, (lang.lid for lang in ch.languages))    # the player never types an id (D7)
     if any(lang.lid == lid for lang in ch.languages):
-        raise CommandError("language already known: %r" % (lid,))
+        raise CommandError("language already known: %r" % (lid,), "language_already_known", values=(lid,))
     try:
         cost = tr.language_cost(native, dv.natives(ch), dv.ability_mod(ch, "int"), projects)
     except ValueError as e:
-        raise CommandError(str(e))
+        raise CommandError(str(e), "rule_refused")
     lang = Language(lid, title or lid, bool(native))
     new = replace(ch, languages=ch.languages + (lang,), training=_pay(ch, cost, source))
     return commit(new, "buy_language", "language %s%s for %d" % (
@@ -146,12 +146,12 @@ def buy_combat_basics(ch, wid="", source=tr.TRAINING):
     5 - difficulty grades (the effect is the existing basics bump; never stacks over ancestors)."""
     catalog = ch.weapon_catalog()
     if wid not in catalog:
-        raise CommandError("no weapon %r" % (wid,))
+        raise CommandError("no weapon %r" % (wid,), "no_weapon", values=(wid,))
     w = catalog[wid]
     if w.basic:
-        raise CommandError("group Basic/simple cannot be trained")
+        raise CommandError("group Basic/simple cannot be trained", "group_basic_simple_cannot")
     if w.basics:
-        raise CommandError("%s already has combat basics" % wid)
+        raise CommandError("%s already has combat basics" % wid, "already_has_combat_basics", values=(wid,))
     cost = wpn.basics_cost(w.scale)
     entries = tuple(replace(e, weapon=replace(e.weapon, basics=True)) if e.weapon.name == wid else e for e in ch.weapons)
     new = replace(ch, weapons=entries, training=_pay(ch, cost, source))
@@ -175,9 +175,9 @@ def buy_item_qualification(ch, iid="", source=tr.TRAINING):
     What it unlocks (hidden properties) is not modelled."""
     it = ch.item(iid)
     if it.qualification_n <= 0:
-        raise CommandError("%s needs no qualification" % it.name)
+        raise CommandError("%s needs no qualification" % it.name, "needs_no_qualification", values=(it.name,))
     if it.qualified:
-        raise CommandError("already qualified with %s" % it.name)
+        raise CommandError("already qualified with %s" % it.name, "already_qualified", values=(it.name,))
     cost = tr.qualification_cost(it.qualification_n)
     items = tuple(replace(x, qualified=True) if x.iid == iid else x for x in ch.items)
     new = replace(ch, items=items, training=_pay(ch, cost, source))
