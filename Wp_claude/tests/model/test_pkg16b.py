@@ -69,7 +69,7 @@ S.case("d-resist-fire", "pkg 16 D: resist:fire 5: 10 fire -> 5 -> HP 3", 3)(
     lambda: hp_after(hero(statuses=(buff(Effect("resist:fire", 5)),)), amount=10, dtype="fire"))
 S.case("d-parts", "resources.md fire sword: 8 slashing (DR 3 -> 5) + 3 fire (resist 2 -> 1) = 6 -> HP 2", 2)(
     lambda: hp_after(hero(statuses=(buff(Effect("dr", 3), Effect("resist:fire", 2)),)), parts=[(8, "slashing"), (3, "fire")]))
-S.case("d-stack-typed", "defense.md stacking: racial DR 3 and racial DR 2 -> 3 (larger wins); flat 3 + flat 2 add -> 5", (3, 5))(
+S.case("d-stack-typed", "package 17 Q115: DR entries do not stack (larger wins): racial 3 + racial 2 -> 3; flat 3 + 2 -> 3", (3, 3))(
     lambda: (dfv.dr(hero(statuses=(buff(Effect("dr", 3, "racial"), Effect("dr", 2, "racial")),))),
              dfv.dr(hero(statuses=(buff(Effect("dr", 3), Effect("dr", 2)),)))))
 S.case("d-skip", "resources.md: the player switches DR off for this hit -> 10 -> HP -2", -2)(
@@ -80,14 +80,14 @@ S.case("d-percent-kept", "resources.md: typed 50% fire stays, then resist 2: 10 
 S.case("d-removed", "pkg 16 D: removing the status removes the DR -> 0", 0)(
     lambda: dfv.dr(run(hero(statuses=(DR3,)), ("delete_status", {"sid": "buff"}))))
 S.case("d-view", "pkg 16 D: the defense view lists DR 3 with its bypass text (narrative only), resist, SR 12",
-       (3, (("buff", 3, "cold iron"),), {"acid": 4}, 12))(
+       (3, (("buff", 3, "cold iron", False),), {"acid": 4}, 12))(
     lambda: (lambda v: (v.dr, v.dr_entries, v.resist, v.spell_resistance))(dfv.defense_view(hero(statuses=(
         replace(DR3, effects=DR3.effects + (Effect("resist:acid", 4), Effect("spell_resistance", 12))),)))))
-S.case("d-sources", "pkg 16 D: a feat DR 2 counts always; a worn item DR 1 only while worn (flat: 2 + 1 = 3, then 2)", (3, 2))(
+S.case("d-sources", "pkg 16 D: a feat DR 2 counts always; a worn item DR 1 (stacks) only while worn: 2 + 1 = 3, then 2", (3, 2))(
     lambda: (lambda ch: (dfv.dr(ch), dfv.dr(run(ch, ("unequip_item", {"iid": "belt"})))))(
         hero(feats=(Feat("tough", effects=(Effect("dr", 2),)),),
-             items=(Item("belt", "belt", equipped=True, effects_off=(Effect("dr", 1),)),))))
-S.case("d-types", "pkg 16 D: 12 damage types from data", 12)(lambda: len(dfv.TYPES))
+             items=(Item("belt", "belt", equipped=True, effects_off=(Effect("dr", 1, stacks=True),)),))))
+S.case("d-types", "pkg 16 D: 12 damage types from data + cold (package 17) = 13", 13)(lambda: len(dfv.TYPES))
 
 
 # ================================================================ E. doll slots

@@ -82,8 +82,8 @@ S.case("b1-level-up", "progression.md: level 1 -> 2: training +100 * 2 = 200 (10
        (2, 1200, (8, 5)))(lambda: (lambda c: (c.level, c.training, c.hp_rolls))(run(hero(), ("level_up", {"hp_roll": 5}))))
 S.case("b1-level-up-3", "progression.md: level 2 -> 3 gives +300", 300)(
     lambda: -spent(hero(level=2, hp_rolls=(8, 5)), ("level_up", {"hp_roll": 4})))
-S.case("b1-refusals", "progression.md: the roll is needed and must be 1..die (d8)",
-       ("refused: give the hit-die roll for the new level (1..8)", "refused: hit-die roll must be 1..8",
+S.case("b1-refusals", "progression.md: the roll must be 1..die (d8); without a roll 1 is taken (package 17, Q111)",
+       ("allowed", "refused: hit-die roll must be 1..8",
         "refused: hit-die roll must be 1..8"))(
     lambda: (refused(hero(), "level_up"), refused(hero(), "level_up", hp_roll=0), refused(hero(), "level_up", hp_roll=9)))
 

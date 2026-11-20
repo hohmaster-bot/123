@@ -4,8 +4,8 @@ T = "core/test_tick.py"
 
 ENTRIES = [
     dict(id="damage-flat-before-percent", file="wp/core/damage.py",
-         old="    amount = apply_percent(part.amount, reductions.percent.get(part.dtype, 0))\n    amount -= int(reductions.flat.get(part.dtype, 0))",
-         new="    amount = part.amount - int(reductions.flat.get(part.dtype, 0))\n    amount = apply_percent(amount, reductions.percent.get(part.dtype, 0))",
+         old="    order: Tuple[str, ...] = (\"percent\", \"flat\", \"modifier\")",
+         new="    order: Tuple[str, ...] = (\"flat\", \"percent\", \"modifier\")",
          suites=(D,), rule="resources.md damage pipeline: percent (rounded up) THEN flat"),
     dict(id="damage-temp-hp-skipped", file="wp/core/damage.py",
          old="    temp_loss = min(amount, vitals.temp_hp)", new="    temp_loss = 0",
