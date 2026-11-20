@@ -36,6 +36,8 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 - Long rest NEVER clears trauma points (OT), comfort, or injury charges: those are reset by hand only [OWNER confirmed].
 
 ## Short rest [OWNER]
+- [package 17] Effects "short_rest_heal" (added to the free heal after the "larger of" rule) and
+  "short_rest_bp" (extra BP) change the free gains.
 1. No limit on how many short rests: narrative element, the GM decides.
 2. Free gains: +1 BP (at max it goes above max: overcap) and 2 + level HP
    (if race or an effect gives more, the larger value is used).

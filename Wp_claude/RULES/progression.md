@@ -1,7 +1,9 @@
 # Progression
 
 ## Level up [OWNER]
-- Hit die rolled OUTSIDE app, result entered; HP recorded.
+- Hit die rolled OUTSIDE app, result entered; HP recorded. [OWNER, package 17, Q111] level_up without a roll takes
+  1 and its result carries the warning "hit_die_default_used" (the UI shows "die not entered, 1 taken"); the value
+  is editable by hand in edit mode. Max HP grows, the current HP is NOT healed. No level cap [OWNER, Q103].
 - Max HP [OWNER, package 8; per die since package 16 G1] = the sum over ALL hit dice of max(1, die HP + CURRENT Con
   modifier) + race bonus (may be 0) + other bonuses (feats, class, quirks, items, effects "hp_max"); at least 1.
   Dice: one per level (level 1 = the maximum of the die, later levels = the value the player entered at level up,

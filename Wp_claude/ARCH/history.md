@@ -40,3 +40,6 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   pools over max, read-only dicts, unknown fields dropped on load), effect targets for sheet numbers, edit commands,
   iterative attacks, DR / resist / SR, doll slots, notebook, templates, hit dice per die, Q108, attention 2 and 4,
   spell price, base contents. Report: tests/PACKAGE16_REPORT.md.
+- Done in package 17: the remaining effect targets (pain, item HP / hardness, morale, short rest, spell cost /
+  overload, mana level), level_up default die 1 with a warning, DR stacks flag, percent modifiers per element and the
+  damage order as data, attack kinds melee / ranged / thrown, master counters as charges. Report: tests/PACKAGE17_REPORT.md.

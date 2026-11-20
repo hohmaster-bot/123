@@ -37,3 +37,7 @@
   limits: edit_entry / remove_entry (edit mode). Only drives take part in the attention income (+1 per drive at 4+).
 - Tests: lens 1/15 -> 11 -> 15 green, +3 stays 15; 1/15 - 1 -> 0 red; drives 4, 5, 3 at level 7 -> 5 attention; quirk
   +2 Str 12 -> burned 10 -> restored 12.
+
+## Not built on purpose [OWNER, package 17, closes Q122]
+- Experience (XP) and money are NARRATIVE: no mechanics, no counters, no prices in the app. There is no "start session"
+  and no "end of session" button: only the end of cycle (above).

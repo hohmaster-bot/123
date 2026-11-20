@@ -26,15 +26,16 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   source, notes) in a collapsed details area, so the interface is not cluttered. Stances get their own visual element.
 - Owner goal: FULL control over bonuses and rules through settings. For now every NEW rule constant or switch goes into
   Character.rules_settings (data) instead of code.
-- NEXT (after package 16, see STATUS.md): owner rules for Q122 (ranged / thrown flags, own damage stat and multiplier,
-  master counters, XP and level threshold, start session, money), then a package with them and the missing effect
-  targets (Q125); still later: principles, PDF export, journal revert (not in RULES yet).
-- Then an AC-zones package (RULES/ac_zones.md) once the owner gives the full table.
-- Rule exists, no code yet (what is left after package 16):
-  - master / expert weapon picks without numeric effect are stored only: reroll one d20, one attack per turn without
-    the [attack] tag, once per combat restore all balance (free action), ignore the first vulnerability, ignore 20%
-    cover, the first ranged attack can be parried;
-  - what an item qualification unlocks (Q109); a status catalog (buffs.md).
+- What is left after package 17 (owner, package 17):
+  1. Phase 3 data / settings: rule constants still in code -> data files, settings domains (D13), wp/i18n texts for
+     the refusal reason ids, theme, panel registry; a status catalog (buffs.md).
+  2. The AC-zones package (RULES/ac_zones.md) once the owner gives the full table.
+  3. Phase 4 overlay spike, Phase 5 UI, Phase 6 release.
+  4. Class system later (below).
+- Not built on purpose (owner, package 17): XP, money, start / end of session (narrative only).
+- Rule exists, no code yet: weapon picks without a numeric effect that are not once-per-combat (one attack per turn
+  without the [attack] tag, ignore the first vulnerability, ignore 20% cover) are stored only; what an item
+  qualification unlocks (Q109); principles, PDF export, journal revert (not in RULES yet).
 
 ## Class system (future, Q61; not built)
 - No multiclass. A class has flags for BAB growth and stat growth, and a good or poor progression per save

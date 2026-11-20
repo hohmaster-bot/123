@@ -24,6 +24,8 @@
   data; rules per game may change.
 - Shop is just a layer on the catalog [OWNER]: taking an item from the catalog can buy it at once (gold deducted automatically);
   taking a feat can buy it for training (only if the checkbox "pay with training" is on). Items only for gold.
+  [OWNER, package 17] Money is NARRATIVE: the app keeps no money and deducts nothing (Q122 closed); the shop layer
+  only copies an item from the catalog.
   Old characters are not migrated (D1).
 
 ## Two names [OWNER]

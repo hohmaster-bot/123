@@ -54,3 +54,16 @@
 
 ## Does NOT receive roll bonuses
 - Crit confirmation die and lucky attack die (see combat.md).
+
+
+## Damage order and percent modifiers [OWNER, package 17]
+- Effect target "percent:<damage type>": a SIGNED percent: -100 = immunity, -50 = half, +50 = takes 50% more. One value
+  per type on a character: with several sources the larger absolute value wins (equal + and - -> 0, like typed
+  bonuses); never below -100. Rounded UP (against the player).
+- Steps of one damage part, in the order of rules_settings.damage_order (data; default "percent", "flat", "modifier"):
+  1. percent reduction typed for the hit (25 / 50 / 75 %); 2. flat: the larger of DR (physical) and resist:<type>;
+  3. the signed percent modifier. Then temp HP, absorbers, HP (resources.md).
+- Tests: cold -100: 10 -> 0; fire +50: 10 -> 15; +50 and -25 -> +50; +25 and -50 -> -50; resist fire 2 then +50:
+  (10 - 2) * 1.5 = 12; with the modifier first: 15 - 2 = 13; 5 with +50 -> 7.5 -> 8.
+- Damage types: data (wp/catalog/data/damage_types.json); "cold" added in package 17 (the owner's immunity example,
+  Q130).

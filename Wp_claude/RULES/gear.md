@@ -197,7 +197,7 @@
 ## Charges and cooldown [OWNER, package 14 B; closes Q94]
 - Anything usable may have charges and a cooldown: an item (and its abilities), a status entry, a feat, an attack
   record, a maneuver. Optional fields (Usage): charges_max, charges_current, recharge ("short_rest" | "long_rest" |
-  "combat_start" | "manual"), cooldown_rounds, cooldown_current. A status keeps its existing charges (rest rules as
+  "combat_start" | "combat_end" (package 17) | "manual"), cooldown_rounds, cooldown_current. A status keeps its existing charges (rest rules as
   before, Q97) and gets cooldown_rounds / cooldown_current.
 - Commands: spend_charge(owner_kind, owner_id, n=1) (refused below 0 or while cooldown_current > 0; with
   cooldown_rounds > 0 the spending starts the cooldown), set_charges, restore_charges.

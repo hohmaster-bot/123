@@ -190,5 +190,9 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   current only.
 - Tests (test_pkg16a.py): +4 Str -> 14 / +2 / CMB 2; enhancement +4 and +2 -> +4; Con +4 -> HP 10; hp_max +5 -> 13,
   BP 4; mana 0/4 + 2 -> long rest 6; slots 2 + 1 -> 3; Ki 3 + 2 -> 5; armor penalty -3 + 2 -> -1 (never above 0).
-- Not yet a target (OPEN_QUESTIONS Q125): pain death cap / penalty per pain, item HP / hardness, "morale X higher",
-  free heal / BP of the short rest, spell cost / overload, mana level.
+- [OWNER, package 17, closes Q125] Also targets: pain_cap, pain_penalty_per_pain, damage_per_pain, item_hp and
+  item_hardness (Effect.weapon = one item id, none = every item; read from statuses, feats, injuries, quirks and
+  templates, not from item tabs, with no stat modifiers: Q127), morale_scale ("count morale X higher"),
+  short_rest_heal, short_rest_bp, spell_cost, spell_overload, mana_level, percent:<damage type>.
+  Tests (test_pkg17.py): pain 10 dies at cap 8, alive at cap 12; pain 2 -> -2, per pain +1 -> -4; sword HP 10 + 3 ->
+  13, axe stays 10; hardness 5 + 2 -> 7; scale 4 + 2 -> morale +3; free heal 3 + 2; circle 2 mana 3 + 1; overload 2 + 1.

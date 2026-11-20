@@ -18,7 +18,8 @@
 
 ## Crit [OWNER]
 - Notation 19+ / 20+ = threat range, x2. "x2/x3/x4" alone = crit on 20.
-- Weapon mastery can widen range by 2 (20 -> 18). (Conflict with the "crit +1" pick below: OPEN_QUESTIONS Q113.) Keen property or similar feat doubles base threat range.
+- [OWNER, package 17, closes Q113] Weapon mastery gives +1 crit range per "crit +1" pick, at most 3 picks (one in
+  each tier: specialist, expert, master). Keen property or similar feat doubles the BASE threat range only.
 - Item must store: base crit + modifiers from mastery and properties. Crit range must be modifiable by feats.
 - [package 10, R8] The attack view shows the crit range: the weapon's base range, "keen" (item property) doubles the
   BASE range, each mastery pick "crit +1" and each feat effect (target "crit_range", for this weapon) widen it by 1;
@@ -173,3 +174,14 @@
   dodge +1, shield 2: stance off -> front 15, flank 13; stance on -> front 12, flank 12.
 - Tests: the stance effect applies only while active; switching stances; refusals (not owned, not a stance); removing
   the feat clears active_stance; end_combat keeps it; the view; not in the container.
+
+
+## Attack kinds [OWNER, package 17, part of Q122]
+- A weapon card (Item.attack_kind) and an attack record (AttackRecord.kind, "" = the card's) are melee | ranged |
+  thrown. Defaults are data (rules_settings): ranged = attack with Dex, NO stat to damage; thrown = attack with Dex,
+  Str to damage x1; melee unchanged (Str by grip x1 / x0.5 / x1.5, Finesse rule).
+- Record overrides: stat (the attack stat), damage_stat ("none" or a stat id), damage_mult (a number). A positive
+  stat modifier is multiplied and rounded down, a negative one counts once as is. This replaces the old "own damage
+  stat and multiplier".
+- Tests: Str 16, Dex 14: bow (ranged) -> Dex, damage 0; dagger (thrown) -> Dex, +3; sword one hand +3, two hands +4;
+  bow with damage_stat str -> +3; sword damage_mult 2 -> +6; thrown with Str 6 -> -2.

@@ -45,7 +45,12 @@ Spell Resistance is separate (vs spells, not a damage step).
   slashing, bludgeoning and the old default "physical"). Effect targets: "dr" (value; Effect.note = bypass text such
   as cold iron, silver, magic: narrative only, never math), "resist:<type>" (value), "spell_resistance" (value, shown
   only). take_damage applies them per part: the larger of DR (physical) and resist:<type> (one reduction per part,
-  assumption Q119); skip=("dr", "resist:fire") = the player's choice for this hit. The defense view lists every entry.
+  assumption Q119); skip=("dr", "resist:fire", "percent:fire") = the player's choice for this hit. The defense view
+  lists every entry.
+- [OWNER, package 17, Q115] DR: every DR entry has the flag "stacks" (default false). Total DR = the largest
+  NON-stacking entry + the sum of all stacking entries. The bypass text never changes the number. Example: DR 1/-
+  stacking + DR 10/piercing = 11. Resistances to elements (resist:<type>) NEVER stack: the larger wins.
+- Percent modifiers per element: see defense.md "Damage order and percent modifiers".
   Tests: DR 3, 10 physical -> HP 8 -> 1; 10 fire -> -2; resist fire 5 -> 3; 8 slashing + 3 fire with DR 3 and resist
   fire 2 -> 6 damage.
 - Balance cap in combat [OWNER homerule, package 9, closes Q35; the stored snapshot accepted, Q54]: start of combat

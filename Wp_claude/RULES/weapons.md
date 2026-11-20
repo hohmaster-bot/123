@@ -93,4 +93,9 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
 ## Notes
 - This "qualification" is weapon level; item "Qualification N" in gear.md is a different mechanic (per-item, 50 training/level).
 - Styles: similar branch rules; app can record one style per equipped weapon or two attack variants (progression.md).
-- Crit range +1 here vs "mastery widens by 2" in combat.md: two specialist/expert picks give +2; check against source.
+- Crit range +1 per pick, at most 3 (specialist, expert, master) [OWNER, package 17, Q113]; keen doubles the base range.
+- [OWNER, package 17] "Once per combat" picks (reroll one d20, free action "restore all balance", the first ranged
+  attack can be parried) are USAGE CHARGES: max 1, recharge at the end of combat; owner kind "pick", id
+  "<weapon node id>:<slot>" (spend_charge / set_charges / restore_charges). restore_all_balance(pick_id) spends the
+  charge and sets the balance to its max (no dice, nothing else; refused while a block_restore covers the balance,
+  Q128). The app tracks abilities and never rolls dice.
