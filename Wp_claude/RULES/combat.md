@@ -8,10 +8,17 @@
 - 2nd tagged option: -5, 3rd: -10. Paired (two-weapon) attacks: penalty applies to both.
 - Abilities without the tag take no iterative penalty.
 - Some abilities/effects ignore the iterative penalty WITHOUT being tagged as an attack (effect flag, e.g. master bonus: one attack per turn has no [attack] tag).
+- [OWNER, package 16 C] The iterative penalty is its own NEGATIVE line "iterative" on the attack, never typed by the
+  player: Character.iterative_count = attacks already used in this round's series. use_attack(rid) (the "attack"
+  button) adds 1; the zero-initiative tick (new round) and end_combat set it to 0; set_iterative_count(n) sets it by
+  hand. Step: rules_settings.iterative_step (default -5, data) or the record's own iterative_step; effects
+  "iterative_penalty" make each step smaller (a step never goes above 0). Penalty of the next attack = count * step.
+  A status with ignores_iterative: no penalty. Effect.when_iterative is stored only (no formula yet).
+  Tests: 3 attacks 0 / -5 / -10; reduction 2 -> 0 / -3 / -6; reset by the tick; manual set 2 -> -10; record step -3.
 
 ## Crit [OWNER]
 - Notation 19+ / 20+ = threat range, x2. "x2/x3/x4" alone = crit on 20.
-- Weapon mastery can widen range by 2 (20 -> 18). Keen property or similar feat doubles base threat range.
+- Weapon mastery can widen range by 2 (20 -> 18). (Conflict with the "crit +1" pick below: OPEN_QUESTIONS Q113.) Keen property or similar feat doubles base threat range.
 - Item must store: base crit + modifiers from mastery and properties. Crit range must be modifiable by feats.
 - [package 10, R8] The attack view shows the crit range: the weapon's base range, "keen" (item property) doubles the
   BASE range, each mastery pick "crit +1" and each feat effect (target "crit_range", for this weapon) widen it by 1;
@@ -124,6 +131,7 @@
   then the better of Str/Dex is used.
 - Size (small/medium/large) affects attack, CMB, CMD.
   [package 10, R9] The attack roll gets the size modifier (the same number as the AC size layer).
+
 ## Size and speed [OWNER, package 11 C; closes Q57, Q66]
 - The race (the character's race fields) holds the size: small | medium | large only, and the base speed in feet
   (default 20). The hand-typed size CMB field is removed (old files: dropped on read).
@@ -142,7 +150,7 @@
   both; a maneuver view shows the CMB of the matching weapon. Tests: two swords, one with mastery +3: CMB 7 and 4,
   general 4; with pain 1 and morale scale 4 in combat: 8, 5, 5.
   CMD [OWNER, Q59] = 10 + BAB + Str mod + Dex mod + size CMB mod + bonuses with target "cmd"; no pain, no morale.
-  Tests: BAB 3, Str 16, size 1, +2 -> CMB 9 (pain 1 -> 8); Finesse and Dex 18 -> 8; CMD 10 + 3 + 3 + 2 + 1 + 1 = 20.
+  Tests: BAB 3, Str 16, size large (+1), +2 -> CMB 9 (pain 1 -> 8); Finesse and Dex 18 -> 8; CMD 10 + 3 + 3 + 2 + 1 + 1 = 20.
 
 ## Spells damage
 - Standard PF, but dice damage is affected by morale and pain. Editor unfinished [BETA]:

@@ -3,7 +3,7 @@ Status: A = accepted by owner, P = proposed (needs owner OK), X = superseded.
 
 | id | status | decision | why |
 |---|---|---|---|
-| D1 | A | No save migrations, ever. New format may break old saves. Old characters are not carried over; create new ones. | Owner, 2026-11-17. Simplicity. |
+| D1 | A | No save migrations, ever. New format may break old saves. Old characters are not carried over; create new ones. Package 16 (owner): on load unknown fields are dropped; anything not working is unfinished work or a bug. | Owner, 2026-11-17. Simplicity. |
 | D2 | A | UI toolkit: PySide6. | LGPL; overlay prototypes already on PySide6; Qt has tray, frameless, opacity built in. |
 | D3 | A | Two exclusive modes: Classic (full-screen sheet, Alt-Tab/hotkey) and Overlay (light, always-on-top panels). Never shown together: enabling one disables the other. Each has its own independent settings. Both have an edit mode that works differently. Split removed. | Owner, 2026-11-17. See `surfaces.md`. |
 | D4 | A | i18n: every UI string in locale files; code is ASCII only. | Owner. RU/EN switch; PowerShell can no longer corrupt code. |

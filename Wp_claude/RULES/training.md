@@ -131,6 +131,20 @@ Narrative options (entered by hand when relevant):
 2. Story power options: IGNORE for now (owner).
 - Resources implied: time points (OV, narrative, burn at end of cycle), base points as fractions. Professionalism level: see above.
 
+## Package 16 additions [OWNER, package 16 G2, G4, G5, A10]
+- Comfort for training: the rate is (level + 1) * 5 + effects "comfort_rate_bonus" (closes Q107). Test: level 1, +3,
+  2 comfort -> 26.
+- New spell price: 20 + 10 * circle^2; a spellbook class (or a teacher / scroll) pays half, rounded down; THEN effects
+  "spell_price_discount" subtract X (the old code's class spell_discount_extra); never below 1. Tests: circle 2 -> 60,
+  book 30, book and discount 5 -> 25; circle 0 with a book (10) and discount 15 -> 1. (Taken over from the deleted
+  legacy draft training_costs_draft.md, package 16 A10; every other number of that draft was already here or in
+  skills.md / weapons.md / progression.md.)
+- Attention option 2: attention_to_training(n): per attention, training as if spending comfort = (Dex mod + attention
+  course) / 2, min 1, tenths; training = floor(comfort * comfort rate) (Q114). Dex 16 -> 1.5 * 10 = 15.
+- Attention option 4: attention_to_base_points(n): per attention max(0.4, 0.2 * (Int mod + attention course)) base
+  points, kept in tenths (Character.base_points_tenths, never lost); every whole point is +1 base slot. 5 attention at
+  the minimum -> 2.0 -> base slots 5 -> 7. (Closes Q110.)
+
 ## Purchase and progression commands [package 15]
 Every command validates, spends training (a non-training source spends nothing), refuses with a reason, is journaled,
 and never refunds. Prices are the constants of wp/core/training.py (data, not scattered literals).

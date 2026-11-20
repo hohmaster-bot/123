@@ -49,3 +49,6 @@
 - Absorption is 1:1; absorbed part does not hit balance (like temp HP). Other traits/classes/races may add other absorbers.
 - Some races redirect damage: after temp HP, before HP, damage hits MANA and acts like temp HP.
   Model damage as an ordered list of absorbers (temp HP -> race pool -> HP), configurable per character.
+
+- [OWNER, package 16 B] Circles 0-9 ONLY: no circle 10 or above anywhere (rules, data, code). cast_spell and
+  learn_spell refuse any other circle with a reason.

@@ -19,3 +19,7 @@ One line each. Remove a line when the cause is fixed and covered by a test.
 - `recompute_derived` builds balance max from BP max; rule says CURRENT BP. Test REST-balmax-curbp.
 - tkinter workarounds (`withdraw` instead of `destroy`, `overrideredirect`, `grab_set` rules, window magnet) do not carry over to Qt.
 - Never write migration code (D1).
+- New core: every refusal is `CommandError(text, reason_id, values=...)`; a test checks every raise has a reason.
+- New core: views must never raise on a broken formula (it counts as 0); stored maxima (mana, slots) stay base values,
+  effects are added on read, bridges write back the current only.
+- New core: a stat:<id> effect reads the STORED scores (sheet_targets.base_context), never ability_mod: no loops.

@@ -1,5 +1,8 @@
 # CONTRACT.md — WIPEFINDER: правила для чат-ботов
 
+> LEGACY: this file describes the old tkinter program only. The new code (branch Rework, `wp/`) follows
+> CLAUDE.md; its data contract is `wp/storage/character_io.py`.
+
 > Роль: единые правила поведения для любого бота (DeepSeek, Continue, ChatGPT и т.д.),
 > чтобы ответы были предсказуемы и без расхождений. Читать **первым** после `TECH.md §0`.
 > Порядок передачи боту: PROJECT_MAP.md → CONTRACT.md → PROMPT.md → character.schema.json → GLOSSARY.md → TECH.md → файл кода.

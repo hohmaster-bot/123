@@ -15,3 +15,10 @@ Each slot holds ONE item that gives a bonus; items can be swapped for the situat
 - Craft tools (smithing etc.). Camp tools (tents, dishes).
 - Magic components. Worship item (holy symbol etc.).
 - Item level ILVL is stored on every item.
+
+- [OWNER, package 16 E] The slot list is data (wp/catalog/data/doll_slots.json; ids hands, armor, belt, body, chest,
+  eyes, gloves, head, neck, fingers, back, shoulders, legs, feet, belt_pouch, companion, pet, modifier, craft_tools,
+  camp_tools, magic_components, worship_item). Item.slot names its slot. equip_item into an occupied slot is refused
+  (reason slot_occupied); equip_item(swap=True) takes the other item off (it stays in the bag). The hands slot is
+  equip_hands (2 hands). An item without a slot is worn without a slot check (as before). Bonuses count only while
+  worn / held.

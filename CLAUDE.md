@@ -9,7 +9,8 @@ Branch `Rework`: architecture rework before the Qt UI. Where we are now: `Wp_cla
 Plan: `Wp_claude/ROADMAP.md`. Legacy tkinter code at repo root is reference only until replaced. Do not edit `main`.
 
 ## Hard rules
-- No save migrations, ever. Never write migration or legacy-conversion code.
+- No migrations; on load unknown fields are dropped; anything not working is unfinished work or a bug.
+  Never write migration or legacy-conversion code.
 - Code files are ASCII only. All UI text lives in locale files (`wp/i18n/*.json`).
 - UI never mutates the character directly; only through commands (`Wp_claude/ARCH/decisions.md` D5).
 - Store base values only; derived values are computed on read, never written back.

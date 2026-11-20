@@ -8,7 +8,8 @@
   weapon + weapon, two-handed weapon, special item + weapon. The shield bonus to AC (type shield) works only while the
   shield is held in a hand, not while it lies in the bag.
 - Armor, helm, glasses, etc. Character slots: see doll.md.
-- Magic items may need activation: 1 spirit/day or 5 until the end of the cycle; cost may scale or have an alternative.
+- Magic items may need activation: 1 spirit per "day" (until the short rest) or 5 per "decade" (until the long rest,
+  package 10 decision I); cost may scale or have an alternative.
 - Requirements: "Qualification N" or Court level X.
 
 ## Qualification
@@ -73,7 +74,7 @@
     casters default to "zero_balance" (source note: the "divine" penalty does not cancel the spell on failure but
     zeroes all balance), others to "cancel".
   - Tests: armor 2/20% + shield 1/15% -> 3 / 35%; shield in the bag not counted; feat -2 / -50% -> 1 / 0; 60% + 60% ->
-    100; mage cost 3 + 2: mana 10 -> 5, balance 6 -> 3; 2 paid with balance: mana 7, balance 1; mana level 4 -> capped;
+    100; mage cost 3 + 2: mana 10 -> 5, balance 6 -> 3; 2 paid with balance: mana 7, balance 1; mana level 4 -> refused (no cut, see above);
     failure modes.
 - A shield counts as armor: a shield held in a hand applies its Str/Dex skill penalty too [OWNER, package 8 R4].
   Test: shield -2 in hand -> climb -2; in the bag -> 0; shield -2 + armor -3 -> -5.
@@ -205,3 +206,9 @@
 - Item charges live on the item (Q94); the old by-name item charges (Character.charges kind "item") are dropped on
   load (D1). The active list shows charges only of worn / held items.
 - There is no separate "class / race ability" entity: such abilities are resource pools or statuses.
+
+## Base contents [OWNER text above; built in package 16 G7]
+- An item left at the base = not carried, not worn, not held. It takes Item.base_slot_cost slots (default 1; grey
+  items: spent or destroyed, 0) and gives the effects of its acting tab ("Strong": +2 Str, 10 slots). base_view =
+  (used, max, over); max = base slots (+ whole attention base points + effects "base_slots"); over the max is shown red,
+  never refused. Tests: Strong at the base -> Str 12, 10 of 5 red; two items + a spent potion -> 2 of 5.

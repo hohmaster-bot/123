@@ -26,16 +26,15 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   source, notes) in a collapsed details area, so the interface is not cluttered. Stances get their own visual element.
 - Owner goal: FULL control over bonuses and rules through settings. For now every NEW rule constant or switch goes into
   Character.rules_settings (data) instead of code.
-- NEXT: an independent review of the whole core by a fresh session, then package 16.
-- Package 16 (planned): the remaining "core" items of tests/LEGACY_FEATURES.md (ranged / thrown attack flags, own
-  damage stat and damage multiplier, master counters, XP and level threshold, start session, money, base contents,
-  quirks / courts / quests / lens / principles, character templates, PDF export, journal revert).
+- NEXT (after package 16, see STATUS.md): owner rules for Q122 (ranged / thrown flags, own damage stat and multiplier,
+  master counters, XP and level threshold, start session, money), then a package with them and the missing effect
+  targets (Q125); still later: principles, PDF export, journal revert (not in RULES yet).
 - Then an AC-zones package (RULES/ac_zones.md) once the owner gives the full table.
-- Rule exists, no code yet (what is left after package 15):
+- Rule exists, no code yet (what is left after package 16):
   - master / expert weapon picks without numeric effect are stored only: reroll one d20, one attack per turn without
     the [attack] tag, once per combat restore all balance (free action), ignore the first vulnerability, ignore 20%
     cover, the first ranged attack can be parried;
-  - attention options 2 and 4 (Q110); what an item qualification unlocks (Q109).
+  - what an item qualification unlocks (Q109); a status catalog (buffs.md).
 
 ## Class system (future, Q61; not built)
 - No multiclass. A class has flags for BAB growth and stat growth, and a good or poor progression per save

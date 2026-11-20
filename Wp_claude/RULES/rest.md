@@ -23,6 +23,8 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
   (or skips if he remembers). Tap when pain is due.
 
 ## Long rest [OWNER]
+- [OWNER, package 16 A5] Refused during combat (reason combat_active); the UI asks "end combat?" and then
+  calls long_rest_end_combat (ends the combat exactly like end_combat, then the long rest).
 - Long rest and end of cycle are separate buttons; one never triggers the other (narrative.md).
 - Restores: all HP, all BP (exactly to max), all pain (except permanent pain from injuries and curses), all ability
   charges, all spells and mana (racial mana too, also when the "mana" magic option is off [OWNER, package 8 R18]),

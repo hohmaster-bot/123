@@ -36,3 +36,7 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package H (housekeeping, no behavior change): tests/run_all.py, tests/break_check.py + tests/breaks/ (43 entries),
   CLAUDE.md procedure, STATUS.md, history.md, ARCH/decision_log.md, tools/rules_index.py, PROMPT_TEMPLATE.md.
   Report: tests/PACKAGEH_REPORT.md.
+- Done in package 16: review 4 fixes (refusal reason ids, no-op journal, circle and two-weapon bugs, long rest in combat,
+  pools over max, read-only dicts, unknown fields dropped on load), effect targets for sheet numbers, edit commands,
+  iterative attacks, DR / resist / SR, doll slots, notebook, templates, hit dice per die, Q108, attention 2 and 4,
+  spell price, base contents. Report: tests/PACKAGE16_REPORT.md.

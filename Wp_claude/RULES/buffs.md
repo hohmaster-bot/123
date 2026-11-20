@@ -133,8 +133,13 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   next D-1 rounds (D rounds), and its per-tick part (DoT / heal / restore) acts on ticks 1..D (D times, also on the
   tick it ends). A 1-round buff is active in the round it was activated in.
 - [OWNER, Q97] Statuses have NO recharge field: the charges of a status follow the rule of its SOURCE (feat, race,
-  pool, item); a plain buff without a source has no recharge rule. (Open: the long rest still restores every status's
-  charges, package 8 rule: Q108.)
+  pool, item); a plain buff without a source has no recharge rule.
+- [OWNER, Q108, package 16 G3] Status.source_ref links a status to its source ("feat:<id>", "item:<id>",
+  "attack:<id>", "maneuver:<id>" -> that source's usage recharge; "pool:<id>" -> the pool's restore rule;
+  "template:<id>" -> none). Rests and start_combat refill a status only when its source's rule fires; a status without
+  a source is NOT refilled by the long rest (the short rest option "restore charges" stays a choice of the player).
+  Tests: unlinked 0/2 stays 0 after the long rest; feat long_rest -> 2; pool short_rest -> 2 after the short rest;
+  item manual -> 0; feat combat_start -> 2 at start_combat.
 - A status has no other cost (Q69).
 - Tests: pool 3 at 1 per round gives exactly 3 rounds (activation 2, ticks 1 and 0, the 3rd tick ends it); own source
   2 per round, charges 4 -> activation 2; refused when the source cannot pay; monk aura, cursed darkness (3 per round),
@@ -149,9 +154,9 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   7/2 = 3, -7/2 = -4. The final result is rounded DOWN to a whole number: level*0.5 at level 3 = 1; -level*0.5 = -2.
 - A formula is validated when it is added or edited (add_status, add_maneuver / edit_maneuver, add_pool / edit_pool,
   the feat catalog): a clear error. A broken formula stored by hand never crashes a derived view: it counts as 0.
-- Pool max on read: the formula on the current sheet. The stored current is read CLAMPED to the max (it is not
-  rewritten); commands that change a pool (spend, restore) start from the clamped value.
-- Tests: rage pool max con_mod + 2*(level+1) with Con mod 3, level 4 -> 13; Con mod 1 -> 11 and the current reads 11;
+- Pool max on read: the formula on the current sheet. The stored current is stored AND shown as it is, also above
+  the max (resources.md "Over max") [OWNER, package 16 A6]; spend starts from it, a restore never lowers it.
+- Tests: rage pool max con_mod + 2*(level+1) with Con mod 3, level 4 -> 13; Con mod 1 -> 11 and the current stays 13 (over max);
   2*lvl, min / max, the rounding examples above; unknown names and quotes refused.
 
 ## Action and restore blocks, restore by effect [OWNER, package 14 F]
@@ -166,3 +171,24 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   the status acts; the one-shot part at activation may restore mana, spirit, balance, hp, pool:<id> (temp HP as
   before). Never above the max. Both honour block_restore. Unknown keys are refused when the status is added.
 - Injuries carry effects too (injuries.md), so an injury can be the source of any block.
+
+
+## Effect targets of every sheet number [OWNER, package 16 A2]
+- Owner: ALL sheet numbers have effect targets. The new targets are DATA: wp/catalog/data/sheet_targets.json (id and
+  meaning): stat:<str..cha> (ability score), hp_max, extra_hit_dice, bp_max, balance_max, balance_regen, spirit_max,
+  mana_max, slots:<circle>, pool_max:<pool id>, comfort_max, comfort_rate_bonus, parry, max_dex, armor_skill_penalty,
+  load_mod, reactions, base_slots, attention_per_cycle, crit_mult, iterative_penalty, dr, resist:<type>,
+  spell_resistance, spell_price_discount. Older ones: ac, attack, damage, save, save:<id>, skill, skill:<id>,
+  initiative, cmb, cmd, speed, crit_range, lucky, touch_armor, armor_slowdown_reduction, spell_penalty_mana,
+  spell_failure_pct, twf_reduction, block_*.
+- Sources: active statuses, owned feats (stance feats while active), injuries, quirks not burned, templates, the
+  acting tab of worn / held items and of items at the base. Typed bonuses stack by the normal rules (same type ->
+  larger wins; flat and dodge add); block_bonus applies.
+- Ability scores: score = stored score + stat:<id> effects; the modifier and everything built on it follow. A stat
+  effect whose value comes from a stat modifier or a formula reads the STORED scores (no loops, assumption Q118).
+- Stored maxima stay base values (mana Pool, slots): the effect is added on read; rests and casts write back the
+  current only.
+- Tests (test_pkg16a.py): +4 Str -> 14 / +2 / CMB 2; enhancement +4 and +2 -> +4; Con +4 -> HP 10; hp_max +5 -> 13,
+  BP 4; mana 0/4 + 2 -> long rest 6; slots 2 + 1 -> 3; Ki 3 + 2 -> 5; armor penalty -3 + 2 -> -1 (never above 0).
+- Not yet a target (OPEN_QUESTIONS Q125): pain death cap / penalty per pain, item HP / hardness, "morale X higher",
+  free heal / BP of the short rest, spell cost / overload, mana level.

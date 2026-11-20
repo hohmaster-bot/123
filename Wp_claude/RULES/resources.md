@@ -40,6 +40,14 @@ Spell Resistance is separate (vs spells, not a damage step).
   Then hits of 1 and 1 (balance not restored): each HP -1, pain +1, trauma +1 -> totals HP -12, pain 3, trauma 11.
 - Damage input: button "take damage" + optional DR/- and Resistance selector (by damage type) applied before the above.
   DR/Resistance come from the sheet's effects. [UI wish]
+- [OWNER, package 16 D] Damage types are data (wp/catalog/data/damage_types.json): piercing, slashing, bludgeoning,
+  fire, water, lightning, acid, sound, force, positive, negative, pure; DR works on the physical ones (piercing,
+  slashing, bludgeoning and the old default "physical"). Effect targets: "dr" (value; Effect.note = bypass text such
+  as cold iron, silver, magic: narrative only, never math), "resist:<type>" (value), "spell_resistance" (value, shown
+  only). take_damage applies them per part: the larger of DR (physical) and resist:<type> (one reduction per part,
+  assumption Q119); skip=("dr", "resist:fire") = the player's choice for this hit. The defense view lists every entry.
+  Tests: DR 3, 10 physical -> HP 8 -> 1; 10 fire -> -2; resist fire 5 -> 3; 8 slashing + 3 fire with DR 3 and resist
+  fire 2 -> 6 damage.
 - Balance cap in combat [OWNER homerule, package 9, closes Q35; the stored snapshot accepted, Q54]: start of combat
   takes a SNAPSHOT of the balance max
   (armor + current BP + bonuses at that moment). During combat the cap changes ONLY by hits (below); it does NOT change
@@ -114,7 +122,7 @@ After everyone acted, in this order [OWNER]:
   analogs first, then HP and balance; overflow -> OT and +1 pain).
 
 ## Spirit, mana, overload [OWNER]
-- Everyone has: HP, balance, balance regen, spirit, trauma points. Spirit pays item activations (1 spirit/day or 5 until the end of the cycle).
+- Everyone has: HP, balance, balance regen, spirit, trauma points. Spirit pays item activations (1 spirit per "day" = until the short rest, or 5 per "decade" = until the long rest).
 - Spirit max [OWNER] = 5 + 5 * Cha modifier, never below 0 (Cha mod -1 or lower -> 0), plus bonuses/penalties by source.
   [OWNER, package 9, closes Q33] Order: max(0, 5 + 5 * Cha mod) FIRST, THEN the bonuses (race, class, feats, other; may
   be negative); the total is never below 0. Tests: Cha mod -2 (base -5 -> 0) + 3 = 3; + (-1) = 0; Cha mod +2 + 3 = 18.
@@ -150,8 +158,8 @@ After everyone acted, in this order [OWNER]:
 
 ## Resource pools [OWNER, package 13 C]
 - A pool is a character-level counter (Ki-like): id (made by the program), name, max (a number or a formula, buffs.md
-  "Formulas"), current (read clamped to the max), restore: "short_rest" | "long_rest" | "combat_start" | "manual";
-  restoring sets it to max.
+  "Formulas"), current (shown as is, also above the max, package 16 A6), restore: "short_rest" | "long_rest" | "combat_start" | "manual";
+  restoring sets it to max (an over-max value is not lowered).
 - Commands: add_pool (current = max unless given), edit_pool, remove_pool, spend_pool(pool_id, n) (refused below 0),
   restore_pool(pool_id). The short rest restores "short_rest" pools; the long rest restores "short_rest" AND
   "long_rest" pools (a long rest includes a short one) [OWNER, Q88]; start_combat restores "combat_start" pools;

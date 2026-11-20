@@ -5,7 +5,7 @@ Kept apart from RULES/. Nothing here changes numbers.
 - Over-max values shown red (comfort, base, load); load/base overload icon.
 - Shield bonus on/off in AC or small secondary number "AC with shield".
 - Morale: one button start/end combat (label toggles); indicators "We are losing!" / "We are winning!" at -5 / +5; log min/max morale.
-- Short rest: convenient menu of BP spends (list in RULES/rest.md); temp BP shown.
+- Short rest: convenient menu of BP spends (list in RULES/rest.md); BP above max (overcap) shown.
 - Chips/tooltips for quests, courts, stories, quirks; quirk "burn" = grey + status destroyed.
 - Item/ability -> code to clipboard; PDF export (balance max only); copy character.
 - Tooltip on resting in negatives: d100 90+ stabilizes.

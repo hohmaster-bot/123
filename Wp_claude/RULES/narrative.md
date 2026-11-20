@@ -29,3 +29,11 @@
 - Lens can also give an advanced skill (skills.md).
 - Lens counter: starts at 1 of X (X set by the player). Range is strictly 0..X, the app clamps; 0 and X are the END states.
   Examples: new lens 1/15; at 11/15 + 4 -> 15/15 (green); at 1/15 - 1 -> 0/15 (red); cannot go to 16 or -1.
+
+## Notebook commands [OWNER, package 16 F]
+- Records: quests, stories, courts (level + tier, label "Skull 5t1"), quirks (effects like a feat while not burned),
+  lenses (counter), drives (level 0..5). add_note(kind, name, ...), change_lens(lid, delta) (clamped 0..X: 0 red,
+  X green), set_drive_level(did, level) (0..5, else refused), burn_quirk(kid, burned) (reversible); any field without
+  limits: edit_entry / remove_entry (edit mode). Only drives take part in the attention income (+1 per drive at 4+).
+- Tests: lens 1/15 -> 11 -> 15 green, +3 stays 15; 1/15 - 1 -> 0 red; drives 4, 5, 3 at level 7 -> 5 attention; quirk
+  +2 Str 12 -> burned 10 -> restored 12.
