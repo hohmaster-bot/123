@@ -260,6 +260,8 @@ def tick(ch, reductions=None):
     t, rep = tk.zero_initiative(bridge.to_tick(ch), reductions)
     new = rst.per_tick(bridge.from_tick(ch, t), rep.acted)     # restore by effect (package 14 F)
     new = us.tick_cooldowns(new)                               # cooldowns -1 (package 14 B)
+    if ch.in_combat:
+        new = replace(new, combat_round=ch.combat_round + 1)   # the next round starts (journal, package 14 H)
     if ch.in_combat and rep.cap_hits:
         new = replace(new, balance_cap_hits=new.balance_cap_hits + rep.cap_hits)
     return commit(new, "tick", "balance +%d, dot %d, heal %d, expired %s" % (

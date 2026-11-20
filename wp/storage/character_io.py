@@ -38,7 +38,8 @@ BAK_SUFFIX = ".bak"
 DROPPED = {"Character": ("mana_level", "size_mod", "size_cmb"),
            "Status": ("cost_resource", "cost_amount"),
            "AttackRecord": ("kind", "base_record"),
-           "Item": ("count",)}
+           "Item": ("count",),
+           "LogEntry": ("summary",)}   # old text journal entries keep only their command id
 _SKIP = object()               # a record not read at all (see _skipped)
 
 

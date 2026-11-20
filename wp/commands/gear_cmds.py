@@ -50,7 +50,7 @@ def hit_item(ch, iid="", damage=0):
     p = dv.picks(ch, it)
     n = itm.notches(it, damage, p)
     if n is None:
-        return Result(state=ch, entry=LogEntry("hit_item", NO_HARDNESS), events=(),
+        return Result(state=ch, entry=LogEntry(command="hit_item"), events=(),
                       info={"refused": NO_HARDNESS})
     new = itm.damaged(it, n, p)
     return commit(_put(ch, new), "hit_item", "%s hit %d -> %d notch(es), HP %d (%s)" % (
@@ -88,7 +88,7 @@ def activate_item(ch, iid="", kind=None):
     if kind is not None and kind not in prices:
         prices = {}
     if not prices:
-        return Result(state=ch, entry=LogEntry("activate_item", NOT_SET), events=(),
+        return Result(state=ch, entry=LogEntry(command="activate_item"), events=(),
                       info={"refused": NOT_SET})
     if kind is None:
         raise CommandError("%s: choose day or decade" % it.name)
@@ -123,7 +123,7 @@ def start_combat(ch):
     cap = dv.balance_max_base(ch)          # snapshot of the balance cap (package 9 C)
     ch = rst.guard(ch, pool_cmds.restore_by(ch, pool_cmds.COMBAT_START))   # "combat_start" pools; restore blocks
     ch = us.recharge(ch, us.COMBAT_START)                 # usage charges (package 14 B)
-    return commit(replace(ch, in_combat=True, balance_cap_hits=0, balance_cap_start=cap), "start_combat",
+    return commit(replace(ch, in_combat=True, balance_cap_hits=0, balance_cap_start=cap, combat_round=1), "start_combat",
                   "combat started, balance cap %d" % cap)
 
 
@@ -135,7 +135,7 @@ def end_combat(ch):
     (resources.md [OWNER]), morale scale reset to 0 (defense.md [OWNER])."""
     if not ch.in_combat:
         raise CommandError("no combat is active")
-    new = replace(ch, in_combat=False, overload=0, morale_scale=0, balance_cap_hits=0, balance_cap_start=None,
+    new = replace(ch, in_combat=False, combat_round=0, overload=0, morale_scale=0, balance_cap_hits=0, balance_cap_start=None,
                   statuses=ef.end_combat(ch.statuses))
     return commit(new, "end_combat", "combat ended")
 

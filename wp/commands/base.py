@@ -32,10 +32,9 @@ def normalize(ch):
 
 
 def commit(ch, command, summary, info=None):
-    """Append a log entry and wrap the new (normalized) state in a Result."""
-    entry = LogEntry(command, summary)
-    ch = normalize(ch)
-    return Result(state=replace(ch, log=ch.log + (entry,)), entry=entry, info=dict(info or {}))
+    """Wrap the new (normalized) state in a Result. The journal entry is written by dispatch (package 14 H:
+    ids and numbers only); `summary` is a developer note and is NOT stored."""
+    return Result(state=normalize(ch), entry=LogEntry(command=command), info=dict(info or {}))
 
 
 REGISTRY = {}
@@ -57,6 +56,9 @@ def dispatch(ch, cmd, listeners=(), /, **params):
         raise
     except (ValueError, KeyError) as e:
         raise CommandError(str(e))
+    if CHANGED in result.events:       # read-only / refused-softly commands are not logged
+        from wp.commands import journal
+        result = journal.record(ch, result, cmd, params)
     for listener in listeners:
         listener(result)
     return result

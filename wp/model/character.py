@@ -210,8 +210,13 @@ class Feat:
 
 @dataclass(frozen=True)
 class LogEntry:
-    command: str
-    summary: str
+    """Journal entry (package 14 H): ids and numbers only, no texts."""
+    seq: int = 0                       # order counter (Character.log_seq)
+    command: str = ""                  # command id
+    kind: str = ""                     # item / spell / damage / heal / status / charges / rest / injury / stance / combat / other
+    params: Dict[str, Any] = field(default_factory=dict)
+    result: Dict[str, Any] = field(default_factory=dict)
+    round: int = 0                     # combat round (0 = not in combat)
 
 
 @dataclass(frozen=True)
@@ -286,6 +291,8 @@ class Character:
     active_stance: Optional[str] = None   # feat id of the active stance (combat.md "Stances", Q74)
     ignore_bag_weight: bool = False    # bag weight not counted (gear.md "drop bag" button, package 8 E)
     log: Tuple[LogEntry, ...] = ()
+    log_seq: int = 0                   # last journal order number (package 14 H)
+    combat_round: int = 0              # 1 at start_combat, +1 per tick in combat, 0 out of combat
 
     def ability(self, name):
         return self.abilities[name]

@@ -61,7 +61,7 @@ S.case("attention-levels", "narrative.md: level 1 -> 1, 3 -> 2, 9 -> 4 (no drive
 @S.case("end-cycle", "narrative.md [OWNER]: end_cycle only adds attention, no maximum", (6, True))
 def _cycle():
     new = run(_CH7, ("end_cycle", {}))
-    same = replace(new, attention=_CH7.attention, log=_CH7.log) == _CH7
+    same = replace(new, attention=_CH7.attention, log=_CH7.log, log_seq=_CH7.log_seq) == _CH7   # pkg 14 H: journal counter
     return (new.attention, same)
 
 
