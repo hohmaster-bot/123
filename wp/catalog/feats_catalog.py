@@ -12,6 +12,7 @@ from dataclasses import dataclass, replace
 from typing import Tuple
 
 from wp.core.effects import Effect
+from wp.core.formula import validate as validate_formula
 
 DEFAULT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "feats_default.json")
 FORMAT = "wipefinder.feats"
@@ -52,7 +53,10 @@ def _effect(d):
     unknown = set(d) - set(EFFECT_KEYS)
     if unknown:
         raise ValueError("unknown effect fields in the feat catalog: %s" % ", ".join(sorted(unknown)))
-    return Effect(**d)
+    e = Effect(**d)
+    if isinstance(e.value, str) and e.value != "all":
+        validate_formula(e.value)          # a broken formula is refused when the catalog is read (package 14 C)
+    return e
 
 
 def parse(text):

@@ -6,7 +6,10 @@ import dataclasses
 from dataclasses import replace
 
 from wp.commands.base import CommandError, command, commit
+from wp.core import formula as fm
+from wp.model import formulas as fx
 from wp.model import ids
+from wp.model import pool_view as pv
 from wp.model.character import ResourcePool
 
 SHORT_REST = "short_rest"
@@ -22,7 +25,11 @@ def _check(p):
         raise CommandError("a pool needs a name")
     if p.restore not in RESTORES:
         raise CommandError("restore must be one of %s" % ", ".join(RESTORES))
-    if p.max < 0 or p.current < 0:
+    try:
+        fx.validate(p.max)             # a number or a formula (package 14 C)
+    except fm.FormulaError as e:
+        raise CommandError("bad pool max formula %r: %s" % (p.max, e))
+    if (not isinstance(p.max, str) and p.max < 0) or p.current < 0:
         raise CommandError("pool values cannot be negative")
     return p
 
@@ -40,14 +47,18 @@ def _put(ch, p):
 
 def restore_by(ch, rule):
     """Pools with this restore rule go back to max (called by short_rest, long_rest, start_combat)."""
-    return replace(ch, pools=tuple(replace(p, current=p.max) if p.restore == rule else p for p in ch.pools))
+    return replace(ch, pools=tuple(replace(p, current=pv.max_of(ch, p)) if p.restore == rule else p for p in ch.pools))
 
 
 @command
 def add_pool(ch, name="", max=0, current=None, restore=MANUAL):
-    p = _check(ResourcePool(pid=ids.make_id(name or "pool", (x.pid for x in ch.pools)), name=name, max=int(max),
-                            current=int(max) if current is None else int(current), restore=restore))
-    return commit(replace(ch, pools=ch.pools + (p,)), "add_pool", "pool %s %d/%d" % (p.name, p.current, p.max),
+    """max: a number or a formula (buffs.md "Formulas"); current defaults to the max on the current sheet."""
+    m = max if isinstance(max, str) else int(max)
+    p = _check(ResourcePool(pid=ids.make_id(name or "pool", (x.pid for x in ch.pools)), name=name, max=m,
+                            current=0 if current is None else int(current), restore=restore))
+    if current is None:
+        p = replace(p, current=pv.max_of(ch, p))
+    return commit(replace(ch, pools=ch.pools + (p,)), "add_pool", "pool %s %d/%d" % (p.name, p.current, pv.max_of(ch, p)),
                   {"pid": p.pid})
 
 
@@ -72,12 +83,14 @@ def spend_pool(ch, pid="", n=1):
     n = int(n)
     if n < 0:
         raise CommandError("cannot spend a negative amount")
-    if p.current - n < 0:
-        raise CommandError("not enough %s: need %d, have %d" % (p.name, n, p.current))
-    return commit(_put(ch, replace(p, current=p.current - n)), "spend_pool", "%s -%d" % (p.name, n))
+    have = pv.current(ch, p)               # clamped to the max on read
+    if have - n < 0:
+        raise CommandError("not enough %s: need %d, have %d" % (p.name, n, have))
+    return commit(_put(ch, replace(p, current=have - n)), "spend_pool", "%s -%d" % (p.name, n))
 
 
 @command
 def restore_pool(ch, pid=""):
     p = _find(ch, pid)
-    return commit(_put(ch, replace(p, current=p.max)), "restore_pool", "%s restored to %d" % (p.name, p.max))
+    m = pv.max_of(ch, p)
+    return commit(_put(ch, replace(p, current=m)), "restore_pool", "%s restored to %d" % (p.name, m))

@@ -11,7 +11,7 @@ Blocks drop only POSITIVE values; penalties always stay.
   - block_stat_bonus (Effect.block_stats: stat names or ("all",)): a positive modifier of those stats
     counts as 0 everywhere; a negative one stays.
   - cannot_be_flanked: the FLANK AC option behaves exactly like a front attack.
-Injuries have no effects in the model yet, so they cannot carry a block (package 13 report).
+Injuries carry effects while they exist (package 14 D), so an injury can be a block source too.
 """
 from wp.core import bonuses as bo
 from wp.core import effects as ef
@@ -35,6 +35,8 @@ def active_effects(ch):
     for it in ch.items:
         if it.equipped or it.in_hands:
             out += [(it.iid, e) for e in dv.item_tab(it, dv.picks(ch, it))]
+    for j in ch.injuries:                  # injuries carry effects while they exist (package 14 D)
+        out += [(j.jid or j.name, e) for e in j.effects]
     return out
 
 

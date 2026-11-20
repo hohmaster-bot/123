@@ -188,22 +188,24 @@ def _ki_ticks(ch, n):
     return out
 
 
-S.case("c-ki-3-ticks", "buffs.md [OWNER pkg 13 C]: pool 3, 1 per round: activation pays nothing; 3 paid ticks, the 4th ends it",
-       (3, [(True, 2), (True, 1), (True, 0), (False, 0)]))(
-    lambda: (lambda c: (c.pools[0].current, _ki_ticks(c, 4)))(run(ki_char(), ("activate_status", {"sid": "ki_mode"}))))
-S.case("c-ki-manual-end", "buffs.md: removed by hand after 1 tick: inactive, the pool stays 2, no more payment", (False, 2))(
+S.case("c-ki-3-ticks", "buffs.md [OWNER pkg 14 A, Q83]: pool 3, 1 per round: activation pays round 1 (2 left), ticks pay "
+       "rounds 2 and 3, the 3rd tick cannot pay -> exactly 3 rounds",
+       (2, [(True, 1), (True, 0), (False, 0)]))(
+    lambda: (lambda c: (c.pools[0].current, _ki_ticks(c, 3)))(run(ki_char(), ("activate_status", {"sid": "ki_mode"}))))
+S.case("c-ki-manual-end", "buffs.md: removed by hand after 1 tick (3 -> 2 -> 1): inactive, the pool stays 1, no more payment",
+       (False, 1))(
     lambda: (lambda c: (c.statuses[0].active, c.pools[0].current))(
         run(ki_char(), ("activate_status", {"sid": "ki_mode"}), ("tick", {}), ("remove_status", {"sid": "ki_mode"}),
             ("tick", {}))))
-S.case("c-duration-first", "buffs.md: duration 2 ends before the pool (3): pool 2 then 1, inactive after 2 ticks; 3rd tick pays nothing",
-       [(True, 2), (False, 1), (False, 1)])(
+S.case("c-duration-first", "buffs.md: duration 2, pool 3: activation 2; tick 1 pays (1), tick 2 pays (0) and the duration "
+       "ends (payment before the duration step, Q95); tick 3 pays nothing", [(True, 1), (False, 0), (False, 0)])(
     lambda: _ki_ticks(run(ki_char(duration=ef.TICKS, full_ticks=2), ("activate_status", {"sid": "ki_mode"})), 3))
-S.case("c-own-charges", "buffs.md: source own: charges 2/2, activation spends 1, tick pays 1 -> 0, next tick ends it",
-       (1, [(True, 0), (False, 0)]))(
+S.case("c-own-charges", "buffs.md [OWNER pkg 14 A, Q91]: source own, 2 per round, charges 4/4: activation spends 2 (not 1 + 2) "
+       "-> 2; tick pays 2 -> 0; the next tick ends it", (2, [(True, 0), (False, 0)]))(
     lambda: (lambda c: (c.statuses[0].charges.current,
                         [(x.statuses[0].active, x.statuses[0].charges.current)
                          for x in (run(c, ("tick", {})), run(c, ("tick", {}), ("tick", {})))]))(
-        run(hero(statuses=(Status("burst", sid="b", charges=Pool(2, 2), charge_per_round=1, active=False),)),
+        run(hero(statuses=(Status("burst", sid="b", charges=Pool(4, 4), charge_per_round=2, active=False),)),
             ("activate_status", {"sid": "b"}))))
 S.case("c-refuse-empty-pool", "buffs.md: activation with a pool below one round's payment is refused",
        "refused: not enough Ki for Ki mode: need 1 per round, have 0")(
@@ -218,8 +220,8 @@ def _pools():
                        ResourcePool("c", "C", 3, 0, "combat_start"), ResourcePool("d", "D", 3, 0, "manual")))
 
 
-S.case("c-restore-rules", "resources.md [OWNER pkg 13 C]: short rest restores A, long rest B, start_combat C, manual D none",
-       ((3, 0, 0, 0), (0, 3, 0, 0), (0, 0, 3, 0)))(
+S.case("c-restore-rules", "resources.md [OWNER pkg 13 C, pkg 14 Q88]: short rest restores A, long rest A and B, start_combat C, "
+       "manual D never", ((3, 0, 0, 0), (3, 3, 0, 0), (0, 0, 3, 0)))(
     lambda: tuple(tuple(p.current for p in run(_pools(), step).pools) for step in (
         ("short_rest", {}), ("long_rest", {}), ("start_combat", {}))))
 S.case("c-pool-commands", "resources.md: add_pool (current = max), spend 2, restore -> (3, 1, 3)", (3, 1, 3))(

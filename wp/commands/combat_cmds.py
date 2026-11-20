@@ -9,6 +9,9 @@ from wp.core import tick as tk
 from wp.model import bridge
 from wp.model import derived_view as dv
 from wp.model import ids
+from wp.core import formula as fm
+from wp.model import formulas as fx
+from wp.model import pool_view as pv
 from wp.model import spell_view as sv
 
 
@@ -119,15 +122,24 @@ def _start(ch, st, ticks=None):
         raise CommandError("status %s is already active" % st.name)
     if not ef.can_activate(st):
         raise CommandError("no charges left: %s" % st.name)
-    if st.charge_per_round > 0 and st.charge_source != ef.OWN:
-        # a pool source must hold at least one round's payment; activation pays nothing (assumption Q85)
-        pool = next((p for p in ch.pools if p.pid == st.charge_source), None)
-        if pool is None:
-            raise CommandError("status %s pays from pool %r, which does not exist" % (st.name, st.charge_source))
-        if pool.current < st.charge_per_round:
-            raise CommandError("not enough %s for %s: need %d per round, have %d" % (
-                pool.name, st.name, st.charge_per_round, pool.current))
-    started = ef.activate(st, ticks)
+    cost = 1
+    if st.charge_per_round > 0:
+        # package 14 A (Q83/Q91): the activation pays the FIRST round; every tick pays the next one
+        n = st.charge_per_round
+        if st.charge_source == ef.OWN:
+            if st.charges is None or st.charges.current < n:
+                raise CommandError("not enough charges for %s: need %d per round, have %d" % (
+                    st.name, n, st.charges.current if st.charges is not None else 0))
+            cost = n                       # instead of the usual single charge
+        else:
+            pool = next((p for p in ch.pools if p.pid == st.charge_source), None)
+            if pool is None:
+                raise CommandError("status %s pays from pool %r, which does not exist" % (st.name, st.charge_source))
+            have = pv.current(ch, pool)
+            if have < n:
+                raise CommandError("not enough %s for %s: need %d per round, have %d" % (pool.name, st.name, n, have))
+            ch = replace(ch, pools=tuple(replace(p, current=have - n) if p.pid == pool.pid else p for p in ch.pools))
+    started = ef.activate(st, ticks, cost)
     if started.duration == ef.TICKS and started.remaining <= 0:
         raise CommandError("status %s lasts N ticks: give the number of ticks (> 0)" % st.name)
     if ef.holds_temp_hp(started):
@@ -158,6 +170,10 @@ def add_status(ch, status=None, ticks=None, active=False):
     unless active=True; then it is started like activate_status (charge, cost, duration)."""
     if status is None:
         raise CommandError("no status given")
+    try:
+        fx.validate_effects(status.effects)     # formula values are checked when added (package 14 C)
+    except fm.FormulaError as e:
+        raise CommandError("bad effect formula in %s: %s" % (status.name, e))
     if status.sid and any(s.sid == status.sid for s in ch.statuses):
         raise CommandError("a status with id %r is already on the sheet" % (status.sid,))
     st = status

@@ -247,7 +247,7 @@ def attack(ch, record, extra=()):
     ids = scope_ids(record)
     st = attack_stat(ch, item, record)
     bonuses = drum(ch, record, item) + list(extra)
-    pain = pn.penalty(dv.pain_total(ch), ch.pain_profile)
+    pain = pn.penalty(dv.pain_total(ch), dv.pain_profile(ch))
 
     hit = [Line("bab", ch.bab), Line("stat:" + st, dv.ability_mod(ch, st))]
     if dv.size_mod(ch):
@@ -262,7 +262,7 @@ def attack(ch, record, extra=()):
     dmg = [Line("str:" + record.grip, str_damage(dv.ability_mod(ch, "str"), record.grip))]
     if pain:
         dmg.append(Line("pain", pain))
-    race = pn.damage_bonus(dv.pain_total(ch), ch.pain_profile)
+    race = pn.damage_bonus(dv.pain_total(ch), dv.pain_profile(ch))
     if race:
         dmg.append(Line("pain: race bonus", race))   # resources.md: damage bonus per pain (R6)
     dmg += _typed_lines(blk.unblocked(ch, bonuses, bo.DAMAGE), bo.DAMAGE, ids)

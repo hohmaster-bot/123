@@ -3,7 +3,9 @@
 Everything is computed on read from base values through wp.core.*; nothing here
 is stored back into the character.
 """
-from dataclasses import dataclass
+import math
+from dataclasses import dataclass, replace
+from fractions import Fraction
 
 from wp.core import ac as acm
 from wp.core import bonuses as bo
@@ -18,6 +20,8 @@ from wp.model import blocks as blk
 from wp.model import items as itm
 from wp.model import stance_view as stv
 from wp.model import records as rec
+from wp.model.body_view import (armor_slowdown, is_dead, morale_bonus, pain_penalty,  # noqa: F401
+                                pain_profile, pain_total, size_cmb, size_mod, speed)
 from wp.model.load_view import (WeightView, bag_weight_l, carried_weight_l, condition_tags,  # noqa: F401
                                 in_bag, load_status, overloaded, weight_view)
 
@@ -299,54 +303,14 @@ def comfort_pool(ch):
     return Pool(ch.comfort_current, comfort_max(ch))
 
 
-# ---------------------------------------------------------------------- pain
-
-def pain_total(ch):
-    return pn.total_pain(ch.pain, ch.hp_current)
-
-
-def pain_penalty(ch):
-    return pn.penalty(pain_total(ch), ch.pain_profile)
-
-
-def is_dead(ch):
-    return pn.is_dead(pain_total(ch), ch.pain_profile)
-
-
 # --------------------------------------------------------------- bonuses, AC
-
-def morale_bonus(ch):
-    return dv.morale_bonus(ch.morale_scale, ch.in_combat)
-
-
-def size_mod(ch):
-    """Size to attack and AC: small +1, medium 0, large -1 (combat.md)."""
-    return dv.size_mod(ch.size)
-
-
-def size_cmb(ch):
-    """Size to CMB and CMD: small -1, medium 0, large +1 (opposite sign, combat.md)."""
-    return dv.size_cmb(ch.size)
-
-
-def armor_slowdown(ch):
-    """Slowdown of the worn armor (on the doll and working, the same items as the armor bonus; the largest
-    one counts, like the armor bonus), minus effects "armor_slowdown_reduction" (value "all" = none left)."""
-    pen = max([it.speed_penalty_ft for it in _equipped(ch)] or [0])
-    return dv.armor_slowdown(pen, total(ch, bo.SLOWDOWN_REDUCTION))
-
-
-def speed(ch):
-    """Speed in feet = race base speed + typed bonuses (target "speed": items, abilities, statuses,
-    feats) - armor slowdown + overload -10 ft (gear.md)."""
-    return dv.speed(ch.base_speed, total(ch, bo.SPEED), overloaded(ch), armor_slowdown(ch))
-
 
 def context(ch):
     """Values effects may read (buffs.md): the current overload and the CURRENT stat modifiers."""
-    ctx = {ef.OVERLOAD: ch.overload}
+    ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": ch.bab}
     for name in ch.abilities:
         ctx[ef.stat_mod_key(name)] = ability_mod(ch, name)
+        ctx["%s_mod" % name] = ctx[ef.stat_mod_key(name)]     # formula variables (package 14 C)
     return ctx
 
 
@@ -371,9 +335,10 @@ def feat_bonuses(ch, ctx=None):
 
 
 def effect_bonuses(ch, ctx=None):
-    """Typed bonuses of active statuses and owned feats (not items: their tab rules differ)."""
+    """Typed bonuses of active statuses, owned feats and injuries (not items: their tab rules differ)."""
     ctx = context(ch) if ctx is None else ctx
-    return tuple(ef.bonuses_from(ch.statuses, ctx)) + feat_bonuses(ch, ctx)
+    injuries = tuple(e.as_bonus(j.name or j.jid, ctx) for j in ch.injuries for e in j.effects)   # package 14 D
+    return tuple(ef.bonuses_from(ch.statuses, ctx)) + feat_bonuses(ch, ctx) + injuries
 
 
 def all_bonuses(ch):
@@ -381,7 +346,7 @@ def all_bonuses(ch):
     out = list(effect_bonuses(ch))
     out += item_effects(ch)
     out.append(bo.morale(morale_bonus(ch)))
-    out.append(pn.penalty_bonus(pain_total(ch), ch.pain_profile))
+    out.append(pn.penalty_bonus(pain_total(ch), pain_profile(ch)))
     return tuple(out)
 
 

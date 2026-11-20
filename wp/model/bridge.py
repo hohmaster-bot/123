@@ -10,6 +10,7 @@ from wp.core.magic import CasterState
 from wp.core.tick import TickState
 from wp.model import blocks as blk
 from wp.model import derived_view as dv
+from wp.model import pool_view as pv
 
 OVERFLOW = "balance overflow"
 
@@ -100,7 +101,7 @@ def to_tick(ch):
     return TickState(vitals=to_vitals(ch), statuses=ch.statuses, overload=ch.overload,
                      balance_regen=dv.balance_regen(ch), negative_state=ch.negative_state,
                      traits=ch.traits, regen_blocked=blk.regen_blocked_by_effect(ch),
-                     pools={p.pid: p.current for p in ch.pools})
+                     pools={p.pid: pv.current(ch, p) for p in ch.pools})
 
 
 def from_tick(ch, t):

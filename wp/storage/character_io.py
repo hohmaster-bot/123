@@ -26,7 +26,7 @@ from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
 from wp.model import ids
 from wp.model.character import (Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
-                                ResourcePool, WeaponEntry)
+                                ResourcePool, RulesSettings, WeaponEntry)
 
 FORMAT = "wipefinder.character"
 VERSION = 1
@@ -37,7 +37,8 @@ BAK_SUFFIX = ".bak"
 # (nothing is converted, the value is simply not used). Character.mana_level: package 10, Q49.
 DROPPED = {"Character": ("mana_level", "size_mod", "size_cmb"),
            "Status": ("cost_resource", "cost_amount"),
-           "AttackRecord": ("kind", "base_record")}
+           "AttackRecord": ("kind", "base_record"),
+           "Item": ("count",)}
 _SKIP = object()               # a record not read at all (see _skipped)
 
 
@@ -48,7 +49,7 @@ def _skipped(name, v):
 _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,
     NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
-    ResourcePool, WeaponEntry)}
+    ResourcePool, RulesSettings, WeaponEntry)}
 
 
 class StorageError(Exception):

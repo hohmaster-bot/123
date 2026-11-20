@@ -7,6 +7,8 @@ import dataclasses
 from dataclasses import replace
 
 from wp.commands.base import CommandError, command, commit
+from wp.core import formula as fm
+from wp.model import formulas as fx
 from wp.model import ids
 from wp.model.character import Maneuver
 
@@ -23,6 +25,10 @@ def _check(m):
         raise CommandError("tag_mode must be any or all")
     if m.condition_tag not in TAGS:
         raise CommandError("condition_tag must be one of %s" % ", ".join(TAGS))
+    try:
+        fx.validate_effects(m.effects)      # formula values are checked when added / edited (package 14 C)
+    except fm.FormulaError as e:
+        raise CommandError("bad effect formula in %s: %s" % (m.name, e))
     for n in ("to_hit", "damage", "cost_actions", "cost_balance", "cost_spirit"):
         if not isinstance(getattr(m, n), int) or isinstance(getattr(m, n), bool):
             raise CommandError("%s must be a whole number" % n)

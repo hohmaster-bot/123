@@ -21,6 +21,7 @@ from dataclasses import dataclass, replace
 from typing import Optional, Tuple
 
 from wp.core import bonuses as bo
+from wp.core import formula as fm
 from wp.core.damage import Pool
 
 TICKS = "ticks"
@@ -64,6 +65,11 @@ class Effect:
             return ALL_VALUE
         if self.stat_mod is not None:
             return int(math.floor(ctx.get(stat_mod_key(self.stat_mod), 0) * self.multiplier))
+        if isinstance(self.value, str):    # a formula (package 14 C); a broken one counts as 0
+            try:
+                return fm.evaluate(self.value, ctx)
+            except fm.FormulaError:
+                return 0
         if self.value_source is None:
             return int(self.value)
         return int(ctx.get(self.value_source, 0))
@@ -135,14 +141,14 @@ def can_activate(status):
     return status.charges is None or status.charges.current > 0
 
 
-def activate(status, ticks=None):
-    """Spend one charge (if any), switch on, set ticks for TICKS duration.
-    No charges left -> ValueError."""
-    if not can_activate(status):
+def activate(status, ticks=None, cost=1):
+    """Spend `cost` charges (if it has charges; 1 normally, charge_per_round for a per-round status with
+    source "own", package 14 A), switch on, set ticks for TICKS duration. Not enough charges -> ValueError."""
+    if not can_activate(status) or (status.charges is not None and status.charges.current < cost):
         raise ValueError("no charges left: %s" % status.name)
     charges = status.charges
     if charges is not None:
-        charges = replace(charges, current=charges.current - 1)
+        charges = replace(charges, current=charges.current - cost)
     if ticks is not None:
         remaining = int(ticks)
     else:

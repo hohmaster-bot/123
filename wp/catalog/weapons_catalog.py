@@ -26,7 +26,7 @@ BASIC = "basic_simple"
 
 ITEM_FIELDS = ("kind", "groups", "required_level", "finesse", "price_sp", "damage_small",
                "damage_medium", "crit_range", "crit_mult", "range_ft", "dmg_type", "hands",
-               "weight_l", "durability", "hp", "count", "armor", "shield", "max_dex", "skill_penalty",
+               "weight_l", "durability", "hp", "quantity", "armor", "shield", "max_dex", "skill_penalty",
                "damage_text", "variable", "damage_small2", "damage_medium2", "double", "no_parry")
 
 

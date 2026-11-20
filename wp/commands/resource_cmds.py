@@ -100,7 +100,8 @@ def long_rest(ch):
     new = switch_off_items(bridge.from_rest(ch, rs.long_rest(bridge.to_rest(ch))), LONG)
     new = replace(new, overload=0)
     new = replace(new, balance_current=max(new.balance_current, dv.balance_max(new)))
-    new = pools.restore_by(new, pools.LONG_REST)       # resource pools with restore "long_rest" (package 13 C)
+    # a long rest includes a short one: "long_rest" and "short_rest" pools (package 14, Q88)
+    new = pools.restore_by(pools.restore_by(new, pools.LONG_REST), pools.SHORT_REST)
     return commit(new, "long_rest", "long rest")
 
 

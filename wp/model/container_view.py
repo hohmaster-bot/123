@@ -10,6 +10,7 @@ favorites = ids of status entries marked favorite. "hidden" is display only.
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
+from wp.core.effects import Effect
 from wp.model import derived_view as dv
 from wp.model import ids
 
@@ -33,6 +34,7 @@ class Entry:
     favorite: bool = False
     condition_tag: str = "none"
     manageable: bool = False           # True only for kind "status" (the status commands act on it)
+    effects: Tuple[Effect, ...] = ()   # the entry's effects (statuses, injuries: package 14 D)
 
 
 @dataclass(frozen=True)
@@ -45,13 +47,15 @@ def _status_entry(s):
     return Entry(kind=STATUS, eid=s.sid, name=s.name, source=s.source, active=s.active, duration=s.duration,
                  remaining=s.remaining, full_ticks=s.full_ticks,
                  charges=(s.charges.current, s.charges.max) if s.charges is not None else None,
-                 hidden=s.hidden, favorite=s.favorite, condition_tag=s.condition_tag, manageable=True)
+                 hidden=s.hidden, favorite=s.favorite, condition_tag=s.condition_tag, manageable=True,
+                 effects=s.effects)
 
 
 def _injury_entries(ch):
     # stable injury ids (package 12, Q70); an injury built by hand without an id gets one here for the view
     return tuple(Entry(kind=INJURY, eid=j.jid, name=j.name or j.severity, source="injury",
-                       active=True, charges=(j.charges.current, j.charges.max) if j.charges.max else None)
+                       active=True, charges=(j.charges.current, j.charges.max) if j.charges.max else None,
+                       effects=j.effects)
                  for j in ids.with_injury_ids(ch.injuries, ch.injury_counter)[0])
 
 

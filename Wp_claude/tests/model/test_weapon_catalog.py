@@ -71,8 +71,8 @@ S.case("quarterstaff-double", "owner (B1, Q21): Quarterstaff is a double weapon,
        (True, ("1d4", "1d6"), ("1d4", "1d6"), 2))(
     lambda: (lambda c: (c.double, (c.damage_small, c.damage_medium), (c.damage_small2, c.damage_medium2), c.hands))(
         card("quarterstaff")))
-S.case("bolts-ammo", "weapons.md: bolts are ammo with a counter of 10", ("ammo", 10, 1, 0, 1))(
-    lambda: (lambda c: (c.kind, c.count, c.price_sp, c.durability, c.hp))(card("bolts")))
+S.case("bolts-ammo", "weapons.md: bolts are ammo with a quantity of 10 (pkg 14, Q86: count -> quantity)", ("ammo", 10, 1, 0, 1))(
+    lambda: (lambda c: (c.kind, c.quantity, c.price_sp, c.durability, c.hp))(card("bolts")))
 
 # ------------------------------------------------------------ unarmed as weapon
 

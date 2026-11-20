@@ -232,7 +232,7 @@
    "weight_l": 1,
    "durability": 0,
    "hp": 1,
-   "count": 10
+   "quantity": 10
   }
  ]
 }
