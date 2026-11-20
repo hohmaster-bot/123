@@ -95,3 +95,35 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 - Spells, abilities, racial abilities are editable: mark "is buff" in the editor; buff list is searchable for activation
   when the source is not pinned to the panel. No charges left -> cannot activate.
 - Test: removing an injury must NOT bring OT back.
+
+## Block effects [OWNER, package 13 B; closes Q82]
+- New effect kinds in the usual effect structure. They work from any source that is ACTIVE now: an active status, an
+  owned feat (a stance feat only while it is the active stance), the acting tab of a worn / held item (an activated
+  item: its "activated" tab). Injuries have no effects in the model yet, so an injury cannot carry a block (Q89).
+- A block drops only POSITIVE values, never penalties.
+- block_balance_regen: while at least one is active the balance does not regenerate (as with overload). The derived
+  view lists the reasons: "overload" (when overload > 0) and the source ids. Overload works as before.
+- block_bonus {block_type: a bonus type (morale, luck, sacred, dodge...) or "any"; block_scope: "all" or a list of
+  targets: attack, damage, ac, save, save:fort, skill, skill:<id>, lucky, crit_range...}: before stacking, positive
+  bonuses of that type to that scope are dropped. Type dodge on scope ac also drops the positive Dex part of the dodge
+  layer (dodge + Dex are netted, defense_layers.md); the low-Dex penalty stays. The same for a positive size modifier
+  when type size (or "any") is blocked on AC.
+- block_stat_bonus {block_stats: stat names or "all"}: a positive modifier of those stats counts as 0 everywhere derived
+  numbers use it (Dex in AC and Reflex, Str in attack and damage, carrying capacity...); a negative modifier stays.
+- cannot_be_flanked (flag): the flank AC option behaves exactly like a front attack (no shield loss).
+- Tests: regen blocked / overload + block / inactive source; no morale at all (attack and save); no sacred to attacks
+  only (AC keeps it); no luck; no dodge to AC (Dex 14 + dodge 1: 13 -> 10; Dex 8: 10 -> 9); skill scope; two sources;
+  penalties stay; Dex / Str / "all" stat blocks; cannot_be_flanked; the "Me Liquescit" stance.
+
+## Per-round cost [OWNER, package 13 C]
+- Status fields charge_source ("own" = its own charges, or a resource pool id, resources.md) and charge_per_round
+  (default 0).
+- Every tick, an ACTIVE status with charge_per_round > 0 pays that amount from its source. This happens in the
+  zero-initiative phase at the duration step, BEFORE the duration drops. If it cannot pay, the status ends
+  (inactive, the entry stays) and does not act in this tick (assumption Q84). The player may remove it earlier by hand.
+- activate_status with a pool source needs at least charge_per_round in the pool but pays nothing yet (assumption
+  Q85); with source "own" the usual activation charge is spent (one charge), then the per-round payment follows
+  (Q91). A status has no other cost (Q69).
+- Tests: pool 3, 1 per round: 3 paid ticks (2, 1, 0), the 4th tick ends it (Q83); manual removal stops the payment;
+  a duration of 2 ends before the pool; own charges 2/2; refusals (empty pool, unknown pool); an unpaid regen does
+  not heal.

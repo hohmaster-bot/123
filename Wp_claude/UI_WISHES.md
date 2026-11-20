@@ -21,3 +21,5 @@ Kept apart from RULES/. Nothing here changes numbers.
 - Pain editor (list of pain entries; turn one into a status).
 - Morale scale editor.
 - Crit confirmation tooltip (house-rule note): x2 -> +0, x3 -> +4, x4 -> +8.
+- AC grid (package 13 H idea): show the 3x3 AC grid around the character (RULES/ac_zones.md) with the AC number in
+  every cell (front / sides / back, shield side), once AC zones are built.

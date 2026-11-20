@@ -39,10 +39,16 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   maneuver list by tags (maneuver_view); CMB per attack record (Q58). Report: tests/PACKAGE12_REPORT.md.
 - UI note (maneuvers): show only name, cost and numbers by default; everything else (description, tags, effects,
   source, notes) in a collapsed details area, so the interface is not cluttered. Stances get their own visual element.
-- Package 13 (planned): consumables with a quantity (use decreases it; at 0 greyed and weightless; manual delete);
-  a list of active attacks and abilities of equipped items with their buffs and charges; injury commands (remove,
-  heal, RL...); then the missing commands below (level-up, comfort -> training, combat basics, qualification,
-  reactions, spells, spell mastery, seeds, native language, attention course...).
+- Done in package 13: block effects (block_balance_regen, block_bonus, block_stat_bonus, cannot_be_flanked; Q82),
+  resource pools and per-round status payment, consumables (quantity, use_consumable), active_list view, injury id
+  counter (Q75) and remove_injury, weight/load views split out of derived_view, LEGACY_FEATURES.md, ac_zones.md
+  draft. Report: tests/PACKAGE13_REPORT.md.
+- Package 14 (planned): the missing commands: level up (+100 * level training, HP roll), comfort -> training exchange,
+  OT removal (comfort, attention, injury, RL raise), skill advancement and specialization commands, professionalism,
+  spell learning and spell mastery, combat basics, item qualification, reactions, seeds, native language, attention
+  course, and the rest of the "rule exists, no code yet" list below. Also: injuries with effects (Q89), item charges
+  tied to items (active list gap).
+- Then an AC-zones package (RULES/ac_zones.md) once the owner gives the full table.
 - Deferred (from REVIEW_REPORT, not done yet): spell mastery cost
   25 * (1 + circle^2); level-up command (+100 * level training, HP roll); comfort -> training command;
   OT removal commands (comfort, attention, injury removal, RL raise); weapon card data from the owner's table.

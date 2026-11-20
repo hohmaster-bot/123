@@ -7,6 +7,7 @@ Each file: rules, then numeric examples (use them as tests).
 | File | Covers |
 |---|---|
 | defense_layers.md | AC ladder: which layer an attack roll landed in, owner texts per layer |
+| ac_zones.md | DRAFT (not built): AC by direction, 3x3 cells, shield coverage |
 | defense.md | AC types, positioning, touch, typed bonuses, morale |
 | combat.md | actions, iterative attacks, crit, lucky attack, maneuvers, size, spells dmg |
 | buffs.md | effects, buffs, duration, charges |

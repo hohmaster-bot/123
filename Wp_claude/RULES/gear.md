@@ -180,3 +180,14 @@
   inactive it is only a masterwork sword (flag) giving +1 attack, nothing else.
 - Item activation data [OWNER, simplified]: item has two tabs: "not activated" and "activated". Either one set of effects or the other, never both.
   (An additive item just repeats the base effects in the activated tab.) No mode flag.
+
+## Consumables [OWNER, package 13 D]
+- Item fields quantity (default 1) and consumable (bool). Weight counts unit weight * quantity (for every item).
+- Command use_consumable(item_id, n=1): quantity -n, refused below 0 (and for a non-consumable). At quantity 0 the item
+  stays in the list, greyed (derived flag spent) and weighs 0; only remove_item deletes it. Items are never removed
+  automatically.
+- Optional field on_use_status (a status id in the container): using the consumable activates that status; if the
+  status cannot be activated (already active, no charge...) the whole use is refused (assumption Q87).
+- The older field count ("pieces, ammo") is still there and unused (Q86).
+- Tests: 3 potions of 5 L -> 15 L, after one use 10; at 0: spent, weight 0, still in the list; refusals; the status
+  starts; remove_item deletes a spent item.

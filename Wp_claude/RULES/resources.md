@@ -147,3 +147,11 @@ After everyone acted, in this order [OWNER]:
 - So audit A054 (no clamp) is NOT a bug; A053 (crash on HP setter) still is.
 
 ## Base, attention, money -> gear.md / narrative.md
+
+## Resource pools [OWNER, package 13 C]
+- A pool is a character-level counter (Ki-like): id (made by the program), name, max, current, restore:
+  "short_rest" | "long_rest" | "combat_start" | "manual"; restoring sets it to max.
+- Commands: add_pool (current = max unless given), edit_pool, remove_pool, spend_pool(pool_id, n) (refused below 0),
+  restore_pool(pool_id). The short rest restores "short_rest" pools, the long rest "long_rest" pools, start_combat
+  "combat_start" pools (each rule only its own pools: Q88). Default restore of a new pool: "manual" (Q90).
+- Statuses may pay their per-round cost from a pool (buffs.md "Per-round cost").

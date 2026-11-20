@@ -149,7 +149,8 @@
   level-scaled damage, damage types, areas, range.
 
 ## Stances
-- Special feats with checkbox. One active stance at a time + one class stance (class stances not built).
+- Special feats with checkbox. ONE active stance per character [OWNER, package 13, Q81]: classic (class) stances are
+  ordinary stance feats.
 - Example: "defensive": +2 dodge, -4 attack (flat). Player toggles by hand at fight start.
 - No automatic stance prerequisites.
 - [OWNER, package 12, Q74; replaces earlier stance notes] A stance is a FEAT with the flag is_stance. The character
@@ -158,8 +159,8 @@
   always. No lock flag and no combat rule: the player decides when to change it; end_combat does not change it.
   Removing the stance feat clears active_stance. Stances are NOT statuses in the container. The derived view lists the
   stances and the active one (the UI gives stances their own visual element).
-- Not expressible with the current effect system (style "Me Liquescit": no dodge bonus to AC, cannot be flanked):
-  there is no effect that switches off a bonus type (no "block"), and "cannot be flanked" is no effect at all (the
-  flank is an AC mode the player picks). Not built now (package 12 report); the player plays these by hand.
+- [package 13, Q82] Style "Me Liquescit" (no dodge bonus to AC, cannot be flanked) is expressed with block effects
+  (buffs.md "Block effects"): block_bonus {type dodge, scope ac} + cannot_be_flanked on the stance feat. Test: Dex 14,
+  dodge +1, shield 2: stance off -> front 15, flank 13; stance on -> front 12, flank 12.
 - Tests: the stance effect applies only while active; switching stances; refusals (not owned, not a stance); removing
   the feat clears active_stance; end_combat keeps it; the view; not in the container.

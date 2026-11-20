@@ -18,8 +18,11 @@
 - Injuries can be added manually. Catalog may provide templates (light/medium/heavy).
 - Injury id [OWNER, package 12, Q70]: every injury has a stable id made by the program from its name (a number on a
   collision, the same scheme as other ids), stored on the injury and used by the status container view. Old files
-  load: injuries without an id get one on load. Ids of the other injuries never change when one is removed; a freed
-  id may be given to a new injury (assumption Q75). Injury commands (remove, heal...) come in package 13.
+  load: injuries without an id get one on load. Ids of the other injuries never change when one is removed.
+  [OWNER, package 13, Q75] Ids are NEVER reused: the character keeps a counter (injury_counter, only grows); an id is
+  "<name>_<N>" (cut_1, cut_2, ...). remove_injury(injury_id): manual, editor level, no resource cost; the counter
+  stays, so the next injury gets a new number. Tests: remove by id, the others keep their ids, after removing cut_3 a
+  new cut is cut_4.
 
 ## Healing rating (RL) [OWNER]
 - Each injury has a Healing Rating. Once per cycle (a cycle = a large span of in-world time, e.g. a skip; narrative tool announced by the GM) the player rolls d12 in an outside app; roll <= RL means healed.
