@@ -26,7 +26,7 @@ from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
 from wp.model import ids
 from wp.model.character import (Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
-                                WeaponEntry)
+                                ResourcePool, WeaponEntry)
 
 FORMAT = "wipefinder.character"
 VERSION = 1
@@ -48,7 +48,7 @@ def _skipped(name, v):
 _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,
     NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
-    WeaponEntry)}
+    ResourcePool, WeaponEntry)}
 
 
 class StorageError(Exception):
@@ -118,7 +118,8 @@ def loads(text):
     if not isinstance(ch, Character):
         raise StorageError("file does not contain a character")
     # injuries saved before package 12 have no id: the program gives them one (owner, Q70)
-    return replace(ch, injuries=ids.with_injury_ids(ch.injuries))
+    injuries, counter = ids.with_injury_ids(ch.injuries, ch.injury_counter)
+    return replace(ch, injuries=injuries, injury_counter=counter)
 
 
 # -------------------------------------------------------------- disk I/O

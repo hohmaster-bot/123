@@ -119,6 +119,14 @@ def _start(ch, st, ticks=None):
         raise CommandError("status %s is already active" % st.name)
     if not ef.can_activate(st):
         raise CommandError("no charges left: %s" % st.name)
+    if st.charge_per_round > 0 and st.charge_source != ef.OWN:
+        # a pool source must hold at least one round's payment; activation pays nothing (assumption Q85)
+        pool = next((p for p in ch.pools if p.pid == st.charge_source), None)
+        if pool is None:
+            raise CommandError("status %s pays from pool %r, which does not exist" % (st.name, st.charge_source))
+        if pool.current < st.charge_per_round:
+            raise CommandError("not enough %s for %s: need %d per round, have %d" % (
+                pool.name, st.name, st.charge_per_round, pool.current))
     started = ef.activate(st, ticks)
     if started.duration == ef.TICKS and started.remaining <= 0:
         raise CommandError("status %s lasts N ticks: give the number of ticks (> 0)" % st.name)

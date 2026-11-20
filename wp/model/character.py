@@ -68,6 +68,9 @@ class Item:
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only
     weight_l: int = 0
     count: int = 1                     # pieces (ammo: bolts...)
+    quantity: int = 1                  # how many (weight = unit weight * quantity; gear.md "Consumables", pkg 13 D)
+    consumable: bool = False           # used up by use_consumable; at quantity 0 "spent" (grey, weight 0)
+    on_use_status: str = ""            # status id activated when the consumable is used
     effects_off: Tuple[Effect, ...] = ()   # tab "not activated" (D17)
     effects_on: Tuple[Effect, ...] = ()    # tab "activated" (D17)
     activated: bool = False
@@ -138,6 +141,16 @@ class Maneuver:
     source: str = ""                   # free label: style / class / feat
     notes: str = ""
     extra: Dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class ResourcePool:
+    """Character-level resource pool (Ki-like; resources.md "Resource pools", package 13 C)."""
+    pid: str                           # stable id (made from the name)
+    name: str
+    max: int = 0
+    current: int = 0
+    restore: str = "manual"            # short_rest / long_rest / combat_start / manual: restores to max
 
 
 @dataclass(frozen=True)
@@ -217,6 +230,7 @@ class Character:
     # states
     statuses: Tuple[Status, ...] = ()
     injuries: Tuple[Injury, ...] = ()
+    injury_counter: int = 0            # last number used in an injury id; never goes down (Q75)
     negative_state: Optional[str] = None
     traits: NegativeTraits = NegativeTraits()
     in_combat: bool = False
@@ -227,7 +241,8 @@ class Character:
     skills: Tuple[Skill, ...] = ()
     feats: Tuple[Feat, ...] = ()
     attacks: Tuple[AttackRecord, ...] = ()
-    maneuvers: Tuple[Maneuver, ...] = ()   # character-level maneuver list (combat.md, package 12 B)
+    maneuvers: Tuple[Maneuver, ...] = ()
+    pools: Tuple[ResourcePool, ...] = ()   # resource pools (package 13 C)   # character-level maneuver list (combat.md, package 12 B)
     balance_cap_hits: int = 0          # hits this combat that lowered the balance cap (homerule)
     balance_cap_start: Optional[int] = None   # balance cap taken at start_combat (snapshot); None = live
     ov: int = 0                        # time points (OV), no cap

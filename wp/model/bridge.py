@@ -8,6 +8,7 @@ from wp.core import rest as rs
 from wp.core.damage import Absorber, Pool, Vitals
 from wp.core.magic import CasterState
 from wp.core.tick import TickState
+from wp.model import blocks as blk
 from wp.model import derived_view as dv
 
 OVERFLOW = "balance overflow"
@@ -98,7 +99,8 @@ def from_caster(ch, c):
 def to_tick(ch):
     return TickState(vitals=to_vitals(ch), statuses=ch.statuses, overload=ch.overload,
                      balance_regen=dv.balance_regen(ch), negative_state=ch.negative_state,
-                     traits=ch.traits)
+                     traits=ch.traits, regen_blocked=blk.regen_blocked_by_effect(ch),
+                     pools={p.pid: p.current for p in ch.pools})
 
 
 def from_tick(ch, t):
@@ -111,4 +113,5 @@ def from_tick(ch, t):
     base = replace(ch, statuses=statuses)
     v = replace(t.vitals, temp_hp=max(0, t.vitals.temp_hp - gone))
     ch = from_vitals(base, v, pain_source="tick: balance overflow")
-    return replace(ch, overload=t.overload)
+    pools = tuple(replace(p, current=t.pools.get(p.pid, p.current)) for p in ch.pools)
+    return replace(ch, overload=t.overload, pools=pools)

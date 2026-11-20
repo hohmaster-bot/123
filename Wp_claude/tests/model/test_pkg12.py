@@ -94,10 +94,10 @@ def _two_cuts():
     return run(hero(), ("add_injury", {"severity": "light", "name": "cut"}), ("add_injury", {"severity": "light", "name": "cut"}))
 
 
-S.case("a3-unique", "injuries.md [OWNER pkg 12, Q70]: two injuries with the same name get different ids", ("cut", "cut_2"))(
+S.case("a3-unique", "injuries.md [OWNER pkg 12-13, Q70/Q75]: two injuries with the same name get different ids", ("cut_1", "cut_2"))(
     lambda: tuple(j.jid for j in _two_cuts().injuries))
-S.case("a3-stable", "injuries.md: removing another injury keeps the ids (cut_2 stays cut_2); a freed id may be reused "
-       "by a new injury (assumption Q75)", ("cut_2", "cut"))(
+S.case("a3-stable", "injuries.md: removing another injury keeps the ids (cut_2 stays cut_2); a freed id is never "
+       "reused (pkg 13, Q75: counter) -> cut_3", ("cut_2", "cut_3"))(
     lambda: tuple(j.jid for j in run(replace(_two_cuts(), injuries=_two_cuts().injuries[1:]),
                                      ("add_injury", {"severity": "light", "name": "cut"})).injuries))
 
@@ -109,8 +109,8 @@ def _old_injury_save():
     return cio.loads(json.dumps(d)).injuries[0].jid
 
 
-S.case("a3-old-file", "injuries.md: an old file without injury ids loads; the program gives the id", "bruise")(_old_injury_save)
-S.case("a3-container", "buffs.md: the container view uses the injury id", ("cut", "cut_2"))(
+S.case("a3-old-file", "injuries.md: an old file without injury ids loads; the program gives the id", "bruise_1")(_old_injury_save)
+S.case("a3-container", "buffs.md: the container view uses the injury id", ("cut_1", "cut_2"))(
     lambda: tuple(e.eid for e in cv.container_view(_two_cuts()).entries if e.kind == cv.INJURY))
 
 

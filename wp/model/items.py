@@ -39,6 +39,16 @@ MW_NOT_WORKING = "not_working"
 MW_ENCHANT_ACTIVE = "enchant_active"
 
 
+def spent(it):
+    """A consumable at quantity 0: stays in the list, greyed, weighs 0 (gear.md, package 13 D)."""
+    return it.consumable and it.quantity <= 0
+
+
+def weight_l(it):
+    """Weight of the item stack = unit weight * quantity (0 when spent)."""
+    return 0 if spent(it) else it.weight_l * max(0, it.quantity)
+
+
 def item_active(it):
     """Activated AND activatable (Q30); a destroyed item is never active."""
     return it.activated and not it.destroyed and (it.activation_day > 0 or it.activation_decade > 0)

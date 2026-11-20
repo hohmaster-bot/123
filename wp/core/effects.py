@@ -52,6 +52,9 @@ class Effect:
     note: str = ""                     # free text: "fire", "crit protection 25%" ... (any kind, D14)
     stat_mod: Optional[str] = None     # value = CURRENT modifier of this stat * multiplier (buffs.md, Q65)
     multiplier: float = 1
+    block_type: str = ""               # block_bonus: bonus type or "any" (package 13 B)
+    block_scope: Tuple[str, ...] = ()  # block_bonus: ("all",) (default when empty) or targets
+    block_stats: Tuple[str, ...] = ()  # block_stat_bonus: stat names or ("all",)
 
     def resolve(self, context=None):
         """The effect's number: a fixed value, a context value (current overload), or the current
@@ -94,6 +97,8 @@ class Status:
     source: str = ""
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only (no effect)
     full_ticks: int = 0                # full duration in ticks (per charge); used when activated
+    charge_source: str = "own"         # per-round payment from: "own" (its charges) or a pool id (package 13 C)
+    charge_per_round: int = 0          # paid every tick while active; cannot pay -> the status ends
     hidden: bool = False               # DISPLAY ONLY: hidden on the panel, still active / ticking
     favorite: bool = False             # pinned for the panel / screen
 
@@ -181,6 +186,35 @@ def tick_duration(status):
 
 def expired_now(before, after):
     return before.active and not after.active
+
+
+OWN = "own"
+
+
+def pay_round(status, pools):
+    """Per-round payment of an ACTIVE status (buffs.md "Per-round cost", package 13 C), before its
+    duration drops. Returns (status, pools). Cannot pay -> the status ends (inactive, entry stays)."""
+    n = status.charge_per_round
+    if not status.active or n <= 0:
+        return status, pools
+    if status.charge_source == OWN:
+        if status.charges is None or status.charges.current < n:
+            return deactivate(status), pools
+        return replace(status, charges=replace(status.charges, current=status.charges.current - n)), pools
+    have = pools.get(status.charge_source)
+    if have is None or have < n:
+        return deactivate(status), pools
+    out = dict(pools)
+    out[status.charge_source] = have - n
+    return status, out
+
+
+def pay_all(statuses, pools):
+    out = []
+    for s in statuses:
+        s, pools = pay_round(s, pools)
+        out.append(s)
+    return tuple(out), pools
 
 
 def tick_all(statuses):

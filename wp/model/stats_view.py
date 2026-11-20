@@ -19,6 +19,7 @@ from typing import Tuple
 
 from wp.catalog.feats_catalog import FINESSE, has_flag
 from wp.core import bonuses as bo
+from wp.model import blocks as blk
 from wp.model import derived_view as dv
 
 SAVES = ("fort", "ref", "will")
@@ -38,7 +39,7 @@ def _typed(ch, target, extra_target=None):
     bs = [b for b in dv.all_bonuses(ch)
           if bo.applies(b, target) or (extra_target is not None and b.target == extra_target
                                        and b.btype not in bo.AC_ONLY_TYPES)]
-    return bo.stack(bs)
+    return bo.stack(blk.unblocked(ch, bs, target, extra_target))
 
 
 def _stat(name, parts):

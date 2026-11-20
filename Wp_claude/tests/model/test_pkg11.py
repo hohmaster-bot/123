@@ -124,7 +124,7 @@ S.case("a-charges-long-rest", "rest.md (unchanged): the long rest restores statu
 S.case("a-charges-short-rest", "rest.md (unchanged): the short rest does not restore status charges (1 stays)", 1)(
     lambda: st(run(added(rage()), ("activate_status", {"sid": "rage"}), ("short_rest", {})), "rage").charges.current)
 S.case("a-container-kinds", "buffs.md: the container lists statuses, injuries and item effects",
-       (("status", "rage", True), ("injury", "cut", False), ("item", "ring", False)))(   # pkg 12 Q70: stable injury id
+       (("status", "rage", True), ("injury", "cut_1", False), ("item", "ring", False)))(   # pkg 12 Q70: stable injury id
     lambda: tuple((e.kind, e.eid, e.manageable) for e in cv.container_view(hero(
         statuses=(rage(),), injuries=(Injury("cut", "light", 2),),
         items=(Item("ring", "ring", equipped=True, effects_off=ATK2),))).entries))

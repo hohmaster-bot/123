@@ -7,8 +7,8 @@ After everyone acted:
      the negative-HP state loss (dying / resting) is applied here like a DoT.
 Overload counts down by 1 per tick after the regen check.
 """
-from dataclasses import dataclass, replace
-from typing import Tuple
+from dataclasses import dataclass, field, replace
+from typing import Dict, Tuple
 
 from wp.core import effects as ef
 from wp.core.damage import DamagePart, Vitals, restore, take_hit
@@ -24,6 +24,8 @@ class TickState:
     balance_regen: int = 1             # derived.balance_regen(...)
     negative_state: object = None      # statuses.DYING / RESTING / STABILIZED / None
     traits: NegativeTraits = NegativeTraits()
+    regen_blocked: bool = False        # a block_balance_regen effect is active (package 13 B)
+    pools: Dict[str, int] = field(default_factory=dict)   # resource pool id -> current (package 13 C)
 
 
 @dataclass(frozen=True)
@@ -40,17 +42,18 @@ class TickReport:
 def zero_initiative(state, reductions=None):
     """Run one zero-initiative phase. Returns (new_state, TickReport)."""
     steps = []
-    acting = tuple(s for s in state.statuses
+    # 1) per-round payments (package 13 C), then durations. A status that cannot pay ends now and does
+    #    not act in this tick (assumption Q84).
+    paid, pools = ef.pay_all(state.statuses, state.pools)
+    acting = tuple(s for s in paid
                    if s.active and (s.duration != ef.TICKS or s.remaining > 0))
-
-    # 1) durations
-    new_statuses = ef.tick_all(state.statuses)
+    new_statuses = ef.tick_all(paid)
     expired = tuple(a.name for a, b in zip(state.statuses, new_statuses) if ef.expired_now(a, b))
     steps.append("durations")
 
     # 2) balance
     v = state.vitals
-    blocked = balance_regen_blocked(state.overload)
+    blocked = balance_regen_blocked(state.overload) or state.regen_blocked
     gained = 0
     if not blocked:
         before = v.balance.current
@@ -79,6 +82,6 @@ def zero_initiative(state, reductions=None):
         dot += r.hp_loss + r.temp_hp_loss + sum(a for _, a in r.absorbed)
     steps.append("dot")
 
-    new = replace(state, vitals=v, statuses=new_statuses, overload=overload)
+    new = replace(state, vitals=v, statuses=new_statuses, overload=overload, pools=pools)
     return new, TickReport(steps=tuple(steps), expired=expired, balance_gained=gained,
                            regen_blocked=blocked, dot_damage=dot, healed=healed, cap_hits=cap_hits)

@@ -40,15 +40,21 @@ def unique(base, taken=()):
     return "%s_%d" % (base, n)
 
 
-def with_injury_ids(injuries):
-    """Every injury gets a stable id once (from its name, a number on a collision); existing ids never
-    change, so removing another injury keeps them (package 12, Q70)."""
+
+def with_injury_ids(injuries, counter=0):
+    """(injuries, counter): every injury without an id gets "<name>_<N>" with N from the character's
+    counter; the counter only grows, so an id is NEVER reused, also after a removal (package 13, Q75).
+    Existing ids never change."""
     from dataclasses import replace
-    taken = [j.jid for j in injuries if j.jid]
+    taken = {j.jid for j in injuries if j.jid}
     out = []
     for j in injuries:
         if not j.jid:
-            j = replace(j, jid=make_id(j.name or j.severity, taken))
-            taken.append(j.jid)
+            base = slug(j.name or j.severity)
+            counter += 1
+            while "%s_%d" % (base, counter) in taken:
+                counter += 1
+            j = replace(j, jid="%s_%d" % (base, counter))
+            taken.add(j.jid)
         out.append(j)
-    return tuple(out)
+    return tuple(out), counter

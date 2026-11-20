@@ -5,6 +5,7 @@ from wp.commands.base import CommandError, command, commit
 from wp.core import damage as dm
 from wp.core import injuries as inj
 from wp.core import rest as rs
+from wp.commands import pool_cmds as pools
 from wp.commands.gear_cmds import LONG, SHORT, switch_off_items
 from wp.model import bridge
 from wp.model import derived_view as dv
@@ -87,6 +88,7 @@ def short_rest(ch, spends=(), other_heal=0, extra_bp=0, keep_overcap=False):
     new = switch_off_items(bridge.from_rest(ch, rs.apply_short_rest(session, keep_overcap)), SHORT)
     # rest.md [OWNER]: after the spends the short rest clears ALL temp HP
     new = replace(new, temp_hp=0, statuses=tuple(replace(s, temp_hp_left=0) for s in new.statuses))
+    new = pools.restore_by(new, pools.SHORT_REST)      # resource pools with restore "short_rest" (package 13 C)
     return commit(new, "short_rest", "short rest: %s" % (
         ", ".join(o for o, _ in spends) or "free gains only"))
 
@@ -98,6 +100,7 @@ def long_rest(ch):
     new = switch_off_items(bridge.from_rest(ch, rs.long_rest(bridge.to_rest(ch))), LONG)
     new = replace(new, overload=0)
     new = replace(new, balance_current=max(new.balance_current, dv.balance_max(new)))
+    new = pools.restore_by(new, pools.LONG_REST)       # resource pools with restore "long_rest" (package 13 C)
     return commit(new, "long_rest", "long rest")
 
 
@@ -105,5 +108,16 @@ def long_rest(ch):
 def add_injury(ch, severity=inj.LIGHT, name=""):
     """Take an injury to remove OT (2 / 5 / 12)."""
     trauma, injury = inj.take_injury(ch.trauma, severity, name)
-    new = replace(ch, trauma=trauma, injuries=ids.with_injury_ids(ch.injuries + (injury,)))
+    injuries, counter = ids.with_injury_ids(ch.injuries + (injury,), ch.injury_counter)
+    new = replace(ch, trauma=trauma, injuries=injuries, injury_counter=counter)
     return commit(new, "add_injury", "%s injury, OT %d -> %d" % (severity, ch.trauma, trauma))
+
+
+@command
+def remove_injury(ch, injury_id=""):
+    """Remove an injury by its id (manual, editor level, no resource cost, injuries.md). The id is not
+    given again to a later injury (the counter stays)."""
+    left = tuple(j for j in ch.injuries if j.jid != injury_id)
+    if len(left) == len(ch.injuries):
+        raise CommandError("no injury with id %r" % (injury_id,))
+    return commit(replace(ch, injuries=left), "remove_injury", "injury %s removed" % injury_id)

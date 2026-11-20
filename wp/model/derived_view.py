@@ -14,6 +14,7 @@ from wp.core import skills as sk
 from wp.core import training as tr
 from wp.core import weapons as wpn
 from wp.core.damage import Pool
+from wp.model import blocks as blk
 from wp.model import items as itm
 from wp.model import stance_view as stv
 from wp.model import records as rec
@@ -28,8 +29,10 @@ def ability_current(ch, name):
 
 
 def ability_mod(ch, name):
-    """Modifier from the CURRENT score (stats.md)."""
-    return dv.ability_mod(ability_current(ch, name))
+    """Modifier from the CURRENT score (stats.md); a positive one counts as 0 while a block_stat_bonus
+    effect covers this stat (package 13 B)."""
+    m = dv.ability_mod(ability_current(ch, name))
+    return min(0, m) if m > 0 and blk.stat_blocked(ch, name) else m
 
 
 # --------------------------------------------------------------- HP, BP, bal
@@ -116,6 +119,8 @@ class ItemView:
     spell_penalty_mana: int = 0
     spell_failure_pct: int = 0
     condition_tag: str = "none"        # display only (package 9 E)
+    quantity: int = 1
+    spent: bool = False                # consumable at quantity 0: grey, weight 0 (package 13 D)
 
 
 def item_view(ch, iid):
@@ -130,7 +135,7 @@ def item_view(ch, iid):
                     shield_proficient=proficient(ch, it),
                     masterwork_active=mw[0], masterwork_reason=mw[1], touch_bonus=touch_value(it, p),
                     durable=itm.is_durable(it), spell_penalty_mana=it.spell_penalty_mana,
-                    spell_failure_pct=it.spell_failure_pct, condition_tag=it.condition_tag)
+                    spell_failure_pct=it.spell_failure_pct, condition_tag=it.condition_tag, quantity=it.quantity, spent=itm.spent(it))
 
 
 def _defense_value(it, base, p=()):
@@ -381,7 +386,8 @@ def all_bonuses(ch):
 
 
 def total(ch, target, weapon=None, skill=None):
-    return bo.total(all_bonuses(ch), target, weapon, skill)
+    sub = bo.skill_target(skill) if skill is not None else None
+    return bo.total(blk.unblocked(ch, all_bonuses(ch), target, sub), target, weapon, skill)
 
 
 def ac_input(ch, flank_drops_shield=True, shield_enabled=True):
@@ -395,12 +401,15 @@ def ac_input(ch, flank_drops_shield=True, shield_enabled=True):
                        size_mod=size_mod(ch), max_dex=min(caps) if caps else None,
                        overloaded=overloaded(ch), shield_enabled=shield_enabled, touch_armor=touch_armor(ch),
                        flank_drops_shield=flank_drops_shield,
-                       bonuses=tuple(b for b in all_bonuses(ch) if b.target == bo.AC))
+                       bonuses=tuple(b for b in all_bonuses(ch) if b.target == bo.AC),
+                       blocked=frozenset(blk.blocked_types(ch, bo.AC)))
 
 
 def ac(ch, mode=acm.FRONT, from_shield_side=False, flank_drops_shield=True, shield_enabled=True):
     """AC for one direction. flank_drops_shield: checkbox (default on); shield_enabled=False after an
     attack with the shield (no shield bonus until the next turn, AttackView.drops_shield_ac)."""
+    if mode == acm.FLANK and blk.cannot_be_flanked(ch):
+        mode = acm.FRONT               # cannot_be_flanked: a flank attack is a front attack (package 13 B)
     return acm.ac(ac_input(ch, flank_drops_shield, shield_enabled), mode, from_shield_side)
 
 

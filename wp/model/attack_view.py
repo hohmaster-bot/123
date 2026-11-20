@@ -22,6 +22,7 @@ from wp.core import bonuses as bo
 from wp.core import effects as ef
 from wp.core import pain as pn
 from wp.core import weapons as wpn
+from wp.model import blocks as blk
 from wp.model import derived_view as dv
 from wp.model import items as itm
 from wp.model import records as rec
@@ -256,7 +257,7 @@ def attack(ch, record, extra=()):
         hit.append(Line("qualification", q))
     if pain:
         hit.append(Line("pain", pain))
-    hit += _typed_lines(bonuses, bo.ATTACK, ids)
+    hit += _typed_lines(blk.unblocked(ch, bonuses, bo.ATTACK), bo.ATTACK, ids)
 
     dmg = [Line("str:" + record.grip, str_damage(dv.ability_mod(ch, "str"), record.grip))]
     if pain:
@@ -264,7 +265,7 @@ def attack(ch, record, extra=()):
     race = pn.damage_bonus(dv.pain_total(ch), ch.pain_profile)
     if race:
         dmg.append(Line("pain: race bonus", race))   # resources.md: damage bonus per pain (R6)
-    dmg += _typed_lines(bonuses, bo.DAMAGE, ids)
+    dmg += _typed_lines(blk.unblocked(ch, bonuses, bo.DAMAGE), bo.DAMAGE, ids)
 
     p = wpn.mastery_flat(rec.group_picks(ch, record.group))["parry"]
     parry_lines = (Line("group parry", p, (record.group,)),) if p else ()
@@ -281,8 +282,8 @@ def attack(ch, record, extra=()):
                       dice=dice_row(item, 1) if item is None or dv.works(ch, item) else ("", ""),
                       item_state=itm.state(item, dv.picks(ch, item)) if item is not None else itm.OK,
                       lucky=wpn.lucky_threshold(rec.group_picks(ch, record.group), weapon_enchant(ch, item),
-                                                lucky_extra(bonuses, ids)),
-                      crit_range=crit_range(ch, record, item, bonuses, ids),
+                                                lucky_extra(blk.unblocked(ch, bonuses, bo.LUCKY), ids)),
+                      crit_range=crit_range(ch, record, item, blk.unblocked(ch, bonuses, bo.CRIT_RANGE), ids),
                       extra_dice=extra_dice(ch, item), cmb=record_cmb(ch, record),
                       available=ok, missing=why["missing"], in_hands=why["in_hands"],
                       drops_shield_ac=item is not None and rec.is_shield(item))

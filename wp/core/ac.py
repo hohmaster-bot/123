@@ -36,6 +36,7 @@ class AcInput:
     flank_drops_shield: bool = True    # checkbox: in FLANK mode the shield is dropped (attacker "may")
     touch_armor: int = 0           # worn armor bonus to TOUCH AC only (armor layer in TOUCH mode)
     bonuses: Tuple[bo.Bonus, ...] = field(default_factory=tuple)  # effects on AC
+    blocked: frozenset = frozenset()   # bonus types whose POSITIVE values are dropped ("any" = all; package 13 B)
 
 
 # Parry from armor proficiency (training.md [OWNER pkg 4]): none 0, light 2, medium 4, heavy 6,
@@ -55,10 +56,16 @@ def base_parry(armor_grade, level, shield_grade="none"):
     return ARMOR_GRADE_PARRY[armor_grade] + odd_level_parry(level) + tower
 
 
+def _blocked(inp, btype):
+    return "any" in inp.blocked or btype in inp.blocked
+
+
 def _dex(inp):
     d = inp.dex_mod
     if inp.max_dex is not None:
         d = min(d, inp.max_dex)
+    if _blocked(inp, bo.DODGE):        # dodge blocked: the positive Dex part of the dodge layer goes too
+        d = min(0, d)
     return d
 
 
@@ -97,6 +104,9 @@ def parts(inp, mode=FRONT, from_shield_side=False):
              bo.Bonus(inp.shield, bo.SHIELD, bo.AC, source="shield")]
     items += [b for b in inp.bonuses if bo.applies(b, bo.AC)]
     items = [b for b in items if b.btype not in drop]
+    blk = inp.blocked
+    if blk:                            # block effects: positive values of blocked types go, penalties stay
+        items = [b for b in items if not (b.value > 0 and ("any" in blk or b.btype in blk))]
     if mode == TOUCH and inp.touch_armor > 0:
         # armor "touch AC" column: the only armor part of the touch AC (package 9 H)
         items.append(bo.Bonus(inp.touch_armor, bo.ARMOR, bo.AC, source="armor touch"))
@@ -112,7 +122,8 @@ def parts(inp, mode=FRONT, from_shield_side=False):
     values = {}
     for t in TYPED_LAYERS:
         if t == "size":
-            values[t] = inp.size_mod + bo.stack([b for b in items if b.btype == "size"])
+            size = min(0, inp.size_mod) if _blocked(inp, "size") else inp.size_mod
+            values[t] = size + bo.stack([b for b in items if b.btype == "size"])
         elif t == bo.DODGE:
             values[t] = dex_dodge
         elif t == bo.ARMOR:

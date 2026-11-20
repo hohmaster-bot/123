@@ -4,4 +4,4 @@ Usage: result = dispatch(ch, "take_damage", amount=10); new_ch = result.state
 """
 from wp.commands.base import CHANGED, REGISTRY, CommandError, Result, dispatch  # noqa: F401
 from wp.commands import (attack_cmds, combat_cmds, gear_cmds, item_cmds, maneuver_cmds,  # noqa: F401
-                         resource_cmds, sheet_cmds, training_cmds)  # (register)
+                         pool_cmds, resource_cmds, sheet_cmds, training_cmds)  # (register)

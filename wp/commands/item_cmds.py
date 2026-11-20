@@ -82,3 +82,27 @@ def remove_item(ch, iid=""):
     new = replace(ch, items=tuple(i for i in ch.items if i.iid != iid),
                   attacks=tuple(r for r in ch.attacks if r.item != iid))
     return commit(new, "remove_item", "%s removed" % it.name)
+
+
+@command
+def use_consumable(ch, iid="", n=1):
+    """Use n of a consumable (gear.md "Consumables", package 13 D): quantity -n, refused below 0. At 0 the
+    item stays (spent, grey, weight 0); only remove_item deletes it. on_use_status: that status is
+    activated; if it cannot be activated, the whole use is refused (assumption Q87)."""
+    it = ch.item(iid)
+    n = int(n)
+    if not it.consumable:
+        raise CommandError("%s is not a consumable" % it.name)
+    if n < 1:
+        raise CommandError("use at least 1")
+    if it.quantity - n < 0:
+        raise CommandError("not enough %s: have %d, use %d" % (it.name, it.quantity, n))
+    new = _put(ch, replace(it, quantity=it.quantity - n))
+    if it.on_use_status:
+        from wp.commands import combat_cmds as cc
+        st = next((s for s in new.statuses if s.sid == it.on_use_status), None)
+        if st is None:
+            raise CommandError("%s activates status %r, which is not on the sheet" % (it.name, it.on_use_status))
+        new, started = cc._start(new, st)
+        new = cc._put_status(new, started)
+    return commit(new, "use_consumable", "%s -%d (%d left)" % (it.name, n, it.quantity - n))

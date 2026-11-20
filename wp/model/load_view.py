@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from wp.core import derived as cdv
 from wp.model import derived_view as dv
+from wp.model import items as itm
 
 
 def in_bag(it):
@@ -12,12 +13,12 @@ def in_bag(it):
 
 
 def bag_weight_l(ch):
-    return sum(it.weight_l for it in ch.items if in_bag(it))
+    return sum(itm.weight_l(it) for it in ch.items if in_bag(it))
 
 
 def carried_weight_l(ch):
     """Carried weight; the bag counts unless ignore_bag_weight is on (package 8 E)."""
-    return sum(it.weight_l for it in ch.items
+    return sum(itm.weight_l(it) for it in ch.items
                if it.carried and not (ch.ignore_bag_weight and in_bag(it)))
 
 
