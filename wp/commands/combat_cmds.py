@@ -14,6 +14,7 @@ from wp.model import formulas as fx
 from wp.model import blocks as blk
 from wp.model import pool_view as pv
 from wp.model import restores as rst
+from wp.model import usage as us
 from wp.model import spell_view as sv
 
 
@@ -258,6 +259,7 @@ def tick(ch, reductions=None):
     """Zero-initiative phase: durations, balance, DoT, overload -1."""
     t, rep = tk.zero_initiative(bridge.to_tick(ch), reductions)
     new = rst.per_tick(bridge.from_tick(ch, t), rep.acted)     # restore by effect (package 14 F)
+    new = us.tick_cooldowns(new)                               # cooldowns -1 (package 14 B)
     if ch.in_combat and rep.cap_hits:
         new = replace(new, balance_cap_hits=new.balance_cap_hits + rep.cap_hits)
     return commit(new, "tick", "balance +%d, dot %d, heal %d, expired %s" % (

@@ -21,7 +21,7 @@ from wp.model import blocks as blk  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
 from wp.model import stats_view as stv  # noqa: E402
 from wp.model.character import (ABILITIES, SHIELD, Ability, AttackRecord, Character, Feat, Item,  # noqa: E402
-                                ResourcePool)
+                                ResourcePool, Usage)
 from wp.storage import character_io as cio  # noqa: E402
 
 S = Suite("test_pkg13")
@@ -276,17 +276,18 @@ S.case("d-remove-item", "gear.md: only remove_item deletes a spent consumable", 
 # ---- E: active list ----
 def _mixed():
     sword = Item("sw", "sword", kind="weapon", hands=1, in_hands=True, groups=("blades",))
-    ring = Item("ring", "ring", equipped=True, activated=True, activation_day=1, effects_on=(Effect(bo.ATTACK, 1),))
+    ring = Item("ring", "ring", equipped=True, activated=True, activation_day=1, effects_on=(Effect(bo.ATTACK, 1),),
+                usage=Usage(charges_max=5, charges_current=2))    # pkg 14 B: charges on the item (was by name)
     axe = Item("ax", "axe", kind="weapon", hands=1, groups=("axes",))          # in the bag: its record is not available
     return hero(items=(sword, ring, POTION, axe), attacks=(AttackRecord("r", "sw", "blades"), AttackRecord("a", "ax", "axes")),
-                charges=(rs.Charge("wand", rs.ITEM, Pool(2, 5)), rs.Charge("rage", rs.ABILITY, Pool(1, 3))),
+                charges=(rs.Charge("rage", rs.ABILITY, Pool(1, 3)),),
                 statuses=(st("bless", Effect(bo.ATTACK, 1), hidden=True), st("off", active=False)))
 
 
 S.case("e-active-list", "pkg 13 E: attacks, activated items, item charges, active statuses (hidden flag), consumables",
-       (("r", "unarmed"), ("ring",), (("wand", 2, 5),), (("bless", True),), (("pot", 3, False),)))(
+       (("r", "unarmed"), ("ring",), (("ring", 2, 5),), (("bless", True),), (("pot", 3, False),)))(
     lambda: (lambda v: (tuple(a.record for a in v.attacks), v.activated_items,
-                        tuple((c.name, c.current, c.max) for c in v.item_charges),
+                        tuple((c.iid, c.current, c.max) for c in v.item_charges),
                         tuple((s.sid, s.hidden) for s in v.statuses),
                         tuple((x.iid, x.quantity, x.spent) for x in v.consumables)))(al.active_list(_mixed())))
 

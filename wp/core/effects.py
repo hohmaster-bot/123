@@ -108,6 +108,8 @@ class Status:
     charge_source: str = "own"         # per-round payment from: "own" (its charges) or a pool id (package 13 C)
     charge_per_round: int = 0          # paid every tick while active; cannot pay -> the status ends
     per_tick_restore: Dict[str, int] = field(default_factory=dict)   # {mana|spirit|balance|pool:<id>: n} per tick (pkg 14 F)
+    cooldown_rounds: int = 0           # spend_charge starts this cooldown (package 14 B)
+    cooldown_current: int = 0          # rounds left; the tick lowers it by 1
     hidden: bool = False               # DISPLAY ONLY: hidden on the panel, still active / ticking
     favorite: bool = False             # pinned for the panel / screen
 

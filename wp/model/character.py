@@ -45,6 +45,16 @@ AMMO = "ammo"
 
 
 @dataclass(frozen=True)
+class Usage:
+    """Charges and cooldown of a usable thing (item, feat, attack record, maneuver; gear.md, package 14 B)."""
+    charges_max: int = 0
+    charges_current: int = 0
+    recharge: str = "manual"           # short_rest / long_rest / combat_start / manual
+    cooldown_rounds: int = 0           # spending starts this cooldown
+    cooldown_current: int = 0          # rounds left; the tick lowers it by 1
+
+
+@dataclass(frozen=True)
 class Item:
     iid: str                           # stable id
     name: str
@@ -70,6 +80,7 @@ class Item:
     quantity: int = 1                  # how many (weight = unit weight * quantity; gear.md "Consumables", pkg 13 D)
     consumable: bool = False           # used up by use_consumable; at quantity 0 "spent" (grey, weight 0)
     on_use_status: str = ""            # status id activated when the consumable is used
+    usage: Optional[Usage] = None      # charges and cooldown of the item (package 14 B, Q94)
     effects_off: Tuple[Effect, ...] = ()   # tab "not activated" (D17)
     effects_on: Tuple[Effect, ...] = ()    # tab "activated" (D17)
     activated: bool = False
@@ -117,6 +128,7 @@ class AttackRecord:
     primary: bool = False
     twf: bool = False                  # "combination of two attacks" toggle (two-weapon fighting)
     twf_off: str = ""                  # off-hand record id; "" = the other end of a double weapon
+    usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
 
 
 @dataclass(frozen=True)
@@ -140,6 +152,7 @@ class Maneuver:
     source: str = ""                   # free label: style / class / feat
     notes: str = ""
     extra: Dict[str, Any] = field(default_factory=dict)
+    usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
 
 
 @dataclass(frozen=True)
@@ -190,6 +203,7 @@ class Feat:
     cost: int = 0
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only
     effects: Tuple[Effect, ...] = ()   # permanent while the feat is owned (same structure as statuses)
+    usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
     granted_maneuvers: Tuple[str, ...] = ()   # maneuver ids (used from package 12)
     is_stance: bool = False            # a stance: its effects apply only while it is the active stance (Q74)
 

@@ -12,6 +12,7 @@ from wp.model import derived_view as dv
 from wp.model import blocks as blk
 from wp.model import ids
 from wp.model import restores as rst
+from wp.model import usage as us
 
 # resource name -> (read pool, write current)
 _SCALAR = {
@@ -96,6 +97,7 @@ def short_rest(ch, spends=(), other_heal=0, extra_bp=0, keep_overcap=False):
     new = replace(new, temp_hp=0, statuses=tuple(replace(s, temp_hp_left=0) for s in new.statuses))
     new = pools.restore_by(new, pools.SHORT_REST)      # resource pools with restore "short_rest" (package 13 C)
     new = rst.guard(ch, rst.rest_hp(ch, new))           # rest HP switch, then restore blocks (package 14 F, G)
+    new = us.recharge(new, us.SHORT_REST)               # usage charges (package 14 B)
     return commit(new, "short_rest", "short rest: %s" % (
         ", ".join(o for o, _ in spends) or "free gains only"))
 
@@ -110,6 +112,7 @@ def long_rest(ch):
     # a long rest includes a short one: "long_rest" and "short_rest" pools (package 14, Q88)
     new = pools.restore_by(pools.restore_by(new, pools.LONG_REST), pools.SHORT_REST)
     new = rst.guard(ch, rst.rest_hp(ch, new))           # rest HP switch, then restore blocks (package 14 F, G)
+    new = us.recharge(new, us.LONG_REST, us.SHORT_REST)  # usage charges (package 14 B, Q96)
     return commit(new, "long_rest", "long rest")
 
 

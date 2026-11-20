@@ -26,7 +26,7 @@ from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
 from wp.model import ids
 from wp.model.character import (Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
-                                ResourcePool, RulesSettings, WeaponEntry)
+                                ResourcePool, RulesSettings, Usage, WeaponEntry)
 
 FORMAT = "wipefinder.character"
 VERSION = 1
@@ -44,12 +44,15 @@ _SKIP = object()               # a record not read at all (see _skipped)
 
 def _skipped(name, v):
     """Item-bound maneuver records (kind "maneuver", packages 9-11) are dropped on load (package 12 B, D1)."""
-    return name == "AttackRecord" and v.get("kind") == "maneuver"   # read from old files, then ignored
+    if name == "AttackRecord" and v.get("kind") == "maneuver":
+        return True
+    # old by-name item charges (Character.charges kind "item") are dropped: charges live on the item (pkg 14 B, D1)
+    return name == "Charge" and v.get("kind") == "item"   # read from old files, then ignored
 
 _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,
     NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
-    ResourcePool, RulesSettings, WeaponEntry)}
+    ResourcePool, RulesSettings, Usage, WeaponEntry)}
 
 
 class StorageError(Exception):
