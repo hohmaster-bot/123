@@ -87,7 +87,7 @@ S.case("d-sources", "pkg 16 D: a feat DR 2 counts always; a worn item DR 1 (stac
     lambda: (lambda ch: (dfv.dr(ch), dfv.dr(run(ch, ("unequip_item", {"iid": "belt"})))))(
         hero(feats=(Feat("tough", effects=(Effect("dr", 2),)),),
              items=(Item("belt", "belt", equipped=True, effects_off=(Effect("dr", 1, stacks=True),)),))))
-S.case("d-types", "pkg 16 D: 12 damage types from data + cold (package 17) = 13", 13)(lambda: len(dfv.TYPES))
+S.case("d-types", "pkg 16 D: 12 damage types from data (cold added, water removed by the owner, Q130)", 12)(lambda: len(dfv.TYPES))
 
 
 # ================================================================ E. doll slots

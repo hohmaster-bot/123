@@ -10,7 +10,7 @@ kinds, master counters). Last report: `Wp_claude/tests/PACKAGE17_REPORT.md`.
 - Legacy baseline (separate): 105 examples, 69 pass, 17 fail, 19 not built (BASELINE_REPORT.md).
 
 ## Open questions (OPEN_QUESTIONS.md)
-- Waiting for the owner: Q104 (professionalism checks), Q130 (is "water" the same as "cold"?).
+- Waiting for the owner: Q104 (professionalism checks).
 - Assumptions to confirm: Q23, Q96, Q98-Q102, Q105, Q106, Q109, Q112, Q114, Q116-Q121, Q123, Q124, Q126-Q129.
 
 ## Next (ROADMAP.md)

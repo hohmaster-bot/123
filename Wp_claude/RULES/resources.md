@@ -41,7 +41,7 @@ Spell Resistance is separate (vs spells, not a damage step).
 - Damage input: button "take damage" + optional DR/- and Resistance selector (by damage type) applied before the above.
   DR/Resistance come from the sheet's effects. [UI wish]
 - [OWNER, package 16 D] Damage types are data (wp/catalog/data/damage_types.json): piercing, slashing, bludgeoning,
-  fire, water, lightning, acid, sound, force, positive, negative, pure; DR works on the physical ones (piercing,
+  fire, cold, lightning, acid, sound, force, positive, negative, pure (12; "water" does not exist, owner); DR works on the physical ones (piercing,
   slashing, bludgeoning and the old default "physical"). Effect targets: "dr" (value; Effect.note = bypass text such
   as cold iron, silver, magic: narrative only, never math), "resist:<type>" (value), "spell_resistance" (value, shown
   only). take_damage applies them per part: the larger of DR (physical) and resist:<type> (one reduction per part,

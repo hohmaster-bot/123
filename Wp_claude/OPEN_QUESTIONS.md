@@ -28,4 +28,3 @@ Closed questions (answered, removed from here): ARCH/decision_log.md (append-onl
 - Q127 | item_hp / item_hardness effects come from statuses, feats, injuries, quirks and templates only (not from item tabs, which depend on item HP), are read without stat modifiers, and block effects do not apply to them. | as is | assumption (package 17)
 - Q128 | restore_all_balance is refused while a block_restore effect covers the balance (the block wins over the master pick). | as is | assumption (package 17)
 - Q129 | Attack kinds: the attack-stat override is the existing record field "stat" (not a new field attack_stat); the weapon catalog has no kind column yet, so every catalog weapon is melee until its card gets attack_kind. | as is | assumption (package 17)
-- Q130 | Damage type "cold" was not in the package 16 list but is in the owner's immunity example: added to the data list. Is "water" a separate type or the same as cold? | keep both | open (package 17)

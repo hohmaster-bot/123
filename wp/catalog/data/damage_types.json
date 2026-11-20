@@ -1,7 +1,7 @@
 {
   "format": "wipefinder.damage_types",
-  "note": "Damage types (package 16 D, owner list; editable; cold added in package 17 from the owner's immunity example). 'physical' = the types DR works on; the old code default type 'physical' also counts as physical.",
-  "types": ["piercing", "slashing", "bludgeoning", "fire", "cold", "water", "lightning", "acid", "sound", "force", "positive",
+  "note": "Damage types (package 16 D, owner list; editable; cold added in package 17 from the owner's immunity example; water removed (owner: it does not exist)). 'physical' = the types DR works on; the old code default type 'physical' also counts as physical.",
+  "types": ["piercing", "slashing", "bludgeoning", "fire", "cold", "lightning", "acid", "sound", "force", "positive",
             "negative", "pure"],
   "physical": ["piercing", "slashing", "bludgeoning", "physical"]
 }

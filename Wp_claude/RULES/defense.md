@@ -65,5 +65,5 @@
   3. the signed percent modifier. Then temp HP, absorbers, HP (resources.md).
 - Tests: cold -100: 10 -> 0; fire +50: 10 -> 15; +50 and -25 -> +50; +25 and -50 -> -50; resist fire 2 then +50:
   (10 - 2) * 1.5 = 12; with the modifier first: 15 - 2 = 13; 5 with +50 -> 7.5 -> 8.
-- Damage types: data (wp/catalog/data/damage_types.json); "cold" added in package 17 (the owner's immunity example,
-  Q130).
+- Damage types: data (wp/catalog/data/damage_types.json); "cold" added in package 17 (the owner's immunity example);
+  "water" does not exist [OWNER, closes Q130]: 12 types.
