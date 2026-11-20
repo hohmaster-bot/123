@@ -18,6 +18,21 @@ BASE_START = 5
 LANG_NON_NATIVE = 30
 LANG_NATIVE_CHEAP = 50
 LANG_NATIVE_EXPENSIVE = 100
+# package 15 (training.md "Other purchases", progression.md, spells.md): the rule constants of the purchase commands
+LEVEL_UP_PER_LEVEL = 100        # training at level-up = 100 * new level
+REACTION_STEP = 200             # +1 reaction = 200 * the new number of reactions
+SEED_COST = 200                 # new seed
+SPROUT_COST = 200               # sprout a seed
+ATTENTION_COURSE_COST = 200     # attention course +1
+MANEUVER_COST = 250             # new combat maneuver
+QUALIFICATION_STEP = 50         # item qualification = 50 * N
+PROFESSIONALISM_COST = 300
+PROFESSIONALISM_SKILLS = ((8, 4), (6, 3), (4, 2), (2, 1))   # class skill points 8+ / 6+ / 4+ / 2+ -> specialized skills
+SPELL_BASE = 20                 # new spell = 20 + 10 * circle^2
+SPELL_PER_CIRCLE_SQ = 10
+SPELL_DISCOUNT_DIVISOR = 2      # book / teacher / scroll classes: half price
+MASTERY_BASE = 25               # spell upgrade = 25 * (1 + circle^2)
+MASTERY_SLOTS = 3               # three upgrade slots per spell
 
 
 def pay(available, cost, source=TRAINING):
@@ -103,7 +118,7 @@ def base_slot_cost(slots, level):
 
 def level_up_training(new_level):
     """Training gained at level-up = 100 * new level."""
-    return 100 * int(new_level)
+    return LEVEL_UP_PER_LEVEL * int(new_level)
 
 
 def comfort_max(level, bonus=0):
@@ -141,3 +156,36 @@ def attention_base_points(attention, int_mod):
 def professionalism_ok(new_level, char_level):
     """Professionalism level cannot exceed character level."""
     return int(new_level) <= int(char_level)
+
+
+# ------------------------------------------------------------ package 15 prices
+
+def reaction_cost(current):
+    """+1 reaction = 200 * the NEW number of reactions (1 reaction -> the 2nd costs 400)."""
+    return REACTION_STEP * (int(current) + 1)
+
+
+def qualification_cost(n):
+    """Item qualification = 50 * N (N = the number written on the item)."""
+    return QUALIFICATION_STEP * int(n)
+
+
+def spell_cost(circle, discount=False):
+    """New spell = 20 + 10 * circle^2; book / teacher / scroll classes pay half (circle 2 -> 60, 30)."""
+    c = int(circle)
+    cost = SPELL_BASE + SPELL_PER_CIRCLE_SQ * c * c
+    return cost // SPELL_DISCOUNT_DIVISOR if discount else cost
+
+
+def mastery_cost(circle):
+    """One spell upgrade = 25 * (1 + circle^2) (circle 2 -> 125)."""
+    c = int(circle)
+    return MASTERY_BASE * (1 + c * c)
+
+
+def professionalism_skills(class_skill_points):
+    """How many class skills become specialized: 2+ -> 1, 4+ -> 2, 6+ -> 3, 8+ -> 4; below 2 -> 0."""
+    for need, n in PROFESSIONALISM_SKILLS:
+        if int(class_skill_points) >= need:
+            return n
+    return 0

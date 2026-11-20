@@ -197,8 +197,8 @@ S.case("c-ki-manual-end", "buffs.md: removed by hand after 1 tick (3 -> 2 -> 1):
     lambda: (lambda c: (c.statuses[0].active, c.pools[0].current))(
         run(ki_char(), ("activate_status", {"sid": "ki_mode"}), ("tick", {}), ("remove_status", {"sid": "ki_mode"}),
             ("tick", {}))))
-S.case("c-duration-first", "buffs.md: duration 2, pool 3: activation 2; tick 1 pays (1), tick 2 pays (0) and the duration "
-       "ends (payment before the duration step, Q95); tick 3 pays nothing", [(True, 1), (False, 0), (False, 0)])(
+S.case("c-duration-first", "buffs.md [OWNER pkg 15, Q95]: duration 2, pool 3: activation pays round 1 (2); tick 1 pays round 2 "
+       "(1); tick 2 ends it WITHOUT paying (1); 2 rounds cost 2", [(True, 1), (False, 1), (False, 1)])(
     lambda: _ki_ticks(run(ki_char(duration=ef.TICKS, full_ticks=2), ("activate_status", {"sid": "ki_mode"})), 3))
 S.case("c-own-charges", "buffs.md [OWNER pkg 14 A, Q91]: source own, 2 per round, charges 4/4: activation spends 2 (not 1 + 2) "
        "-> 2; tick pays 2 -> 0; the next tick ends it", (2, [(True, 0), (False, 0)]))(

@@ -26,7 +26,7 @@ from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
 from wp.model import ids
 from wp.model.character import (Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
-                                ResourcePool, RulesSettings, Usage, WeaponEntry)
+                                ResourcePool, RulesSettings, Seed, Spell, SpellUpgrade, Usage, WeaponEntry)
 
 FORMAT = "wipefinder.character"
 VERSION = 1
@@ -53,7 +53,7 @@ def _skipped(name, v):
 _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,
     NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
-    ResourcePool, RulesSettings, Usage, WeaponEntry)}
+    ResourcePool, RulesSettings, Seed, Spell, SpellUpgrade, Usage, WeaponEntry)}
 
 
 class StorageError(Exception):

@@ -138,3 +138,47 @@ def buy_language(ch, lid="", title="", native=False, projects=1, source=tr.TRAIN
     new = replace(ch, languages=ch.languages + (lang,), training=_pay(ch, cost, source))
     return commit(new, "buy_language", "language %s%s for %d" % (
         lid, " (native)" if native else "", cost), {"cost": cost})
+
+
+@command
+def buy_combat_basics(ch, wid="", source=tr.TRAINING):
+    """Combat basics (weapons.md): 50 / 100 / 150 for scale 1 / 2 / 3, once per weapon node; raises it by
+    5 - difficulty grades (the effect is the existing basics bump; never stacks over ancestors)."""
+    catalog = ch.weapon_catalog()
+    if wid not in catalog:
+        raise CommandError("no weapon %r" % (wid,))
+    w = catalog[wid]
+    if w.basic:
+        raise CommandError("group Basic/simple cannot be trained")
+    if w.basics:
+        raise CommandError("%s already has combat basics" % wid)
+    cost = wpn.basics_cost(w.scale)
+    entries = tuple(replace(e, weapon=replace(e.weapon, basics=True)) if e.weapon.name == wid else e for e in ch.weapons)
+    new = replace(ch, weapons=entries, training=_pay(ch, cost, source))
+    return commit(new, "buy_combat_basics", "%s basics for %d" % (wid, cost), {"cost": cost})
+
+
+@command
+def buy_maneuver(ch, name="", source=tr.TRAINING, **fields):
+    """New combat maneuver for 250 (training.md): an entry in the character maneuver list; the player sets its tags
+    and numbers later with edit_maneuver. The difficulty rules of the text (0-3 levels harder, branch) are the GM's."""
+    from wp.commands import maneuver_cmds
+    res = maneuver_cmds.add_maneuver(ch, name=name, **fields)
+    new = replace(res.state, training=_pay(ch, tr.MANEUVER_COST, source))
+    return commit(new, "buy_maneuver", "maneuver %s for %d" % (res.info["mid"], tr.MANEUVER_COST),
+                  {"cost": tr.MANEUVER_COST, "mid": res.info["mid"]})
+
+
+@command
+def buy_item_qualification(ch, iid="", source=tr.TRAINING):
+    """Item qualification = 50 * N (N = the number on the item, gear.md "Qualification N"); tied to that item.
+    What it unlocks (hidden properties) is not modelled."""
+    it = ch.item(iid)
+    if it.qualification_n <= 0:
+        raise CommandError("%s needs no qualification" % it.name)
+    if it.qualified:
+        raise CommandError("already qualified with %s" % it.name)
+    cost = tr.qualification_cost(it.qualification_n)
+    items = tuple(replace(x, qualified=True) if x.iid == iid else x for x in ch.items)
+    new = replace(ch, items=items, training=_pay(ch, cost, source))
+    return commit(new, "buy_item_qualification", "%s qualification for %d" % (iid, cost), {"cost": cost})

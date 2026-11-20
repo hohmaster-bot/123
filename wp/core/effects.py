@@ -208,6 +208,8 @@ def pay_round(status, pools):
     n = status.charge_per_round
     if not status.active or n <= 0:
         return status, pools
+    if status.duration == TICKS and status.remaining <= 1:
+        return status, pools       # it ends at this tick: no next round, nothing to pay (package 15, Q95)
     if status.charge_source == OWN:
         if status.charges is None or status.charges.current < n:
             return deactivate(status), pools

@@ -92,6 +92,8 @@ class Item:
     wkind: str = ""                    # weapon kind id = the catalog card id (a maneuver tag, package 12 B)
     required_level: int = 0            # qualification level (weapons.md), from the card's qualification
     qualification: str = ""            # qualification as written in the owner's table
+    qualification_n: int = 0           # item qualification "Qualification N" (gear.md); 0 = none needed
+    qualified: bool = False            # bought for 50 * N (package 15); hidden properties are not modelled
     finesse: bool = False              # column "F." of the table: finesse AND light (one flag, owner)
     price_sp: int = 0                  # price in silver (1 gp = 10 sp)
     damage_small: str = ""             # dice, small size
@@ -195,6 +197,33 @@ class Language:
 
 
 @dataclass(frozen=True)
+class Seed:
+    """A seed in the Quirks tab (training.md "Seeds"): bought for 200, sprouted for 200 (package 15)."""
+    sid: str
+    name: str
+    sprouted: bool = False
+
+
+@dataclass(frozen=True)
+class SpellUpgrade:
+    """One spell mastery upgrade (progression.md "Spell mastery"): slots it takes, metamagic circles (0 = none)."""
+    name: str
+    slots: int = 1
+    metamagic: int = 0
+
+
+@dataclass(frozen=True)
+class Spell:
+    """A learned spell (package 15; a minimal record: the spell list itself is a later package)."""
+    spid: str
+    name: str
+    circle: int = 0
+    source: str = "training"
+    cost: int = 0
+    upgrades: Tuple[SpellUpgrade, ...] = ()
+
+
+@dataclass(frozen=True)
 class Feat:
     fid: str                           # catalog template id (stable)
     title: str = ""
@@ -252,6 +281,7 @@ class Character:
     comfort_current: int = 0
     comfort_bonus: int = 0
     attention: int = 0                 # no maximum (narrative.md)
+    attention_course: int = 0          # +1 per 200 training: adds to every attention conversion (package 15)
     drives: Dict[str, int] = field(default_factory=dict)   # drive id -> level
     # pain, trauma, overload
     pain: Tuple[PainEntry, ...] = ()
@@ -280,6 +310,10 @@ class Character:
     balance_cap_start: Optional[int] = None   # balance cap taken at start_combat (snapshot); None = live
     ov: int = 0                        # time points (OV), no cap
     languages: Tuple[Language, ...] = ()
+    reactions: int = 1                 # +1 reaction for 200 * the new number (package 15)
+    seeds: Tuple[Seed, ...] = ()
+    spells: Tuple[Spell, ...] = ()
+    professionalism_bought: bool = False   # the 300-point professionalism option (package 15, Q29)
     shield_grade: str = "none"
     armor_grade: str = "none"
     training: int = 1000

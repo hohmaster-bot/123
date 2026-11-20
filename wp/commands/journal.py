@@ -23,6 +23,12 @@ KIND = {
     "injury": ("add_injury", "remove_injury"),
     "stance": ("set_active_stance",),
     "combat": ("start_combat", "end_combat", "tick"),
+    "purchase": ("buy_ability", "buy_skill_rank", "buy_hp", "buy_weapon_grade", "buy_base_slot", "buy_shield_grade",
+                 "buy_armor_grade", "buy_language", "buy_combat_basics", "buy_maneuver", "buy_item_qualification",
+                 "buy_attention_course", "buy_reaction", "buy_seed", "sprout_seed", "make_language_native",
+                 "promote_skill", "buy_professionalism", "learn_spell", "buy_spell_upgrade", "add_feat"),
+    "progression": ("level_up", "exchange_comfort", "set_hp_roll"),
+    "ot": ("remove_ot_comfort", "remove_ot_attention", "raise_heal_rating"),
 }
 _BY_COMMAND = {c: k for k, cmds in KIND.items() for c in cmds}
 OTHER = "other"

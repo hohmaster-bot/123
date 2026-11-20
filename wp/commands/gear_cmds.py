@@ -155,10 +155,10 @@ OV_MIN = 2
 
 @command
 def convert_attention(ch):
-    """Spend 1 Attention -> max(2, Con mod) OV (training.md attention course, option 3)."""
+    """Spend 1 Attention -> max(2, Con mod) + attention course OV (training.md attention course, option 3)."""
     if ch.attention < 1:
         raise CommandError("no attention")
-    gain = max(OV_MIN, dv.ability_mod(ch, "con"))
+    gain = max(OV_MIN, dv.ability_mod(ch, "con")) + ch.attention_course
     return commit(replace(ch, attention=ch.attention - 1, ov=ch.ov + gain), "convert_attention",
                   "attention -1, OV +%d" % gain, {"gain": gain})
 
