@@ -32,9 +32,11 @@ This is a DRAFT of the owner's future AC-by-direction scheme. Nothing here is bu
 - It must be DATA: a table of cells with flags (Dex / dodge allowed, shield coverage by shield type, parry allowed),
   read by the AC code, NOT new hard-coded conditions per cell.
 
-## Open items (OPEN_QUESTIONS Q92, Q93)
-- How the cells combine with the existing flank / flat-footed / shield-side logic (defense.md): do the cells replace
-  the modes, or do the modes stay as presets (for example "flank" = cells 4 / 6)?
+## Values per cell [OWNER, package 14, closes Q92]
+- Every cell shows BOTH values: Full and Parry (parrying is the player's choice and may be done with an empty hand).
+- The current flank / flat-footed / shield-side modes later become PRESETS of cells.
+
+## Open items (OPEN_QUESTIONS Q93)
 - The owner's remark: "the side with no weapon has full AC without the shield". Which cells is that, and how does it
   combine with the shield coverage table above?
 - The full owner table is still to come (then an AC-zones package, ROADMAP).

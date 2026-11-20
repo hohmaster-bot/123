@@ -151,6 +151,7 @@
 ## Stances
 - Special feats with checkbox. ONE active stance per character [OWNER, package 13, Q81]: classic (class) stances are
   ordinary stance feats.
+- Attack records, maneuvers and feats may carry charges and a cooldown (gear.md "Charges and cooldown", package 14 B).
 - Example: "defensive": +2 dodge, -4 attack (flat). Player toggles by hand at fight start.
 - No automatic stance prerequisites.
 - [OWNER, package 12, Q74; replaces earlier stance notes] A stance is a FEAT with the flag is_stance. The character

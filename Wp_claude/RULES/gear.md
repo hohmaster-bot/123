@@ -188,6 +188,20 @@
   automatically.
 - Optional field on_use_status (a status id in the container): using the consumable activates that status; if the
   status cannot be activated (already active, no charge...) the whole use is refused (assumption Q87).
-- The older field count ("pieces, ammo") is still there and unused (Q86).
+- [OWNER, Q86] The older field count is removed; only quantity remains (old files: count is dropped on load; the
+  weapon catalog uses quantity, e.g. bolts x10).
 - Tests: 3 potions of 5 L -> 15 L, after one use 10; at 0: spent, weight 0, still in the list; refusals; the status
   starts; remove_item deletes a spent item.
+
+## Charges and cooldown [OWNER, package 14 B; closes Q94]
+- Anything usable may have charges and a cooldown: an item (and its abilities), a status entry, a feat, an attack
+  record, a maneuver. Optional fields (Usage): charges_max, charges_current, recharge ("short_rest" | "long_rest" |
+  "combat_start" | "manual"), cooldown_rounds, cooldown_current. A status keeps its existing charges (rest rules as
+  before, Q97) and gets cooldown_rounds / cooldown_current.
+- Commands: spend_charge(owner_kind, owner_id, n=1) (refused below 0 or while cooldown_current > 0; with
+  cooldown_rounds > 0 the spending starts the cooldown), set_charges, restore_charges.
+- The tick lowers cooldown_current by 1 for every owner. Rests and start_combat restore by the recharge rule (a long rest
+  also restores "short_rest" charges, like pools: assumption Q96).
+- Item charges live on the item (Q94); the old by-name item charges (Character.charges kind "item") are dropped on
+  load (D1). The active list shows charges only of worn / held items.
+- There is no separate "class / race ability" entity: such abilities are resource pools or statuses.

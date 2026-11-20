@@ -43,11 +43,20 @@ Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects
   resource pools and per-round status payment, consumables (quantity, use_consumable), active_list view, injury id
   counter (Q75) and remove_injury, weight/load views split out of derived_view, LEGACY_FEATURES.md, ac_zones.md
   draft. Report: tests/PACKAGE13_REPORT.md.
-- Package 14 (planned): the missing commands: level up (+100 * level training, HP roll), comfort -> training exchange,
+- Done in package 14: per-round payment at activation (Q83/Q91), count -> quantity (Q86), long rest restores short
+  pools (Q88), charges and cooldown for items / statuses / feats / attack records / maneuvers (item charges on the
+  item, Q94), a safe formula evaluator (effect values, pool max), injury effects (Q89), action / restore blocks and
+  restore by effect, rule switches as data (rules_settings), the long journal; body_view split out of derived_view.
+  Report: tests/PACKAGE14_REPORT.md.
+- Owner goal: FULL control over bonuses and rules through settings. For now every NEW rule constant or switch goes into
+  Character.rules_settings (data) instead of code.
+- Package 15 (planned): the missing commands: level up (+100 * level training, HP roll), comfort -> training exchange,
   OT removal (comfort, attention, injury, RL raise), skill advancement and specialization commands, professionalism,
   spell learning and spell mastery, combat basics, item qualification, reactions, seeds, native language, attention
-  course, and the rest of the "rule exists, no code yet" list below. Also: injuries with effects (Q89), item charges
-  tied to items (active list gap).
+  course, and the rest of the "rule exists, no code yet" list below.
+- Package 16 (planned): the remaining "core" items of tests/LEGACY_FEATURES.md (ranged / thrown attack flags, own
+  damage stat and damage multiplier, master counters, XP and level threshold, start session, money, base contents,
+  quirks / courts / quests / lens / principles, character templates, PDF export, journal revert).
 - Then an AC-zones package (RULES/ac_zones.md) once the owner gives the full table.
 - Deferred (from REVIEW_REPORT, not done yet): spell mastery cost
   25 * (1 + circle^2); level-up command (+100 * level training, HP roll); comfort -> training command;

@@ -16,6 +16,10 @@
 - Roleplay-only injuries are recorded but have no mechanics.
 - Permanent injury: separate row "Permanent injury". Cannot be healed normally; narrative removal only. Also feeds permanent pain (resources.md).
 - Injuries can be added manually. Catalog may provide templates (light/medium/heavy).
+- Injury effects [OWNER, package 14 D, Q89]: an injury has an effects list (the usual effect structure: penalties,
+  bonuses, blocks, anything). They apply while the injury exists; the container view shows them; an injury can be a
+  block source (e.g. block_balance_regen). The OT price rules stay. Tests: -2 attack, regen blocked, removing the
+  injury removes the effect.
 - Injury id [OWNER, package 12, Q70]: every injury has a stable id made by the program from its name (a number on a
   collision, the same scheme as other ids), stored on the injury and used by the status container view. Old files
   load: injuries without an id get one on load. Ids of the other injuries never change when one is removed.

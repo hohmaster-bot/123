@@ -149,9 +149,33 @@ After everyone acted, in this order [OWNER]:
 ## Base, attention, money -> gear.md / narrative.md
 
 ## Resource pools [OWNER, package 13 C]
-- A pool is a character-level counter (Ki-like): id (made by the program), name, max, current, restore:
-  "short_rest" | "long_rest" | "combat_start" | "manual"; restoring sets it to max.
+- A pool is a character-level counter (Ki-like): id (made by the program), name, max (a number or a formula, buffs.md
+  "Formulas"), current (read clamped to the max), restore: "short_rest" | "long_rest" | "combat_start" | "manual";
+  restoring sets it to max.
 - Commands: add_pool (current = max unless given), edit_pool, remove_pool, spend_pool(pool_id, n) (refused below 0),
-  restore_pool(pool_id). The short rest restores "short_rest" pools, the long rest "long_rest" pools, start_combat
-  "combat_start" pools (each rule only its own pools: Q88). Default restore of a new pool: "manual" (Q90).
+  restore_pool(pool_id). The short rest restores "short_rest" pools; the long rest restores "short_rest" AND
+  "long_rest" pools (a long rest includes a short one) [OWNER, Q88]; start_combat restores "combat_start" pools;
+  "manual" pools never restore by themselves. Default restore of a new pool: "manual" [OWNER, Q90 accepted].
 - Statuses may pay their per-round cost from a pool (buffs.md "Per-round cost").
+
+## Rule switches [OWNER, package 14 G]
+- Character.rules_settings holds rule switches as DATA (easy to extend; every NEW rule constant or switch goes there):
+  - ignore_pain: pain gives no penalties; the pain count itself stays (REUSES PainProfile.no_penalty: death by pain
+    still counts);
+  - ignore_negative_morale: a negative morale scale counts as 0 (a positive one still works);
+  - speed_multiplier (default 1): derived speed = floor(speed * multiplier);
+  - rest_regen_multiplier and rest_regen_bonus: the HP one rest command gives -> floor(gain * multiplier) + bonus,
+    never above the max; nothing when the rest gave no HP (assumption Q99);
+  - hp_regen_per_tick (default 0): HP healed every tick (honours block_restore hp);
+  - overload_enabled (default true): when false a cast adds no overload and the overload never blocks the regen;
+  - log_limit (default 0 = unlimited): the journal keeps the last N entries.
+- Tests: pain 2 -> attack 0 (count 2); scale -4 -> 0, +4 -> +2; 1.5 -> 30 ft, 0.5 of 25 -> 12; short rest 3 HP with
+  x2 + 1 -> 7; hp_regen_per_tick 2; overload off: no overload from a cast, regen not blocked.
+
+## Journal [OWNER, package 14 H]
+- One journal for everything: every command that CHANGES the character logs itself through the command base (dispatch):
+  order counter, kind (item / item_damage / spell / damage / heal / status / charges / rest / injury / stance / combat /
+  other), command id, short params, result, combat round (1 at start_combat, +1 per tick, 0 out of combat).
+- Entries store ids and numbers only, no texts (the UI translates through wp/i18n). Old text entries load with their
+  command id only. Read-only or softly refused commands (nothing changed) are not logged. No cap by default
+  (log_limit 0). No revert.

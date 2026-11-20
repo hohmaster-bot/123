@@ -99,7 +99,7 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 ## Block effects [OWNER, package 13 B; closes Q82]
 - New effect kinds in the usual effect structure. They work from any source that is ACTIVE now: an active status, an
   owned feat (a stance feat only while it is the active stance), the acting tab of a worn / held item (an activated
-  item: its "activated" tab). Injuries have no effects in the model yet, so an injury cannot carry a block (Q89).
+  item: its "activated" tab), an injury (package 14 D, Q89).
 - A block drops only POSITIVE values, never penalties.
 - block_balance_regen: while at least one is active the balance does not regenerate (as with overload). The derived
   view lists the reasons: "overload" (when overload > 0) and the source ids. Overload works as before.
@@ -118,12 +118,42 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 ## Per-round cost [OWNER, package 13 C]
 - Status fields charge_source ("own" = its own charges, or a resource pool id, resources.md) and charge_per_round
   (default 0).
-- Every tick, an ACTIVE status with charge_per_round > 0 pays that amount from its source. This happens in the
-  zero-initiative phase at the duration step, BEFORE the duration drops. If it cannot pay, the status ends
-  (inactive, the entry stays) and does not act in this tick (assumption Q84). The player may remove it earlier by hand.
-- activate_status with a pool source needs at least charge_per_round in the pool but pays nothing yet (assumption
-  Q85); with source "own" the usual activation charge is spent (one charge), then the per-round payment follows
-  (Q91). A status has no other cost (Q69).
-- Tests: pool 3, 1 per round: 3 paid ticks (2, 1, 0), the 4th tick ends it (Q83); manual removal stops the payment;
-  a duration of 2 ends before the pool; own charges 2/2; refusals (empty pool, unknown pool); an unpaid regen does
-  not heal.
+- [OWNER, package 14 A; replaces Q83, Q85, Q91] The ACTIVATION pays charge_per_round for the FIRST round; then
+  every tick pays the next round. The source is a pool or the status's own charges; with source "own" the activation
+  pays charge_per_round from the own charges INSTEAD of the usual single charge (no extra charge). If the source
+  cannot pay at activation, the activation is refused with a reason.
+- The tick payment happens in the zero-initiative phase at the duration step, BEFORE the duration drops. If it cannot
+  pay, the status ends at once (inactive, the entry stays) and does not act in this tick (Q84). The player may remove
+  it earlier by hand: then nothing more is paid and there is no effect.
+- A status whose duration ends in a tick still pays in that tick (payment before the duration step; assumption Q95).
+- A status has no other cost (Q69).
+- Tests: pool 3 at 1 per round gives exactly 3 rounds (activation 2, ticks 1 and 0, the 3rd tick ends it); own source
+  2 per round, charges 4 -> activation 2; refused when the source cannot pay; monk aura, cursed darkness (3 per round),
+  barbarian rage (formula pool max).
+
+## Formulas [OWNER, package 14 C]
+- An effect value may be a number, a stat_mod value, or a FORMULA string; a resource pool's max may be a number or a
+  formula. A small safe evaluator reads it (no eval / exec).
+- Variables: level (also lvl), str_mod, dex_mod, con_mod, int_mod, wis_mod, cha_mod (CURRENT modifiers, block effects
+  included), bab. Operators + - * /, parentheses, unary minus. Functions: min(a, b, ...), max(a, b, ...), floor(x).
+- Numbers may be whole or decimal; + - * are exact. "/" is integer division rounding DOWN (towards minus infinity):
+  7/2 = 3, -7/2 = -4. The final result is rounded DOWN to a whole number: level*0.5 at level 3 = 1; -level*0.5 = -2.
+- A formula is validated when it is added or edited (add_status, add_maneuver / edit_maneuver, add_pool / edit_pool,
+  the feat catalog): a clear error. A broken formula stored by hand never crashes a derived view: it counts as 0.
+- Pool max on read: the formula on the current sheet. The stored current is read CLAMPED to the max (it is not
+  rewritten); commands that change a pool (spend, restore) start from the clamped value.
+- Tests: rage pool max con_mod + 2*(level+1) with Con mod 3, level 4 -> 13; Con mod 1 -> 11 and the current reads 11;
+  2*lvl, min / max, the rounding examples above; unknown names and quotes refused.
+
+## Action and restore blocks, restore by effect [OWNER, package 14 F]
+- block_action {block_actions: attack | move | spell_cast | heal | any}: the derived view exposes blocked_actions with
+  the reasons (source ids). cast_spell refuses while spell_cast is blocked; restore(resource "hp") refuses while heal
+  is blocked. attack and move have no command: only the flag is exposed.
+- block_restore {block_resources: hp | mana | spirit | balance | pool:<id> | any}: ticks, rests, start_combat pool
+  restores and restore effects do not raise those resources while active (lowering is never blocked); the restore and
+  restore_pool commands refuse with a reason (assumption Q98). block_balance_regen keeps working as the balance case
+  (the old name is an alias).
+- Restore by effect: per_tick_restore {mana | spirit | balance | pool:<id>: n} on a status restores every tick while
+  the status acts; the one-shot part at activation may restore mana, spirit, balance, hp, pool:<id> (temp HP as
+  before). Never above the max. Both honour block_restore. Unknown keys are refused when the status is added.
+- Injuries carry effects too (injuries.md), so an injury can be the source of any block.
