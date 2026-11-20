@@ -60,6 +60,7 @@ class Effect:
     block_actions: Tuple[str, ...] = ()    # block_action: attack / move / spell_cast / heal / any (package 14 F)
     block_resources: Tuple[str, ...] = ()  # block_restore: hp / mana / spirit / balance / pool:<id> / any
     when_iterative: str = ""            # behaviour while an iterative penalty exists: STORED ONLY (package 16 C)
+    stacks: bool = False               # DR entry: adds to the others (package 17, Q115); False = only the largest
 
     def resolve(self, context=None):
         """The effect's number: a fixed value, a context value (current overload), or the current

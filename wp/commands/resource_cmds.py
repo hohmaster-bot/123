@@ -12,6 +12,7 @@ from wp.model import derived_view as dv
 from wp.model import blocks as blk
 from wp.model import ids
 from wp.model import restores as rst
+from wp.model import sheet_targets as stg
 from wp.model import usage as us
 
 # resource name -> (read pool, write current)
@@ -89,7 +90,8 @@ def spend_bp(ch, n=1):
 def short_rest(ch, spends=(), other_heal=0, extra_bp=0, keep_overcap=False):
     """Short rest: free gains, then spends [(option, {params}), ...], then 'Apply'.
     BP above max is lost at the end unless keep_overcap=True (package 8 C)."""
-    session = rs.start_short_rest(bridge.to_rest(ch), other_heal, extra_bp)
+    session = rs.start_short_rest(bridge.to_rest(ch), other_heal, int(extra_bp) + stg.value(ch, "short_rest_bp"),
+                                  stg.value(ch, "short_rest_heal"))     # effect targets (package 17)
     for opt, params in spends:
         session = rs.spend(session, opt, **dict(params))
     new = switch_off_items(bridge.from_rest(ch, rs.apply_short_rest(session, keep_overcap)), SHORT)

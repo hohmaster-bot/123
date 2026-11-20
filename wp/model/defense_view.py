@@ -15,7 +15,10 @@ import os
 from dataclasses import dataclass
 from typing import Dict, Tuple
 
+from wp.core import bonuses as bo
 from wp.core import damage as dm
+from wp.model import blocks as blk
+from wp.model import derived_view as dv
 from wp.model import sheet_targets as stg
 
 PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "catalog", "data", "damage_types.json")
@@ -35,19 +38,44 @@ TYPES, PHYSICAL = _load()
 @dataclass(frozen=True)
 class DefenseView:
     dr: int
-    dr_entries: Tuple[Tuple[str, int, str], ...]       # (source id, value, bypass text)
+    dr_entries: Tuple[Tuple[str, int, str, bool], ...]  # (source id, value, bypass text, stacks)
     resist: Dict[str, int]                              # damage type -> value (only types with a value)
     resist_entries: Dict[str, Tuple[Tuple[str, int, str], ...]]
     spell_resistance: int
     sr_entries: Tuple[Tuple[str, int, str], ...]
+    percent: Tuple[Tuple[str, int], ...] = ()          # (damage type, signed %) for types with a value
+
+
+PERCENT = "percent:"
+
+
+def _values(ch, target):
+    return [v for _, v, _ in stg.entries(ch, target)]
 
 
 def resist(ch, dtype):
-    return max(0, stg.value(ch, stg.RESIST + dtype))
+    """Resistances NEVER stack: the larger wins (package 17, Q115)."""
+    return max([0] + _values(ch, stg.RESIST + dtype))
+
+
+def dr_entries(ch):
+    """(source, value, bypass text, stacks) of every DR effect."""
+    ctx = dv.context(ch)
+    return tuple((src, e.resolve(ctx), e.note, e.stacks) for src, e in blk.active_effects(ch) if e.target == DR)
 
 
 def dr(ch):
-    return max(0, stg.value(ch, DR))
+    """Total DR = the largest NON-stacking entry + the sum of the stacking entries (package 17, Q115). The bypass
+    text never changes the number."""
+    es = dr_entries(ch)
+    return max(0, max([0] + [v for _, v, _, s in es if not s]) + sum(v for _, v, _, s in es if s))
+
+
+def modifier(ch, dtype):
+    """Signed percent modifier of one damage type (effects "percent:<type>"): one value per type; with several
+    sources the larger absolute value wins (equal + and - -> 0, like typed bonuses); never below -100."""
+    vs = _values(ch, PERCENT + dtype)
+    return max(-100, bo.winner(max([0] + vs), min([0] + vs)))
 
 
 def spell_resistance(ch):
@@ -56,7 +84,8 @@ def spell_resistance(ch):
 
 def defense_view(ch):
     res = {t: resist(ch, t) for t in TYPES}
-    return DefenseView(dr=dr(ch), dr_entries=stg.entries(ch, DR),
+    mods = {t: modifier(ch, t) for t in TYPES}
+    return DefenseView(dr=dr(ch), dr_entries=dr_entries(ch), percent=tuple((t, v) for t, v in mods.items() if v),
                        resist={t: v for t, v in res.items() if v},
                        resist_entries={t: stg.entries(ch, stg.RESIST + t) for t in TYPES if stg.entries(ch, stg.RESIST + t)},
                        spell_resistance=spell_resistance(ch), sr_entries=stg.entries(ch, SR))
@@ -73,4 +102,10 @@ def reductions(ch, types, skip=(), given=None):
         best = max(own, d if t in PHYSICAL else 0, int(flat.get(t, 0)))
         if best:
             flat[t] = best
-    return dm.Reductions(percent=dict(given.percent), flat=flat)
+    mods = dict(given.modifier)
+    for t in set(types):
+        m = 0 if (PERCENT + t) in skip else modifier(ch, t)
+        if m:
+            mods[t] = m
+    return dm.Reductions(percent=dict(given.percent), flat=flat, modifier=mods,
+                         order=tuple(ch.rules_settings.damage_order))

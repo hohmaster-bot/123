@@ -69,6 +69,8 @@ class Reductions:
     """
     percent: Dict[str, int] = field(default_factory=dict)
     flat: Dict[str, int] = field(default_factory=dict)
+    modifier: Dict[str, int] = field(default_factory=dict)   # signed % per type: -100 immune, +50 takes 50% more
+    order: Tuple[str, ...] = ("percent", "flat", "modifier")  # steps of one part (rules_settings.damage_order)
 
 
 @dataclass(frozen=True)
@@ -113,12 +115,32 @@ def apply_percent(amount, percent):
     return ceil_div(amount * (100 - percent), 100)
 
 
+PERCENT = "percent"
+FLAT = "flat"
+MODIFIER = "modifier"
+
+
+def apply_modifier(amount, pct):
+    """Signed percent modifier (package 17): amount * (100 + pct) / 100, rounded UP (against the player); -100 = 0."""
+    pct = max(-100, int(pct))
+    return max(0, ceil_div(int(amount) * (100 + pct), 100))
+
+
 def reduce_part(part, reductions):
-    """Steps 1-2 for one part: percent, then flat of the same type. Never below 0."""
+    """Steps for one part in reductions.order (default: percent reduction, flat, signed modifier), each by the part's
+    own type. Never below 0."""
     if part.amount < 0:
         raise ValueError("damage amount must be >= 0")
-    amount = apply_percent(part.amount, reductions.percent.get(part.dtype, 0))
-    amount -= int(reductions.flat.get(part.dtype, 0))
+    amount = part.amount
+    for step in reductions.order:
+        if step == PERCENT:
+            amount = apply_percent(amount, reductions.percent.get(part.dtype, 0))
+        elif step == FLAT:
+            amount = max(0, amount - int(reductions.flat.get(part.dtype, 0)))
+        elif step == MODIFIER:
+            amount = apply_modifier(amount, reductions.modifier.get(part.dtype, 0))
+        else:
+            raise ValueError("unknown damage step %r" % (step,))
     return max(0, amount)
 
 

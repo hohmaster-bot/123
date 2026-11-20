@@ -86,8 +86,9 @@ def bp_pool(ch):
 
 
 def picks(ch, it):
-    """Mastery picks reaching this item (records.item_picks, package 8 R3)."""
-    return rec.item_picks(ch, it)
+    """Mastery picks reaching this item (records.item_picks, package 8 R3) + effect bonuses "item_hp" /
+    "item_hardness" (package 17: Effect.weapon = this item's id, or none = every item)."""
+    return rec.item_picks(ch, it) + stg.item_bonuses(ch, it.iid)
 
 
 def works(ch, it):

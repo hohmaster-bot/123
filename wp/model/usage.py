@@ -12,22 +12,39 @@ from dataclasses import replace
 
 from wp.model.character import Usage
 
-KINDS = ("item", "status", "feat", "attack", "maneuver")
+KINDS = ("item", "status", "feat", "attack", "maneuver", "pick")
+PICK = "pick"                      # a once-per-combat mastery pick; id "<weapon node id>:<slot>" (package 17)
 SHORT_REST = "short_rest"
 LONG_REST = "long_rest"
 COMBAT_START = "combat_start"
+COMBAT_END = "combat_end"          # package 17: master counters
 MANUAL = "manual"
-RECHARGES = (SHORT_REST, LONG_REST, COMBAT_START, MANUAL)
+RECHARGES = (SHORT_REST, LONG_REST, COMBAT_START, COMBAT_END, MANUAL)
 _FIELD = {"item": ("items", "iid"), "status": ("statuses", "sid"), "feat": ("feats", "fid"),
           "attack": ("attacks", "rid"), "maneuver": ("maneuvers", "mid")}
 
 
+def pick_id(entry, pick):
+    return "%s:%d" % (entry.weapon.name, pick.slot)
+
+
+def _picks(ch):
+    from wp.core import weapons as wpn
+    return [(pick_id(e, p), e, p) for e in ch.weapons for p in e.picks if p.bonus in wpn.COUNTER_PICKS]
+
+
 def find(ch, kind, oid):
+    if kind == PICK:
+        return next((p for i, _, p in _picks(ch) if i == oid), None)
     name, key = _FIELD[kind]
     return next((x for x in getattr(ch, name) if getattr(x, key) == oid), None)
 
 
-def put(ch, kind, owner):
+def put(ch, kind, owner, oid=None):
+    if kind == PICK:
+        weapons = tuple(replace(e, picks=tuple(owner if (pick_id(e, p) == oid) else p for p in e.picks))
+                        for e in ch.weapons)
+        return replace(ch, weapons=weapons)
     name, key = _FIELD[kind]
     oid = getattr(owner, key)
     return replace(ch, **{name: tuple(owner if getattr(x, key) == oid else x for x in getattr(ch, name))})
@@ -37,6 +54,8 @@ def charges(kind, owner):
     """(current, max) or None when the owner has no charges."""
     if kind == "status":
         return (owner.charges.current, owner.charges.max) if owner.charges is not None else None
+    if kind == PICK:
+        return (1 - min(1, owner.used), 1)
     u = owner.usage
     return (u.charges_current, u.charges_max) if u is not None and u.charges_max > 0 else None
 
@@ -45,12 +64,16 @@ def cooldown(kind, owner):
     """(cooldown_current, cooldown_rounds)."""
     if kind == "status":
         return owner.cooldown_current, owner.cooldown_rounds
+    if kind == PICK:
+        return (0, 0)
     u = owner.usage
     return (u.cooldown_current, u.cooldown_rounds) if u is not None else (0, 0)
 
 
 def with_values(kind, owner, current=None, cool=None):
     """The owner with new charges current and / or cooldown current."""
+    if kind == PICK:
+        return owner if current is None else replace(owner, used=1 - int(current))
     if kind == "status":
         out = owner
         if current is not None:
@@ -68,6 +91,8 @@ def with_values(kind, owner, current=None, cool=None):
 
 def _each(ch):
     for kind in KINDS:
+        if kind == PICK:
+            continue
         name, _ = _FIELD[kind]
         for x in getattr(ch, name):
             yield kind, x
@@ -88,6 +113,10 @@ def recharge(ch, *rules):
         if kind == "status" or x.usage is None or x.usage.recharge not in rules:
             continue
         ch = put(ch, kind, with_values(kind, x, current=x.usage.charges_max))
+    if COMBAT_END in rules:            # master counters: once per combat (package 17)
+        for oid, _, p in _picks(ch):
+            if p.used:
+                ch = put(ch, PICK, replace(p, used=0), oid)
     return ch
 
 

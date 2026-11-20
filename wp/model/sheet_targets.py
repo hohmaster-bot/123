@@ -86,3 +86,23 @@ def entries(ch, target):
         if e.target == target:
             out.append((src, e.resolve(ctx), e.note))
     return tuple(out)
+
+
+def item_bonuses(ch, iid):
+    """ItemBonus records for one item from statuses, feats, injuries, quirks and templates (NOT from items: an item's
+    HP must not depend on item tabs, which depend on item HP). Values are read without stat modifiers (no loops,
+    assumption Q127); normal typed stacking per target; block effects are not applied here."""
+    from wp.core import weapons as wpn
+    from wp.model import stance_view as stv
+    effects = [e for s in ch.statuses if ef.is_effective(s) for e in s.effects]
+    effects += [e for f in ch.feats if stv.feat_applies(ch, f) for e in f.effects]
+    effects += [e for j in ch.injuries for e in j.effects]
+    effects += [e for _, es in dv.other_sources(ch) for e in es]
+    ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": ch.bab}
+    out = ()
+    for kind in (wpn.ITEM_HP, wpn.ITEM_HARDNESS):
+        bs = [bo.Bonus(e.resolve(ctx), e.btype if e.btype not in bo.AC_ONLY_TYPES else bo.FLAT, kind)
+              for e in effects if e.target == kind and (e.weapon is None or e.weapon == iid)]
+        if bs:
+            out += (wpn.ItemBonus(kind, bo.stack(bs)),)
+    return out

@@ -1,6 +1,6 @@
 {
   "format": "wipefinder.sheet_targets",
-  "note": "Effect targets of sheet numbers added in package 16 (A2, D, G). Older targets (ac, attack, damage, save, save:<id>, skill, skill:<id>, initiative, cmb, cmd, speed, crit_range, lucky, touch_armor, armor_slowdown_reduction, spell_penalty_mana, spell_failure_pct, twf_reduction, block_*) are in RULES/buffs.md. A target with ':' takes an id after it.",
+  "note": "Effect targets of sheet numbers added in packages 16 and 17. Older targets (ac, attack, damage, save, save:<id>, skill, skill:<id>, initiative, cmb, cmd, speed, crit_range, lucky, touch_armor, armor_slowdown_reduction, spell_penalty_mana, spell_failure_pct, twf_reduction, block_*) are in RULES/buffs.md. A target with ':' takes an id after it.",
   "targets": {
     "stat:": "ability score (stat:str ... stat:cha): typed bonuses stack by the normal rules; the modifier and everything built on it follow",
     "hp_max": "max HP",
@@ -23,9 +23,21 @@
     "attention_per_cycle": "attention at the end of a cycle",
     "crit_mult": "crit multiplier (weapon id = that weapon only)",
     "iterative_penalty": "makes every step of the iterative penalty smaller (a step never goes above 0)",
-    "dr": "damage reduction vs physical damage; Effect.note = the bypass text (narrative only)",
-    "resist:": "flat resistance to one damage type (resist:fire ...)",
+    "dr": "damage reduction vs physical damage; Effect.note = the bypass text (narrative only); Effect.stacks: total = the largest non-stacking entry + all stacking entries",
+    "resist:": "flat resistance to one damage type (resist:fire ...); never stacks, the larger wins",
     "spell_resistance": "spell resistance (shown only, not a damage step)",
-    "spell_price_discount": "training subtracted from a new spell's price after the spellbook half; minimum 1"
+    "spell_price_discount": "training subtracted from a new spell's price after the spellbook half; minimum 1",
+    "pain_cap": "pain count at which the character dies (default 8)",
+    "pain_penalty_per_pain": "roll penalty per pain point (default 1; -1 makes 0, never below 0)",
+    "damage_per_pain": "damage bonus per pain point (race rule)",
+    "item_hp": "max HP of items (Effect.weapon = one item id; none = every item); not from item tabs",
+    "item_hardness": "hardness of items (Effect.weapon = one item id; none = every item); never below 0",
+    "morale_scale": "count the morale scale X higher (defense.md; the scale stays -10..10)",
+    "short_rest_heal": "added to the free heal of the short rest (after the 'larger of' rule)",
+    "short_rest_bp": "extra BP gained by the short rest",
+    "spell_cost": "mana cost of every circle 1+ spell (never below 0)",
+    "spell_overload": "overload gained by every cast (never below 0)",
+    "mana_level": "the most one spell may cost in mana (level + this)",
+    "percent:": "signed percent damage modifier of one type (percent:fire 50 = 50% more, -100 = immune)"
   }
 }

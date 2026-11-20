@@ -97,11 +97,12 @@ def free_heal_amount(level, other_heal=0):
     return max(2 + int(level), int(other_heal))
 
 
-def start_short_rest(state, other_heal=0, extra_bp=0):
+def start_short_rest(state, other_heal=0, extra_bp=0, heal_bonus=0):
     """Free gains: +1 BP (at max it goes above max), the free heal, extra BP from
-    other sources (allies, skills, class, feats); all may go above max (overcap)."""
+    other sources (allies, skills, class, feats); all may go above max (overcap).
+    heal_bonus: effects "short_rest_heal", added after the "larger of" rule (package 17), never below 0."""
     bp = replace(state.bp, current=state.bp.current + 1 + int(extra_bp))
-    heal = free_heal_amount(state.level, other_heal)
+    heal = max(0, free_heal_amount(state.level, other_heal) + int(heal_bonus))
     st = replace(state, bp=bp, hp=_heal(state.hp, heal))
     return ShortRest(state=st, free_heal=heal)
 

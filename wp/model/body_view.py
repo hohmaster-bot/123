@@ -17,9 +17,15 @@ def pain_total(ch):
 def pain_profile(ch):
     """The pain profile with the rule switch ignore_pain applied: it REUSES PainProfile.no_penalty (pain gives no
     penalty, the pain count and death stay; package 14 G)."""
-    if ch.rules_settings.ignore_pain and not ch.pain_profile.no_penalty:
-        return replace(ch.pain_profile, no_penalty=True)
-    return ch.pain_profile
+    from wp.model import sheet_targets as stg
+    p = ch.pain_profile
+    # effect targets (package 17, Q125): death cap, penalty per pain, damage per pain
+    p = replace(p, cap=p.cap + stg.value(ch, "pain_cap"),
+                penalty_per_pain=max(0, p.penalty_per_pain + stg.value(ch, "pain_penalty_per_pain")),
+                damage_per_pain=p.damage_per_pain + stg.value(ch, "damage_per_pain"))
+    if ch.rules_settings.ignore_pain and not p.no_penalty:
+        return replace(p, no_penalty=True)
+    return p
 
 
 def pain_penalty(ch):
@@ -27,12 +33,13 @@ def pain_penalty(ch):
 
 
 def is_dead(ch):
-    return pn.is_dead(pain_total(ch), ch.pain_profile)
+    return pn.is_dead(pain_total(ch), pain_profile(ch))
 
 
 def morale_bonus(ch):
     """ignore_negative_morale (rule switch, package 14 G): a negative scale counts as 0."""
-    scale = ch.morale_scale
+    from wp.model import sheet_targets as stg
+    scale = ch.morale_scale + stg.value(ch, "morale_scale")    # "count morale X higher" (defense.md, package 17)
     if ch.rules_settings.ignore_negative_morale:
         scale = max(0, scale)
     return dv.morale_bonus(scale, ch.in_combat)

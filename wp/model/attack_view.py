@@ -22,6 +22,7 @@ from wp.core import bonuses as bo
 from wp.core import effects as ef
 from wp.core import pain as pn
 from wp.core import weapons as wpn
+from wp.model import attack_kind as akd
 from wp.model import blocks as blk
 from wp.model import derived_view as dv
 from wp.model import iterative as itv
@@ -105,6 +106,9 @@ def attack_stat(ch, item, record):
     """Record's stat > best of Str/Dex (finesse weapon + Finesse feat) > Str."""
     if record.stat:
         return record.stat
+    by_kind = akd.default_attack_stat(ch, akd.kind(record, item))   # ranged / thrown: Dex by default (pkg 17)
+    if by_kind:
+        return by_kind
     if item is not None and item.finesse and has_flag(ch, FINESSE):
         return max(("str", "dex"), key=lambda a: (dv.ability_mod(ch, a), a == "dex"))
     return DEFAULT_STAT
@@ -268,7 +272,7 @@ def attack(ch, record, extra=()):
         hit.append(Line("iterative", it_pen))       # combat.md: a separate negative line (package 16 C)
     hit += _typed_lines(blk.unblocked(ch, bonuses, bo.ATTACK), bo.ATTACK, ids)
 
-    dmg = [Line("str:" + record.grip, str_damage(dv.ability_mod(ch, "str"), record.grip))]
+    dmg = [Line(*akd.damage_part(ch, record, item, dv.ability_mod, str_damage))]   # kind rules (package 17)
     if pain:
         dmg.append(Line("pain", pain))
     race = pn.damage_bonus(dv.pain_total(ch), dv.pain_profile(ch))

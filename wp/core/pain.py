@@ -28,6 +28,7 @@ class PainProfile:
     ignores_pain: bool = False       # pain gives no penalty and no death
     no_penalty: bool = False         # pain gives no penalty (death still counts)
     damage_per_pain: int = 0         # e.g. race: +1 damage per pain
+    penalty_per_pain: int = 1        # roll penalty per pain point (package 17: effect pain_penalty_per_pain)
 
 
 def entries_total(entries):
@@ -46,10 +47,10 @@ def is_dead(total, profile=PainProfile()):
 
 
 def penalty(total, profile=PainProfile()):
-    """Roll penalty from pain: -1 per pain (0 if the profile ignores it)."""
+    """Roll penalty from pain: -penalty_per_pain per pain (default 1; 0 if the profile ignores it)."""
     if profile.ignores_pain or profile.no_penalty:
         return 0
-    return -int(total)
+    return -int(total) * max(0, int(profile.penalty_per_pain))
 
 
 def penalty_bonus(total, profile=PainProfile()):

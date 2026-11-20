@@ -121,6 +121,7 @@ class Item:
     no_parry: bool = False             # cannot parry with it (spiked gauntlets = parry with an empty hand)
     damage_text: str = ""              # damage as written in the table when it is not a simple small/medium pair
     variable: Tuple[str, ...] = ()     # fields the table gives as "Vary." (left empty on purpose)
+    attack_kind: str = "melee"         # weapon card: melee / ranged / thrown (package 17, attack_kind.py)
     slot: str = ""                     # doll slot id (wp/catalog/data/doll_slots.json); "" = no slot (package 16 E)
     base_slot_cost: int = 1            # base slots taken while left at the base (gear.md "Base"; grey items 0)
     source: str = ""                   # where it came from (loot, shop, template:<id>...), a label
@@ -139,6 +140,9 @@ class AttackRecord:
     twf_off: str = ""                  # off-hand record id; "" = the other end of a double weapon
     usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
     iterative_step: Optional[int] = None   # own iterative step (e.g. -3); None = rules_settings (package 16 C)
+    kind: str = ""                     # melee / ranged / thrown; "" = the weapon card's attack_kind (package 17)
+    damage_stat: Optional[str] = None  # "none" or a stat id; None = the kind's default (stat = the attack stat)
+    damage_mult: Any = None            # multiplier of the damage stat; None = the kind's default / the grip
 
 
 @dataclass(frozen=True)
@@ -181,6 +185,13 @@ class RulesSettings:
     overload_enabled: bool = True      # False: the overload counter is never applied and never blocks regen
     log_limit: int = 0                 # journal: keep the last N entries (0 = unlimited, package 14 H)
     iterative_step: int = -5           # iterative attack penalty per step (combat.md, package 16 C)
+    ranged_attack_stat: str = "dex"    # attack kinds (combat.md, package 17): defaults per kind
+    ranged_damage_stat: str = "none"
+    ranged_damage_mult: Any = 1
+    thrown_attack_stat: str = "dex"
+    thrown_damage_stat: str = "str"
+    thrown_damage_mult: Any = 1
+    damage_order: Tuple[str, ...] = ("percent", "flat", "modifier")   # damage steps (defense.md, package 17)
 
 
 @dataclass(frozen=True)

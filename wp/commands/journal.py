@@ -18,7 +18,7 @@ KIND = {
     "status": ("add_status", "activate_status", "remove_status", "delete_status", "set_status_duration",
                "set_status_hidden", "set_status_favorite"),
     "charges": ("spend_charge", "set_charges", "restore_charges", "spend_pool", "restore_pool", "add_pool",
-                "edit_pool", "remove_pool", "spend_bp"),
+                "edit_pool", "remove_pool", "spend_bp", "restore_all_balance"),
     "rest": ("short_rest", "long_rest", "long_rest_end_combat"),
     "injury": ("add_injury", "remove_injury"),
     "stance": ("set_active_stance",),

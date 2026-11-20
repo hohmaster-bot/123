@@ -26,19 +26,27 @@ def attention_value(ch, stat):
     return inj.attention_value(dv.ability_mod(ch, stat)) + ch.attention_course
 
 
+HIT_DIE_DEFAULT = 1
+HIT_DIE_DEFAULT_USED = "hit_die_default_used"
+
+
 @command
 def level_up(ch, hp_roll=None):
     """Level +1, +100 * NEW level training (progression.md), and the player's hit-die roll for the new level
-    (1..die; edit later with set_hp_roll). No level cap in RULES (Q103)."""
+    (1..die; edit later with set_hp_roll or edit mode). No level cap (owner, Q103). Without a roll the die counts 1
+    and the result carries the warning "hit_die_default_used" ("die not entered, 1 taken", package 17, Q111).
+    Max HP grows; the current HP is not healed (Q111)."""
+    warnings = ()
     if hp_roll is None:
-        raise CommandError("give the hit-die roll for the new level (1..%d)" % ch.hit_die, "give_hit_die_roll", values=(ch.hit_die,))
+        hp_roll, warnings = HIT_DIE_DEFAULT, (HIT_DIE_DEFAULT_USED,)
     roll = int(hp_roll)
     if not 1 <= roll <= ch.hit_die:
         raise CommandError("hit-die roll must be 1..%d" % ch.hit_die, "hit_die_roll_must", values=(ch.hit_die,))
     level = ch.level + 1
     gain = tr.level_up_training(level)
     new = replace(ch, level=level, hp_rolls=ch.hp_rolls + (roll,), training=ch.training + gain)
-    return commit(new, "level_up", "level %d, training +%d" % (level, gain), {"level": level, "training": gain})
+    return commit(new, "level_up", "level %d, training +%d" % (level, gain),
+                  {"level": level, "training": gain, "roll": roll, "warnings": warnings})
 
 
 @command

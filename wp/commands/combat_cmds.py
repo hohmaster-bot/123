@@ -7,6 +7,7 @@ from wp.core import effects as ef
 from wp.core import magic as mg
 from wp.core import tick as tk
 from wp.model import bridge
+from wp.model import sheet_targets as stg
 from wp.model import defense_view as dfv
 from wp.model import derived_view as dv
 from wp.model import ids
@@ -68,6 +69,8 @@ def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=None, fr
     if ch.caster is None and not from_item:
         raise CommandError("character is not a caster", "character_not_caster")
     mana_cost = mg.circle_mana(circle) if mana_cost is None else int(mana_cost)
+    if int(circle) > 0:
+        mana_cost = max(0, mana_cost + stg.value(ch, "spell_cost"))   # effect target spell_cost (package 17)
     extra = 0
     if ch.caster == mg.MAGE and not from_item:
         if int(circle) > 0:
@@ -82,6 +85,7 @@ def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=None, fr
     cost = mg.cast_cost(ch.caster or mg.MAGE, circle, cast_actions, mana_cost,
                         circle0_slots=c0.max if c0 else 0, from_item=from_item, overload=overload,
                         extra_mana=extra - pb, extra_balance=pb)
+    cost = replace(cost, overload=max(0, cost.overload + stg.value(ch, "spell_overload")))   # package 17
     if not mg.can_pay(bridge.to_caster(ch), cost):
         raise CommandError("not enough mana or slots", "not_enough_mana_slots")
     state, res = mg.cast(bridge.to_caster(ch), cost)

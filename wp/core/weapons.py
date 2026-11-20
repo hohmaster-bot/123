@@ -58,6 +58,11 @@ class Weapon:
 class Pick:
     slot: int                    # 5..12
     bonus: str
+    used: int = 0                # once-per-combat picks (COUNTER_PICKS): 1 = spent this combat (package 17)
+
+
+# Mastery picks that are a "once per combat" ability: usage charges max 1, recharge at the end of combat (package 17)
+COUNTER_PICKS = ("reroll_d20", "restore_balance", "parry_ranged")
 
 
 # ------------------------------------------------------------ levels / cost
@@ -188,14 +193,29 @@ def durability_percent(picks):
     return 30 * count(picks, "durability_30") + 70 * count(picks, "durability_70")
 
 
+ITEM_HP = "item_hp"                # ItemBonus kinds: effect targets on items (package 17, Q125)
+ITEM_HARDNESS = "item_hardness"
+
+
+@dataclass(frozen=True)
+class ItemBonus:
+    """An effect bonus to one item's HP or hardness, passed together with the mastery picks (not a pick)."""
+    bonus: str
+    value: int
+
+
+def _effect(picks, kind):
+    return sum(p.value for p in picks if isinstance(p, ItemBonus) and p.bonus == kind)
+
+
 def final_durability(base, picks):
-    """Final durability from the item's base value; rounded down."""
-    return int(base) * (100 + durability_percent(picks)) // 100
+    """Final durability from the item's base value; rounded down; then + effects "item_hardness" (never below 0)."""
+    return max(0, int(base) * (100 + durability_percent(picks)) // 100 + _effect(picks, ITEM_HARDNESS))
 
 
 def final_hp(base, picks):
-    """Final item HP: +1 per expert 'weapon HP +1' pick."""
-    return int(base) + count(picks, "hp_1")
+    """Final item HP: +1 per expert 'weapon HP +1' pick + effects "item_hp" (package 17)."""
+    return int(base) + count(picks, "hp_1") + _effect(picks, ITEM_HP)
 
 
 # --------------------------------------------------------- crit and lucky

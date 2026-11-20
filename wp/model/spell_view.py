@@ -79,8 +79,10 @@ def view(ch):
 
 
 def mana_level(ch):
-    """The most one spell may cost in mana, penalty included = the character's level (Q49)."""
-    return int(ch.level)
+    """The most one spell may cost in mana, penalty included = the character's level (Q49) + effects "mana_level"
+    (package 17)."""
+    from wp.model import sheet_targets as stg
+    return int(ch.level) + stg.value(ch, "mana_level")
 
 
 def over_limit(ch, mana_cost, extra):
