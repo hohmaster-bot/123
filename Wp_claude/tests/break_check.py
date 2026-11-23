@@ -20,7 +20,8 @@ import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-COPY = ("wp", os.path.join("Wp_claude", "tests"), os.path.join("Wp_claude", "RULES"), os.path.join("Wp_claude", "tools"))
+COPY = ("wp", os.path.join("Wp_claude", "tests"), os.path.join("Wp_claude", "RULES"), os.path.join("Wp_claude", "tools"),
+        os.path.join("Wp_claude", "TRANSLATION_TODO.md"), os.path.join("Wp_claude", "REVIEW_PACK"))
 
 
 def registry():
@@ -38,7 +39,12 @@ def registry():
 def _copy(tmp):
     ignore = shutil.ignore_patterns("__pycache__", "*.pyc")
     for rel in COPY:
-        shutil.copytree(os.path.join(ROOT, rel), os.path.join(tmp, rel), ignore=ignore)
+        src = os.path.join(ROOT, rel)
+        if os.path.isfile(src):
+            os.makedirs(os.path.dirname(os.path.join(tmp, rel)), exist_ok=True)
+            shutil.copy2(src, os.path.join(tmp, rel))
+        elif os.path.isdir(src):
+            shutil.copytree(src, os.path.join(tmp, rel), ignore=ignore)
 
 
 def _passes(suite, tmp):
