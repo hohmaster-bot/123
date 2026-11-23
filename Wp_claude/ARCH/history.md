@@ -47,3 +47,6 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   skills, weapon_groups, feats, damage_types, doll_slots), shipped + user layers (override, tombstone, reset),
   catalog commands, schema table, atomic save, entry codes; old loaders moved onto it; medicine = Int; break_check
   checks suites pass without a break. Report: tests/PACKAGE18_REPORT.md.
+- Done in package 19: settings structure: schema in data, three domains (rules, character, app), app settings
+  file with two layers and atomic save, settings / profile / layout / quick-button / image commands, cells resolved
+  against the character, colour rules, macros of existing commands, hotkey conflicts. Report: tests/PACKAGE19_REPORT.md.

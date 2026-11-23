@@ -25,3 +25,14 @@ Kept apart from RULES/. Nothing here changes numbers.
 - Crit confirmation tooltip (house-rule note): x2 -> +0, x3 -> +4, x4 -> +8.
 - AC grid (package 13 H idea): show the 3x3 AC grid around the character (RULES/ac_zones.md) with the AC number in
   every cell (front / sides / back, shield side), once AC zones are built.
+
+## Settings and layouts [OWNER, package 19: wishes, the structure exists in ARCH/settings.md]
+- Classic: resize panels; put ANY parameter / ability / status / pool / skill into a cell; cells may change colour by
+  thresholds and run an action on click.
+- Lite: move every element; window opacity together with click-through (and a hotkey that toggles click-through);
+  always on top; lock the layout; snap to a grid; per-monitor scale.
+- Pictures for buttons, abilities, slots, statuses (image registry, placeholder when a file is missing).
+- Quick buttons usable in both modes, with an icon, a hotkey and a macro of several commands.
+- General program settings: language RU / EN, theme, scale, font size, weight units, autosave, backups,
+  confirmations for dangerous actions, hotkeys, notifications, log filters, how each resource is shown (number / bar /
+  both / percent), window positions, the last character, the default mode.

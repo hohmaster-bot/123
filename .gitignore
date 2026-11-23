@@ -1,3 +1,5 @@
 characters/
 __pycache__/
 catalogs/
+app_settings.json
+images/
