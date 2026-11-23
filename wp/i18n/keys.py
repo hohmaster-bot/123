@@ -76,7 +76,7 @@ def required():
     add("catalog", *sorted({"catalog.field." + f["name"] for fs in cat.SCHEMAS.values() for f in fs}))
     add("skill", *("skill." + e["id"] for e in cs.load_shipped("skills").entries))
     add("stat", *("stat." + a for a in ABILITIES))
-    add("tier", *("tier." + t for t in sk.TIERS))
+    add("tier", *("tier." + t for t in sk.TIERS), "tier.specialized.full")   # full name for tooltips (package 22 C)
     add("damage", *("damage." + e["id"] for e in cs.load_shipped("damage_types").entries))
     add("slot", *("slot." + e["id"] for e in cs.load_shipped("doll_slots").entries))
     add("resource", *("resource." + r for r in RESOURCES))

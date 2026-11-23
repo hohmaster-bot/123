@@ -23,6 +23,7 @@ from wp.model import records as rec
 UNARMED_TAG = "unarmed"
 NO_MATCH = "no_matching_weapon"
 FEAT_MISSING = "feat_missing"
+NO_REACTIONS = "not_enough_reactions"     # package 22 A2
 UNARMED_NOT_POSSIBLE = "unarmed_not_possible"
 NO_RECORD = "no_attack_record"
 
@@ -104,7 +105,11 @@ def view_one(ch, m):
         reasons.append(NO_MATCH)
     if m.required_feat and not any(f.fid == m.required_feat for f in ch.feats):
         reasons.append(FEAT_MISSING)
-    ok = bool(entries) and FEAT_MISSING not in reasons
+    if m.cost_reactions:
+        from wp.commands import reaction_cmds
+        if reaction_cmds.reactions_current(ch) < m.cost_reactions:
+            reasons.append(NO_REACTIONS)
+    ok = bool(entries) and FEAT_MISSING not in reasons and NO_REACTIONS not in reasons
     return ManeuverView(mid=m.mid, name=m.name, available=ok, weapons=tuple(entries), reasons=tuple(reasons),
                         cost=(m.cost_actions, m.cost_balance, m.cost_spirit), favorite=m.favorite,
                         condition_tag=m.condition_tag,

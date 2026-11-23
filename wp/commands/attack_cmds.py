@@ -139,6 +139,9 @@ def use_attack(ch, rid=""):
         raise CommandError("attack %s is not available: take %s in hand" % (rid, ", ".join(why["missing"]) or "?"),
                            "attack_not_available", values=(rid,), missing=tuple(why["missing"]))
     pen = itv.penalty(ch, record)
+    if record.cost_reactions:          # an attack of opportunity / readied attack record (package 22 A2)
+        from wp.commands import reaction_cmds
+        ch = reaction_cmds.spend(ch, record.cost_reactions)
     return commit(replace(ch, iterative_count=ch.iterative_count + 1), "use_attack",
                   "attack %s, iterative %d" % (rid, pen), {"iterative": pen, "count": ch.iterative_count + 1})
 

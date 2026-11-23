@@ -37,9 +37,15 @@ class Result:
 
 
 def normalize(ch):
-    """States at HP < 0 exist only while HP < 0 (resources.md): at HP >= 0 the state is cleared."""
+    """States at HP < 0 exist only while HP < 0 (resources.md): at HP >= 0 the state is cleared. In combat the
+    balance never stays above the current balance cap (package 22 A3: restores are clamped, not refused)."""
     if ch.negative_state is not None and ch.hp_current >= 0:
-        return replace(ch, negative_state=None)
+        ch = replace(ch, negative_state=None)
+    if ch.in_combat:
+        from wp.model import derived_view as dv
+        cap = dv.balance_max(ch)
+        if ch.balance_current > cap:
+            ch = replace(ch, balance_current=cap)
     return ch
 
 

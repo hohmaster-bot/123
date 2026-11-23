@@ -142,7 +142,7 @@ def end_combat(ch):
 def end_combat_state(ch):
     """The state after the end of combat (end_combat, long_rest_end_combat). Iterative series cleared (package 16 C)."""
     new = replace(ch, in_combat=False, combat_round=0, overload=0, morale_scale=0, balance_cap_hits=0, balance_cap_start=None,
-                  statuses=ef.end_combat(ch.statuses), iterative_count=0)
+                  statuses=ef.end_combat(ch.statuses), iterative_count=0, reactions_current=None)
     return us.status_recharge(new, us.recharge(new, us.COMBAT_END), (us.COMBAT_END,))   # "combat_end" (package 17)
 
 

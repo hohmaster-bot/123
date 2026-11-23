@@ -142,6 +142,7 @@ class AttackRecord:
     twf_off: str = ""                  # off-hand record id; "" = the other end of a double weapon
     usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
     iterative_step: Optional[int] = None   # own iterative step (e.g. -3); None = rules_settings (package 16 C)
+    cost_reactions: int = 0            # reactions spent by use_attack (attack of opportunity...; package 22 A2)
     kind: str = ""                     # melee / ranged / thrown; "" = the weapon card's attack_kind (package 17)
     damage_stat: Optional[str] = None  # "none" or a stat id; None = the kind's default (stat = the attack stat)
     damage_mult: Any = None            # multiplier of the damage stat; None = the kind's default / the grip
@@ -162,6 +163,7 @@ class Maneuver:
     cost_actions: int = 0
     cost_balance: int = 0
     cost_spirit: int = 0
+    cost_reactions: int = 0            # record + availability check (package 22 A2)
     required_feat: str = ""            # feat id; unavailable unless the feat is owned
     condition_tag: str = "none"        # display only
     favorite: bool = False
@@ -265,6 +267,7 @@ class Feat:
     usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
     granted_maneuvers: Tuple[str, ...] = ()   # maneuver ids (used from package 12)
     is_stance: bool = False            # a stance: its effects apply only while it is the active stance (Q74)
+    cost_reactions: int = 0            # reactions the feat's use costs: a record (package 22 A2)
 
 
 @dataclass(frozen=True)
@@ -352,6 +355,7 @@ class Character:
     ov: int = 0                        # time points (OV), no cap
     languages: Tuple[Language, ...] = ()
     reactions: int = rd.default("new.reactions")   # +1 reaction for 200 * the new number (package 15)
+    reactions_current: Optional[int] = None   # reactions left this round; None = all (package 22 A2)
     seeds: Tuple[Seed, ...] = ()
     spells: Tuple[Spell, ...] = ()
     professionalism_bought: bool = False   # the 300-point professionalism option (package 15, Q29)

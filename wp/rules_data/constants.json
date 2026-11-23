@@ -134,7 +134,8 @@
   {"id": "progression.hit_die_default", "value": 1, "type": "int", "group": "training", "unit": "HP", "description": "level_up without a roll takes this die value (Q111)", "label": "rules.progression.hit_die_default"},
   {"id": "training.feat_default_cost", "value": 200, "type": "int", "group": "training", "unit": "training", "description": "feat price when the author gives none", "label": "rules.training.feat_default_cost"},
   {"id": "new.hit_die", "value": 8, "type": "int", "group": "new_character", "unit": "HP", "description": "hit die of a new character (and its level-1 HP)", "label": "rules.new.hit_die"},
-  {"id": "new.reactions", "value": 1, "type": "int", "group": "new_character", "unit": "reactions", "description": "reactions of a new character", "label": "rules.new.reactions"}
+  {"id": "new.reactions", "value": 1, "type": "int", "group": "new_character", "unit": "reactions", "description": "reactions of a new character", "label": "rules.new.reactions"},
+  {"id": "tick.max_order_items", "value": 6, "type": "int", "group": "tick", "unit": "items", "description": "all orders of the tick's balance items are tried up to this many (then greedy)", "label": "rules.tick.max_order_items"}
  ],
  "allowlist": {
   "note": "Numbers in code that are NOT game rules (package 20). named: module constants; inline: numbers inside functions. 0, 1, -1 are always allowed.",
