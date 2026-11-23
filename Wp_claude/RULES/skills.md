@@ -16,7 +16,8 @@ skill = ranks + key stat mod + bonuses (race/class/items...) + armor penalty (if
 - "Cycle" = GM-announced big time span (see injuries.md).
 
 ## Skill catalog [OWNER]
-- The default skill catalog (45 templates) is DATA loaded from skills_list.md, not hard-coded. The player may add own templates (catalog.md).
+- The default skill catalog (45 templates) is DATA, not hard-coded: the catalog file wp/catalog/data/skills.json,
+  made from skills_list.md (package 18; a test checks they agree). [OWNER, package 18] Medicine is an Int skill. The player may add own templates (catalog.md).
 - A new character starts with ONLY two skills: Perception (perception) and Search (search), both 0 ranks.
   Every other skill is added by the player from the catalog (picking a template creates the skill with 0 ranks).
 - Templates flagged `param` are families: on adding, the player names the sub-skill. Examples: "Craft (smith) III" =

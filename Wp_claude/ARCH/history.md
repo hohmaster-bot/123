@@ -43,3 +43,7 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package 17: the remaining effect targets (pain, item HP / hardness, morale, short rest, spell cost /
   overload, mana level), level_up default die 1 with a warning, DR stacks flag, percent modifiers per element and the
   damage order as data, attack kinds melee / ranged / thrown, master counters as charges. Report: tests/PACKAGE17_REPORT.md.
+- Done in package 18: catalogs as single JSON files per kind (weapons, armor_shields, items, spells, statuses,
+  skills, weapon_groups, feats, damage_types, doll_slots), shipped + user layers (override, tombstone, reset),
+  catalog commands, schema table, atomic save, entry codes; old loaders moved onto it; medicine = Int; break_check
+  checks suites pass without a break. Report: tests/PACKAGE18_REPORT.md.

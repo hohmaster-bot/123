@@ -13,9 +13,9 @@
 - Weight in catalog rows [OWNER]: "L" = 1 L; a plain number N = N * 10 L (1 = 10 L = 1 B). The unit "B" is not
   written in the rows.
 - Skills: the default skill catalog ships with the app as data (skills_list.md, 45 templates); see skills.md "Skill catalog".
-- Armor and shields [OWNER, package 9]: two example data sets ship as data (wp/catalog/data/armor_set_1.json "Country
-  1", 8 rows; armor_set_2.json "Country 2", 15 rows). They are tables from a game, rules may differ per game: plain
-  selectable data sets, not hard rules; any file armor_set_*.json is one more set. Row fields: id, name, kind
+- Armor and shields [OWNER, package 9]: two example data sets ship as data (since package 18 both live in the
+  catalog file armor_shields.json, field "set": set_1 "Country 1", 8 rows; set_2 "Country 2", 15 rows). They are tables from a game, rules may differ per game: plain
+  selectable data sets, not hard rules; another value of "set" is one more set. Row fields: id, name, kind
   (armor / shield), category (armor light / medium / heavy; shield light / heavy / tower), weight, price (text as
   written), access_class (set 1 only), ac_bonus, touch_bonus, max_dex, skill_penalty (positive = penalty),
   speed_penalty_ft, spell_penalty_mana, spell_failure_pct, special ("+" column of set 2), hardness, hp, durable.
@@ -31,3 +31,29 @@
 ## Two names [OWNER]
 - Everything can store two names: the list name and a short name (used on chips and buttons).
 - Plan (not rule): button label may be replaced by an image.
+
+## Catalog files [OWNER, package 18, D21]
+- Every catalog is ONE self-contained JSON file that the program (and later the UI) loads, lists, edits, adds to,
+  deletes from and creates from scratch with no code change. One shipped file per kind in wp/catalog/data/:
+  weapons, armor_shields, items, spells, statuses, skills, weapon_groups, feats, damage_types, doll_slots. A user can
+  create more catalog files of a kind.
+- Format: {"kind", "format": 1, "title", "counter", "retired", "meta", "entries": [...]}. Every entry: a stable id (made
+  by the program from the name: transliteration, a number from the file's counter on a collision; a deleted id goes
+  to "retired" and is never given again), name (free text), sample (bool), the fields of its kind. Unknown entry
+  fields are KEPT on edit and save and never interpreted; unknown top-level fields are dropped on load (no
+  migrations). The fields of each kind (name, type, required, allowed values) are DATA: catalog_schemas.json.
+- Two layers: shipped catalogs (read-only, the install folder) and user catalogs (a folder next to the characters,
+  catalogs/<kind>.json). A user entry with the same id wins ("override"); removing a shipped entry writes a
+  tombstone into the user file; reset drops the override or the tombstone. The program never writes into the
+  shipped folder. The program's own loaders (weapons, groups, armor, feats, skills, damage types, doll slots) read
+  through this layer.
+- Catalog commands are the ONLY way to change a catalog (like character commands, D5): catalog_add_entry,
+  catalog_edit_entry, catalog_rename_entry (id stays), catalog_remove_entry, catalog_duplicate_entry,
+  catalog_reset_entry, catalog_import_entry, catalog_create. Refusals carry a reason id + params. Saving is atomic
+  (temp file + replace; a failed save keeps the old file). The UI later reads catalogs through the catalog view (list
+  with a filter text and a sort; get, with the layer shipped / user / override) and writes them only through these
+  commands.
+- Sharing: one entry -> a text code (export) and back (import as a new entry, gear.md "Item codes"); a whole
+  catalog file can be exported / imported as it is.
+- The rows shipped in package 18 for weapons, armor / shields, items, spells and statuses are TEST SAMPLES
+  (sample = true) [OWNER]: the owner replaces them through the future UI.

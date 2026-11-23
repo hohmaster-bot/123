@@ -39,8 +39,8 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: Cells (6) | Shield coverage (shield in the LEFT hand) (16) | Features change cells (27) | Requirement for the implementation (31) | Values per cell [OWNER, package 14, closes Q92] (35) | Parry and shields [OWNER, package 15, closes Q93] (39)
 - `buffs.md` (198 lines): effects, buffs, duration, charges
   sections: What an effect can change (4) | Duration kinds (9) | Value from the current overload [OWNER] (25) | Value from a stat modifier [OWNER, package 11 B; closes Q65] (29) | Skills target [OWNER] (39) | Condition [OWNER, package 8] (42) | Status container [OWNER, package 11 A; closes Q63] (50) | Charges and activation (78) | Stacking (see defense.md) (85) | Ready-made buffs (89) | Stacking flags [OWNER] (92) | Block effects [OWNER, package 13 B; closes Q82] (99) | Per-round cost [OWNER, package 13 C] (118) | Formulas [OWNER, package 14 C] (148) | Action and restore blocks, restore by effect [OWNER, package 14 F] (162) | Effect targets of every sheet number [OWNER, package 16 A2] (176)
-- `catalog.md` (33 lines): catalogs, sharing, sorting
-  sections: Two names [OWNER] (31)
+- `catalog.md` (59 lines): catalogs, sharing, sorting
+  sections: Two names [OWNER] (31) | Catalog files [OWNER, package 18, D21] (35)
 - `classes_magic.md` (54 lines): class editor tabs, mana/slots restore
   sections: Class editor, 3 tabs [OWNER] (3) | Restore [OWNER] (10) | Where abilities live [OWNER] (16) | Mana source [OWNER] (21) | Spell cost [OWNER, confirmed] (25) | Racial damage absorbers [OWNER] (48)
 - `combat.md` (187 lines): actions, iterative attacks, crit, lucky attack, maneuvers, size, spells dmg
@@ -53,8 +53,8 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: Penalties, dodge, flat [OWNER, packages 4-5] (17) | Owner texts (bound to the layer TYPE, stored as data: wp/catalog/data/defense_layers.json) (36)
 - `doll.md` (24 lines): 22 doll slots
   sections: (no ## headings)
-- `gear.md` (214 lines): doll, hands, belt, bag, weight/load, base, armor, qualification, item codes
-  sections: Doll [OWNER] (3) | Qualification (15) | Belt (unload) [OWNER] (18) | Bag (22) | Weight [OWNER] (28) | Base (resource for strengthening) [OWNER] (43) | Armor [OWNER] (50) | Masterwork [OWNER, package 8; package 9 closes Q39, Q40] (82) | Enchantment [OWNER, package 5] (97) | Item HP [OWNER, package 6, closes Q31] (121) | Item codes / sharing [OWNER] (166) | Enabled / disabled (activation) [OWNER] (170) | Consumables [OWNER, package 13 D] (185) | Charges and cooldown [OWNER, package 14 B; closes Q94] (197) | Base contents [OWNER text above; built in package 16 G7] (210)
+- `gear.md` (215 lines): doll, hands, belt, bag, weight/load, base, armor, qualification, item codes
+  sections: Doll [OWNER] (3) | Qualification (15) | Belt (unload) [OWNER] (18) | Bag (22) | Weight [OWNER] (28) | Base (resource for strengthening) [OWNER] (43) | Armor [OWNER] (50) | Masterwork [OWNER, package 8; package 9 closes Q39, Q40] (82) | Enchantment [OWNER, package 5] (97) | Item HP [OWNER, package 6, closes Q31] (121) | Item codes / sharing [OWNER] (166) | Enabled / disabled (activation) [OWNER] (171) | Consumables [OWNER, package 13 D] (186) | Charges and cooldown [OWNER, package 14 B; closes Q94] (198) | Base contents [OWNER text above; built in package 16 G7] (211)
 - `injuries.md` (43 lines): trauma points, injuries
   sections: Trauma points (OT) [OWNER] (3) | Injury [OWNER] (17) | Healing rating (RL) [OWNER] (35)
 - `narrative.md` (43 lines): quirks, stories, courts, quests, drives, attention
@@ -65,10 +65,10 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: HP and temp HP [OWNER] (3) | Damage pipeline [OWNER] (17) | Balance [OWNER] (32) | Pain [OWNER] (83) | Zero initiative phase [OWNER] (117) | Spirit, mana, overload [OWNER] (129) | Class resources [OWNER] (145) | Comfort [OWNER] (149) | Over max [OWNER, confirmed] (153) | Base, attention, money -> gear.md / narrative.md (162) | Resource pools [OWNER, package 13 C] (164) | Rule switches [OWNER, package 14 G] (174) | Journal [OWNER, package 14 H] (188)
 - `rest.md` (59 lines): short rest, long rest, BP
   sections: BP and balance [OWNER] (5) | Action UI [OWNER] (21) | Long rest [OWNER] (25) | Short rest [OWNER] (38)
-- `skills.md` (42 lines): skill categories and costs
-  sections: Roll bonus (5) | Categories (8) | Skill catalog [OWNER] (18) | Training cost (26) | Creation and free grants [OWNER] (38)
+- `skills.md` (43 lines): skill categories and costs
+  sections: Roll bonus (5) | Categories (8) | Skill catalog [OWNER] (18) | Training cost (27) | Creation and free grants [OWNER] (39)
 - `skills_list.md` (71 lines): default skill catalog (45 templates, data, owner text)
-  sections: СИЛА (STR) (16) | ЛОВКОСТЬ (DEX) (19) | ВЫНОСЛИВОСТЬ (CON) (28) | ИНТЕЛЛЕКТ (INT) (31) | МУДРОСТЬ (WIS) (55) | ХАРИЗМА (CHA) (63)
+  sections: СИЛА (STR) (16) | ЛОВКОСТЬ (DEX) (19) | ВЫНОСЛИВОСТЬ (CON) (28) | ИНТЕЛЛЕКТ (INT) (31) | МУДРОСТЬ (WIS) (56) | ХАРИЗМА (CHA) (63)
 - `spells.md` (16 lines): spell record, effect link, damage editor [BETA], stance = feat checkbox
   sections: Metamagic [OWNER, package 10, docs only; not built] (11)
 - `stats.md` (10 lines): stat damage, current/max, permanent stat damage

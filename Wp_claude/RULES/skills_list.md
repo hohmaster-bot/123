@@ -5,7 +5,7 @@ The player can edit/add skills (catalog rules: catalog.md). Costs and tiers: ski
 id (ASCII), stat, name (RU/EN via i18n), description (owner text), flags.
 Flag `param` = "(х)": a family; the player adds named sub-skills, each with its OWN ranks
 (e.g. Piloting: air / water / space; Culture knowledge: one per region; Acting: one per art; Craft: three TYPES I/II/III, each with a named craft).
-Counts: STR 1, DEX 7, CON 1, INT 22, WIS 6, CHA 8 = 45 entries.
+Counts: STR 1, DEX 7, CON 1, INT 23, WIS 5, CHA 8 = 45 entries. [OWNER, package 18] Medicine is an Int skill.
 Mechanical hooks mentioned by the owner (only these are rules, the rest is flavor text for the tooltip):
 - Concentration: helps to act in negatives (DC 20, see resources.md "Dying").
 - Self-hypnosis: may help to restore balance (hook for effects, not an automatic rule).
@@ -51,10 +51,10 @@ Mechanical hooks mentioned by the owner (only these are rules, the rest is flavo
 - know_war | Знание (бой и война) — Понимание стилей боя, армейской и военной рутины, патрулей, военной разведки. Помогает определить, насколько серьезный противник перед вами.
 - know_planes | Знание (другие миры) — Они же "планы". Умение разбираться в пришельцах, контрактах, призывах.
 - know_it | Знание (IT) — Теоретические познания в том, как работают информационные технологии. Могут косвенно помочь в том числе и в магических устройствах. Позволяют анализировать работы различных "черных ящиков", а также базовые познания в программировании. Обычным людям доступно редко.
+- medicine | Медицина — "Тяжелая" медицина. Необходима для обработки полученных травм, ухода за тяжело раненными и так далее. На сессиях применяется редко, обычно работает как "знание", отражающее теоретические познания, либо между сессиями и в пост-обработке.
 
 ## МУДРОСТЬ (WIS)
 - first_aid | Первая помощь — Полевая медицина. Экстренно остановить кровотечение союзнику, помочь с ядом или переломом, а также уход за товарищами на отдыхе. Помогает определить характер ран или смерти. С серьезными травмами не помогает.
-- medicine | Медицина — "Тяжелая" медицина. Необходима для обработки полученных травм, ухода за тяжело раненными и так далее. На сессиях применяется редко, обычно работает как "знание", отражающее теоретические познания, либо между сессиями и в пост-обработке.
 - perception | Восприятие — Навыки и психология, позволяющие определить, что что-то не так, найти прячущегося человека или кого-то, кто ведет себя подозрительно.
 - empathy | Эмпатия — Умение понять, что тебе врут. Сбор информации. Также пригодится для общение с существами, общающихся эмоциями или телепатией, например, с феями.
 - survival | Выживание — Полевой навык. Умение найти себе еду, укрытие, определить погоду, очистить воду и так далее.

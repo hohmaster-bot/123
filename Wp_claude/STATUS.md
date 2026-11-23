@@ -1,17 +1,18 @@
 # Status (update at the end of every package; at most 40 lines)
 
 Branch: `Rework`. Phase: 3 (rules core and model done; data / settings next, no UI yet).
-Last finished package: 17 (remaining effect targets, level_up default die, DR stacks, percent per element, attack
-kinds, master counters). Last report: `Wp_claude/tests/PACKAGE17_REPORT.md`.
+Last finished package: 18 (catalogs: one JSON file per kind, shipped + user layers, catalog commands, entry codes,
+medicine = Int). Last report: `Wp_claude/tests/PACKAGE18_REPORT.md`.
 
-## Tests (last run in package 17)
-- `python Wp_claude/tests/run_all.py`: suites 44, passed 44, failed 0.
-- `python Wp_claude/tests/break_check.py`: entries 86, caught 86, missed 0.
+## Tests (last run in package 18)
+- `python Wp_claude/tests/run_all.py`: suites 45, passed 45, failed 0.
+- `python Wp_claude/tests/break_check.py`: entries 99, caught 99, missed 0.
 - Legacy baseline (separate): 105 examples, 69 pass, 17 fail, 19 not built (BASELINE_REPORT.md).
 
 ## Open questions (OPEN_QUESTIONS.md)
-- Waiting for the owner: Q104 (professionalism checks).
-- Assumptions to confirm: Q23, Q96, Q98-Q102, Q105, Q106, Q109, Q112, Q114, Q116-Q121, Q123, Q124, Q126-Q129.
+- Waiting for the owner: Q104 (professionalism checks), Q133 (an ilvl field on sheet items).
+- Assumptions to confirm: Q23, Q96, Q98-Q102, Q105, Q106, Q109, Q112, Q114, Q116-Q121, Q123, Q124, Q126-Q129, Q131,
+  Q132, Q134-Q136.
 
 ## Next (ROADMAP.md)
 1. Phase 3 data / settings: rule constants from code to data, settings domains, wp/i18n texts for refusal reasons,
@@ -28,4 +29,5 @@ kinds, master counters). Last report: `Wp_claude/tests/PACKAGE17_REPORT.md`.
 ## Where things are
 - Plan: ROADMAP.md. Finished packages: ARCH/history.md. Closed questions: ARCH/decision_log.md.
 - Prompt template for new packages: Wp_claude/PROMPT_TEMPLATE.md.
-- Data: wp/catalog/data/sheet_targets.json, damage_types.json, doll_slots.json.
+- Catalogs: wp/catalog/data/<kind>.json (RULES/catalog.md "Catalog files", D21); rule data: sheet_targets.json,
+  defense_layers.json, catalog_schemas.json.

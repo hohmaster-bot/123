@@ -164,7 +164,8 @@
   switches a "day" item off and the enchantment is gone.
 
 ## Item codes / sharing [OWNER]
-- Any item/ability/etc -> code copied to clipboard. Code -> import as item (catalog import wanted, not built).
+- Any item/ability/etc -> code copied to clipboard. Code -> import as item. [package 18] Built for catalog entries:
+  store.export_entry / catalog_import_entry (catalog.md "Catalog files").
 - Whole character copy, PDF export. UI must not block copy.
 
 ## Enabled / disabled (activation) [OWNER]
