@@ -43,7 +43,8 @@
   fields are KEPT on edit and save and never interpreted; unknown top-level fields are dropped on load (no
   migrations). The fields of each kind (name, type, required, allowed values) are DATA: catalog_schemas.json.
 - Two layers: shipped catalogs (read-only, the install folder) and user catalogs (a folder next to the characters,
-  catalogs/<kind>.json). A user entry with the same id wins ("override"); removing a shipped entry writes a
+  catalogs/<kind>.json; more user files of the same kind are named <kind>__<name>.json, package 22 B9, Q152).
+  A user entry with the same id wins ("override"); removing a shipped entry writes a
   tombstone into the user file; reset drops the override or the tombstone. The program never writes into the
   shipped folder. The program's own loaders (weapons, groups, armor, feats, skills, damage types, doll slots) read
   through this layer.

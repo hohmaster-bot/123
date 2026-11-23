@@ -71,7 +71,7 @@ SIZES = ("small", "medium", "large")
 SIZE_MOD = rd.ref("size.attack_ac")  # attack and AC
 SIZE_CMB = rd.ref("size.cmb_cmd")  # CMB and CMD (opposite sign)
 BASE_SPEED_FT = rd.ref("speed.base_ft")
-OVERLOAD_SPEED_FT = rd.ref("speed.overload_ft")  # gear.md: overload -10 ft
+OVERLOAD_SPEED_FT = rd.ref("speed.encumbrance_ft")  # gear.md: overload -10 ft
 
 
 def size_mod(size):

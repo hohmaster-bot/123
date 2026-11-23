@@ -1,18 +1,18 @@
 # Status (update at the end of every package; at most 40 lines)
 
 Branch: `Rework`. Phase: 3 (rules core and model done; data / settings next, no UI yet).
-Last finished package: 21 (i18n key files RU / EN with fallback, themes as token data with a QSS builder, the panel
-registry; Item.ilvl; the old iterative helper removed). Last report: `Wp_claude/tests/PACKAGE21_REPORT.md`.
+Last finished package: 22 (restore_mana, reactions as a resource, balance cap in combat, the most favourable
+tick order, paired attack = one use; RULES text fixes B1-B9; ru.json names). Last report: `Wp_claude/tests/PACKAGE22_REPORT.md`.
 
-## Tests (last run in package 21)
-- `python Wp_claude/tests/run_all.py`: suites 50, passed 50, failed 0.
-- `python Wp_claude/tests/break_check.py`: entries 130, caught 130, missed 0.
+## Tests (last run in package 22)
+- `python Wp_claude/tests/run_all.py`: suites 51, passed 51, failed 0.
+- `python Wp_claude/tests/break_check.py`: entries 154, caught 154, missed 0.
 - Legacy baseline (separate): 105 examples, 69 pass, 17 fail, 19 not built (BASELINE_REPORT.md).
 
 ## Open questions (OPEN_QUESTIONS.md)
-- Waiting for the owner: Q104 (professionalism checks). Russian texts to fill: Wp_claude/TRANSLATION_TODO.md.
+- Waiting for the owner: Q104 (professionalism checks), Q151 (damage pipeline order: code vs the owner's list). Russian texts to fill: Wp_claude/TRANSLATION_TODO.md.
 - Assumptions to confirm: Q23, Q96, Q98-Q102, Q105, Q106, Q109, Q112, Q114, Q116-Q121, Q123, Q124, Q126-Q129, Q131,
-  Q132, Q134-Q144, Q146-Q149.
+  Q132, Q134-Q144, Q146, Q148-Q150, Q152, Q153.
 
 ## Next (ROADMAP.md)
 1. The independent review of RULES_PACK.md; the owner fills ru.json (TRANSLATION_TODO.md); a status catalog.

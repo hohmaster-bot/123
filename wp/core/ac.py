@@ -17,7 +17,7 @@ from wp.rules_data import rules as rd
 ODD_LEVEL_STEP = rd.ref("ac.odd_level_step")   # parry +1 per this many levels from level 3
 
 BASE_AC = rd.ref("ac.base")
-OVERLOAD_DODGE_CAP = rd.ref("ac.overload_dodge_cap")
+OVERLOAD_DODGE_CAP = rd.ref("ac.encumbrance_dodge_cap")
 
 FRONT = "front"
 FLANK = "flank"

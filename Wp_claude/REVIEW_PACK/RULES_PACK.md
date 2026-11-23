@@ -248,6 +248,19 @@ The UI is not built yet: only the calculation and the data exist.
 - Crit confirmation die and lucky attack die (see combat.md).
 
 
+#### Damage pipeline [package 22 B6: the ONE text, checked against the code wp/core/damage.py]
+For every part of a hit (each damage type on its own), in this order:
+1. the steps of rules_settings.damage_order (data; default):
+   a. percent reduction typed for the hit (25 / 50 / 75 %), rounded up;
+   b. flat reduction: the larger of the total DR (physical types; Q115 stacking) and resist:<type> (Q119);
+   c. the signed percent modifier "percent:<type>" (-100 immunity ... +50 more), rounded up;
+2. the parts are added up; the sum goes to temp HP first;
+3. then to the temp-HP analogs (absorbers, e.g. racial mana), in their order;
+4. what is left reaches HP, and the same amount lowers the balance (floored at 0);
+5. what the balance could not take is the overflow: -> OT, and +1 pain for the hit.
+(The owner's list in package 22 named "percent modifier -> flat -> absorbers -> temp HP"; the code does a, b, c as
+above and temp HP BEFORE the absorbers: OPEN_QUESTIONS Q151.)
+
 #### Damage order and percent modifiers [OWNER, package 17]
 - Effect target "percent:<damage type>": a SIGNED percent: -100 = immunity, -50 = half, +50 = takes 50% more. One value
   per type on a character: with several sources the larger absolute value wins (equal + and - -> 0, like typed
@@ -271,6 +284,8 @@ The UI is not built yet: only the calculation and the data exist.
 - Options spent in own turn may carry tag "attack" (player sets tags himself, spells needing attack roll too).
 - 2nd tagged option: -5, 3rd: -10. Paired (two-weapon) attacks: penalty applies to both.
 - Abilities without the tag take no iterative penalty.
+- [OWNER, package 22 A5] A paired (two-weapon) combination is ONE action and ONE use: the iterative counter +1 per
+  combination (not +2); the TWF table penalties stay. Test: a combination, then a normal attack -> -5, not -10.
 - Some abilities/effects ignore the iterative penalty WITHOUT being tagged as an attack (effect flag, e.g. master bonus: one attack per turn has no [attack] tag).
 - [OWNER, package 16 C] The iterative penalty is its own NEGATIVE line "iterative" on the attack, never typed by the
   player: Character.iterative_count = attacks already used in this round's series. use_attack(rid) (the "attack"
@@ -402,11 +417,12 @@ The UI is not built yet: only the calculation and the data exist.
   (default 20). The hand-typed size CMB field is removed (old files: dropped on read).
 - Size modifiers: attack and AC small +1, medium 0, large -1. CMB and CMD small -1, medium 0, large +1 (opposite sign).
 - Effect target "speed": typed bonuses / penalties from any source (items, abilities, statuses, feats), stacked by the
-  usual rules. Derived speed = base + bonuses; overload gives -10 ft (gear.md). Speed is not a roll: no pain, no morale.
+  usual rules. Derived speed = base + bonuses; encumbrance gives -10 ft (gear.md). Speed is not a roll: no pain, no morale.
 - One move = 1 action.
-- Not applied (OPEN_QUESTIONS Q72): the armor card field speed_penalty_ft (armor slowdown) is stored but not counted.
+- Armor slowdown: REPLACED by gear.md "Armor" (package 12, Q72): the worn armor's speed_penalty_ft lowers the speed,
+  minus effects "armor_slowdown_reduction" (the old line "stored but not counted" no longer applies).
 - Tests: BAB 2, Str/Dex 12 -> (attack, AC, CMB, CMD) small (+1, 12, 2, 13), medium (0, 11, 3, 14), large (-1, 10, 4, 15);
-  base 20; +10 ft item -> 30; -5 ft status -> 15 (inactive: 20); overload -> 10.
+  base 20; +10 ft item -> 30; -5 ft status -> 15 (inactive: 20); encumbrance -> 10.
 - CMB / CMD in the sheet [package 10; Q58 and Q59 answered in package 12]:
   CMB = BAB + Str mod (with the Finesse feat: the better of Str / Dex) + size CMB mod + bonuses with target "cmb"
   + pain + morale (CMB is a roll). This is the general CMB without a weapon.
@@ -449,6 +465,20 @@ The UI is not built yet: only the calculation and the data exist.
   stat and multiplier".
 - Tests: Str 16, Dex 14: bow (ranged) -> Dex, damage 0; dagger (thrown) -> Dex, +3; sword one hand +3, two hands +4;
   bow with damage_stat str -> +3; sword damage_mult 2 -> +6; thrown with Str 6 -> -2.
+
+#### Reactions [OWNER, package 22 A2]
+- Reactions are a resource with the fixed id "reactions": max = the bought reactions (start 1; +1 for 200 * the new
+  number, training.md) + effects "reactions"; current = what is left this round.
+- spend_reaction(n) (free attacks of opportunity, readied attacks: the player presses; refused at 0, reason
+  not_enough_reactions); restore_reactions (manual, edit level). The zero-initiative tick (a new round) and the end of
+  combat bring them back to max.
+- Attack records, maneuvers and feats may carry cost_reactions: an attack record spends them in use_attack (refused
+  when not enough); a maneuver is shown unavailable (reason not_enough_reactions); a feat keeps it as a record.
+- Tests: start 1/1; spend -> 0, again refused; tick -> 1; 2 reactions for 400; an attack of opportunity record costs 1.
+
+#### Damage roll and pain [package 22 B5]
+- The damage roll is a roll with a die: the pain penalty and morale apply to it, like to the attack roll
+  (resources.md "Pain", defense.md "Morale").
 
 ## File: buffs.md
 
@@ -527,14 +557,15 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 - Tests: activation with and without charges; refusals (no charge, already active); no cost (spirit unchanged);
   remove early; a 3-tick status
   is active 2 ticks with its bonus and inactive after the 3rd; an inactive status does not tick; hidden still gives the
-  bonus and ticks; favorite flag; charges restore as before (long rest yes, a free short rest no).
+  bonus and ticks; favorite flag; charges: see "Charges and activation" (Q108).
 
 #### Charges and activation
 - A buff source (ability/item) may have charges (e.g. rage 2/3). If placed on screen/slot, tapping activates it;
   shows remaining rounds and remaining charges.
-- Charges restore on long rest (rest.md) unless item without the "restore on long rest" checkbox.
-  Charges kept on a status (rage 2/3) are restored too, on the long rest AND by the short rest option
-  "restore charges" (2 BP) [OWNER, package 8]. Test: rage 0/3, short rest charges option -> 3/3.
+- ONE rule for status charges [OWNER, Q108, package 16 G3; the package 8 line "every status is restored by the long
+  rest" is REPLACED]: a status linked to a source (Status.source_ref) follows that source's recharge rule; a status
+  without a source is NOT refilled by rests. The short rest option "restore charges" (2 BP) stays a choice of the
+  player (Q121). Item usage charges follow the item's recharge rule (gear.md "Charges and cooldown").
 
 #### Stacking (see defense.md)
 - Same type: the value with the larger absolute value wins, equal absolute values give 0; only flat stacks
@@ -704,7 +735,7 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
    | Restore all spirit | 2 BP |
    | Restore 1 stat: returns 1 point of stat damage (stats.md) | 1 BP |
    | Remove 1 pain | 1 BP |
-   | Restore mana by regen | free once, then 1 BP |
+   | Restore mana by regen (the rest regeneration; a GM / ability restore is restore_mana, classes_magic.md) | free once, then 1 BP |
    | Restore divine casts (chance from Court; only for a character with divine slots [OWNER, package 8]) | 1 BP |
 4. Only options with something to restore are shown (stat not damaged -> "Restore 1 stat" hidden; same for every option).
 5. Other BP sources (allies, skill checks, class, feats) add BP (may go above max). Effects can modify rest
@@ -712,6 +743,27 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 6. "Apply" applies everything; the short rest window closes; excess BP (above max) is lost unless keep_overcap
    [OWNER, package 8]; ALL temp HP are cleared [OWNER].
 7. Example: level 3, HP 1/20: free +5 HP (2+3); a second heal costs 1 BP.
+
+#### What is restored when [package 22 B8: a summary of the current rules, nothing new]
+| What | Short rest | Long rest | Combat start | Combat end | Zero-initiative tick | Cycle end | Manual |
+|---|---|---|---|---|---|---|---|
+| HP | free 2 + level (or the larger effect), more for 1 BP each | to max | - | - | heals per tick; rule switch hp_regen_per_tick | - | restore, set_value |
+| Temp HP | ALL cleared | not touched | - | "until end of combat" ones go | ended statuses take theirs | - | set_temp_hp |
+| BP | +1 free (may go above max), overcap lost at Apply | exactly to max | - | - | - | BP above max dropped | spend_bp, set_value |
+| Balance | - | to max | the cap is taken (snapshot) | the cap is computed again | regen (not while spell overload > 0) | - | restore, set_value, restore_all_balance (master pick) |
+| Mana | "restore mana by regen" (free once, then 1 BP) | all | - | - | per_tick_restore of statuses | - | restore_mana |
+| Spirit | "restore all spirit" (2 BP) | all | - | - | per_tick_restore of statuses | - | restore, set_value |
+| Pools | restore "short_rest" | restore "long_rest" and "short_rest" | restore "combat_start" | - | per-round payments, per_tick_restore | - | restore_pool, edit_pool |
+| Usage charges | recharge "short_rest" | "long_rest" and "short_rest" | "combat_start" | "combat_end" (master picks) | cooldowns -1 | - | restore_charges, set_charges |
+| Status charges | follow the source; option "restore charges" (2 BP) | follow the source (Q108) | follow the source | follow the source | per-round payment | - | set_charges, restore_charges |
+| Reactions | - | - | - | to max | to max | - | restore_reactions |
+| Stats (damage) | "restore 1 stat" (1 BP) | all (not permanent damage) | - | - | - | - | edit |
+| Pain | "remove 1 pain" (1 BP) | all except permanent | - | - | - | - | edit |
+| Spell overload | - | 0 | - | 0 | -1 | - | edit |
+| Morale scale | - | - | - | 0 | - | - | edit |
+| Injuries / OT | never | never | - | - | - | - | add / remove injury, OT by comfort / attention |
+| Comfort | never | never | - | - | - | - | exchange, edit |
+| Attention, OV | - | - | - | - | - | attention + income, OV burned | convert, spend |
 
 ## File: injuries.md
 
@@ -752,7 +804,8 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 #### Healing rating (RL) [OWNER]
 - Each injury has a Healing Rating. Once per cycle (a cycle = a large span of in-world time, e.g. a skip; narrative tool announced by the GM) the player rolls d12 in an outside app; roll <= RL means healed.
 - Base RL: light 3, medium 2, heavy 1.
-- 1 attention raises RL by max(2, Str modifier) (e.g. light 3 -> 5 at minimum). Some consumables/items directly reduce OT when used.
+- 1 attention raises RL by max(2, Str modifier) (e.g. light 3 -> 5 at minimum); the attention course adds to it
+  (+1 per course, Q102). Some consumables/items directly reduce OT when used.
 - The injury is removed BY HAND by the player. The app tracks its status and the related resources (HP, attention, comfort, sheet state).
 - No automatic countdown, no auto-removal, no "end session" button that edits injuries or comfort.
 - The app never removes comfort or edits injuries without a player action; no such button for now.
@@ -772,7 +825,12 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 
 #### Restore [OWNER]
 - Slots: full rest, some narrative situations, short rest. On short rest slots may or may not return despite resource spent.
-- Mana: short rest gives X; X is decided by the GM (manual input, no formula). Full rest restores all.
+- Mana [OWNER, package 22 A1], two separate things:
+  1. Rest regeneration (rest.md): the short rest option "Restore mana by regen" (free once, then 1 BP; the amount X is
+     typed in, decided by the GM, no formula); the long rest restores all mana.
+  2. Manual restore: command restore_mana(amount): a GM narrative effect or an ability gives mana at any time; up to
+     the max (an over-max value is kept, never raised); refused while a block_restore covers mana; journaled.
+  Tests: 2/10 + 5 -> 7; + 20 -> 10; 12/10 stays 12; blocked -> refused.
 - Slots on short rest: the GM decides whether they return (manual).
 - Other per-class pools: full restore on long rest (see rest.md).
 
@@ -835,8 +893,9 @@ Terms: BP (БП) = pain threshold, a resource shown "cur of max" (e.g. 4/4). Bal
 - HP can go below 0.
 
 #### Damage pipeline [OWNER]
-Order for incoming damage of a type:
-1. Percent reduction of damage: 25 / 50 / 75 % (usually race, items too). Official name TBD (owner: do not name it "resist"; GUI name later).
+The ONE current order (all steps, data rules_settings.damage_order) is in defense.md "Damage pipeline" (package 22 B6).
+What this section adds:
+1. (Percent steps: defense.md, the old percent text of this list is REPLACED there.)
 2. Flat reduction BY DAMAGE TYPE [OWNER]: one mechanism. "DR/-" is just the flat resist to PHYSICAL damage; fire resist etc. are other types.
    DR does not work on fire. Damage may have several components, each handled by its own type:
    fire sword hit = 8 physical + 3 fire -> physical part uses DR/physical resist, fire part uses fire resist.
@@ -846,7 +905,7 @@ Order for incoming damage of a type:
 4. Temp-HP analogs (e.g. racial: damage hits MANA first; others possible), in a configurable order.
 5. HP (and balance, see below). Only the part that reaches HP touches balance.
 Rounding [OWNER]: damage is never fractional; round UP (against the player). 10 dmg, 25% -> 7.5 -> 8.
-Example: 10 fire, percent 50% -> 5, flat 2 -> 3, temp HP 0 -> HP -3, balance -3.
+Example (with the defense.md order): 10 fire, a percent reduction 50% -> 5, flat 2 -> 3, temp HP 0 -> HP -3, balance -3.
 Spell Resistance is separate (vs spells, not a damage step).
 
 #### Balance [OWNER]
@@ -880,6 +939,8 @@ Spell Resistance is separate (vs spells, not a damage step).
   recomputes the cap from scratch and clears the snapshot. Balance REGEN stays live (current Con etc.).
   Tests: snapshot 7 (armor 2 + BP 5); spend 2 BP -> 7; armor off -> 7; bonus +3 and Con 14 -> 8 -> 7 (regen 3 -> 1);
   a hit -> 6; end of combat with BP 3 and no armor -> 3.
+  [OWNER, package 22 A3] While combat is active the balance never stays above the current cap: restores and
+  manual sets are clamped to it (not refused). Outside combat the overcap rules stay.
   Hits: Each hit on the character lowers the cap by 1 until the end of
   combat, ONLY if the damage reached the balance (after percent, flat reductions, temp HP and analogs, HP were really
   lost). A fully blocked hit does not lower it. The current balance is NOT lowered by the cap drop. DoT does not lower
@@ -937,10 +998,17 @@ Spell Resistance is separate (vs spells, not a damage step).
 #### Zero initiative phase [OWNER]
 After everyone acted, in this order [OWNER]:
 1. Durations: statuses lose 1 duration (expired ones are removed).
-2. Balance restoration (if overload == 0).
-3. DoTs (bleed, fast healing, regeneration) - balance first, then DoT (best for the player).
+2. Balance restoration (if spell overload == 0) and the damage of the tick (DoT statuses, the dying / resting loss),
+   in the order MOST FAVOURABLE for the player [OWNER, package 22 A4]: the order with the smallest overflow (OT, then
+   pain) and then the highest final balance (Q150). Every order is tried up to 6 items (data tick.max_order_items),
+   beyond that a greedy order (damages ascending, the regen tried at every place). Only the tick; ordinary commands
+   apply at once.
+3. Heals per tick (fast healing, regeneration) after the damage.
+   Tests: balance 5/5, dying -2, bleeding -4, regen +1 -> -2, +1, -4 = 3, 4, 0: no OT, no pain (regen first would
+   give 5, 3, -1: OT 1, pain 1); balance 3 (cap 5), regen +1, damage -4 -> regen first: 0, no OT; at the cap the regen
+   does not go above it; no DoT: plain regen.
 - DoT and regen last exactly their duration [OWNER]: N rounds = N ticks (bleed for 3 rounds hits exactly 3 times).
-- Overload is a number: -1 per zero-initiative tick; at 0 it is gone. End of combat resets it to 0 [OWNER].
+- Spell overload (from casting, B4 name) is a number: -1 per zero-initiative tick; at 0 it is gone. End of combat resets it to 0 [OWNER].
   Order inside the tick: the regen check uses the overload at the START of the tick, then overload drops by 1
   (overload 1: no regen in this tick, overload 0, regen in the next tick).
 - Damage from the "dying" state and from DoT goes through temp HP and balance like an ordinary hit (temp HP and
@@ -1044,24 +1112,26 @@ After everyone acted, in this order [OWNER]:
 
 #### Weight [OWNER]
 - Unit "balk" B: 5.9 B = 59 L. Stored as L.
-- Load thresholds [OWNER confirmed]: base light 0-5.9 B, heavy to 10.9 B, above = overload.
+- Load thresholds [OWNER confirmed]: base light 0-5.9 B, heavy to 10.9 B, above = encumbrance (weight overload;
+  package 22 B4: not the same thing as the spell overload of casting, resources.md).
   Both thresholds shift by Str MODIFIER (in B). Examples: +2 -> 7.9 / 12.9; -2 -> 3.9 / 8.9; +3 -> 8.9 / 13.9; -1 -> 4.9 / 9.9.
-  Above heavy: drag only or drop something (overload icon).
-- Overload effect: dodge bonus to AC capped at +2; Dex gives dodge; speed -10 ft. [package 11 C: the speed -10 ft is computed, combat.md "Size and speed"]
+  Above heavy: drag only or drop something (encumbrance icon).
+- Encumbrance effect: dodge bonus to AC capped at +2; Dex gives dodge; speed -10 ft. [package 11 C: the speed -10 ft is computed, combat.md "Size and speed"]
 - Armor slowdown [OWNER, package 12, Q72]: a WORN armor (on the doll, not at 0 HP: the same items as the armor bonus)
   subtracts its speed_penalty_ft from the derived speed. Effect target "armor_slowdown_reduction" (feats, abilities,
   statuses, items): a positive value reduces the slowdown, never below 0 slowdown in total; the value "all" ignores it
-  completely. The overload -10 ft stacks with it. Assumptions (OPEN_QUESTIONS Q80): with several worn items the
+  completely. The encumbrance -10 ft stacks with it. Assumptions (OPEN_QUESTIONS Q80): with several worn items the
   largest slowdown counts (like the armor bonus); a broken armor still slows fully.
   Tests: worn 5 ft -> 15, in the bag 20; broken 15, at 0 HP 20; reduction 3 -> 18, 10 -> 20; "all" -> 20;
-  with overload -> 5.
-- Abilities may ignore slowdown from armor/overload (editor/settings/doll section).
+  with encumbrance -> 5.
+- Abilities may ignore slowdown from armor/encumbrance (editor/settings/doll section).
 
 #### Base (resource for strengthening) [OWNER]
 - Blessings, immaterial and material things at player's home. Start 5 slots, max 10*level.
 - Item = 1 slot normally, some items/buffs more. "Grey" items take 0 slots.
 - Example: item "Strong" gives +2 Str and takes 10 slots.
-- Base can temporarily exceed limit: player must carry something away or drop; show red indicator (like overload).
+- Base can temporarily exceed limit: player must carry something away or drop; show red indicator (like encumbrance).
+- [package 22 B7] 1 base point = 1 base slot; attention base points are kept in tenths, every whole point is +1 slot.
 - Buffs from base give abilities, permanent parameters, or improve modifiers.
 
 #### Armor [OWNER]
@@ -1513,7 +1583,8 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   fields are KEPT on edit and save and never interpreted; unknown top-level fields are dropped on load (no
   migrations). The fields of each kind (name, type, required, allowed values) are DATA: catalog_schemas.json.
 - Two layers: shipped catalogs (read-only, the install folder) and user catalogs (a folder next to the characters,
-  catalogs/<kind>.json). A user entry with the same id wins ("override"); removing a shipped entry writes a
+  catalogs/<kind>.json; more user files of the same kind are named <kind>__<name>.json, package 22 B9, Q152).
+  A user entry with the same id wins ("override"); removing a shipped entry writes a
   tombstone into the user file; reset drops the override or the tombstone. The program never writes into the
   shipped folder. The program's own loaders (weapons, groups, armor, feats, skills, damage types, doll slots) read
   through this layer.
@@ -1985,13 +2056,13 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | size.attack_ac | {"small": 1, "medium": 0, "large": -1} | map | size to attack and AC |
 | size.cmb_cmd | {"small": -1, "medium": 0, "large": 1} | map | size to CMB and CMD |
 | speed.base_ft | 20 | ft | default race speed |
-| speed.overload_ft | -10 | ft | speed change while overloaded |
+| speed.encumbrance_ft | -10 | ft | speed change while encumbered (weight) |
 | ability.mod_base | 10 | score | modifier = (score - base) // divisor |
 | ability.mod_divisor | 2 |  | modifier divisor |
 | bp.cap_divisor | 4 | HP | BP cap = ceil(max HP / this) |
 | morale.divisor | 2 |  | morale bonus = trunc(scale / this) |
 | ac.base | 10 | AC | AC base before layers |
-| ac.overload_dodge_cap | 2 | AC | overloaded: Dex + dodge at most |
+| ac.encumbrance_dodge_cap | 2 | AC | encumbered: Dex + dodge at most |
 | ac.armor_grade_parry | {"none": 0, "light": 2, "medium": 4, "heavy": 6} | map | parry by armor proficiency grade |
 | ac.tower_grade_parry | 2 | AC | parry of the tower shield proficiency grade |
 | ac.odd_level_step | 2 | levels | parry +1 per this many levels from level 3 |

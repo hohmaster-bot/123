@@ -56,3 +56,6 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package 21: i18n (ru / en key files, fallback, refusal texts, TRANSLATION_TODO.md), themes as token
   data with a QSS builder (no Qt), the panel registry and profile checks, Item.ilvl, the old iterative helper removed.
   Report: tests/PACKAGE21_REPORT.md.
+- Done in package 22: restore_mana, reactions as a resource, balance clamped to the cap in combat, the most favourable
+  tick order, paired attack = one use, RULES text fixes (pipeline, rest table, encumbrance vs spell overload), ru.json
+  names. Report: tests/PACKAGE22_REPORT.md.

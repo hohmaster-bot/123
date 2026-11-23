@@ -56,6 +56,19 @@
 - Crit confirmation die and lucky attack die (see combat.md).
 
 
+## Damage pipeline [package 22 B6: the ONE text, checked against the code wp/core/damage.py]
+For every part of a hit (each damage type on its own), in this order:
+1. the steps of rules_settings.damage_order (data; default):
+   a. percent reduction typed for the hit (25 / 50 / 75 %), rounded up;
+   b. flat reduction: the larger of the total DR (physical types; Q115 stacking) and resist:<type> (Q119);
+   c. the signed percent modifier "percent:<type>" (-100 immunity ... +50 more), rounded up;
+2. the parts are added up; the sum goes to temp HP first;
+3. then to the temp-HP analogs (absorbers, e.g. racial mana), in their order;
+4. what is left reaches HP, and the same amount lowers the balance (floored at 0);
+5. what the balance could not take is the overflow: -> OT, and +1 pain for the hit.
+(The owner's list in package 22 named "percent modifier -> flat -> absorbers -> temp HP"; the code does a, b, c as
+above and temp HP BEFORE the absorbers: OPEN_QUESTIONS Q151.)
+
 ## Damage order and percent modifiers [OWNER, package 17]
 - Effect target "percent:<damage type>": a SIGNED percent: -100 = immunity, -50 = half, +50 = takes 50% more. One value
   per type on a character: with several sources the larger absolute value wins (equal + and - -> 0, like typed

@@ -9,7 +9,12 @@
 
 ## Restore [OWNER]
 - Slots: full rest, some narrative situations, short rest. On short rest slots may or may not return despite resource spent.
-- Mana: short rest gives X; X is decided by the GM (manual input, no formula). Full rest restores all.
+- Mana [OWNER, package 22 A1], two separate things:
+  1. Rest regeneration (rest.md): the short rest option "Restore mana by regen" (free once, then 1 BP; the amount X is
+     typed in, decided by the GM, no formula); the long rest restores all mana.
+  2. Manual restore: command restore_mana(amount): a GM narrative effect or an ability gives mana at any time; up to
+     the max (an over-max value is kept, never raised); refused while a block_restore covers mana; journaled.
+  Tests: 2/10 + 5 -> 7; + 20 -> 10; 12/10 stays 12; blocked -> refused.
 - Slots on short rest: the GM decides whether they return (manual).
 - Other per-class pools: full restore on long rest (see rest.md).
 

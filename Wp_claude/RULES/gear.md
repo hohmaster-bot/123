@@ -27,24 +27,26 @@
 
 ## Weight [OWNER]
 - Unit "balk" B: 5.9 B = 59 L. Stored as L.
-- Load thresholds [OWNER confirmed]: base light 0-5.9 B, heavy to 10.9 B, above = overload.
+- Load thresholds [OWNER confirmed]: base light 0-5.9 B, heavy to 10.9 B, above = encumbrance (weight overload;
+  package 22 B4: not the same thing as the spell overload of casting, resources.md).
   Both thresholds shift by Str MODIFIER (in B). Examples: +2 -> 7.9 / 12.9; -2 -> 3.9 / 8.9; +3 -> 8.9 / 13.9; -1 -> 4.9 / 9.9.
-  Above heavy: drag only or drop something (overload icon).
-- Overload effect: dodge bonus to AC capped at +2; Dex gives dodge; speed -10 ft. [package 11 C: the speed -10 ft is computed, combat.md "Size and speed"]
+  Above heavy: drag only or drop something (encumbrance icon).
+- Encumbrance effect: dodge bonus to AC capped at +2; Dex gives dodge; speed -10 ft. [package 11 C: the speed -10 ft is computed, combat.md "Size and speed"]
 - Armor slowdown [OWNER, package 12, Q72]: a WORN armor (on the doll, not at 0 HP: the same items as the armor bonus)
   subtracts its speed_penalty_ft from the derived speed. Effect target "armor_slowdown_reduction" (feats, abilities,
   statuses, items): a positive value reduces the slowdown, never below 0 slowdown in total; the value "all" ignores it
-  completely. The overload -10 ft stacks with it. Assumptions (OPEN_QUESTIONS Q80): with several worn items the
+  completely. The encumbrance -10 ft stacks with it. Assumptions (OPEN_QUESTIONS Q80): with several worn items the
   largest slowdown counts (like the armor bonus); a broken armor still slows fully.
   Tests: worn 5 ft -> 15, in the bag 20; broken 15, at 0 HP 20; reduction 3 -> 18, 10 -> 20; "all" -> 20;
-  with overload -> 5.
-- Abilities may ignore slowdown from armor/overload (editor/settings/doll section).
+  with encumbrance -> 5.
+- Abilities may ignore slowdown from armor/encumbrance (editor/settings/doll section).
 
 ## Base (resource for strengthening) [OWNER]
 - Blessings, immaterial and material things at player's home. Start 5 slots, max 10*level.
 - Item = 1 slot normally, some items/buffs more. "Grey" items take 0 slots.
 - Example: item "Strong" gives +2 Str and takes 10 slots.
-- Base can temporarily exceed limit: player must carry something away or drop; show red indicator (like overload).
+- Base can temporarily exceed limit: player must carry something away or drop; show red indicator (like encumbrance).
+- [package 22 B7] 1 base point = 1 base slot; attention base points are kept in tenths, every whole point is +1 slot.
 - Buffs from base give abilities, permanent parameters, or improve modifiers.
 
 ## Armor [OWNER]

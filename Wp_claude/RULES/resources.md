@@ -15,8 +15,9 @@
 - HP can go below 0.
 
 ## Damage pipeline [OWNER]
-Order for incoming damage of a type:
-1. Percent reduction of damage: 25 / 50 / 75 % (usually race, items too). Official name TBD (owner: do not name it "resist"; GUI name later).
+The ONE current order (all steps, data rules_settings.damage_order) is in defense.md "Damage pipeline" (package 22 B6).
+What this section adds:
+1. (Percent steps: defense.md, the old percent text of this list is REPLACED there.)
 2. Flat reduction BY DAMAGE TYPE [OWNER]: one mechanism. "DR/-" is just the flat resist to PHYSICAL damage; fire resist etc. are other types.
    DR does not work on fire. Damage may have several components, each handled by its own type:
    fire sword hit = 8 physical + 3 fire -> physical part uses DR/physical resist, fire part uses fire resist.
@@ -26,7 +27,7 @@ Order for incoming damage of a type:
 4. Temp-HP analogs (e.g. racial: damage hits MANA first; others possible), in a configurable order.
 5. HP (and balance, see below). Only the part that reaches HP touches balance.
 Rounding [OWNER]: damage is never fractional; round UP (against the player). 10 dmg, 25% -> 7.5 -> 8.
-Example: 10 fire, percent 50% -> 5, flat 2 -> 3, temp HP 0 -> HP -3, balance -3.
+Example (with the defense.md order): 10 fire, a percent reduction 50% -> 5, flat 2 -> 3, temp HP 0 -> HP -3, balance -3.
 Spell Resistance is separate (vs spells, not a damage step).
 
 ## Balance [OWNER]
@@ -60,6 +61,8 @@ Spell Resistance is separate (vs spells, not a damage step).
   recomputes the cap from scratch and clears the snapshot. Balance REGEN stays live (current Con etc.).
   Tests: snapshot 7 (armor 2 + BP 5); spend 2 BP -> 7; armor off -> 7; bonus +3 and Con 14 -> 8 -> 7 (regen 3 -> 1);
   a hit -> 6; end of combat with BP 3 and no armor -> 3.
+  [OWNER, package 22 A3] While combat is active the balance never stays above the current cap: restores and
+  manual sets are clamped to it (not refused). Outside combat the overcap rules stay.
   Hits: Each hit on the character lowers the cap by 1 until the end of
   combat, ONLY if the damage reached the balance (after percent, flat reductions, temp HP and analogs, HP were really
   lost). A fully blocked hit does not lower it. The current balance is NOT lowered by the cap drop. DoT does not lower
@@ -117,10 +120,17 @@ Spell Resistance is separate (vs spells, not a damage step).
 ## Zero initiative phase [OWNER]
 After everyone acted, in this order [OWNER]:
 1. Durations: statuses lose 1 duration (expired ones are removed).
-2. Balance restoration (if overload == 0).
-3. DoTs (bleed, fast healing, regeneration) - balance first, then DoT (best for the player).
+2. Balance restoration (if spell overload == 0) and the damage of the tick (DoT statuses, the dying / resting loss),
+   in the order MOST FAVOURABLE for the player [OWNER, package 22 A4]: the order with the smallest overflow (OT, then
+   pain) and then the highest final balance (Q150). Every order is tried up to 6 items (data tick.max_order_items),
+   beyond that a greedy order (damages ascending, the regen tried at every place). Only the tick; ordinary commands
+   apply at once.
+3. Heals per tick (fast healing, regeneration) after the damage.
+   Tests: balance 5/5, dying -2, bleeding -4, regen +1 -> -2, +1, -4 = 3, 4, 0: no OT, no pain (regen first would
+   give 5, 3, -1: OT 1, pain 1); balance 3 (cap 5), regen +1, damage -4 -> regen first: 0, no OT; at the cap the regen
+   does not go above it; no DoT: plain regen.
 - DoT and regen last exactly their duration [OWNER]: N rounds = N ticks (bleed for 3 rounds hits exactly 3 times).
-- Overload is a number: -1 per zero-initiative tick; at 0 it is gone. End of combat resets it to 0 [OWNER].
+- Spell overload (from casting, B4 name) is a number: -1 per zero-initiative tick; at 0 it is gone. End of combat resets it to 0 [OWNER].
   Order inside the tick: the regen check uses the overload at the START of the tick, then overload drops by 1
   (overload 1: no regen in this tick, overload 0, regen in the next tick).
 - Damage from the "dying" state and from DoT goes through temp HP and balance like an ordinary hit (temp HP and

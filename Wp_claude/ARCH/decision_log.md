@@ -40,3 +40,4 @@ Package 18 (owner): medicine is an Int skill (skills_list.md, counts Int 23 / Wi
 D22 (owner, 2026-11-23, package 19): settings are data with a schema, three domains, layout profiles per mode, image registry (ARCH/settings.md).
 D23 (owner, 2026-11-23, package 20): every game-rule number is data with per-character overrides (ARCH/constants.md).
 Q133 Item.ilvl (optional) on the sheet, mapped from the item catalog; Q145 the old iterative helper core/combat.py removed; D24 (owner, 2026-11-23, package 21): i18n key files, themes as data, panel registry.
+Q147 (owner, package 22 C): stat.con = Vynoslivost (Russian), tier.specialized short 'Spets' + full name key, slot.fingers = 'Paltsy'; Q-none: package 22 rule changes A1-A5 (classes_magic.md, combat.md, resources.md).

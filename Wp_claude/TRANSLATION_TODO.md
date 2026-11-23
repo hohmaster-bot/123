@@ -356,10 +356,10 @@
 - `rules.ac.armor_grade_parry.desc`
 - `rules.ac.base`
 - `rules.ac.base.desc`
+- `rules.ac.encumbrance_dodge_cap`
+- `rules.ac.encumbrance_dodge_cap.desc`
 - `rules.ac.odd_level_step`
 - `rules.ac.odd_level_step.desc`
-- `rules.ac.overload_dodge_cap`
-- `rules.ac.overload_dodge_cap.desc`
 - `rules.ac.tower_grade_parry`
 - `rules.ac.tower_grade_parry.desc`
 - `rules.actions.standard`
@@ -484,8 +484,8 @@
 - `rules.skills.specialize_per_other.desc`
 - `rules.speed.base_ft`
 - `rules.speed.base_ft.desc`
-- `rules.speed.overload_ft`
-- `rules.speed.overload_ft.desc`
+- `rules.speed.encumbrance_ft`
+- `rules.speed.encumbrance_ft.desc`
 - `rules.spirit.base`
 - `rules.spirit.base.desc`
 - `rules.spirit.per_cha`
@@ -910,10 +910,10 @@
 - `rules.ac.armor_grade_parry.desc`
 - `rules.ac.base`
 - `rules.ac.base.desc`
+- `rules.ac.encumbrance_dodge_cap`
+- `rules.ac.encumbrance_dodge_cap.desc`
 - `rules.ac.odd_level_step`
 - `rules.ac.odd_level_step.desc`
-- `rules.ac.overload_dodge_cap`
-- `rules.ac.overload_dodge_cap.desc`
 - `rules.ac.tower_grade_parry`
 - `rules.ac.tower_grade_parry.desc`
 - `rules.actions.standard`
@@ -1038,8 +1038,8 @@
 - `rules.skills.specialize_per_other.desc`
 - `rules.speed.base_ft`
 - `rules.speed.base_ft.desc`
-- `rules.speed.overload_ft`
-- `rules.speed.overload_ft.desc`
+- `rules.speed.encumbrance_ft`
+- `rules.speed.encumbrance_ft.desc`
 - `rules.spirit.base`
 - `rules.spirit.base.desc`
 - `rules.spirit.per_cha`

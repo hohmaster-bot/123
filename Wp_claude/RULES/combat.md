@@ -7,6 +7,8 @@
 - Options spent in own turn may carry tag "attack" (player sets tags himself, spells needing attack roll too).
 - 2nd tagged option: -5, 3rd: -10. Paired (two-weapon) attacks: penalty applies to both.
 - Abilities without the tag take no iterative penalty.
+- [OWNER, package 22 A5] A paired (two-weapon) combination is ONE action and ONE use: the iterative counter +1 per
+  combination (not +2); the TWF table penalties stay. Test: a combination, then a normal attack -> -5, not -10.
 - Some abilities/effects ignore the iterative penalty WITHOUT being tagged as an attack (effect flag, e.g. master bonus: one attack per turn has no [attack] tag).
 - [OWNER, package 16 C] The iterative penalty is its own NEGATIVE line "iterative" on the attack, never typed by the
   player: Character.iterative_count = attacks already used in this round's series. use_attack(rid) (the "attack"
@@ -138,11 +140,12 @@
   (default 20). The hand-typed size CMB field is removed (old files: dropped on read).
 - Size modifiers: attack and AC small +1, medium 0, large -1. CMB and CMD small -1, medium 0, large +1 (opposite sign).
 - Effect target "speed": typed bonuses / penalties from any source (items, abilities, statuses, feats), stacked by the
-  usual rules. Derived speed = base + bonuses; overload gives -10 ft (gear.md). Speed is not a roll: no pain, no morale.
+  usual rules. Derived speed = base + bonuses; encumbrance gives -10 ft (gear.md). Speed is not a roll: no pain, no morale.
 - One move = 1 action.
-- Not applied (OPEN_QUESTIONS Q72): the armor card field speed_penalty_ft (armor slowdown) is stored but not counted.
+- Armor slowdown: REPLACED by gear.md "Armor" (package 12, Q72): the worn armor's speed_penalty_ft lowers the speed,
+  minus effects "armor_slowdown_reduction" (the old line "stored but not counted" no longer applies).
 - Tests: BAB 2, Str/Dex 12 -> (attack, AC, CMB, CMD) small (+1, 12, 2, 13), medium (0, 11, 3, 14), large (-1, 10, 4, 15);
-  base 20; +10 ft item -> 30; -5 ft status -> 15 (inactive: 20); overload -> 10.
+  base 20; +10 ft item -> 30; -5 ft status -> 15 (inactive: 20); encumbrance -> 10.
 - CMB / CMD in the sheet [package 10; Q58 and Q59 answered in package 12]:
   CMB = BAB + Str mod (with the Finesse feat: the better of Str / Dex) + size CMB mod + bonuses with target "cmb"
   + pain + morale (CMB is a roll). This is the general CMB without a weapon.
@@ -185,3 +188,17 @@
   stat and multiplier".
 - Tests: Str 16, Dex 14: bow (ranged) -> Dex, damage 0; dagger (thrown) -> Dex, +3; sword one hand +3, two hands +4;
   bow with damage_stat str -> +3; sword damage_mult 2 -> +6; thrown with Str 6 -> -2.
+
+## Reactions [OWNER, package 22 A2]
+- Reactions are a resource with the fixed id "reactions": max = the bought reactions (start 1; +1 for 200 * the new
+  number, training.md) + effects "reactions"; current = what is left this round.
+- spend_reaction(n) (free attacks of opportunity, readied attacks: the player presses; refused at 0, reason
+  not_enough_reactions); restore_reactions (manual, edit level). The zero-initiative tick (a new round) and the end of
+  combat bring them back to max.
+- Attack records, maneuvers and feats may carry cost_reactions: an attack record spends them in use_attack (refused
+  when not enough); a maneuver is shown unavailable (reason not_enough_reactions); a feat keeps it as a record.
+- Tests: start 1/1; spend -> 0, again refused; tick -> 1; 2 reactions for 400; an attack of opportunity record costs 1.
+
+## Damage roll and pain [package 22 B5]
+- The damage roll is a roll with a die: the pain penalty and morale apply to it, like to the attack roll
+  (resources.md "Pain", defense.md "Morale").

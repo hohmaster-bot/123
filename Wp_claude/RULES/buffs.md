@@ -73,14 +73,15 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 - Tests: activation with and without charges; refusals (no charge, already active); no cost (spirit unchanged);
   remove early; a 3-tick status
   is active 2 ticks with its bonus and inactive after the 3rd; an inactive status does not tick; hidden still gives the
-  bonus and ticks; favorite flag; charges restore as before (long rest yes, a free short rest no).
+  bonus and ticks; favorite flag; charges: see "Charges and activation" (Q108).
 
 ## Charges and activation
 - A buff source (ability/item) may have charges (e.g. rage 2/3). If placed on screen/slot, tapping activates it;
   shows remaining rounds and remaining charges.
-- Charges restore on long rest (rest.md) unless item without the "restore on long rest" checkbox.
-  Charges kept on a status (rage 2/3) are restored too, on the long rest AND by the short rest option
-  "restore charges" (2 BP) [OWNER, package 8]. Test: rage 0/3, short rest charges option -> 3/3.
+- ONE rule for status charges [OWNER, Q108, package 16 G3; the package 8 line "every status is restored by the long
+  rest" is REPLACED]: a status linked to a source (Status.source_ref) follows that source's recharge rule; a status
+  without a source is NOT refilled by rests. The short rest option "restore charges" (2 BP) stays a choice of the
+  player (Q121). Item usage charges follow the item's recharge rule (gear.md "Charges and cooldown").
 
 ## Stacking (see defense.md)
 - Same type: the value with the larger absolute value wins, equal absolute values give 0; only flat stacks

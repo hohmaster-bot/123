@@ -35,7 +35,8 @@
 ## Healing rating (RL) [OWNER]
 - Each injury has a Healing Rating. Once per cycle (a cycle = a large span of in-world time, e.g. a skip; narrative tool announced by the GM) the player rolls d12 in an outside app; roll <= RL means healed.
 - Base RL: light 3, medium 2, heavy 1.
-- 1 attention raises RL by max(2, Str modifier) (e.g. light 3 -> 5 at minimum). Some consumables/items directly reduce OT when used.
+- 1 attention raises RL by max(2, Str modifier) (e.g. light 3 -> 5 at minimum); the attention course adds to it
+  (+1 per course, Q102). Some consumables/items directly reduce OT when used.
 - The injury is removed BY HAND by the player. The app tracks its status and the related resources (HP, attention, comfort, sheet state).
 - No automatic countdown, no auto-removal, no "end session" button that edits injuries or comfort.
 - The app never removes comfort or edits injuries without a player action; no such button for now.
