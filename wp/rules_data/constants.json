@@ -82,7 +82,12 @@
   {"id": "combat.core_iterative_step", "value": -5, "type": "int", "group": "combat", "unit": "to-hit", "description": "old helper core/combat.py only; the sheet uses rules_settings.iterative_step", "label": "rules.combat.core_iterative_step"},
   {"id": "injuries.severity", "value": {"light": [2, 3], "medium": [5, 2], "heavy": [12, 1]}, "type": "map", "group": "injuries", "unit": "map", "description": "severity -> (OT removed, base healing rating)", "label": "rules.injuries.severity"},
   {"id": "injuries.comfort_ot", "value": 3, "type": "int", "group": "injuries", "unit": "OT", "description": "1 comfort removes this much OT", "label": "rules.injuries.comfort_ot"},
-  {"id": "injuries.attention_min", "value": 2, "type": "int", "group": "injuries", "unit": "", "description": "attention value = max(this, Str mod)", "label": "rules.injuries.attention_min"}
+  {"id": "injuries.attention_min", "value": 2, "type": "int", "group": "injuries", "unit": "", "description": "attention value = max(this, Str mod)", "label": "rules.injuries.attention_min"},
+  {"id": "magic.circle_mana", "value": [0, 1, 3, 5, 7, 9, 11, 13, 15, 17], "type": "list", "group": "magic", "unit": "mana", "description": "mana cost by circle 0..9", "label": "rules.magic.circle_mana"},
+  {"id": "magic.concentration_base", "value": 10, "type": "int", "group": "magic", "unit": "DC", "description": "concentration DC = base + per_ot * OT", "label": "rules.magic.concentration_base"},
+  {"id": "magic.concentration_per_ot", "value": 2, "type": "int", "group": "magic", "unit": "DC", "description": "concentration DC per OT gained", "label": "rules.magic.concentration_per_ot"},
+  {"id": "actions.standard", "value": 2, "type": "int", "group": "magic", "unit": "actions", "description": "a standard action (shift 1, move 1, full-round 3)", "label": "rules.actions.standard"},
+  {"id": "magic.slot_overload_mult", "value": 2, "type": "int", "group": "magic", "unit": "", "description": "slot casters and cantrips: overload = this * actions", "label": "rules.magic.slot_overload_mult"}
  ],
  "allowlist": {}
 }

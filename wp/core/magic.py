@@ -17,11 +17,15 @@ from dataclasses import dataclass, replace
 from typing import Dict, Optional
 
 from wp.core.damage import Pool
+from wp.rules_data import rules as rd
+
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+SLOT_OVERLOAD_MULT = rd.ref("magic.slot_overload_mult")   # slot casters and cantrips: overload = this * actions
 
 MAGE = "mana"
 SLOTS = "slots"
 # Mana cost by circle 0..9 (spells.md [OWNER, package 10]); a spell may state its own cost instead.
-CIRCLE_MANA = (0, 1, 3, 5, 7, 9, 11, 13, 15, 17)
+CIRCLE_MANA = rd.ref("magic.circle_mana")
 
 
 CIRCLES = tuple(range(len(CIRCLE_MANA)))   # valid circles 0..9 (package 16 B: no circle 10 or above)
@@ -60,8 +64,8 @@ class CastResult:
     concentration_dc: Optional[int] = None   # None = no check needed
 
 
-CONCENTRATION_BASE = 10
-CONCENTRATION_PER_OT = 2
+CONCENTRATION_BASE = rd.ref("magic.concentration_base")
+CONCENTRATION_PER_OT = rd.ref("magic.concentration_per_ot")
 
 
 def concentration_dc(ot_gained):
@@ -71,7 +75,7 @@ def concentration_dc(ot_gained):
     return CONCENTRATION_BASE + CONCENTRATION_PER_OT * int(ot_gained)
 
 
-STANDARD_ACTION = 2      # combat.md: shift 1, move 1, standard 2, full-round 3, complete 4
+STANDARD_ACTION = rd.ref("actions.standard")  # combat.md: shift 1, move 1, standard 2, full-round 3, complete 4
 
 
 def default_overload(caster, circle, cast_actions=STANDARD_ACTION, from_item=False):
@@ -83,7 +87,7 @@ def default_overload(caster, circle, cast_actions=STANDARD_ACTION, from_item=Fal
     if from_item:
         return 0
     if int(circle) == 0 or caster == SLOTS:
-        return 2 * x
+        return SLOT_OVERLOAD_MULT * x
     if caster == MAGE:
         return x
     raise ValueError("unknown caster type: %r" % (caster,))
@@ -97,7 +101,7 @@ def cast_cost(caster, circle, cast_actions=STANDARD_ACTION, mana_cost=0, circle0
     no mana, no slot (the item pays; its spirit activation is separate).
     extra_mana / extra_balance: armor spell penalty for a mage, split by the player (package 9 I)."""
     circle = int(circle)
-    if not 0 <= circle <= 9:
+    if circle not in CIRCLES:
         raise ValueError("circle must be 0..9")
     ov = default_overload(caster, circle, cast_actions, from_item)
     if overload is not None:
