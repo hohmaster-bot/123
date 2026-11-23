@@ -16,7 +16,7 @@ DATA = os.path.join(ROOT, "wp", "catalog", "data")
 SKILLS_MD = os.path.join(ROOT, "Wp_claude", "RULES", "skills_list.md")
 STAT_CODES = {"STR": "str", "DEX": "dex", "CON": "con", "INT": "int", "WIS": "wis", "CHA": "cha"}
 _SECTION = re.compile(r"^##\s.*\((STR|DEX|CON|INT|WIS|CHA)\)\s*$")
-_ENTRY = re.compile(r"^-\s+([a-z0-9_]+)\s*(?:\(([a-z_ ,]+)\))?\s*\|\s*(.+?)\s+—\s+(.*)$")
+_ENTRY = re.compile(r"^-\s+([a-z0-9_]+)\s*(?:\(([a-z_ ,]+)\))?\s*\|\s*(.+?)\s+\u2014\s+(.*)$")
 
 
 def read(name):

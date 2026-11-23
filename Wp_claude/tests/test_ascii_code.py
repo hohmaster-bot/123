@@ -1,5 +1,5 @@
 """Code files are ASCII only (CLAUDE.md hard rule, D4).
-Checks every .py in wp/ and Wp_claude/tests/. Legacy files at the repo root are
+Checks every .py in wp/, Wp_claude/tests/ and Wp_claude/tools/. Legacy files at the repo root are
 reference only and are not checked. Non-ASCII text belongs in locale or data files;
 in code write it as escape codes.
 Run: python Wp_claude/tests/test_ascii_code.py   (exit 1 if any file has a non-ASCII byte)"""
@@ -8,7 +8,7 @@ import sys
 
 TESTS = os.path.abspath(os.path.dirname(__file__))
 REPO = os.path.dirname(os.path.dirname(TESTS))
-ROOTS = (os.path.join(REPO, "wp"), TESTS)
+ROOTS = (os.path.join(REPO, "wp"), TESTS, os.path.join(REPO, "Wp_claude", "tools"))  # tools: package 20
 
 
 def py_files():

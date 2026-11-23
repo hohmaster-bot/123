@@ -38,7 +38,7 @@ ENTRIES = [
          new="        if True:\n            continue",
          suites=("model/test_pkg14.py",), rule="buffs.md block_restore: rests do not restore blocked resources"),
     dict(id="item-broken-at-half", file="wp/model/items.py",
-         old="    if 2 * cur <= mx:", new="    if 2 * cur < mx:",
+         old="    if BROKEN_AT * cur <= mx:", new="    if BROKEN_AT * cur < mx:",
          suites=("model/test_pkg6.py",), rule="gear.md Item HP: broken at 50% of max and below"),
     dict(id="item-off-rounding", file="wp/model/items.py",
          old="    v = (2 * cur * new_max + old_max) // (2 * old_max)", new="    v = cur * new_max // old_max",
