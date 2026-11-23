@@ -1,0 +1,7 @@
+{
+ "format": 1,
+ "note": "Performance budgets of the heavy character (package 23 B), in milliseconds, on the owner machine with a margin. They depend on the hardware.",
+ "view_ms": 50,
+ "dispatch_all_views_ms": 200,
+ "load_ms": 500
+}

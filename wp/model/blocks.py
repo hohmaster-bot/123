@@ -17,12 +17,14 @@ from wp.core import bonuses as bo
 from wp.core import effects as ef
 from wp.model import derived_view as dv
 from wp.model import stance_view as stv
+from wp.model.cache import cached
 
 ALL = "all"
 ANY = "any"
 OVERLOAD_REASON = "overload"
 
 
+@cached
 def active_effects(ch):
     """(source id, Effect) of every effect from an active source (no values resolved here)."""
     out = []

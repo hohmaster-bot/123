@@ -17,6 +17,7 @@ from wp.core import training as tr
 from wp.core import weapons as wpn
 from wp.core.damage import Pool
 from wp.model import blocks as blk
+from wp.model.cache import cached
 from wp.model import items as itm
 from wp.model import stance_view as stv
 from wp.model import records as rec
@@ -43,6 +44,7 @@ def ability_max(ch, name):
     return ch.ability(name).score_max + stg.stat_bonus(ch, name)
 
 
+@cached
 def ability_mod(ch, name):
     """Modifier from the CURRENT score (stats.md); a positive one counts as 0 while a block_stat_bonus
     effect covers this stat (package 13 B)."""
@@ -90,6 +92,7 @@ def bp_pool(ch):
     return Pool(ch.bp_current, bp_max(ch))
 
 
+@cached
 def picks(ch, it):
     """Mastery picks reaching this item (records.item_picks, package 8 R3) + effect bonuses "item_hp" /
     "item_hardness" (package 17: Effect.weapon = this item's id, or none = every item)."""
@@ -327,6 +330,7 @@ def comfort_pool(ch):
 
 # --------------------------------------------------------------- bonuses, AC
 
+@cached
 def context(ch):
     """Values effects may read (buffs.md): the current overload and the CURRENT stat modifiers."""
     ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": ch.bab}
@@ -371,6 +375,7 @@ def other_sources(ch):
             + [(t.tid, t.effects) for t in ch.templates])
 
 
+@cached
 def all_bonuses(ch):
     """Typed bonuses from statuses, feats, items, morale and pain."""
     out = list(effect_bonuses(ch))

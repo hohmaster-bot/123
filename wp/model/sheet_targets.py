@@ -16,6 +16,7 @@ from wp.core import derived as cdv
 from wp.core import effects as ef
 from wp.model import blocks as blk
 from wp.model import derived_view as dv
+from wp.model.cache import cached
 
 PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "catalog", "data", "sheet_targets.json")
 STAT = "stat:"
@@ -67,6 +68,7 @@ def stack_of(ch, bonuses, target):
     return bo.stack(blk.unblocked(ch, bs, target))
 
 
+@cached
 def value(ch, target):
     if not _has(ch, target):
         return 0
@@ -88,6 +90,7 @@ def entries(ch, target):
     return tuple(out)
 
 
+@cached
 def item_bonuses(ch, iid):
     """ItemBonus records for one item from statuses, feats, injuries, quirks and templates (NOT from items: an item's
     HP must not depend on item tabs, which depend on item HP). Values are read without stat modifiers (no loops,

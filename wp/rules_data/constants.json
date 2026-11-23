@@ -163,6 +163,9 @@
     },
     "wp/model/spell_view.py": {
       "MAX_PCT": "a chance is at most 100 percent"
+    },
+    "wp/app/views.py": {
+      "LOG_TAIL": "how many journal lines the log view shows (UI, not a rule)"
     }
   },
   "inline": {
@@ -214,6 +217,9 @@
     },
     "wp/theme/themes.py": {
       "100": "a percent token is 0..100"
+    },
+    "wp/app/files.py": {
+      "1000": "milliseconds in a second (backup time stamps)"
     }
   }
 }

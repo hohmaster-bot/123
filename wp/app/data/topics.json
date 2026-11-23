@@ -1,0 +1,524 @@
+{
+ "format": 1,
+ "note": "Command id -> topics (panel ids of the registry) to refresh after the command (package 23 A1). 'all' = every panel. A command missing here refreshes every panel (and a test fails).",
+ "commands": {
+  "activate_item": [
+   "all"
+  ],
+  "activate_status": [
+   "attacks",
+   "defense",
+   "resources",
+   "sheet",
+   "skills",
+   "statuses",
+   "log"
+  ],
+  "add_attack": [
+   "attacks",
+   "maneuvers",
+   "log"
+  ],
+  "add_entry": [
+   "all"
+  ],
+  "add_feat": [
+   "all"
+  ],
+  "add_injury": [
+   "all"
+  ],
+  "add_maneuver": [
+   "maneuvers",
+   "log"
+  ],
+  "add_note": [
+   "notebook",
+   "log"
+  ],
+  "add_pool": [
+   "resources",
+   "log"
+  ],
+  "add_skill": [
+   "skills",
+   "log"
+  ],
+  "add_status": [
+   "attacks",
+   "defense",
+   "resources",
+   "sheet",
+   "statuses",
+   "log"
+  ],
+  "add_template": [
+   "all"
+  ],
+  "attention_to_base_points": [
+   "items",
+   "notebook",
+   "training",
+   "log"
+  ],
+  "attention_to_training": [
+   "notebook",
+   "training",
+   "log"
+  ],
+  "burn_ov": [
+   "notebook",
+   "log"
+  ],
+  "burn_quirk": [
+   "all"
+  ],
+  "buy_ability": [
+   "all"
+  ],
+  "buy_armor_grade": [
+   "defense",
+   "training",
+   "log"
+  ],
+  "buy_attention_course": [
+   "training",
+   "log"
+  ],
+  "buy_base_slot": [
+   "items",
+   "training",
+   "log"
+  ],
+  "buy_combat_basics": [
+   "attacks",
+   "defense",
+   "training",
+   "log"
+  ],
+  "buy_hp": [
+   "resources",
+   "training",
+   "log"
+  ],
+  "buy_item_qualification": [
+   "items",
+   "training",
+   "log"
+  ],
+  "buy_language": [
+   "training",
+   "log"
+  ],
+  "buy_maneuver": [
+   "maneuvers",
+   "training",
+   "log"
+  ],
+  "buy_professionalism": [
+   "skills",
+   "training",
+   "log"
+  ],
+  "buy_reaction": [
+   "combat",
+   "resources",
+   "training",
+   "log"
+  ],
+  "buy_seed": [
+   "notebook",
+   "training",
+   "log"
+  ],
+  "buy_shield_grade": [
+   "defense",
+   "resources",
+   "training",
+   "log"
+  ],
+  "buy_skill_rank": [
+   "skills",
+   "training",
+   "log"
+  ],
+  "buy_spell_upgrade": [
+   "spells",
+   "training",
+   "log"
+  ],
+  "buy_weapon_grade": [
+   "attacks",
+   "defense",
+   "training",
+   "log"
+  ],
+  "cast_spell": [
+   "combat",
+   "resources",
+   "spells",
+   "log"
+  ],
+  "change_lens": [
+   "notebook",
+   "log"
+  ],
+  "convert_attention": [
+   "notebook",
+   "training",
+   "log"
+  ],
+  "damage_item": [
+   "attacks",
+   "defense",
+   "items",
+   "log"
+  ],
+  "damage_to_balance": [
+   "combat",
+   "resources",
+   "log"
+  ],
+  "deactivate_item": [
+   "all"
+  ],
+  "delete_status": [
+   "attacks",
+   "defense",
+   "resources",
+   "sheet",
+   "skills",
+   "statuses",
+   "log"
+  ],
+  "edit_ability": [
+   "all"
+  ],
+  "edit_entry": [
+   "all"
+  ],
+  "edit_maneuver": [
+   "maneuvers",
+   "log"
+  ],
+  "edit_pool": [
+   "resources",
+   "log"
+  ],
+  "edit_rules": [
+   "all"
+  ],
+  "edit_sheet": [
+   "all"
+  ],
+  "end_combat": [
+   "all"
+  ],
+  "end_cycle": [
+   "notebook",
+   "resources",
+   "training",
+   "log"
+  ],
+  "equip_hands": [
+   "all"
+  ],
+  "equip_item": [
+   "all"
+  ],
+  "exchange_comfort": [
+   "resources",
+   "training",
+   "log"
+  ],
+  "hit_item": [
+   "attacks",
+   "defense",
+   "items",
+   "log"
+  ],
+  "learn_spell": [
+   "spells",
+   "training",
+   "log"
+  ],
+  "level_up": [
+   "all"
+  ],
+  "long_rest": [
+   "all"
+  ],
+  "long_rest_end_combat": [
+   "all"
+  ],
+  "make_language_native": [
+   "training",
+   "log"
+  ],
+  "pay_hp_cost": [
+   "resources",
+   "log"
+  ],
+  "promote_skill": [
+   "skills",
+   "training",
+   "log"
+  ],
+  "raise_heal_rating": [
+   "injuries",
+   "log"
+  ],
+  "remove_attack": [
+   "attacks",
+   "maneuvers",
+   "log"
+  ],
+  "remove_entry": [
+   "all"
+  ],
+  "remove_feat": [
+   "all"
+  ],
+  "remove_injury": [
+   "all"
+  ],
+  "remove_item": [
+   "all"
+  ],
+  "remove_maneuver": [
+   "maneuvers",
+   "log"
+  ],
+  "remove_ot_attention": [
+   "injuries",
+   "resources",
+   "log"
+  ],
+  "remove_ot_comfort": [
+   "injuries",
+   "resources",
+   "log"
+  ],
+  "remove_pool": [
+   "resources",
+   "statuses",
+   "log"
+  ],
+  "remove_status": [
+   "attacks",
+   "defense",
+   "resources",
+   "sheet",
+   "skills",
+   "statuses",
+   "log"
+  ],
+  "remove_template": [
+   "all"
+  ],
+  "reset_char_setting": [
+   "settings",
+   "log"
+  ],
+  "reset_rule_setting": [
+   "all"
+  ],
+  "reset_settings_group": [
+   "all"
+  ],
+  "resolve_spell_failure": [
+   "resources",
+   "spells",
+   "log"
+  ],
+  "restore": [
+   "resources",
+   "log"
+  ],
+  "restore_all_balance": [
+   "combat",
+   "resources",
+   "log"
+  ],
+  "restore_charges": [
+   "attacks",
+   "items",
+   "maneuvers",
+   "statuses",
+   "log"
+  ],
+  "restore_mana": [
+   "resources",
+   "spells",
+   "log"
+  ],
+  "restore_pool": [
+   "resources",
+   "log"
+  ],
+  "restore_reactions": [
+   "combat",
+   "resources",
+   "log"
+  ],
+  "set_active_stance": [
+   "all"
+  ],
+  "set_base_speed": [
+   "sheet",
+   "log"
+  ],
+  "set_char_setting": [
+   "settings",
+   "log"
+  ],
+  "set_charges": [
+   "attacks",
+   "items",
+   "maneuvers",
+   "statuses",
+   "log"
+  ],
+  "set_condition_tag": [
+   "items",
+   "statuses",
+   "log"
+  ],
+  "set_drive_level": [
+   "notebook",
+   "training",
+   "log"
+  ],
+  "set_hp_roll": [
+   "resources",
+   "sheet",
+   "log"
+  ],
+  "set_ignore_bag_weight": [
+   "defense",
+   "items",
+   "sheet",
+   "log"
+  ],
+  "set_item_hp": [
+   "attacks",
+   "defense",
+   "items",
+   "log"
+  ],
+  "set_item_masterwork": [
+   "attacks",
+   "defense",
+   "items",
+   "log"
+  ],
+  "set_iterative_count": [
+   "attacks",
+   "combat",
+   "log"
+  ],
+  "set_primary_attack": [
+   "attacks",
+   "defense",
+   "maneuvers",
+   "resources",
+   "log"
+  ],
+  "set_rule_setting": [
+   "all"
+  ],
+  "set_size": [
+   "all"
+  ],
+  "set_status_duration": [
+   "statuses",
+   "log"
+  ],
+  "set_status_favorite": [
+   "statuses",
+   "log"
+  ],
+  "set_status_hidden": [
+   "statuses",
+   "log"
+  ],
+  "set_temp_hp": [
+   "resources",
+   "log"
+  ],
+  "set_twf": [
+   "attacks",
+   "log"
+  ],
+  "set_value": [
+   "resources",
+   "sheet",
+   "log"
+  ],
+  "short_rest": [
+   "all"
+  ],
+  "spend_balance": [
+   "resources",
+   "log"
+  ],
+  "spend_bp": [
+   "resources",
+   "log"
+  ],
+  "spend_charge": [
+   "attacks",
+   "items",
+   "maneuvers",
+   "statuses",
+   "log"
+  ],
+  "spend_ov": [
+   "notebook",
+   "log"
+  ],
+  "spend_pool": [
+   "resources",
+   "log"
+  ],
+  "spend_reaction": [
+   "combat",
+   "resources",
+   "log"
+  ],
+  "sprout_seed": [
+   "notebook",
+   "training",
+   "log"
+  ],
+  "start_combat": [
+   "all"
+  ],
+  "take_damage": [
+   "combat",
+   "resources",
+   "log"
+  ],
+  "tick": [
+   "all"
+  ],
+  "unequip_hands": [
+   "all"
+  ],
+  "unequip_item": [
+   "all"
+  ],
+  "use_attack": [
+   "attacks",
+   "combat",
+   "resources",
+   "log"
+  ],
+  "use_consumable": [
+   "items",
+   "resources",
+   "statuses",
+   "log"
+  ]
+ }
+}

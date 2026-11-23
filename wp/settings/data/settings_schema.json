@@ -10,6 +10,7 @@
   {"id": "default_mode", "domain": "app", "type": "enum", "default": "classic", "allowed": ["classic", "lite"], "group": "general"},
   {"id": "last_character", "domain": "app", "type": "string", "default": "", "group": "general"},
   {"id": "autosave", "domain": "app", "type": "bool", "default": true, "group": "saving"},
+  {"id": "autosave_mode", "domain": "app", "type": "enum", "default": "interval", "allowed": ["interval", "every_command"], "group": "saving"},
   {"id": "autosave_interval_s", "domain": "app", "type": "int", "default": 120, "min": 10, "max": 3600, "group": "saving"},
   {"id": "backups_count", "domain": "app", "type": "int", "default": 5, "min": 0, "max": 100, "group": "saving"},
   {"id": "backups_folder", "domain": "app", "type": "string", "default": "backups", "group": "saving"},

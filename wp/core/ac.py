@@ -90,15 +90,20 @@ def parts(inp, mode=FRONT, from_shield_side=False):
     armor holds max(armor, parry) in PARRY mode, plus enhancement bonuses to AC (owner, Q26)."""
     if mode not in (FRONT, FLANK, FLAT_FOOTED, PARRY, TOUCH):
         raise ValueError("unknown AC mode: %r" % (mode,))
-
-    armor_value = max(inp.armor, inp.parry) if mode == PARRY else inp.armor
     use_shield = inp.shield_enabled
     if mode == FLANK and inp.flank_drops_shield:
         use_shield = False
     if mode == FLAT_FOOTED and not from_shield_side:
         use_shield = False
+    return layer_parts(inp, use_parry=mode == PARRY, use_shield=use_shield, lose_dex=mode == FLAT_FOOTED,
+                       touch=mode == TOUCH)
+
+
+def layer_parts(inp, use_parry=False, use_shield=True, lose_dex=False, touch=False):
+    """The ladder for explicit flags (the modes above and the AC cells, package 23 D, ac_zones.py)."""
+    armor_value = max(inp.armor, inp.parry) if use_parry else inp.armor
     drop = set()
-    if mode == TOUCH:
+    if touch:
         drop |= {bo.ARMOR, bo.NATURAL, bo.SHIELD, bo.ENHANCEMENT}
     if not use_shield:
         drop.add(bo.SHIELD)
@@ -111,11 +116,11 @@ def parts(inp, mode=FRONT, from_shield_side=False):
     blk = inp.blocked
     if blk:                            # block effects: positive values of blocked types go, penalties stay
         items = [b for b in items if not (b.value > 0 and ("any" in blk or b.btype in blk))]
-    if mode == TOUCH and inp.touch_armor > 0:
+    if touch and inp.touch_armor > 0:
         # armor "touch AC" column: the only armor part of the touch AC (package 9 H)
         items.append(bo.Bonus(inp.touch_armor, bo.ARMOR, bo.AC, source="armor touch"))
 
-    if mode == FLAT_FOOTED:
+    if lose_dex:
         # only the positive parts go: low-Dex penalty and dodge penalties stay
         dex_dodge = min(0, _dex(inp)) + sum(min(0, int(b.value)) for b in items if b.btype == bo.DODGE)
     else:

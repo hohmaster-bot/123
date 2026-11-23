@@ -1,0 +1,124 @@
+"""Panel views (package 23 A2): one function per panel of the registry (wp/panels/data/panels.json). Each returns the
+derived data the panel shows (dataclasses, tuples, dicts of plain values). Read only; the Session calls them inside
+rules.using(character), so the UI never has to.
+
+A view: fn(ch, session, **params). Params are listed in PARAMS (the view contract, ARCH/view_contract.md).
+"""
+from wp.catalog import schema as cat
+from wp.commands import edit_cmds, notebook_cmds, reaction_cmds
+from wp.core import rest as rs
+from wp.model import active_list as al
+from wp.model import attack_view as av
+from wp.model import bridge
+from wp.model import container_view as cv
+from wp.model import defense_view as dfv
+from wp.model import derived_view as dv
+from wp.model import doll
+from wp.model import iterative as itv
+from wp.model import load_view as lv
+from wp.model import maneuver_view as mv
+from wp.model import pool_view as pv
+from wp.model import spell_view as sv
+from wp.model import stance_view as stv
+from wp.model import stats_view as stats
+from wp.settings import settings_view
+from wp.settings import store as st
+
+LOG_TAIL = 50                          # not a rule: how many journal lines the log view returns by default
+
+
+def _pool(p):
+    return {"current": p.current, "max": p.max, "over_max": p.over_max}
+
+
+def resources(ch, session=None):
+    return {"hp": _pool(dv.hp_pool(ch)), "temp_hp": dv.temp_hp_total(ch), "balance": _pool(dv.balance_pool(ch)),
+            "bp": _pool(dv.bp_pool(ch)), "spirit": _pool(dv.spirit_pool(ch)), "mana": _pool(dv.mana_pool(ch)),
+            "comfort": _pool(dv.comfort_pool(ch)), "pain": dv.pain_total(ch), "ot": ch.trauma,
+            "overload": ch.overload, "reactions": _pool(reaction_cmds.reactions_pool(ch)),
+            "pools": tuple((p.pid, p.name, {"current": pv.current(ch, p), "max": pv.max_of(ch, p)}) for p in ch.pools)}
+
+
+def combat(ch, session=None):
+    return {"in_combat": ch.in_combat, "round": ch.combat_round, "iterative_count": ch.iterative_count,
+            "next_iterative": itv.penalty(ch), "morale_scale": ch.morale_scale, "morale_bonus": dv.morale_bonus(ch),
+            "negative_state": ch.negative_state, "dead": dv.is_dead(ch), "reactions": _pool(reaction_cmds.reactions_pool(ch)),
+            "stance": stv.stance_view(ch), "defense": dfv.defense_view(ch)}
+
+
+def defense(ch, session=None):
+    from wp.core import ac as acm
+    from wp.model import ac_zones_view
+    return {"modes": acm.all_modes(dv.ac_input(ch)), "cells": ac_zones_view.cells(ch), "defense": dfv.defense_view(ch)}
+
+
+def attacks(ch, session=None):
+    return tuple(av.attack(ch, r) for r in ch.attacks)
+
+
+def maneuvers(ch, session=None):
+    return mv.maneuver_view(ch)
+
+
+def items(ch, session=None):
+    return {"doll": doll.doll_view(ch), "items": tuple(dv.item_view(ch, it.iid) for it in ch.items),
+            "weight": lv.weight_view(ch), "base": dv.base_view(ch)}
+
+
+def statuses(ch, session=None):
+    return {"container": cv.container_view(ch), "active": al.active_list(ch)}
+
+
+def skills(ch, session=None):
+    return tuple((s.name, s.tier, s.ranks, dv.skill_bonus(ch, s.name)) for s in ch.skills)
+
+
+def rest(ch, session=None):
+    session_state = rs.start_short_rest(bridge.to_rest(ch))
+    return {"free_heal": session_state.free_heal, "options": rs.options(session_state)}
+
+
+def log(ch, session=None, tail=LOG_TAIL):
+    return tuple(ch.log[-int(tail):]) if tail else tuple(ch.log)
+
+
+def notebook(ch, session=None):
+    return notebook_cmds.notebook_view(ch)
+
+
+def training(ch, session=None):
+    return {"training": ch.training, "level": ch.level, "base_slots": dv.base_slots(ch), "reactions": dv.reactions(ch),
+            "comfort": _pool(dv.comfort_pool(ch)), "attention": ch.attention}
+
+
+def settings(ch, session=None):
+    return settings_view.list_settings(session.app if session is not None else st.AppSettings(), ch)
+
+
+def catalogs(ch, session=None):
+    return {"kinds": cat.KINDS}
+
+
+def sheet(ch, session=None):
+    return {"abilities": {a: (dv.ability_current(ch, a), dv.ability_mod(ch, a)) for a in ch.abilities},
+            "stats": stats.view(ch), "level": ch.level, "bab": ch.bab, "speed": dv.speed(ch)}
+
+
+def spells(ch, session=None):
+    return {"view": sv.view(ch), "spells": ch.spells, "mana": _pool(dv.mana_pool(ch)),
+            "slots": {c: _pool(p) for c, p in dv.slot_pools(ch).items()}}
+
+
+def injuries(ch, session=None):
+    return {"injuries": ch.injuries, "trauma": ch.trauma}
+
+
+def editor(ch, session=None):
+    return {"collections": edit_cmds.COLLECTIONS}
+
+
+VIEWS = {"resources": resources, "combat": combat, "defense": defense, "attacks": attacks, "maneuvers": maneuvers,
+         "items": items, "statuses": statuses, "skills": skills, "rest": rest, "log": log, "notebook": notebook,
+         "training": training, "settings": settings, "catalogs": catalogs, "sheet": sheet, "spells": spells,
+         "injuries": injuries, "editor": editor}
+PARAMS = {"log": ("tail",)}

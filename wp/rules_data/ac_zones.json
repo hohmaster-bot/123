@@ -1,0 +1,22 @@
+{
+ "format": 1,
+ "note": "AC zones (RULES/ac_zones.md, owner DRAFT; package 23 D). SAMPLE table: the owner replaces it. Grid [1][2][3]/[4][5][6]/[7][8][9], cell 5 = the character facing 1-2-3. Per cell: dex_dodge (Dex and dodge count), parry (a Parry value exists), presets (the old AC modes this cell reproduces). Shield coverage is for a shield in the LEFT hand; mirror maps it for the right hand. Gaps of the draft are in OPEN_QUESTIONS (Q154-Q157).",
+ "cells": {
+  "1": {"dex_dodge": true, "parry": true},
+  "2": {"dex_dodge": true, "parry": true, "presets": ["front", "parry"]},
+  "3": {"dex_dodge": true, "parry": true},
+  "4": {"dex_dodge": true, "parry": false},
+  "6": {"dex_dodge": true, "parry": false, "presets": ["flank"]},
+  "7": {"dex_dodge": true, "parry": false},
+  "8": {"dex_dodge": false, "parry": false, "presets": ["flat_footed"]},
+  "9": {"dex_dodge": true, "parry": false}
+ },
+ "shield_cells": {
+  "buckler": [1, 2, 4],
+  "light": [1, 2, 3, 4, 7],
+  "heavy": [1, 2, 3, 4, 7],
+  "tower": [1, 2, 3, 4, 7],
+  "": [1, 2, 3, 4, 7]
+ },
+ "mirror": {"1": 3, "3": 1, "4": 6, "6": 4, "7": 9, "9": 7, "2": 2, "8": 8}
+}
