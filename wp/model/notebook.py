@@ -15,7 +15,7 @@ from wp.core.effects import Effect
 from wp.rules_data import rules as rd
 
 DRIVE_MAX = rd.ref("narrative.drive_max")
-DRIVE_ATTENTION_LEVEL = rd.ref("narrative.drive_attention_level")
+DRIVE_ATTENTION_LEVEL = rd.ref("attention.drive_level")
 LENS_START = rd.ref("narrative.lens_start")
 RED = "red"
 GREEN = "green"

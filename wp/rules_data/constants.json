@@ -128,8 +128,12 @@
   {"id": "attack.max_primary", "value": 2, "type": "int", "group": "attack", "unit": "records", "description": "primary attack records at most", "label": "rules.attack.max_primary"},
   {"id": "cmd.base", "value": 10, "type": "int", "group": "defense", "unit": "CMD", "description": "CMD = base + BAB + Str + Dex + size", "label": "rules.cmd.base"},
   {"id": "narrative.drive_max", "value": 5, "type": "int", "group": "narrative", "unit": "level", "description": "highest drive level", "label": "rules.narrative.drive_max"},
-  {"id": "narrative.drive_attention_level", "value": 4, "type": "int", "group": "narrative", "unit": "level", "description": "(notebook) drive level that gives attention", "label": "rules.narrative.drive_attention_level"},
-  {"id": "narrative.lens_start", "value": 1, "type": "int", "group": "narrative", "unit": "", "description": "a new lens starts at this value", "label": "rules.narrative.lens_start"}
+  {"id": "narrative.lens_start", "value": 1, "type": "int", "group": "narrative", "unit": "", "description": "a new lens starts at this value", "label": "rules.narrative.lens_start"},
+  {"id": "hands.max", "value": 2, "type": "int", "group": "attack", "unit": "hands", "description": "hands of all held items add up to at most this", "label": "rules.hands.max"},
+  {"id": "hands.two_handed", "value": 2, "type": "int", "group": "attack", "unit": "hands", "description": "an item needing this many hands is two-handed", "label": "rules.hands.two_handed"},
+  {"id": "attention.ov_min", "value": 2, "type": "int", "group": "narrative", "unit": "OV", "description": "1 attention gives max(this, Con mod) OV", "label": "rules.attention.ov_min"},
+  {"id": "progression.hit_die_default", "value": 1, "type": "int", "group": "training", "unit": "HP", "description": "level_up without a roll takes this die value (Q111)", "label": "rules.progression.hit_die_default"},
+  {"id": "training.feat_default_cost", "value": 200, "type": "int", "group": "training", "unit": "training", "description": "feat price when the author gives none", "label": "rules.training.feat_default_cost"}
  ],
  "allowlist": {}
 }

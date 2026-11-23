@@ -6,6 +6,7 @@ from wp.commands.base import CommandError, command, commit
 from wp.core import derived as dvc
 from wp.core import training as tr
 from wp.model.character import Feat
+from wp.rules_data import rules as rd
 
 
 @command
@@ -50,8 +51,9 @@ def set_size(ch, size="medium"):
 
 
 @command
-def set_base_speed(ch, feet=20):
-    """Race base speed in feet (default 20)."""
+def set_base_speed(ch, feet=None):
+    """Race base speed in feet (default: the rule constant speed.base_ft)."""
+    feet = rd.const("speed.base_ft", ch) if feet is None else feet
     if int(feet) < 0:
         raise CommandError("speed cannot be negative", "speed_cannot_negative")
     return commit(replace(ch, base_speed=int(feet)), "set_base_speed", "base speed %d ft" % int(feet))

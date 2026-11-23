@@ -9,6 +9,7 @@ from wp.model import restores as rst
 from wp.model import usage as us
 from wp.model import items as itm
 from wp.model.character import LogEntry
+from wp.rules_data import rules as rd
 
 SHORT = "short"
 LONG = "long"
@@ -155,7 +156,7 @@ def end_cycle(ch):
                   "attention +%d, OV %d burned" % (gain, ch.ov), {"gain": gain, "burned": ch.ov})
 
 
-OV_MIN = 2
+OV_MIN = rd.ref("attention.ov_min")
 
 
 @command

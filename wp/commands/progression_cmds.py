@@ -11,6 +11,7 @@ from wp.core import training as tr
 from wp.model import derived_view as dv
 from wp.model import ids
 from wp.model.character import Seed
+from wp.rules_data import rules as rd
 
 
 def _pay(ch, cost, source):
@@ -26,7 +27,7 @@ def attention_value(ch, stat):
     return inj.attention_value(dv.ability_mod(ch, stat)) + ch.attention_course
 
 
-HIT_DIE_DEFAULT = 1
+HIT_DIE_DEFAULT = rd.ref("progression.hit_die_default")
 HIT_DIE_DEFAULT_USED = "hit_die_default_used"
 
 

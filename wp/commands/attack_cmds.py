@@ -14,8 +14,12 @@ from wp.model import ids
 from wp.model import iterative as itv
 from wp.model import records as rec
 from wp.model.character import AttackRecord
+from wp.rules_data import rules as rd
 
-MAX_HANDS = 2
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+TWO_HANDED = rd.ref("hands.two_handed")   # an item needing this many hands is two-handed
+
+MAX_HANDS = rd.ref("hands.max")
 GRIPS = ("one", "off", "two")
 UNARMED_GROUPS = (UNARMED_COMBAT, CONTACT)
 
@@ -35,7 +39,7 @@ def equip_hands(ch, iid=""):
         raise CommandError("%s needs no hands" % it.name, "needs_no_hands", values=(it.name,))
     check_wearable(ch, it)             # a shield at HP 0 cannot be taken up; a weapon at HP 0 can
     if dv.hands_used(ch) + it.hands > MAX_HANDS:
-        raise CommandError("not enough free hands for %s (%d of %d used)" % (it.name, dv.hands_used(ch), MAX_HANDS), "not_enough_free_hands", values=(it.name, dv.hands_used(ch), MAX_HANDS))
+        raise CommandError("not enough free hands for %s (%d of %d used)" % (it.name, dv.hands_used(ch), int(MAX_HANDS)), "not_enough_free_hands", values=(it.name, dv.hands_used(ch), int(MAX_HANDS)))
     return commit(_set_item(ch, iid, in_hands=True), "equip_hands", "%s in hands" % it.name)
 
 
@@ -68,9 +72,9 @@ def add_attack(ch, iid="", group="", grip="one", stat="", rid=""):
         group = group or groups[0]
         if group not in groups:
             raise CommandError("%s is not in group %r" % (it.name, group), "not_group", values=(it.name, group))
-        if it.hands == 2 and grip != "two":
+        if it.hands == TWO_HANDED and grip != "two":
             raise CommandError("%s is two-handed" % it.name, "two_handed", values=(it.name,))
-        if grip == "off" and it.hands == 2:
+        if grip == "off" and it.hands == TWO_HANDED:
             raise CommandError("a two-handed weapon cannot be off-hand", "two_handed_weapon_cannot")
         if grip == "two" and it.finesse:
             raise CommandError("a finesse weapon is held in one hand or the off-hand only (owner)", "finesse_weapon_held_one")

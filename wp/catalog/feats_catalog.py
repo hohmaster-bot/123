@@ -14,9 +14,10 @@ from typing import Tuple
 from wp.catalog import store as cs
 from wp.core.effects import Effect
 from wp.core.formula import validate as validate_formula
+from wp.rules_data import rules as rd
 
 KIND = "feats"
-DEFAULT_COST = 200
+DEFAULT_COST = rd.ref("training.feat_default_cost")
 FINESSE = "finesse"
 
 
@@ -26,7 +27,7 @@ class FeatTemplate:
     name: str
     name_en: str = ""
     desc: str = ""
-    cost: int = DEFAULT_COST
+    cost: int = rd.default("training.feat_default_cost")
     flags: Tuple[str, ...] = ()
     source: str = "default"
     effects: Tuple[Effect, ...] = ()   # copied to the sheet feat (package 11 D)
@@ -63,7 +64,7 @@ def _effect(d):
 
 def from_entries(entries):
     out = tuple(FeatTemplate(fid=f["id"], name=f["name"], name_en=f.get("name_en", ""),
-                             desc=f.get("desc", ""), cost=int(f.get("cost", DEFAULT_COST)),
+                             desc=f.get("desc", ""), cost=int(f.get("cost", int(DEFAULT_COST))),
                              flags=tuple(f.get("flags", ())),
                              effects=tuple(_effect(e) for e in f.get("effects", ())),
                              granted_maneuvers=tuple(f.get("granted_maneuvers", ())),
