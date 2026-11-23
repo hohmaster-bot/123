@@ -2,7 +2,7 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (718)
+## Нет в ru.json (728)
 
 ### catalog (95)
 - `catalog.field.ac_bonus`
@@ -153,7 +153,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (187)
+### reason (195)
 - `reason.action_needed`
 - `reason.activates_status_which_not`
 - `reason.already_activated`
@@ -173,6 +173,7 @@
 - `reason.bad_effect_formula`
 - `reason.bad_hotkey`
 - `reason.bad_image_type`
+- `reason.bad_name`
 - `reason.bad_pool_max_formula`
 - `reason.bad_profile`
 - `reason.cannot_put_item_hp`
@@ -181,6 +182,7 @@
 - `reason.catalog_error`
 - `reason.catalog_exists`
 - `reason.character_not_caster`
+- `reason.character_open`
 - `reason.charges_must_0`
 - `reason.choose_day_decade`
 - `reason.choose_exactly_different_skills`
@@ -202,6 +204,7 @@
 - `reason.field_not_allowed`
 - `reason.field_required`
 - `reason.field_type`
+- `reason.file_corrupt`
 - `reason.file_not_found`
 - `reason.finesse_weapon_held_one`
 - `reason.grip_must_one_off`
@@ -227,10 +230,13 @@
 - `reason.most_primary_attack_records`
 - `reason.must_whole_number`
 - `reason.name_needed`
+- `reason.name_taken`
 - `reason.needs_no_hands`
 - `reason.needs_no_qualification`
 - `reason.no_attack_record`
 - `reason.no_attention`
+- `reason.no_backup`
+- `reason.no_character`
 - `reason.no_charges_left`
 - `reason.no_combat_active`
 - `reason.no_feat_catalog_given`
@@ -291,6 +297,7 @@
 - `reason.restore_must_one`
 - `reason.restoring_blocked`
 - `reason.rule_refused`
+- `reason.save_failed`
 - `reason.seed_has_already_sprouted`
 - `reason.seed_needs_name`
 - `reason.settings_error`
@@ -332,6 +339,7 @@
 - `reason.unknown_setting`
 - `reason.unknown_slot`
 - `reason.unknown_target`
+- `reason.unknown_view`
 - `reason.upgrade_needs_name`
 - `reason.use_hands`
 - `reason.use_least_1`
@@ -617,11 +625,13 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (104)
+### settings (106)
 - `settings.autosave`
 - `settings.autosave.desc`
 - `settings.autosave_interval_s`
 - `settings.autosave_interval_s.desc`
+- `settings.autosave_mode`
+- `settings.autosave_mode.desc`
 - `settings.backups_count`
 - `settings.backups_count.desc`
 - `settings.backups_folder`
@@ -746,7 +756,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (571)
+## Нет в en.json (581)
 
 ### catalog (95)
 - `catalog.field.ac_bonus`
@@ -883,22 +893,30 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (16)
+### reason (24)
 - `reason.bad_color`
 - `reason.bad_hotkey`
+- `reason.bad_name`
 - `reason.catalog_error`
+- `reason.character_open`
 - `reason.combat_active`
 - `reason.field_not_allowed`
 - `reason.field_required`
 - `reason.field_type`
+- `reason.file_corrupt`
 - `reason.invalid_value`
+- `reason.name_taken`
+- `reason.no_backup`
+- `reason.no_character`
 - `reason.not_allowed`
 - `reason.not_enough_reactions`
 - `reason.out_of_range`
 - `reason.over_mana_level`
 - `reason.rule_refused`
+- `reason.save_failed`
 - `reason.settings_error`
 - `reason.unknown_command`
+- `reason.unknown_view`
 - `reason.wrong_type`
 
 ### rules (268)
@@ -1171,11 +1189,13 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (104)
+### settings (106)
 - `settings.autosave`
 - `settings.autosave.desc`
 - `settings.autosave_interval_s`
 - `settings.autosave_interval_s.desc`
+- `settings.autosave_mode`
+- `settings.autosave_mode.desc`
 - `settings.backups_count`
 - `settings.backups_count.desc`
 - `settings.backups_folder`

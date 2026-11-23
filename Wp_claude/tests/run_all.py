@@ -19,7 +19,7 @@ TAIL = 15
 
 def suites(base=HERE):
     out = []
-    for sub in ("core", "model", "storage"):
+    for sub in ("core", "model", "storage", "app", "perf"):
         out += sorted(glob.glob(os.path.join(base, sub, "test_*.py")))
     out += [os.path.join(base, "test_module_size.py"), os.path.join(base, "test_ascii_code.py"),
             os.path.join(base, "test_rule_literals.py"), os.path.join(base, "test_review_pack.py")]
