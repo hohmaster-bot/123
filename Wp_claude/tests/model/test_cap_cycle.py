@@ -58,14 +58,15 @@ S.case("temp-hp-partial", "owner: hit 7, temp HP 3 -> 4 reached HP, cap -1", (2,
 S.case("dr-zeroes", "owner: a hit zeroed by DR does not lower the cap", (6, 6))(
     lambda: bal(run(fighter(), IN, ("take_damage", {"amount": 5, "reductions": Reductions(flat={PHYSICAL: 5})}))))
 
-# DoT: bleed 2 per tick, no flag -> cap stays 6 (balance: 6 is max, regen nothing, bleed 2 -> 4).
-S.case("dot-no-flag", "owner: DoT does not lower the cap by default", (4, 6))(
+# DoT: bleed 2 per tick, no flag -> cap stays 6. Package 22 A4 (owner): the tick order most favourable for the player:
+# bleed first 6 -> 4, then regen +1 -> 5 (the old fixed order regen-first wasted the regen at the cap: 4).
+S.case("dot-no-flag", "owner: DoT does not lower the cap by default; pkg 22 best tick order -> balance 5", (5, 6))(
     lambda: bal(run(fighter(), IN,
                     ("add_status", {"active": True, "status": Status("bleed", sid="b", per_tick_hp=-2, duration=ef.TICKS), "ticks": 3}),
                     ("tick", {}))))
 
 # DoT with the flag "lowers cap": cap 6 - 1 = 5.
-S.case("dot-flag", "owner: DoT with the flag lowers the cap", (4, 5))(
+S.case("dot-flag", "owner: DoT with the flag lowers the cap 6 -> 5; balance 4 + regen 1 = 5 (pkg 22 A4)", (5, 5))(
     lambda: bal(run(fighter(), IN,
                     ("add_status", {"active": True, "status": Status("burn", sid="b", per_tick_hp=-2, duration=ef.TICKS,
                                                      lowers_balance_cap=True), "ticks": 3}),

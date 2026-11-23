@@ -2051,6 +2051,7 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | training.feat_default_cost | 200 | training | feat price when the author gives none |
 | new.hit_die | 8 | HP | hit die of a new character (and its level-1 HP) |
 | new.reactions | 1 | reactions | reactions of a new character |
+| tick.max_order_items | 6 | items | all orders of the tick's balance items are tried up to this many (then greedy) |
 
 ### Damage types (damage_types.json)
 

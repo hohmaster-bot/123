@@ -2,7 +2,7 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (714)
+## Нет в ru.json (718)
 
 ### catalog (95)
 - `catalog.field.ac_bonus`
@@ -153,7 +153,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (186)
+### reason (187)
 - `reason.action_needed`
 - `reason.activates_status_which_not`
 - `reason.already_activated`
@@ -268,6 +268,7 @@
 - `reason.not_enough_need_have`
 - `reason.not_enough_need_per`
 - `reason.not_enough_ov_need`
+- `reason.not_enough_reactions`
 - `reason.not_enough_slots_uses`
 - `reason.not_enough_spirit_need`
 - `reason.not_found`
@@ -346,7 +347,7 @@
 - `resource.ov`
 - `resource.training`
 
-### rules (266)
+### rules (268)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -489,6 +490,8 @@
 - `rules.spirit.base.desc`
 - `rules.spirit.per_cha`
 - `rules.spirit.per_cha.desc`
+- `rules.tick.max_order_items`
+- `rules.tick.max_order_items.desc`
 - `rules.training.ability_step`
 - `rules.training.ability_step.desc`
 - `rules.training.armor_grade_cost`
@@ -614,7 +617,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (103)
+### settings (104)
 - `settings.autosave`
 - `settings.autosave.desc`
 - `settings.autosave_interval_s`
@@ -654,6 +657,7 @@
 - `settings.group.rules.rest`
 - `settings.group.rules.sheet`
 - `settings.group.rules.skills`
+- `settings.group.rules.tick`
 - `settings.group.rules.training`
 - `settings.group.rules.twf`
 - `settings.group.rules.weapons`
@@ -742,7 +746,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (566)
+## Нет в en.json (571)
 
 ### catalog (95)
 - `catalog.field.ac_bonus`
@@ -879,7 +883,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (15)
+### reason (16)
 - `reason.bad_color`
 - `reason.bad_hotkey`
 - `reason.catalog_error`
@@ -889,6 +893,7 @@
 - `reason.field_type`
 - `reason.invalid_value`
 - `reason.not_allowed`
+- `reason.not_enough_reactions`
 - `reason.out_of_range`
 - `reason.over_mana_level`
 - `reason.rule_refused`
@@ -896,7 +901,7 @@
 - `reason.unknown_command`
 - `reason.wrong_type`
 
-### rules (266)
+### rules (268)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -1039,6 +1044,8 @@
 - `rules.spirit.base.desc`
 - `rules.spirit.per_cha`
 - `rules.spirit.per_cha.desc`
+- `rules.tick.max_order_items`
+- `rules.tick.max_order_items.desc`
 - `rules.training.ability_step`
 - `rules.training.ability_step.desc`
 - `rules.training.armor_grade_cost`
@@ -1164,7 +1171,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (103)
+### settings (104)
 - `settings.autosave`
 - `settings.autosave.desc`
 - `settings.autosave_interval_s`
@@ -1204,6 +1211,7 @@
 - `settings.group.rules.rest`
 - `settings.group.rules.sheet`
 - `settings.group.rules.skills`
+- `settings.group.rules.tick`
 - `settings.group.rules.training`
 - `settings.group.rules.twf`
 - `settings.group.rules.weapons`
@@ -1319,6 +1327,9 @@
 ### theme (2)
 - `theme.dark`
 - `theme.light`
+
+### tier (1)
+- `tier.specialized.full`
 
 ### warning (4)
 - `warning.hit_die_default_used`
