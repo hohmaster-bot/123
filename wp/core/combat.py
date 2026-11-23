@@ -6,8 +6,9 @@ applies to both attacks. Options without the tag take no penalty. An effect flag
 "ignores iterative" makes a tagged option count as untagged (e.g. master bonus).
 """
 from dataclasses import dataclass
+from wp.rules_data import rules as rd
 
-ITERATIVE_STEP = -5
+ITERATIVE_STEP = rd.ref("combat.core_iterative_step")
 
 
 @dataclass(frozen=True)
