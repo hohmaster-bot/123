@@ -19,12 +19,16 @@ from wp.core import effects as ef
 from wp.model import attack_view as av
 from wp.model import derived_view as dv
 from wp.model.character import AttackRecord
+from wp.rules_data import rules as rd
+
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+TWF_WEAPONS = rd.ref("twf.weapons_needed")   # weapons in the hands for a two-weapon combination
 
 TWF_FLAG = "twf"
 REDUCTION = "twf_reduction"            # effect target: number that lowers both penalties
-BASE = (-6, -10)
-LIGHT_RELIEF = 2                       # each penalty
-FEAT_RELIEF = (2, 6)                   # primary, off hand
+BASE = rd.ref("twf.base_penalties")
+LIGHT_RELIEF = rd.ref("twf.light_relief")  # each penalty
+FEAT_RELIEF = rd.ref("twf.feat_relief")  # primary, off hand
 
 
 @dataclass(frozen=True)
@@ -107,5 +111,5 @@ def available(ch, record, off_rid=""):
         if off is not None and off.item == av.UNARMED:
             return dv.hands_used(ch) <= 1
     held = [it for it in ch.items if it.in_hands and it.groups]
-    return len(held) >= 2
+    return len(held) >= TWF_WEAPONS
 

@@ -117,7 +117,11 @@
   {"id": "items.masterwork_penalty_relief", "value": 1, "type": "int", "group": "items", "unit": "skill", "description": "masterwork armor: skill penalty smaller by", "label": "rules.items.masterwork_penalty_relief"},
   {"id": "items.broken_at_fraction", "value": 2, "type": "int", "group": "items", "unit": "", "description": "broken at max HP / this and below", "label": "rules.items.broken_at_fraction"},
   {"id": "items.broken_skill_mult", "value": 2, "type": "int", "group": "items", "unit": "", "description": "a broken armor's skill penalty is multiplied by", "label": "rules.items.broken_skill_mult"},
-  {"id": "items.hardness_per_enchant", "value": 2, "type": "int", "group": "items", "unit": "hardness", "description": "hardness + this * enchantment N", "label": "rules.items.hardness_per_enchant"}
+  {"id": "items.hardness_per_enchant", "value": 2, "type": "int", "group": "items", "unit": "hardness", "description": "hardness + this * enchantment N", "label": "rules.items.hardness_per_enchant"},
+  {"id": "twf.base_penalties", "value": [-6, -10], "type": "list", "group": "twf", "unit": "to-hit", "description": "two-weapon penalties (primary, off hand)", "label": "rules.twf.base_penalties"},
+  {"id": "twf.light_relief", "value": 2, "type": "int", "group": "twf", "unit": "to-hit", "description": "a light off-hand weapon: each penalty smaller by", "label": "rules.twf.light_relief"},
+  {"id": "twf.feat_relief", "value": [2, 6], "type": "list", "group": "twf", "unit": "to-hit", "description": "the feat: penalties smaller by (primary, off hand)", "label": "rules.twf.feat_relief"},
+  {"id": "twf.weapons_needed", "value": 2, "type": "int", "group": "twf", "unit": "weapons", "description": "weapons in the hands for a two-weapon combination", "label": "rules.twf.weapons_needed"}
  ],
  "allowlist": {}
 }
