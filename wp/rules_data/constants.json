@@ -121,7 +121,10 @@
   {"id": "twf.base_penalties", "value": [-6, -10], "type": "list", "group": "twf", "unit": "to-hit", "description": "two-weapon penalties (primary, off hand)", "label": "rules.twf.base_penalties"},
   {"id": "twf.light_relief", "value": 2, "type": "int", "group": "twf", "unit": "to-hit", "description": "a light off-hand weapon: each penalty smaller by", "label": "rules.twf.light_relief"},
   {"id": "twf.feat_relief", "value": [2, 6], "type": "list", "group": "twf", "unit": "to-hit", "description": "the feat: penalties smaller by (primary, off hand)", "label": "rules.twf.feat_relief"},
-  {"id": "twf.weapons_needed", "value": 2, "type": "int", "group": "twf", "unit": "weapons", "description": "weapons in the hands for a two-weapon combination", "label": "rules.twf.weapons_needed"}
+  {"id": "twf.weapons_needed", "value": 2, "type": "int", "group": "twf", "unit": "weapons", "description": "weapons in the hands for a two-weapon combination", "label": "rules.twf.weapons_needed"},
+  {"id": "attack.default_crit_mult", "value": 2, "type": "int", "group": "attack", "unit": "", "description": "crit multiplier without a weapon card", "label": "rules.attack.default_crit_mult"},
+  {"id": "attack.grip_factor", "value": {"one": [1, 1], "off": [1, 2], "two": [3, 2]}, "type": "map", "group": "attack", "unit": "fraction", "description": "Str to damage by grip (numerator, denominator)", "label": "rules.attack.grip_factor"},
+  {"id": "attack.crit_hint", "value": {"2": "+0", "3": "+4", "4": "+8"}, "type": "map", "group": "attack", "unit": "text", "description": "house-rule crit confirmation hint by multiplier (tooltip only)", "label": "rules.attack.crit_hint"}
  ],
  "allowlist": {}
 }

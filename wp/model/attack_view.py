@@ -29,15 +29,19 @@ from wp.model import iterative as itv
 from wp.model import items as itm
 from wp.model import records as rec
 from wp.model import stats_view as stv
+from wp.rules_data import rules as rd
+
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+DEFAULT_CRIT_MULT = rd.ref("attack.default_crit_mult")   # crit multiplier without a weapon card
+GRIP_FACTOR_DATA = rd.ref("attack.grip_factor")   # Str to damage by grip (numerator, denominator)
+CRIT_HINT_DATA = rd.ref("attack.crit_hint")   # house-rule crit confirmation hint by multiplier (tooltip only)
 
 UNARMED = rec.UNARMED
 ONE = "one"
 OFF = "off"
 TWO = "two"
 GRIPS = (ONE, OFF, TWO)
-GRIP_FACTOR = {ONE: (1, 1), OFF: (1, 2), TWO: (3, 2)}   # multiplier as a fraction
 DEFAULT_STAT = "str"
-CRIT_HINT = {2: "+0", 3: "+4", 4: "+8"}
 
 
 @dataclass(frozen=True)
@@ -81,13 +85,13 @@ def str_damage(mod, grip):
     mod = int(mod)
     if mod <= 0:
         return mod
-    num, den = GRIP_FACTOR[grip]
+    num, den = GRIP_FACTOR_DATA[grip]
     return mod * num // den
 
 
 def crit_hint(mult):
     """House-rule tooltip text only, no calculation."""
-    return CRIT_HINT.get(int(mult), "")
+    return CRIT_HINT_DATA.get(str(int(mult)), "")
 
 
 def _item(ch, record):
@@ -231,7 +235,7 @@ CRIT_MULT = "crit_mult"
 def crit_range(ch, record, item, bonuses, ids):
     """Crit range shown on the attack (combat.md "Crit", package 10 R8): the weapon's base range, keen
     doubles it, each mastery pick "crit +1" and each feat effect (target "crit_range") widen it by 1."""
-    base = item.crit_range if item is not None else 20
+    base = item.crit_range if item is not None else int(wpn.D20)
     keen = item.keen if item is not None else False
     return wpn.crit_threshold(base, keen, rec.group_picks(ch, record.group), _scoped(bonuses, bo.CRIT_RANGE, ids))
 
@@ -291,8 +295,8 @@ def attack(ch, record, extra=()):
                       to_hit=sum(x.value for x in hit), to_hit_lines=tuple(hit),
                       damage=sum(x.value for x in dmg), damage_lines=tuple(dmg),
                       parry=p, parry_lines=parry_lines,
-                      crit_hint=crit_hint(item.crit_mult if item is not None else 2),
-                      crit_mult=(item.crit_mult if item is not None else 2)
+                      crit_hint=crit_hint(item.crit_mult if item is not None else DEFAULT_CRIT_MULT),
+                      crit_mult=(item.crit_mult if item is not None else int(DEFAULT_CRIT_MULT))
                       + _scoped(blk.unblocked(ch, bonuses, CRIT_MULT), CRIT_MULT, ids),
                       dice=dice_row(item, 1) if item is None or dv.works(ch, item) else ("", ""),
                       item_state=itm.state(item, dv.picks(ch, item)) if item is not None else itm.OK,
