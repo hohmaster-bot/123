@@ -59,7 +59,21 @@
   {"id": "weapons.durability_specialist_pct", "value": 30, "type": "int", "group": "weapons", "unit": "percent", "description": "hardness per specialist pick", "label": "rules.weapons.durability_specialist_pct"},
   {"id": "weapons.durability_expert_pct", "value": 70, "type": "int", "group": "weapons", "unit": "percent", "description": "hardness per expert pick", "label": "rules.weapons.durability_expert_pct"},
   {"id": "dice.d20_faces", "value": 20, "type": "int", "group": "weapons", "unit": "faces", "description": "the d20 (crit base range 20+)", "label": "rules.dice.d20_faces"},
-  {"id": "weapons.keen_multiplier", "value": 2, "type": "int", "group": "weapons", "unit": "", "description": "keen multiplies the BASE crit range", "label": "rules.weapons.keen_multiplier"}
+  {"id": "weapons.keen_multiplier", "value": 2, "type": "int", "group": "weapons", "unit": "", "description": "keen multiplies the BASE crit range", "label": "rules.weapons.keen_multiplier"},
+  {"id": "load.light_max_l", "value": 59, "type": "int", "group": "derived", "unit": "L", "description": "light load up to this (5.9 B)", "label": "rules.load.light_max_l"},
+  {"id": "load.heavy_max_l", "value": 109, "type": "int", "group": "derived", "unit": "L", "description": "heavy load up to this (10.9 B)", "label": "rules.load.heavy_max_l"},
+  {"id": "load.l_per_b", "value": 10, "type": "int", "group": "derived", "unit": "L", "description": "L in one B; thresholds shift by Str mod * this", "label": "rules.load.l_per_b"},
+  {"id": "morale.scale_min", "value": -10, "type": "int", "group": "derived", "unit": "scale", "description": "morale scale lowest", "label": "rules.morale.scale_min"},
+  {"id": "morale.scale_max", "value": 10, "type": "int", "group": "derived", "unit": "scale", "description": "morale scale highest", "label": "rules.morale.scale_max"},
+  {"id": "pain.hp_step", "value": 3, "type": "int", "group": "derived", "unit": "HP", "description": "1 pain per this many HP below 0", "label": "rules.pain.hp_step"},
+  {"id": "size.attack_ac", "value": {"small": 1, "medium": 0, "large": -1}, "type": "map", "group": "derived", "unit": "map", "description": "size to attack and AC", "label": "rules.size.attack_ac"},
+  {"id": "size.cmb_cmd", "value": {"small": -1, "medium": 0, "large": 1}, "type": "map", "group": "derived", "unit": "map", "description": "size to CMB and CMD", "label": "rules.size.cmb_cmd"},
+  {"id": "speed.base_ft", "value": 20, "type": "int", "group": "derived", "unit": "ft", "description": "default race speed", "label": "rules.speed.base_ft"},
+  {"id": "speed.overload_ft", "value": -10, "type": "int", "group": "derived", "unit": "ft", "description": "speed change while overloaded", "label": "rules.speed.overload_ft"},
+  {"id": "ability.mod_base", "value": 10, "type": "int", "group": "derived", "unit": "score", "description": "modifier = (score - base) // divisor", "label": "rules.ability.mod_base"},
+  {"id": "ability.mod_divisor", "value": 2, "type": "int", "group": "derived", "unit": "", "description": "modifier divisor", "label": "rules.ability.mod_divisor"},
+  {"id": "bp.cap_divisor", "value": 4, "type": "int", "group": "derived", "unit": "HP", "description": "BP cap = ceil(max HP / this)", "label": "rules.bp.cap_divisor"},
+  {"id": "morale.divisor", "value": 2, "type": "int", "group": "derived", "unit": "", "description": "morale bonus = trunc(scale / this)", "label": "rules.morale.divisor"}
  ],
  "allowlist": {}
 }

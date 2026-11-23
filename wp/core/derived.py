@@ -3,16 +3,23 @@
 Rules: RULES/rest.md (BP, balance), RULES/resources.md (pain from HP),
 RULES/defense.md (morale), RULES/gear.md (load thresholds).
 """
+from wp.rules_data import rules as rd
+
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+ABILITY_MOD_BASE = rd.ref("ability.mod_base")   # modifier = (score - base) // divisor
+ABILITY_MOD_DIVISOR = rd.ref("ability.mod_divisor")   # modifier divisor
+BP_CAP_DIVISOR = rd.ref("bp.cap_divisor")   # BP cap = ceil(max HP / this)
+MORALE_DIVISOR = rd.ref("morale.divisor")   # morale bonus = trunc(scale / this)
 
 # Load: thresholds are stored in L (1 B = 10 L). Base light 0-5.9 B, heavy to 10.9 B.
-LIGHT_MAX_BASE_L = 59
-HEAVY_MAX_BASE_L = 109
-L_PER_B = 10
+LIGHT_MAX_BASE_L = rd.ref("load.light_max_l")
+HEAVY_MAX_BASE_L = rd.ref("load.heavy_max_l")
+L_PER_B = rd.ref("load.l_per_b")
 
-MORALE_MIN = -10
-MORALE_MAX = 10
+MORALE_MIN = rd.ref("morale.scale_min")
+MORALE_MAX = rd.ref("morale.scale_max")
 
-PAIN_HP_STEP = 3
+PAIN_HP_STEP = rd.ref("pain.hp_step")
 
 LOAD_LIGHT = "light"
 LOAD_HEAVY = "heavy"
@@ -21,7 +28,7 @@ LOAD_OVER = "overload"
 
 def ability_mod(score):
     """Pathfinder ability modifier: floor((score - 10) / 2)."""
-    return (int(score) - 10) // 2
+    return (int(score) - ABILITY_MOD_BASE) // ABILITY_MOD_DIVISOR
 
 
 def bp_cap(max_hp):
@@ -29,7 +36,7 @@ def bp_cap(max_hp):
     max_hp = int(max_hp)
     if max_hp <= 0:
         return 0
-    return -(-max_hp // 4)
+    return -(-max_hp // BP_CAP_DIVISOR)
 
 
 def bp_cap_from_hp(hp_pool):
@@ -61,18 +68,18 @@ def pain_from_hp(hp):
 
 # Size (combat.md "Size and speed", package 11 C): small / medium / large only.
 SIZES = ("small", "medium", "large")
-SIZE_MOD = {"small": 1, "medium": 0, "large": -1}       # attack and AC
-SIZE_CMB = {"small": -1, "medium": 0, "large": 1}       # CMB and CMD (opposite sign)
-BASE_SPEED_FT = 20
-OVERLOAD_SPEED_FT = -10                                  # gear.md: overload -10 ft
+SIZE_MOD = rd.ref("size.attack_ac")  # attack and AC
+SIZE_CMB = rd.ref("size.cmb_cmd")  # CMB and CMD (opposite sign)
+BASE_SPEED_FT = rd.ref("speed.base_ft")
+OVERLOAD_SPEED_FT = rd.ref("speed.overload_ft")  # gear.md: overload -10 ft
 
 
 def size_mod(size):
-    return SIZE_MOD[size]
+    return rd.value(SIZE_MOD)[size]
 
 
 def size_cmb(size):
-    return SIZE_CMB[size]
+    return rd.value(SIZE_CMB)[size]
 
 
 def armor_slowdown(penalty_ft, reduction=0):
@@ -94,7 +101,7 @@ def morale_bonus(scale, combat_active=True):
         return 0
     scale = max(MORALE_MIN, min(MORALE_MAX, int(scale)))
     # int() truncates toward zero; // would floor (-3 // 2 == -2, wrong).
-    return int(scale / 2)
+    return int(scale / MORALE_DIVISOR)
 
 
 def load_thresholds_l(str_mod):
