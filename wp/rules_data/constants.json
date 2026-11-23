@@ -88,7 +88,9 @@
   {"id": "magic.concentration_per_ot", "value": 2, "type": "int", "group": "magic", "unit": "DC", "description": "concentration DC per OT gained", "label": "rules.magic.concentration_per_ot"},
   {"id": "actions.standard", "value": 2, "type": "int", "group": "magic", "unit": "actions", "description": "a standard action (shift 1, move 1, full-round 3)", "label": "rules.actions.standard"},
   {"id": "magic.slot_overload_mult", "value": 2, "type": "int", "group": "magic", "unit": "", "description": "slot casters and cantrips: overload = this * actions", "label": "rules.magic.slot_overload_mult"},
-  {"id": "pain.death_cap", "value": 8, "type": "int", "group": "pain", "unit": "pain", "description": "pain count that kills", "label": "rules.pain.death_cap"}
+  {"id": "pain.death_cap", "value": 8, "type": "int", "group": "pain", "unit": "pain", "description": "pain count that kills", "label": "rules.pain.death_cap"},
+  {"id": "rest.short_rest_costs", "value": {"heal": 1, "charges": 2, "spirit": 2, "stat": 1, "pain": 1, "mana": 1, "divine": 1}, "type": "map", "group": "rest", "unit": "BP", "description": "short rest option prices", "label": "rules.rest.short_rest_costs"},
+  {"id": "rest.free_heal_base", "value": 2, "type": "int", "group": "rest", "unit": "HP", "description": "free heal of the short rest = this + level", "label": "rules.rest.free_heal_base"}
  ],
  "allowlist": {}
 }

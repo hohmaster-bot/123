@@ -17,6 +17,10 @@ from typing import Dict, Tuple
 from wp.core import pain as pn
 from wp.core.damage import Pool
 from wp.core.injuries import restore_stat, stat_damaged
+from wp.rules_data import rules as rd
+
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+FREE_HEAL_BASE = rd.ref("rest.free_heal_base")   # free heal of the short rest = this + level
 
 # charge kinds
 ABILITY = "ability"     # class, race, feat, quirk charges
@@ -32,8 +36,7 @@ OPT_PAIN = "pain"            # remove 1 pain
 OPT_MANA = "mana"            # restore mana by regen (amount: GM, manual)
 OPT_DIVINE = "divine"        # restore divine casts (Court chance rolled outside)
 
-COST = {OPT_HEAL: 1, OPT_CHARGES: 2, OPT_SPIRIT: 2, OPT_STAT: 1,
-        OPT_PAIN: 1, OPT_MANA: 1, OPT_DIVINE: 1}
+COST = rd.ref("rest.short_rest_costs")
 
 
 @dataclass(frozen=True)
@@ -94,7 +97,7 @@ def _restore_charges(charges, kinds):
 
 def free_heal_amount(level, other_heal=0):
     """2 + level HP; if race or an effect gives more, the larger value is used."""
-    return max(2 + int(level), int(other_heal))
+    return max(FREE_HEAL_BASE + int(level), int(other_heal))
 
 
 def start_short_rest(state, other_heal=0, extra_bp=0, heal_bonus=0):
