@@ -4,7 +4,8 @@ Each registry entry (Wp_claude/tests/breaks/*.py, list ENTRIES) breaks ONE rule 
 test suites that must fail:
     dict(id="...", file="wp/...", old="exact text", new="broken text", suites=("core/test_x.py", ...), rule="...")
 `old` / `new` are written with "\\n"; they are matched with the file's own line endings.
-The runner copies wp/, Wp_claude/tests/ and Wp_claude/RULES/ to a TEMP directory, applies one break at a time
+The runner copies wp/, Wp_claude/tests/, Wp_claude/RULES/ and Wp_claude/tools/ to a TEMP directory, checks that
+each named suite passes there WITHOUT a break (else the entry proves nothing: "not applied"), applies one break at a time
 THERE (the working tree is never touched), runs only the named suites, and reports caught / missed per entry.
 Exit code 1 if any entry is missed or does not apply.
 Usage: python Wp_claude/tests/break_check.py [id-prefix ...]
@@ -19,7 +20,7 @@ import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-COPY = ("wp", os.path.join("Wp_claude", "tests"), os.path.join("Wp_claude", "RULES"))
+COPY = ("wp", os.path.join("Wp_claude", "tests"), os.path.join("Wp_claude", "RULES"), os.path.join("Wp_claude", "tools"))
 
 
 def registry():
@@ -40,8 +41,18 @@ def _copy(tmp):
         shutil.copytree(os.path.join(ROOT, rel), os.path.join(tmp, rel), ignore=ignore)
 
 
-def check(entry, tmp):
-    """'caught', 'missed' or 'not applied (...)' for one entry, run inside the temp copy."""
+def _passes(suite, tmp):
+    r = subprocess.run([sys.executable, os.path.join(tmp, "Wp_claude", "tests", suite)], capture_output=True, text=True,
+                       cwd=tmp)
+    return r.returncode == 0
+
+
+def check(entry, tmp, clean):
+    """'caught', 'missed' or 'not applied (...)' for one entry, run inside the temp copy.
+    clean: {suite: passes without any break}; a suite that already fails proves nothing (package 18)."""
+    bad = [s for s in entry["suites"] if not clean.setdefault(s, _passes(s, tmp))]
+    if bad:
+        return "not applied (suite fails without a break: %s)" % ", ".join(bad)
     path = os.path.join(tmp, entry["file"])
     raw = open(path, "rb").read()
     nl = b"\r\n" if b"\r\n" in raw else b"\n"
@@ -68,8 +79,9 @@ def main(prefixes):
     tmp = tempfile.mkdtemp(prefix="wp_breaks_")
     try:
         _copy(tmp)
+        clean = {}
         for e in entries:
-            res = check(e, tmp)
+            res = check(e, tmp, clean)
             if res != "caught":
                 bad += 1
             print("%-8s %-40s %s" % ("ok" if res == "caught" else "MISSED", e["id"], "" if res == "caught" else res))

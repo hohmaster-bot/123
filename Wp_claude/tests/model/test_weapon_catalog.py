@@ -13,6 +13,7 @@ from _runner import Suite  # noqa: E402
 from dataclasses import replace  # noqa: E402
 
 from wp.catalog import feats_catalog as fc  # noqa: E402
+from wp.catalog import store as cs  # noqa: E402
 from wp.catalog import weapons_catalog as wc  # noqa: E402
 from wp.commands import CommandError, dispatch  # noqa: E402
 from wp.core.weapons import Pick, Weapon  # noqa: E402
@@ -23,8 +24,8 @@ from wp.model.factory import new_character  # noqa: E402
 
 S = Suite("test_weapon_catalog")
 CAT = wc.load_default()
-DATA = json.load(io.open(wc.DEFAULT_PATH, encoding="utf-8"))
-LEVELS = DATA["qualification_levels"]
+DATA = json.load(io.open(cs.shipped_path(wc.WEAPONS), encoding="utf-8"))   # catalog file (package 18)
+LEVELS = DATA["meta"]["qualification_levels"]
 
 
 def card(wid):

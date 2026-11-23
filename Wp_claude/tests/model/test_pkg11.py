@@ -274,8 +274,8 @@ S.case("d-remove-feat", "pkg 11 D: removing the feat removes its effect (attack 
 
 
 def _catalog_feat():
-    cat = fc.parse(json.dumps({"format": "wipefinder.feats", "version": 1, "feats": [
-        {"fid": "brute", "name": "Brute", "cost": 200, "granted_maneuvers": ["shove"],
+    cat = fc.parse(json.dumps({"kind": "feats", "format": 1, "entries": [      # catalog file format (package 18)
+        {"id": "brute", "name": "Brute", "cost": 200, "granted_maneuvers": ["shove"],
          "effects": [{"target": "attack", "value": 1}, {"target": "skill:intimidate", "stat_mod": "str"}]}]}))
     ch = run(with_feat(), ("remove_feat", {"fid": "ft"}), ("add_feat", {"catalog": cat, "fid": "brute"}))
     f = ch.feats[0]

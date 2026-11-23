@@ -35,6 +35,8 @@ def main():
     files = suites()
     for f in files:
         code, lines = run(f)
+        if not lines:                  # an empty or silent suite proves nothing (package 18)
+            code, lines = 1, ["suite printed nothing (empty file?)"]
         if code != 0:
             failed += 1
             print("FAILED %s" % os.path.relpath(f, ROOT))

@@ -21,7 +21,7 @@ NORTH = "\u0421\u0435\u0432\u0435\u0440"
 AIR = "\u0432\u043e\u0437\u0434\u0443\u0448\u043d\u043e\u0435"
 
 S.case("count-45", "skills_list.md: 45 templates", 45)(lambda: len(CAT.templates))
-S.case("by-stat", "skills_list.md: STR 1, DEX 7, CON 1, INT 22, WIS 6, CHA 8", (1, 7, 1, 22, 6, 8))(
+S.case("by-stat", "skills_list.md [OWNER pkg 18: medicine is Int]: STR 1, DEX 7, CON 1, INT 23, WIS 5, CHA 8", (1, 7, 1, 23, 5, 8))(
     lambda: tuple(len(CAT.by_stat(s)) for s in ("str", "dex", "con", "int", "wis", "cha")))
 S.case("families", "skills_list.md: param families",
        ("piloting", "craft_1", "craft_2", "craft_3", "know_culture", "acting"))(
