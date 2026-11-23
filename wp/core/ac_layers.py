@@ -14,9 +14,10 @@ from dataclasses import dataclass
 from typing import Optional
 
 from wp.core.ac import PENALTY
+from wp.rules_data import rules as rd
 
 
-BASE = 10
+BASE = rd.ref("ac.base")                 # the ladder starts at the AC base (data, package 20)
 POSITION = "position"
 EXACT = "exact"
 HIT = "hit"

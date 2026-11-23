@@ -11,9 +11,13 @@ from dataclasses import dataclass, field
 from typing import Optional, Tuple
 
 from wp.core import bonuses as bo
+from wp.rules_data import rules as rd
 
-BASE_AC = 10
-OVERLOAD_DODGE_CAP = 2
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+ODD_LEVEL_STEP = rd.ref("ac.odd_level_step")   # parry +1 per this many levels from level 3
+
+BASE_AC = rd.ref("ac.base")
+OVERLOAD_DODGE_CAP = rd.ref("ac.overload_dodge_cap")
 
 FRONT = "front"
 FLANK = "flank"
@@ -42,13 +46,13 @@ class AcInput:
 # Parry from armor proficiency (training.md [OWNER pkg 4]): none 0, light 2, medium 4, heavy 6,
 # plus 1 on every odd level from 3 (3, 5, 7, ...; level 1 does not count, owner Q27),
 # plus 2 for the "tower shields" proficiency grade. Parry comes from PROFICIENCY, not from an item.
-ARMOR_GRADE_PARRY = {"none": 0, "light": 2, "medium": 4, "heavy": 6}
+ARMOR_GRADE_PARRY = rd.ref("ac.armor_grade_parry")
 TOWER_GRADE = "tower"
-TOWER_GRADE_PARRY = 2
+TOWER_GRADE_PARRY = rd.ref("ac.tower_grade_parry")
 
 
 def odd_level_parry(level):
-    return max(0, (int(level) - 1) // 2)
+    return max(0, (int(level) - 1) // ODD_LEVEL_STEP)
 
 
 def base_parry(armor_grade, level, shield_grade="none"):
