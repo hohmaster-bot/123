@@ -9,7 +9,6 @@ sys.path.insert(0, os.path.join(HERE, "..", "core"))
 from _runner import Suite  # noqa: E402
 
 from wp.commands import CommandError, dispatch  # noqa: E402
-from wp.core import combat as cb  # noqa: E402
 from wp.core import magic as mg  # noqa: E402
 from wp.core import weapons as wpn  # noqa: E402
 from wp.core.damage import Pool  # noqa: E402
@@ -94,9 +93,6 @@ S.case("g-derived", "gear.md load: 65 L heavy with light max 59; light max 69 ->
         hero(items=(Item("bag", "sack", weight_l=65),)), with_k(hero(items=(Item("bag", "sack", weight_l=65),)), {"load.light_max_l": 69}))))
 S.case("g-defense", "defense.md: AC base 10 -> 12 with ac.base 12", (10, 12))(
     lambda: tuple(view(c, lambda c=c: dv.ac(c)) for c in (hero(), with_k(hero(), {"ac.base": 12}))))
-S.case("g-combat", "combat.md (old core helper): steps of -4 -> 0 / -4 / -8", (0, -4, -8))(
-    lambda: view(with_k(hero(), {"combat.core_iterative_step": -4}),
-                 lambda: cb.iterative_penalties(tuple(cb.TurnOption("a", attack_tag=True) for _ in range(3)))))
 S.case("g-injuries", "injuries.md: 1 comfort removes 3 OT (10 -> 7); comfort_ot 4 -> 6", (7, 6))(
     lambda: tuple(run(c, ("remove_ot_comfort", {"n": 1})).trauma for c in (
         hero(trauma=10, comfort_current=2), with_k(hero(trauma=10, comfort_current=2), {"injuries.comfort_ot": 4}))))

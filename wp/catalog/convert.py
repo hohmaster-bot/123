@@ -1,11 +1,11 @@
 """Catalog entry -> sheet record (package 18): items and statuses (weapons, armor, feats, skills have their own modules).
-Fields kept only in the catalog (no sheet field yet): items ilvl, ignore_bag_weight (assumption Q133)."""
+Fields kept only in the catalog (no sheet field): items ignore_bag_weight (a character flag). ilvl -> Item.ilvl (Q133)."""
 from wp.core.damage import Pool
 from wp.core.effects import Effect, Status
 from wp.model.character import Item
 
 ITEM_FIELDS = ("kind", "hands", "slot", "weight_l", "quantity", "consumable", "activation_day", "activation_decade",
-               "on_use_status", "qualification_n", "base_slot_cost", "hp", "durability")
+               "on_use_status", "qualification_n", "base_slot_cost", "hp", "durability", "ilvl")
 
 
 def effect(d):

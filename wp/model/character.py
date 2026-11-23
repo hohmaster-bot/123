@@ -124,6 +124,7 @@ class Item:
     variable: Tuple[str, ...] = ()     # fields the table gives as "Vary." (left empty on purpose)
     attack_kind: str = "melee"         # weapon card: melee / ranged / thrown (package 17, attack_kind.py)
     slot: str = ""                     # doll slot id (wp/catalog/data/doll_slots.json); "" = no slot (package 16 E)
+    ilvl: Optional[int] = None         # item level ILVL (doll.md); None = not given (package 21, Q133)
     base_slot_cost: int = 1            # base slots taken while left at the base (gear.md "Base"; grey items 0)
     source: str = ""                   # where it came from (loot, shop, template:<id>...), a label
 

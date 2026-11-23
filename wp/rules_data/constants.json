@@ -79,7 +79,6 @@
   {"id": "ac.armor_grade_parry", "value": {"none": 0, "light": 2, "medium": 4, "heavy": 6}, "type": "map", "group": "defense", "unit": "map", "description": "parry by armor proficiency grade", "label": "rules.ac.armor_grade_parry"},
   {"id": "ac.tower_grade_parry", "value": 2, "type": "int", "group": "defense", "unit": "AC", "description": "parry of the tower shield proficiency grade", "label": "rules.ac.tower_grade_parry"},
   {"id": "ac.odd_level_step", "value": 2, "type": "int", "group": "defense", "unit": "levels", "description": "parry +1 per this many levels from level 3", "label": "rules.ac.odd_level_step"},
-  {"id": "combat.core_iterative_step", "value": -5, "type": "int", "group": "combat", "unit": "to-hit", "description": "old helper core/combat.py only; the sheet uses rules_settings.iterative_step", "label": "rules.combat.core_iterative_step"},
   {"id": "injuries.severity", "value": {"light": [2, 3], "medium": [5, 2], "heavy": [12, 1]}, "type": "map", "group": "injuries", "unit": "map", "description": "severity -> (OT removed, base healing rating)", "label": "rules.injuries.severity"},
   {"id": "injuries.comfort_ot", "value": 3, "type": "int", "group": "injuries", "unit": "OT", "description": "1 comfort removes this much OT", "label": "rules.injuries.comfort_ot"},
   {"id": "injuries.attention_min", "value": 2, "type": "int", "group": "injuries", "unit": "", "description": "attention value = max(this, Str mod)", "label": "rules.injuries.attention_min"},

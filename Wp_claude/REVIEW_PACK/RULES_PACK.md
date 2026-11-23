@@ -1995,7 +1995,6 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | ac.armor_grade_parry | {"none": 0, "light": 2, "medium": 4, "heavy": 6} | map | parry by armor proficiency grade |
 | ac.tower_grade_parry | 2 | AC | parry of the tower shield proficiency grade |
 | ac.odd_level_step | 2 | levels | parry +1 per this many levels from level 3 |
-| combat.core_iterative_step | -5 | to-hit | old helper core/combat.py only; the sheet uses rules_settings.iterative_step |
 | injuries.severity | {"light": [2, 3], "medium": [5, 2], "heavy": [12, 1]} | map | severity -> (OT removed, base healing rating) |
 | injuries.comfort_ot | 3 | OT | 1 comfort removes this much OT |
 | injuries.attention_min | 2 |  | attention value = max(this, Str mod) |
