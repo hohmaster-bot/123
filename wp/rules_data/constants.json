@@ -137,5 +137,72 @@
   {"id": "new.hit_die", "value": 8, "type": "int", "group": "new_character", "unit": "HP", "description": "hit die of a new character (and its level-1 HP)", "label": "rules.new.hit_die"},
   {"id": "new.reactions", "value": 1, "type": "int", "group": "new_character", "unit": "reactions", "description": "reactions of a new character", "label": "rules.new.reactions"}
  ],
- "allowlist": {}
+ "allowlist": {
+  "note": "Numbers in code that are NOT game rules (package 20). named: module constants; inline: numbers inside functions. 0, 1, -1 are always allowed.",
+  "named": {
+    "wp/catalog/store.py": {
+      "FORMAT": "catalog file format version"
+    },
+    "wp/settings/store.py": {
+      "FORMAT": "settings file format version"
+    },
+    "wp/storage/character_io.py": {
+      "VERSION": "character file format version"
+    },
+    "wp/core/effects.py": {
+      "ALL_VALUE": "value 'all' = more than any real number"
+    },
+    "wp/core/formula.py": {
+      "MAX_LENGTH": "longest formula text accepted"
+    },
+    "wp/core/weapons.py": {
+      "LEVEL_NAMES": "display names of the grades (UI text)"
+    },
+    "wp/model/ids.py": {
+      "_TRANSLIT": "Unicode code points of the Cyrillic letters"
+    },
+    "wp/model/spell_view.py": {
+      "MAX_PCT": "a chance is at most 100 percent"
+    }
+  },
+  "inline": {
+    "wp/commands/journal.py": {
+      "2": "depth of the short journal parameters"
+    },
+    "wp/commands/progression_cmds.py": {
+      "10": "tenths arithmetic of the comfort equivalent"
+    },
+    "wp/core/damage.py": {
+      "100": "percent arithmetic"
+    },
+    "wp/core/weapons.py": {
+      "100": "percent arithmetic"
+    },
+    "wp/model/attack_view.py": {
+      "2": "the second damage row of a double weapon"
+    },
+    "wp/model/defense_view.py": {
+      "100": "percent: -100 is the floor"
+    },
+    "wp/model/ids.py": {
+      "2": "the first number added to a taken id"
+    },
+    "wp/model/items.py": {
+      "2": "rounding to nearest (half up)"
+    },
+    "wp/model/twf.py": {
+      "2": "the second damage row of a double weapon"
+    },
+    "wp/settings/images.py": {
+      "1024": "bytes in a KB",
+      "1023": "rounding bytes up to KB"
+    },
+    "wp/settings/schema.py": {
+      "24": "F1..F24 keys",
+      "2": "a point has 2 numbers / rect index",
+      "4": "a rect has 4 numbers",
+      "3": "rect index (height)"
+    }
+  }
+}
 }

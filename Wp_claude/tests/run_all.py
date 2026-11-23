@@ -21,7 +21,8 @@ def suites(base=HERE):
     out = []
     for sub in ("core", "model", "storage"):
         out += sorted(glob.glob(os.path.join(base, sub, "test_*.py")))
-    out += [os.path.join(base, "test_module_size.py"), os.path.join(base, "test_ascii_code.py")]
+    out += [os.path.join(base, "test_module_size.py"), os.path.join(base, "test_ascii_code.py"),
+            os.path.join(base, "test_rule_literals.py")]
     return out
 
 
