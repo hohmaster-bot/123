@@ -12,9 +12,10 @@ from wp.catalog.weapons_catalog import BASIC, CONTACT, UNARMED_COMBAT
 from wp.core import bonuses as bo
 from wp.core import weapons as wpn
 from wp.model.character import SHIELD, AttackRecord
+from wp.rules_data import rules as rd
 
 UNARMED = "unarmed"
-MAX_PRIMARY = 2
+MAX_PRIMARY = rd.ref("attack.max_primary")
 PASSIVE_KEYS = ("parry", "balance_regen", "range_ft")
 
 

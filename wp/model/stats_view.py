@@ -21,9 +21,10 @@ from wp.catalog.feats_catalog import FINESSE, has_flag
 from wp.core import bonuses as bo
 from wp.model import blocks as blk
 from wp.model import derived_view as dv
+from wp.rules_data import rules as rd
 
 SAVES = ("fort", "ref", "will")
-CMD_BASE = 10
+CMD_BASE = rd.ref("cmd.base")
 
 
 @dataclass(frozen=True)

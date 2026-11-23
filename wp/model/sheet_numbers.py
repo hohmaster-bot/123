@@ -4,6 +4,7 @@ from wp.core.damage import Pool
 from wp.model import items as itm
 from wp.model import sheet_targets as stg
 from wp.model.derived_view import works
+from wp.rules_data import rules as rd
 
 
 
@@ -33,7 +34,7 @@ def reactions(ch):
 
 def base_slots(ch):
     """Base slots: bought / start slots + whole base points of attention option 4 (tenths kept) + effects."""
-    return max(0, ch.base_slots + ch.base_points_tenths // 10 + stg.value(ch, "base_slots"))
+    return max(0, ch.base_slots + ch.base_points_tenths // rd.const("training.tenths_per_point", ch) + stg.value(ch, "base_slots"))
 
 
 def comfort_rate_bonus(ch):

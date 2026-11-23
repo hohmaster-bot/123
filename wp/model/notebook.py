@@ -12,10 +12,11 @@ from dataclasses import dataclass
 from typing import Tuple
 
 from wp.core.effects import Effect
+from wp.rules_data import rules as rd
 
-DRIVE_MAX = 5
-DRIVE_ATTENTION_LEVEL = 4
-LENS_START = 1
+DRIVE_MAX = rd.ref("narrative.drive_max")
+DRIVE_ATTENTION_LEVEL = rd.ref("narrative.drive_attention_level")
+LENS_START = rd.ref("narrative.lens_start")
 RED = "red"
 GREEN = "green"
 DESTROYED = "destroyed"
@@ -66,7 +67,7 @@ class Quirk:
 class Lens:
     lid: str
     name: str
-    value: int = LENS_START
+    value: int = rd.default("narrative.lens_start")
     max: int = 1
     text: str = ""
 
