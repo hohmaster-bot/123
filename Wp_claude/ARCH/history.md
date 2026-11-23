@@ -59,3 +59,6 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package 22: restore_mana, reactions as a resource, balance clamped to the cap in combat, the most favourable
   tick order, paired attack = one use, RULES text fixes (pipeline, rest table, encumbrance vs spell overload), ru.json
   names. Report: tests/PACKAGE22_REPORT.md.
+- Done in package 23: session layer wp/app (views by panel, topics, files with backups / trash / corrupt recovery,
+  autosave), read cache (dispatch + all views 4631 -> about 29 ms on the heavy character), perf budgets, generated
+  ARCH/view_contract.md, AC zones as data. Phase 3 done. Report: tests/PACKAGE23_REPORT.md.

@@ -20,6 +20,12 @@ Finished-package history: ARCH/history.md.
 Test runner that can fail (done: baseline script). Golden tests from RULES. Fix core bugs. Split core into modules (D9).
 
 ## Phase 3 - nodes without visuals
+PHASE 3 DONE (package 23): session layer (D25, ARCH/app_layer.md), view contract (ARCH/view_contract.md), read
+cache and perf budgets, AC zones as data. What is left (owner, package 23):
+  1. Independent review 5 (RULES_PACK.md).
+  2. Overlay prototype (Phase 4) - needs the owner's screen drawings A1, A2.
+  3. The UI (Phase 5).
+  PDF export is NOT built (not in RULES; no package asked for it).
 Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects (D14-D17), catalogs contract, i18n (D4: RU / EN switch, wp/i18n/ru.json and en.json, refusal reason ids as keys; Russian only
 until then), theme, panel registry.
 - Before Phase 4: the owner sends screen drawings with labels (A1, A2...), Claude turns them into screen descriptions.
@@ -30,7 +36,7 @@ until then), theme, panel registry.
 - What is left after package 17 (owner, package 17):
   1. Phase 3 remainder: Russian texts in wp/i18n/ru.json (owner, TRANSLATION_TODO.md); a status catalog (buffs.md).
      Done: settings (19), rule constants (20), i18n files, themes, panel registry (21).
-  2. The AC-zones package (RULES/ac_zones.md) once the owner gives the full table.
+  2. AC zones: built as data in package 23 from the draft (Q154-Q157); the full table can replace the data.
   3. Phase 4 Lite (overlay) spike, Phase 5 UI (two modes: Classic and Lite, D20), Phase 6 release.
   4. Class system later (below).
 - Q122 CLOSED (owner, package 17): XP and money are narrative; there is no "start session" or "end session" button,
