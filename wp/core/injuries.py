@@ -9,20 +9,17 @@ from typing import Tuple
 
 from wp.core.damage import Pool
 from wp.core.effects import Effect
+from wp.rules_data import rules as rd
 
 LIGHT = "light"
 MEDIUM = "medium"
 HEAVY = "heavy"
 
 # severity -> (OT removed, base healing rating RL)
-SEVERITY = {
-    LIGHT: (2, 3),
-    MEDIUM: (5, 2),
-    HEAVY: (12, 1),
-}
+SEVERITY = rd.ref("injuries.severity")
 
-COMFORT_OT = 3          # 1 comfort removes 3 OT
-ATTENTION_MIN = 2       # attention value = max(2, Str mod)
+COMFORT_OT = rd.ref("injuries.comfort_ot")  # 1 comfort removes 3 OT
+ATTENTION_MIN = rd.ref("injuries.attention_min")  # attention value = max(2, Str mod)
 
 
 @dataclass(frozen=True)
