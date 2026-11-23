@@ -1,0 +1,11 @@
+{
+ "format": 1,
+ "note": "Shipped layout profiles (package 19): one default profile per mode. Concrete panels and cells come with the UI (owner).",
+ "classic": [
+  {"id": "default", "name": "Default", "panels": [], "cells": []}
+ ],
+ "lite": [
+  {"id": "default", "name": "Default", "elements": [], "opacity": 100, "click_through": false, "click_through_hotkey": "",
+   "always_on_top": true, "show_hotkey": "", "lock_layout": false, "snap_to_grid": false, "grid_size": 8, "monitor_scale": {}}
+ ]
+}

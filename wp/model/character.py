@@ -20,7 +20,7 @@ from wp.model.notebook import Court, Drive, Lens, Quest, Quirk, Story
 from wp.model.template import Template
 
 ABILITIES = ("str", "dex", "con", "int", "wis", "cha")
-DICT_FIELDS = ("abilities", "slots", "resources", "save_base", "save_stats")
+DICT_FIELDS = ("abilities", "slots", "resources", "save_base", "save_stats", "char_settings")
 
 
 @dataclass(frozen=True)
@@ -340,6 +340,7 @@ class Character:
     maneuvers: Tuple[Maneuver, ...] = ()
     pools: Tuple[ResourcePool, ...] = ()   # resource pools (package 13 C)
     rules_settings: RulesSettings = RulesSettings()   # rule switches as data (package 14 G)
+    char_settings: Dict[str, Any] = field(default_factory=dict)   # character-bound settings (package 19, D13)
     balance_cap_hits: int = 0          # hits this combat that lowered the balance cap (homerule)
     balance_cap_start: Optional[int] = None   # balance cap taken at start_combat (snapshot); None = live
     ov: int = 0                        # time points (OV), no cap

@@ -1,0 +1,81 @@
+{
+ "format": 1,
+ "note": "Settings schema (package 19, D13, D22). Each key: id, domain (rules = Character.rules_settings, character = Character.char_settings, app = the global settings file), type (bool int float enum string color hotkey point rect list map), default, allowed / min / max, item (list items) or value (map values) type, group, label and description ids (i18n keys). Unknown keys in a file are kept, never interpreted.",
+ "keys": [
+  {"id": "language", "domain": "app", "type": "enum", "default": "ru", "allowed": ["ru", "en"], "group": "general"},
+  {"id": "theme", "domain": "app", "type": "string", "default": "default", "group": "general"},
+  {"id": "ui_scale", "domain": "app", "type": "float", "default": 1.0, "min": 0.5, "max": 3.0, "group": "general"},
+  {"id": "font_size", "domain": "app", "type": "int", "default": 12, "min": 6, "max": 48, "group": "general"},
+  {"id": "units_weight", "domain": "app", "type": "enum", "default": "B", "allowed": ["B", "L"], "group": "general"},
+  {"id": "default_mode", "domain": "app", "type": "enum", "default": "classic", "allowed": ["classic", "lite"], "group": "general"},
+  {"id": "last_character", "domain": "app", "type": "string", "default": "", "group": "general"},
+  {"id": "autosave", "domain": "app", "type": "bool", "default": true, "group": "saving"},
+  {"id": "autosave_interval_s", "domain": "app", "type": "int", "default": 120, "min": 10, "max": 3600, "group": "saving"},
+  {"id": "backups_count", "domain": "app", "type": "int", "default": 5, "min": 0, "max": 100, "group": "saving"},
+  {"id": "backups_folder", "domain": "app", "type": "string", "default": "backups", "group": "saving"},
+  {"id": "confirmations", "domain": "app", "type": "map", "value": "bool", "default": {"remove_item": true, "long_rest_end_combat": true, "catalog_remove_entry": true, "image_remove": true, "profile_delete": true}, "group": "safety"},
+  {"id": "hotkeys", "domain": "app", "type": "map", "value": "hotkey", "default": {"toggle_mode": "Ctrl+Shift+W"}, "group": "hotkeys"},
+  {"id": "notifications", "domain": "app", "type": "map", "value": "bool", "default": {}, "group": "notifications"},
+  {"id": "log_kinds", "domain": "app", "type": "list", "item": "string", "default": [], "group": "log"},
+  {"id": "log_max", "domain": "app", "type": "int", "default": 0, "min": 0, "max": 100000, "group": "log"},
+  {"id": "resource_display", "domain": "app", "type": "map", "value": "enum", "allowed": ["number", "bar", "both", "percent"], "default": {"hp": "both", "balance": "both", "bp": "number", "spirit": "number", "mana": "bar", "comfort": "number"}, "group": "display"},
+  {"id": "window_classic", "domain": "app", "type": "rect", "default": [100, 100, 1280, 800], "group": "windows"},
+  {"id": "window_lite", "domain": "app", "type": "rect", "default": [0, 0, 400, 300], "group": "windows"},
+  {"id": "image_max_kb", "domain": "app", "type": "int", "default": 2048, "min": 1, "max": 102400, "group": "images"},
+  {"id": "image_extensions", "domain": "app", "type": "list", "item": "string", "default": ["png", "jpg", "jpeg", "gif", "svg", "webp"], "group": "images"},
+  {"id": "char_portrait", "domain": "character", "type": "string", "default": "", "group": "character"},
+  {"id": "ignore_pain", "domain": "rules", "type": "bool", "default": false, "group": "rules"},
+  {"id": "ignore_negative_morale", "domain": "rules", "type": "bool", "default": false, "group": "rules"},
+  {"id": "speed_multiplier", "domain": "rules", "type": "float", "default": 1, "min": 0, "group": "rules"},
+  {"id": "rest_regen_multiplier", "domain": "rules", "type": "float", "default": 1, "min": 0, "group": "rules"},
+  {"id": "rest_regen_bonus", "domain": "rules", "type": "int", "default": 0, "group": "rules"},
+  {"id": "hp_regen_per_tick", "domain": "rules", "type": "int", "default": 0, "group": "rules"},
+  {"id": "overload_enabled", "domain": "rules", "type": "bool", "default": true, "group": "rules"},
+  {"id": "log_limit", "domain": "rules", "type": "int", "default": 0, "min": 0, "group": "rules"},
+  {"id": "iterative_step", "domain": "rules", "type": "int", "default": -5, "max": 0, "group": "rules"},
+  {"id": "ranged_attack_stat", "domain": "rules", "type": "enum", "default": "dex", "allowed": ["str", "dex", "con", "int", "wis", "cha"], "group": "rules"},
+  {"id": "ranged_damage_stat", "domain": "rules", "type": "enum", "default": "none", "allowed": ["none", "str", "dex", "con", "int", "wis", "cha"], "group": "rules"},
+  {"id": "ranged_damage_mult", "domain": "rules", "type": "float", "default": 1, "min": 0, "group": "rules"},
+  {"id": "thrown_attack_stat", "domain": "rules", "type": "enum", "default": "dex", "allowed": ["str", "dex", "con", "int", "wis", "cha"], "group": "rules"},
+  {"id": "thrown_damage_stat", "domain": "rules", "type": "enum", "default": "str", "allowed": ["none", "str", "dex", "con", "int", "wis", "cha"], "group": "rules"},
+  {"id": "thrown_damage_mult", "domain": "rules", "type": "float", "default": 1, "min": 0, "group": "rules"},
+  {"id": "damage_order", "domain": "rules", "type": "list", "item": "enum", "allowed": ["percent", "flat", "modifier"], "default": ["percent", "flat", "modifier"], "group": "rules"}
+ ],
+ "profile_fields": {
+  "classic": [
+   {"id": "name", "type": "string"}, {"id": "panels", "type": "list"}, {"id": "cells", "type": "list"}
+  ],
+  "lite": [
+   {"id": "name", "type": "string"}, {"id": "elements", "type": "list"},
+   {"id": "opacity", "type": "int", "min": 0, "max": 100}, {"id": "click_through", "type": "bool"},
+   {"id": "click_through_hotkey", "type": "hotkey"}, {"id": "always_on_top", "type": "bool"},
+   {"id": "show_hotkey", "type": "hotkey"}, {"id": "lock_layout", "type": "bool"}, {"id": "snap_to_grid", "type": "bool"},
+   {"id": "grid_size", "type": "int", "min": 1, "max": 200}, {"id": "monitor_scale", "type": "map", "value": "float"}
+  ],
+  "panel": [
+   {"id": "visible", "type": "bool"}, {"id": "size", "type": "point"}, {"id": "position", "type": "point"},
+   {"id": "dock", "type": "enum", "allowed": ["left", "right", "top", "bottom", "center", "float"]}, {"id": "tab_order", "type": "int"}
+  ],
+  "cell": [
+   {"id": "source", "type": "string"}, {"id": "kind", "type": "enum", "allowed": ["number", "bar", "icon", "text", "button"]},
+   {"id": "label", "type": "string"}, {"id": "size", "type": "point"}, {"id": "grid", "type": "rect"}, {"id": "position", "type": "point"},
+   {"id": "color_rules", "type": "list"}, {"id": "action", "type": "any"}, {"id": "icon", "type": "string"}, {"id": "visible", "type": "bool"},
+   {"id": "panel", "type": "string"}
+  ],
+  "element": [
+   {"id": "kind", "type": "enum", "allowed": ["button", "log", "icon", "bar", "text"]}, {"id": "source", "type": "string"},
+   {"id": "action", "type": "any"}, {"id": "position", "type": "point"}, {"id": "monitor", "type": "string"}, {"id": "size", "type": "point"},
+   {"id": "visible", "type": "bool"}, {"id": "anchor", "type": "enum", "allowed": ["none", "left", "right", "top", "bottom"]},
+   {"id": "snap_grid", "type": "int", "min": 0}, {"id": "opacity", "type": "int", "min": 0, "max": 100}, {"id": "icon", "type": "string"}
+  ],
+  "quick_button": [
+   {"id": "label", "type": "string"}, {"id": "icon", "type": "string"}, {"id": "action", "type": "any"}, {"id": "macro", "type": "list"},
+   {"id": "hotkey", "type": "hotkey"}, {"id": "group", "type": "string"}, {"id": "order", "type": "int"}
+  ],
+  "image": [
+   {"id": "name", "type": "string"}, {"id": "file", "type": "string"},
+   {"id": "kind", "type": "enum", "allowed": ["icon", "picture", "background"]}, {"id": "tags", "type": "list"}
+  ]
+ },
+ "image_targets": ["feat", "status", "item", "skill", "spell", "pool", "quick_button", "cell", "element", "doll_slot", "character"]
+}

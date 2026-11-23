@@ -33,6 +33,8 @@ KIND = {
     "edit": ("edit_sheet", "edit_ability", "edit_rules", "add_entry", "edit_entry", "remove_entry"),
     "notebook": ("add_note", "change_lens", "set_drive_level", "burn_quirk"),
     "template": ("add_template", "remove_template"),
+    "settings": ("set_rule_setting", "reset_rule_setting", "set_char_setting", "reset_char_setting",
+                 "reset_settings_group"),
 }
 _BY_COMMAND = {c: k for k, cmds in KIND.items() for c in cmds}
 OTHER = "other"

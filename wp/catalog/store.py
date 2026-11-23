@@ -162,10 +162,15 @@ def save(cat, path=None):
         raise CatalogError("no path to save the catalog to")
     if in_shipped_folder(path):
         raise CatalogError("shipped catalogs are read-only: %s" % path)
-    text = dumps(cat)                     # built before anything is written
+    atomic_write(path, dumps(cat))        # the text is built before anything is written
+    return replace(cat, path=path)
+
+
+def atomic_write(path, text):
+    """Write text to <path>.tmp, flush, fsync, then replace <path>; a failure leaves the old file (also used by the
+    settings files, package 19)."""
     tmp = path + ".tmp"
-    folder = os.path.dirname(os.path.abspath(path))
-    os.makedirs(folder, exist_ok=True)
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     try:
         with io.open(tmp, "w", encoding="utf-8", newline="\n") as f:
             f.write(text)
@@ -175,8 +180,7 @@ def save(cat, path=None):
     except OSError as e:
         if os.path.exists(tmp):
             os.remove(tmp)
-        raise CatalogError("saving the catalog failed (the old file is kept): %s" % e)
-    return replace(cat, path=path)
+        raise CatalogError("saving failed (the old file is kept): %s" % e)
 
 
 # ------------------------------------------------------------------ layers
