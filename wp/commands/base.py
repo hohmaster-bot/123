@@ -62,8 +62,10 @@ def dispatch(ch, cmd, listeners=(), /, **params):
     """Run a command by name; on success notify listeners(result)."""
     if cmd not in REGISTRY:
         raise CommandError("unknown command: %r" % (cmd,), UNKNOWN_COMMAND, command=cmd)
+    from wp.rules_data import rules as rd
     try:
-        result = REGISTRY[cmd](ch, **params)
+        with rd.using(ch):             # rule constants of this character (package 20, D23)
+            result = REGISTRY[cmd](ch, **params)
     except CommandError:
         raise
     except KeyError as e:

@@ -77,8 +77,9 @@ S.case("v-unknown-key", "pkg 19: an unknown key is refused by settings_set", "un
     lambda: reason(app(), "settings_set", key="nope", value=1))
 S.case("v-rules-key-not-app", "pkg 19: a rule setting is not set by the app command", "not_app_setting")(
     lambda: reason(app(), "settings_set", key="iterative_step", value=-3))
-S.case("v-rules-mirror", "pkg 19: the schema's rule keys are exactly the RulesSettings fields", True)(
-    lambda: set(sch.keys_of("rules")) == {f.name for f in fields(RulesSettings)})
+S.case("v-rules-mirror", "pkg 19/20: the schema's rule keys are the RulesSettings fields + the rule constants", True)(
+    lambda: set(sch.keys_of("rules")) == {f.name for f in fields(RulesSettings) if f.name != "constants"} |
+    set(__import__("wp.rules_data.rules", fromlist=["x"]).TABLE))
 S.case("v-defaults-valid", "pkg 19: every default passes its own schema", [])(
     lambda: [k for k, s in sch.KEYS.items() if sch.check_value(s, s["default"])])
 

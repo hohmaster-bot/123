@@ -29,6 +29,8 @@ def _value(app, ch, key):
         return st.get(app, key)
     if ch is None:
         return spec["default"]
+    if spec["domain"] == "rules" and spec.get("constant"):
+        return ch.rules_settings.constants.get(key, spec["default"])
     if spec["domain"] == "rules":
         v = getattr(ch.rules_settings, key)
         return list(v) if isinstance(v, tuple) else v

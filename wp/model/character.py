@@ -192,6 +192,10 @@ class RulesSettings:
     thrown_damage_stat: str = "str"
     thrown_damage_mult: Any = 1
     damage_order: Tuple[str, ...] = ("percent", "flat", "modifier")   # damage steps (defense.md, package 17)
+    constants: Dict[str, Any] = field(default_factory=dict)   # rule constant overrides {id: value} (package 20, D23)
+
+    def __post_init__(self):
+        freeze_fields(self, ("constants",))
 
 
 @dataclass(frozen=True)

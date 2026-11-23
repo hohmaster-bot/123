@@ -24,18 +24,31 @@ def _rule_value(key, value):
     return tuple(value) if isinstance(value, list) else value
 
 
+def _constant(key):
+    return bool(sch.KEYS.get(key, {}).get("constant"))
+
+
 @command
 def set_rule_setting(ch, key="", value=None):
+    """A rule switch (a RulesSettings field) or a rule constant (rules_settings.constants, package 20)."""
     _check(key, value, "rules")
-    return commit(replace(ch, rules_settings=replace(ch.rules_settings, **{key: _rule_value(key, value)})),
-                  "set_rule_setting", "rule %s" % key, {"key": key})
+    rs = ch.rules_settings
+    if _constant(key):
+        rs = replace(rs, constants=FrozenDict(dict(rs.constants, **{key: value})))
+    else:
+        rs = replace(rs, **{key: _rule_value(key, value)})
+    return commit(replace(ch, rules_settings=rs), "set_rule_setting", "rule %s" % key, {"key": key})
 
 
 @command
 def reset_rule_setting(ch, key=""):
     _check(key, sch.KEYS.get(key, {}).get("default"), "rules")
+    rs = ch.rules_settings
+    if _constant(key):
+        return commit(replace(ch, rules_settings=replace(rs, constants=FrozenDict(
+            {k: v for k, v in rs.constants.items() if k != key}))), "reset_rule_setting", "rule %s reset" % key, {"key": key})
     default = {f.name: f.default for f in fields(RulesSettings)}[key]
-    return commit(replace(ch, rules_settings=replace(ch.rules_settings, **{key: default})), "reset_rule_setting",
+    return commit(replace(ch, rules_settings=replace(rs, **{key: default})), "reset_rule_setting",
                   "rule %s reset" % key, {"key": key})
 
 
@@ -60,7 +73,8 @@ def reset_settings_group(ch, group=""):
     if not keys:
         raise CommandError("no character settings in group %r" % (group,), "unknown_group", values=(group,))
     defaults = {f.name: f.default for f in fields(RulesSettings)}
-    rules = replace(ch.rules_settings, **{k: defaults[k] for k in keys if sch.KEYS[k]["domain"] == "rules"})
+    rules = replace(ch.rules_settings, **{k: defaults[k] for k in keys if sch.KEYS[k]["domain"] == "rules" and not _constant(k)})
+    rules = replace(rules, constants=FrozenDict({k: v for k, v in rules.constants.items() if k not in keys}))
     own = FrozenDict({k: v for k, v in ch.char_settings.items() if k not in keys})
     return commit(replace(ch, rules_settings=rules, char_settings=own), "reset_settings_group", "group %s reset" % group,
                   {"reset": tuple(sorted(keys))})

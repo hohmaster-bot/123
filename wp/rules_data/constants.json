@@ -1,0 +1,6 @@
+{
+ "format": 1,
+ "note": "Game-rule constants (package 20, D23). Defaults = the values the code had before. A character overrides any of them in rules_settings.constants (set_rule_setting). The code reads them only through wp/rules_data/rules.py. allowlist: numbers in code that are NOT rules (indexes, file formats, percent math, die faces).",
+ "constants": [],
+ "allowlist": {}
+}

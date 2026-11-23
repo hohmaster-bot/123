@@ -27,6 +27,10 @@ def _load(path=PATH):
         k.setdefault("label", "settings.%s" % k["id"])
         k.setdefault("description", "settings.%s.desc" % k["id"])
         keys[k["id"]] = k
+    from wp.rules_data import rules as rd
+    for cid, c in rd.TABLE.items():    # every rule constant is a rules-domain key (package 20, D23)
+        keys[cid] = {"id": cid, "domain": "rules", "type": c["type"], "default": c["value"], "group": "rules." + c["group"],
+                     "label": c.get("label", "rules." + cid), "description": "rules.%s.desc" % cid, "constant": True}
     return keys, {name: {f["id"]: f for f in fs} for name, fs in d["profile_fields"].items()}, tuple(d["image_targets"])
 
 
