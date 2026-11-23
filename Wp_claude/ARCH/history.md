@@ -53,3 +53,6 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package 20: all game-rule numbers into data (134 constants, wp/rules_data/constants.json; code reads them
   through rules.py; per-character overrides; scan test), the rules pack for an independent reviewer
   (REVIEW_PACK/RULES_PACK.md). Report: tests/PACKAGE20_REPORT.md.
+- Done in package 21: i18n (ru / en key files, fallback, refusal texts, TRANSLATION_TODO.md), themes as token
+  data with a QSS builder (no Qt), the panel registry and profile checks, Item.ilvl, the old iterative helper removed.
+  Report: tests/PACKAGE21_REPORT.md.

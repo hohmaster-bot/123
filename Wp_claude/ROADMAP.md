@@ -28,8 +28,8 @@ until then), theme, panel registry.
 - Owner goal: FULL control over bonuses and rules through settings. For now every NEW rule constant or switch goes into
   Character.rules_settings (data) instead of code.
 - What is left after package 17 (owner, package 17):
-  1. Phase 3 remainder: wp/i18n texts for the refusal reason ids and setting labels, theme, panel registry; a status
-     catalog (buffs.md). Done: settings structure (package 19), rule constants as data (package 20).
+  1. Phase 3 remainder: Russian texts in wp/i18n/ru.json (owner, TRANSLATION_TODO.md); a status catalog (buffs.md).
+     Done: settings (19), rule constants (20), i18n files, themes, panel registry (21).
   2. The AC-zones package (RULES/ac_zones.md) once the owner gives the full table.
   3. Phase 4 Lite (overlay) spike, Phase 5 UI (two modes: Classic and Lite, D20), Phase 6 release.
   4. Class system later (below).
