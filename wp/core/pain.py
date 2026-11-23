@@ -11,8 +11,9 @@ from typing import Tuple
 
 from wp.core import bonuses as bo
 from wp.core.derived import pain_from_hp
+from wp.rules_data import rules as rd
 
-DEFAULT_CAP = 8
+DEFAULT_CAP = rd.ref("pain.death_cap")
 
 
 @dataclass(frozen=True)
@@ -24,7 +25,7 @@ class PainEntry:
 
 @dataclass(frozen=True)
 class PainProfile:
-    cap: int = DEFAULT_CAP
+    cap: int = rd.default("pain.death_cap")   # a plain number in the record (table default)
     ignores_pain: bool = False       # pain gives no penalty and no death
     no_penalty: bool = False         # pain gives no penalty (death still counts)
     damage_per_pain: int = 0         # e.g. race: +1 damage per pain

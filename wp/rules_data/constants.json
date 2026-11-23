@@ -87,7 +87,8 @@
   {"id": "magic.concentration_base", "value": 10, "type": "int", "group": "magic", "unit": "DC", "description": "concentration DC = base + per_ot * OT", "label": "rules.magic.concentration_base"},
   {"id": "magic.concentration_per_ot", "value": 2, "type": "int", "group": "magic", "unit": "DC", "description": "concentration DC per OT gained", "label": "rules.magic.concentration_per_ot"},
   {"id": "actions.standard", "value": 2, "type": "int", "group": "magic", "unit": "actions", "description": "a standard action (shift 1, move 1, full-round 3)", "label": "rules.actions.standard"},
-  {"id": "magic.slot_overload_mult", "value": 2, "type": "int", "group": "magic", "unit": "", "description": "slot casters and cantrips: overload = this * actions", "label": "rules.magic.slot_overload_mult"}
+  {"id": "magic.slot_overload_mult", "value": 2, "type": "int", "group": "magic", "unit": "", "description": "slot casters and cantrips: overload = this * actions", "label": "rules.magic.slot_overload_mult"},
+  {"id": "pain.death_cap", "value": 8, "type": "int", "group": "pain", "unit": "pain", "description": "pain count that kills", "label": "rules.pain.death_cap"}
  ],
  "allowlist": {}
 }
