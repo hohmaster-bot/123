@@ -90,7 +90,13 @@
   {"id": "magic.slot_overload_mult", "value": 2, "type": "int", "group": "magic", "unit": "", "description": "slot casters and cantrips: overload = this * actions", "label": "rules.magic.slot_overload_mult"},
   {"id": "pain.death_cap", "value": 8, "type": "int", "group": "pain", "unit": "pain", "description": "pain count that kills", "label": "rules.pain.death_cap"},
   {"id": "rest.short_rest_costs", "value": {"heal": 1, "charges": 2, "spirit": 2, "stat": 1, "pain": 1, "mana": 1, "divine": 1}, "type": "map", "group": "rest", "unit": "BP", "description": "short rest option prices", "label": "rules.rest.short_rest_costs"},
-  {"id": "rest.free_heal_base", "value": 2, "type": "int", "group": "rest", "unit": "HP", "description": "free heal of the short rest = this + level", "label": "rules.rest.free_heal_base"}
+  {"id": "rest.free_heal_base", "value": 2, "type": "int", "group": "rest", "unit": "HP", "description": "free heal of the short rest = this + level", "label": "rules.rest.free_heal_base"},
+  {"id": "skills.advanced_roll_bonus", "value": 3, "type": "int", "group": "skills", "unit": "roll", "description": "bonus of an advanced / specialized skill", "label": "rules.skills.advanced_roll_bonus"},
+  {"id": "skills.rank_price", "value": {"normal": 20, "advanced": 15, "specialized": 10}, "type": "map", "group": "skills", "unit": "map", "description": "+1 rank = price * new rank, by tier", "label": "rules.skills.rank_price"},
+  {"id": "skills.promote_base", "value": 40, "type": "int", "group": "skills", "unit": "training", "description": "make advanced = base + per_other * others", "label": "rules.skills.promote_base"},
+  {"id": "skills.promote_per_other", "value": 20, "type": "int", "group": "skills", "unit": "training", "description": "per OTHER advanced or specialized skill", "label": "rules.skills.promote_per_other"},
+  {"id": "skills.specialize_base", "value": 200, "type": "int", "group": "skills", "unit": "training", "description": "make specialized = base + per_other * others", "label": "rules.skills.specialize_base"},
+  {"id": "skills.specialize_per_other", "value": 50, "type": "int", "group": "skills", "unit": "training", "description": "per OTHER specialized skill", "label": "rules.skills.specialize_per_other"}
  ],
  "allowlist": {}
 }

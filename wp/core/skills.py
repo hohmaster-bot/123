@@ -9,14 +9,21 @@ Costs ("rank" = the NEW rank):
 Free advanced/specialized skills still count as "other".
 """
 from dataclasses import dataclass
+from wp.rules_data import rules as rd
+
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+PROMOTE_BASE = rd.ref("skills.promote_base")   # make advanced = base + per_other * others
+PROMOTE_PER_OTHER = rd.ref("skills.promote_per_other")   # per OTHER advanced or specialized skill
+SPECIALIZE_BASE = rd.ref("skills.specialize_base")   # make specialized = base + per_other * others
+SPECIALIZE_PER_OTHER = rd.ref("skills.specialize_per_other")   # per OTHER specialized skill
 
 NORMAL = "normal"
 ADVANCED = "advanced"
 SPECIALIZED = "specialized"
 TIERS = (NORMAL, ADVANCED, SPECIALIZED)
 
-ADVANCED_ROLL_BONUS = 3
-RANK_PRICE = {NORMAL: 20, ADVANCED: 15, SPECIALIZED: 10}
+ADVANCED_ROLL_BONUS = rd.ref("skills.advanced_roll_bonus")
+RANK_PRICE = rd.ref("skills.rank_price")
 
 
 @dataclass(frozen=True)
@@ -74,12 +81,12 @@ def _count(skills, tiers, exclude):
 
 def promote_cost(skills, name):
     """Make a skill advanced: 40 + 20 per OTHER advanced skill (specialized ones are advanced too)."""
-    return 40 + 20 * _count(skills, (ADVANCED, SPECIALIZED), name)
+    return PROMOTE_BASE + PROMOTE_PER_OTHER * _count(skills, (ADVANCED, SPECIALIZED), name)
 
 
 def specialize_cost(skills, name):
     """Make an advanced skill specialized: 200 + 50 per OTHER specialized skill."""
-    return 200 + 50 * _count(skills, (SPECIALIZED,), name)
+    return SPECIALIZE_BASE + SPECIALIZE_PER_OTHER * _count(skills, (SPECIALIZED,), name)
 
 
 def tier_cost(skills, name, to_tier):
