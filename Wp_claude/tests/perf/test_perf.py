@@ -89,6 +89,20 @@ def _override_not_mixed():
 
 S.case("c-scope", "pkg 23: a value computed under other rule constants is never reused (AC base 12 vs 10)", 2)(_override_not_mixed)
 
+
+def _mod_scope():
+    from wp.model import derived_view as dv
+    from wp.model.character import ABILITIES, Ability, Character
+    ch = Character(abilities={a: Ability(base=14 if a == "dex" else 10) for a in ABILITIES})
+    c2 = dispatch(ch, "set_rule_setting", key="ability.mod_base", value=12).state
+    with rd.using(c2):
+        a = dv.ability_mod(c2, "dex")                 # (14 - 12) // 2 = 1
+    return a, dv.ability_mod(c2, "dex")               # outside the scope: (14 - 10) // 2 = 2
+
+
+S.case("c-scope-cached", "pkg 23: a cached function (ability_mod) keyed by the rule scope: Dex 14 with base 12 -> 1, "
+       "with the default 10 -> 2", (1, 2))(_mod_scope)
+
 if __name__ == "__main__":
     print("load %.1f ms, dispatch + views %.1f ms, slowest view %.1f ms" % (
         M["load_ms"], M["dispatch_all_views_ms"], max(M["views_ms"].values())))
