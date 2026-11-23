@@ -111,7 +111,13 @@
   {"id": "spirit.per_cha", "value": 5, "type": "int", "group": "sheet", "unit": "spirit", "description": "spirit per Cha modifier", "label": "rules.spirit.per_cha"},
   {"id": "attention.drive_level", "value": 4, "type": "int", "group": "sheet", "unit": "level", "description": "a drive at this level or above gives +1 attention", "label": "rules.attention.drive_level"},
   {"id": "items.broken_defense_divisor", "value": 2, "type": "int", "group": "sheet", "unit": "", "description": "a broken armor / shield bonus is divided by this", "label": "rules.items.broken_defense_divisor"},
-  {"id": "attention.level_step", "value": 3, "type": "int", "group": "sheet", "unit": "levels", "description": "attention per cycle +1 per this many levels", "label": "rules.attention.level_step"}
+  {"id": "attention.level_step", "value": 3, "type": "int", "group": "sheet", "unit": "levels", "description": "attention per cycle +1 per this many levels", "label": "rules.attention.level_step"},
+  {"id": "items.broken_weapon_penalty", "value": -2, "type": "int", "group": "items", "unit": "to-hit", "description": "a broken weapon: attack and damage", "label": "rules.items.broken_weapon_penalty"},
+  {"id": "items.masterwork_attack", "value": 1, "type": "int", "group": "items", "unit": "to-hit", "description": "masterwork weapon attack bonus", "label": "rules.items.masterwork_attack"},
+  {"id": "items.masterwork_penalty_relief", "value": 1, "type": "int", "group": "items", "unit": "skill", "description": "masterwork armor: skill penalty smaller by", "label": "rules.items.masterwork_penalty_relief"},
+  {"id": "items.broken_at_fraction", "value": 2, "type": "int", "group": "items", "unit": "", "description": "broken at max HP / this and below", "label": "rules.items.broken_at_fraction"},
+  {"id": "items.broken_skill_mult", "value": 2, "type": "int", "group": "items", "unit": "", "description": "a broken armor's skill penalty is multiplied by", "label": "rules.items.broken_skill_mult"},
+  {"id": "items.hardness_per_enchant", "value": 2, "type": "int", "group": "items", "unit": "hardness", "description": "hardness + this * enchantment N", "label": "rules.items.hardness_per_enchant"}
  ],
  "allowlist": {}
 }

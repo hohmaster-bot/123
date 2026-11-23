@@ -25,14 +25,20 @@
 from dataclasses import replace
 
 from wp.core import weapons as wpn
+from wp.rules_data import rules as rd
+
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+BROKEN_AT = rd.ref("items.broken_at_fraction")   # broken at max HP / this and below
+BROKEN_SKILL_MULT = rd.ref("items.broken_skill_mult")   # a broken armor's skill penalty is multiplied by
+HARDNESS_PER_ENCHANT = rd.ref("items.hardness_per_enchant")   # hardness + this * enchantment N
 
 OK = "ok"
 BROKEN = "broken"
 NOT_WORKING = "not_working"
 DESTROYED = "destroyed"
-BROKEN_PENALTY = -2            # weapon: attack and damage with it
-MASTERWORK_ATTACK = 1          # masterwork weapon: +1 attack, type enhancement
-MASTERWORK_PENALTY_RELIEF = 1  # masterwork armor/shield: skill penalty 1 smaller
+BROKEN_PENALTY = rd.ref("items.broken_weapon_penalty")  # weapon: attack and damage with it
+MASTERWORK_ATTACK = rd.ref("items.masterwork_attack")  # masterwork weapon: +1 attack, type enhancement
+MASTERWORK_PENALTY_RELIEF = rd.ref("items.masterwork_penalty_relief")  # masterwork armor/shield: skill penalty 1 smaller
 # masterwork_state reason ids (data for the UI, no text)
 MW_NOT_MASTERWORK = "not_masterwork"
 MW_NOT_WORKING = "not_working"
@@ -81,7 +87,7 @@ def state(it, picks=()):
     cur, mx = hp_current(it, picks), hp_max(it, picks)
     if cur <= 0:
         return NOT_WORKING
-    if 2 * cur <= mx:
+    if BROKEN_AT * cur <= mx:
         return BROKEN
     return OK
 
@@ -127,7 +133,7 @@ def skill_penalty(it, picks=()):
     p = min(0, it.skill_penalty)
     if it.masterwork:
         p = min(0, p + MASTERWORK_PENALTY_RELIEF)
-    return 2 * p if broken(it, picks) else p
+    return BROKEN_SKILL_MULT * p if broken(it, picks) else p
 
 
 def tab(it, picks=()):
@@ -139,7 +145,7 @@ def tab(it, picks=()):
 
 def durability(it, picks=()):
     """Final hardness: (base + 2N while activated) * (100 + mastery percent) / 100, down (package 9 F)."""
-    return wpn.final_durability(it.durability + 2 * enchant(it, picks), picks)
+    return wpn.final_durability(it.durability + HARDNESS_PER_ENCHANT * enchant(it, picks), picks)
 
 
 def is_durable(it):
