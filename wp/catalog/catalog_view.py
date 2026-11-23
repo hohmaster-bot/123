@@ -19,6 +19,12 @@ def _view(entry, layer):
     return EntryView(entry["id"], str(entry.get("name", "")), layer, bool(entry.get("sample", False)), entry)
 
 
+def display_name(entry, lang="ru"):
+    """The name in a language (entry field name_i18n {lang: name}, package 21), else the name as typed."""
+    names = entry.get("name_i18n") or {}
+    return str(names.get(lang) or entry.get("name", ""))
+
+
 def list_entries(layers, text="", sort="name"):
     """Entries whose name or id contains `text` (case-insensitive), sorted by name, id or layer (file order for
     "")."""

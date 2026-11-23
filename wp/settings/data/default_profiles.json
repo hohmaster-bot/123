@@ -1,11 +1,149 @@
 {
  "format": 1,
- "note": "Shipped layout profiles (package 19): one default profile per mode. Concrete panels and cells come with the UI (owner).",
+ "note": "Shipped layout profiles (packages 19, 21): one default profile per mode; panels and elements name registry panels (wp/panels/data/panels.json).",
  "classic": [
-  {"id": "default", "name": "Default", "panels": [], "cells": []}
+  {
+   "id": "default",
+   "name": "Default",
+   "panels": [
+    {
+     "id": "resources",
+     "panel": "resources",
+     "visible": true,
+     "dock": "left",
+     "position": [
+      0,
+      0
+     ],
+     "size": [
+      280,
+      220
+     ],
+     "tab_order": 0
+    },
+    {
+     "id": "defense",
+     "panel": "defense",
+     "visible": true,
+     "dock": "left",
+     "position": [
+      0,
+      230
+     ],
+     "size": [
+      280,
+      200
+     ],
+     "tab_order": 1
+    },
+    {
+     "id": "attacks",
+     "panel": "attacks",
+     "visible": true,
+     "dock": "center",
+     "position": [
+      0,
+      0
+     ],
+     "size": [
+      480,
+      260
+     ],
+     "tab_order": 2
+    },
+    {
+     "id": "statuses",
+     "panel": "statuses",
+     "visible": true,
+     "dock": "right",
+     "position": [
+      0,
+      370
+     ],
+     "size": [
+      320,
+      220
+     ],
+     "tab_order": 3
+    },
+    {
+     "id": "skills",
+     "panel": "skills",
+     "visible": true,
+     "dock": "left",
+     "position": [
+      0,
+      440
+     ],
+     "size": [
+      280,
+      300
+     ],
+     "tab_order": 4
+    },
+    {
+     "id": "log",
+     "panel": "log",
+     "visible": true,
+     "dock": "bottom",
+     "position": [
+      0,
+      0
+     ],
+     "size": [
+      640,
+      160
+     ],
+     "tab_order": 5
+    }
+   ],
+   "cells": []
+  }
  ],
  "lite": [
-  {"id": "default", "name": "Default", "elements": [], "opacity": 100, "click_through": false, "click_through_hotkey": "",
-   "always_on_top": true, "show_hotkey": "", "lock_layout": false, "snap_to_grid": false, "grid_size": 8, "monitor_scale": {}}
+  {
+   "id": "default",
+   "name": "Default",
+   "elements": [
+    {
+     "id": "hp_bar",
+     "kind": "bar",
+     "source": "resource:hp",
+     "panel": "resources",
+     "visible": true,
+     "position": [
+      20,
+      20
+     ],
+     "size": [
+      200,
+      24
+     ]
+    },
+    {
+     "id": "log",
+     "kind": "log",
+     "panel": "log",
+     "visible": true,
+     "position": [
+      20,
+      410
+     ],
+     "size": [
+      320,
+      140
+     ]
+    }
+   ],
+   "opacity": 100,
+   "click_through": false,
+   "click_through_hotkey": "",
+   "always_on_top": true,
+   "show_hotkey": "",
+   "lock_layout": false,
+   "snap_to_grid": false,
+   "grid_size": 8,
+   "monitor_scale": {}
+  }
  ]
 }

@@ -1,0 +1,30 @@
+{
+ "kind": "themes",
+ "format": 1,
+ "title": "Shipped themes (samples: the owner changes the values later)",
+ "counter": 0,
+ "retired": [],
+ "meta": {},
+ "entries": [
+  {"id": "light", "name": "Light", "sample": true,
+   "colors": {"background": "#f4f4f2", "surface": "#ffffff", "text": "#1e1e1e", "muted": "#7a7a7a", "accent": "#3a6ea5",
+              "accent_text": "#ffffff", "border": "#c8c8c8", "success": "#2e8b57", "warning": "#c98a00", "danger": "#c0392b",
+              "info": "#2f80ed", "hp": "#c0392b", "balance": "#2f80ed", "mana": "#6c5ce7", "spirit": "#00a3a3",
+              "comfort": "#e67e22", "pain": "#8e44ad", "ot": "#7f4f24", "morale": "#f1c40f",
+              "ac_base": "#9e9e9e", "ac_size": "#b0bec5", "ac_dodge": "#4caf50", "ac_insight": "#00bcd4", "ac_morale": "#ffc107",
+              "ac_competence": "#8bc34a", "ac_luck": "#cddc39", "ac_circumstance": "#ff9800", "ac_deflection": "#03a9f4",
+              "ac_shield": "#795548", "ac_armor": "#607d8b", "ac_flat": "#9c27b0", "ac_natural": "#a1887f"},
+   "fonts": {"family": "Segoe UI", "base": 12, "small": 10, "large": 16},
+   "radius": 4, "spacing": 6, "border_width": 1, "icon_style": "outline", "overlay_opacity": 90},
+  {"id": "dark", "name": "Dark", "sample": true,
+   "colors": {"background": "#1b1d21", "surface": "#24272d", "text": "#e6e6e6", "muted": "#8a8f98", "accent": "#5b9bd5",
+              "accent_text": "#0d0d0d", "border": "#3a3f47", "success": "#3fb27f", "warning": "#e0a800", "danger": "#e5534b",
+              "info": "#4ea1ff", "hp": "#e5534b", "balance": "#4ea1ff", "mana": "#9b8cff", "spirit": "#28c2c2",
+              "comfort": "#f0954a", "pain": "#b072d0", "ot": "#b07a4a", "morale": "#f4d03f",
+              "ac_base": "#757575", "ac_size": "#90a4ae", "ac_dodge": "#66bb6a", "ac_insight": "#26c6da", "ac_morale": "#ffca28",
+              "ac_competence": "#9ccc65", "ac_luck": "#d4e157", "ac_circumstance": "#ffa726", "ac_deflection": "#29b6f6",
+              "ac_shield": "#8d6e63", "ac_armor": "#78909c", "ac_flat": "#ab47bc", "ac_natural": "#bcaaa4"},
+   "fonts": {"family": "Segoe UI", "base": 12, "small": 10, "large": 16},
+   "radius": 4, "spacing": 6, "border_width": 1, "icon_style": "outline", "overlay_opacity": 85}
+ ]
+}

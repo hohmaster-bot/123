@@ -1,0 +1,21 @@
+{
+ "format": 1,
+ "note": "QSS template (package 21): selector -> declarations; {token} = a flat theme token (colors by name; font_family, font_base, font_small, font_large; radius, spacing, border_width, overlay_opacity).",
+ "rules": [
+  {"selector": "QWidget", "declarations": [["background-color", "{background}"], ["color", "{text}"],
+                                            ["font-family", "\"{font_family}\""], ["font-size", "{font_base}px"]]},
+  {"selector": "QFrame#panel", "declarations": [["background-color", "{surface}"],
+                                                 ["border", "{border_width}px solid {border}"], ["border-radius", "{radius}px"]]},
+  {"selector": "QPushButton", "declarations": [["background-color", "{accent}"], ["color", "{accent_text}"],
+                                                ["border-radius", "{radius}px"], ["padding", "{spacing}px"]]},
+  {"selector": "QLabel#muted", "declarations": [["color", "{muted}"], ["font-size", "{font_small}px"]]},
+  {"selector": "QLabel#title", "declarations": [["font-size", "{font_large}px"]]},
+  {"selector": "QProgressBar#hp::chunk", "declarations": [["background-color", "{hp}"]]},
+  {"selector": "QProgressBar#balance::chunk", "declarations": [["background-color", "{balance}"]]},
+  {"selector": "QProgressBar#mana::chunk", "declarations": [["background-color", "{mana}"]]},
+  {"selector": "QProgressBar#spirit::chunk", "declarations": [["background-color", "{spirit}"]]},
+  {"selector": "QLabel#danger", "declarations": [["color", "{danger}"]]},
+  {"selector": "QLabel#warning", "declarations": [["color", "{warning}"]]},
+  {"selector": "QLabel#success", "declarations": [["color", "{success}"]]}
+ ]
+}

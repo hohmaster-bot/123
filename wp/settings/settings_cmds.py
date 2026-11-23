@@ -18,6 +18,7 @@ from typing import Any, Dict
 from wp.commands.base import CommandError
 from wp.core.frozen import FrozenDict
 from wp.model import ids
+from wp.panels import registry
 from wp.settings import schema as sch
 from wp.settings import store as st
 
@@ -276,7 +277,7 @@ def layout_add(app, mode="", pid="", collection="", item=None):
     _coll(mode, collection)
     p = dict(_profile(app, mode, pid))
     item = dict(item or {})
-    bad = sch.check_fields(ITEM_KIND[collection], item)
+    bad = sch.check_fields(ITEM_KIND[collection], item) or registry.check_item(collection, item, mode)
     if bad:
         refuse(bad)
     rows = list(p.get(collection, ()))
@@ -299,8 +300,8 @@ def layout_edit(app, mode="", pid="", collection="", item_id="", **fields):
     if "id" in fields:
         raise CommandError("an id cannot be changed", "id_not_editable", values=("id",))
     p = dict(_profile(app, mode, pid))
-    _item(p, collection, item_id)
-    bad = sch.check_fields(ITEM_KIND[collection], fields)
+    new_item = dict(_item(p, collection, item_id), **fields)
+    bad = sch.check_fields(ITEM_KIND[collection], fields) or registry.check_item(collection, new_item, mode)
     if bad:
         refuse(bad)
     p[collection] = tuple(st.freeze(dict(r, **fields)) if r["id"] == item_id else r for r in p[collection])

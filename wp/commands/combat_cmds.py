@@ -62,7 +62,8 @@ def cast_spell(ch, circle=1, cast_actions=mg.STANDARD_ACTION, mana_cost=None, fr
     (spell_view) is added; penalty_balance = the part of it paid with balance (the rest with mana).
     Mage: cost + penalty above the mana level (= level) -> refused (package 10, Q49)."""
     if not mg.valid_circle(circle):
-        raise CommandError("circle must be 0..%d" % mg.CIRCLES[-1], "circle_out_of_range", values=(circle,))
+        raise CommandError("circle must be 0..%d" % mg.CIRCLES[-1], "circle_out_of_range", values=(mg.CIRCLES[-1],),
+                           circle=circle)
     why = blk.action_block_reasons(ch, "spell_cast")
     if why:
         raise CommandError("casting is blocked by %s" % ", ".join(why), "casting_blocked", values=", ".join(why))

@@ -201,6 +201,18 @@
       "2": "a point has 2 numbers / rect index",
       "4": "a rect has 4 numbers",
       "3": "rect index (height)"
+    },
+    "wp/i18n/i18n.py": {
+      "2": "Russian plural forms (grammar, not a game rule)",
+      "4": "Russian plural forms (grammar, not a game rule)",
+      "10": "Russian plural forms (grammar, not a game rule)",
+      "11": "Russian plural forms (grammar, not a game rule)",
+      "12": "Russian plural forms (grammar, not a game rule)",
+      "14": "Russian plural forms (grammar, not a game rule)",
+      "100": "Russian plural forms (grammar, not a game rule)"
+    },
+    "wp/theme/themes.py": {
+      "100": "a percent token is 0..100"
     }
   }
 }

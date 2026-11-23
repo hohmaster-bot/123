@@ -6,7 +6,8 @@
   {"name": "name", "type": "str", "required": true},
   {"name": "sample", "type": "bool"},
   {"name": "short_name", "type": "str"},
-  {"name": "source", "type": "str"}
+  {"name": "source", "type": "str"},
+  {"name": "name_i18n", "type": "dict"}
  ],
  "kinds": {
   "weapons": [
