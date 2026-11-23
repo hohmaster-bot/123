@@ -1,24 +1,21 @@
 """Skill catalog (RULES/skills_list.md, catalog.md, skills.md).
 
-The default catalog is DATA: it is read from the owner's file skills_list.md, not
-hard-coded. Line format inside a stat section ("## ... (STR)"):
-    - <id> [(flags)] | <name> - <description>
-Flags: `param` = a family (the player names each sub-skill, each has its own ranks),
-`needs_flight` = informational. The player may add own templates (catalog rules).
+The default catalog is DATA: the catalog file wp/catalog/data/skills.json (kind "skills", package 18), made from the
+owner's text RULES/skills_list.md by Wp_claude/tools/build_catalogs.py skills (a test checks they agree).
+Entry fields: id, name, name_en, stat, desc, param (a family: the player names each sub-skill, each has its own
+ranks), needs_flight (informational). The player may add own templates (catalog rules).
 
 A new character starts with ONLY perception and search, 0 ranks. Every other skill
 is added from the catalog with 0 ranks.
 """
-import io
-import os
-import re
 from dataclasses import dataclass, replace
 from typing import Tuple
 
+from wp.catalog import store as cs
 from wp.core import skills as sk
 
-REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-DEFAULT_PATH = os.path.join(REPO, "Wp_claude", "RULES", "skills_list.md")
+KIND = "skills"
+DEFAULT_PATH = cs.shipped_path(KIND)
 
 STAT_CODES = {"STR": "str", "DEX": "dex", "CON": "con", "INT": "int", "WIS": "wis", "CHA": "cha"}
 ARMOR_PENALTY_STATS = ("str", "dex")      # gear.md: armor skill penalty on Str/Dex skills
@@ -26,8 +23,6 @@ START_SKILLS = ("perception", "search")
 DEFAULT = "default"
 USER = "user"
 
-_SECTION = re.compile(r"^##\s.*\((STR|DEX|CON|INT|WIS|CHA)\)\s*$")
-_ENTRY = re.compile(r"^-\s+([a-z0-9_]+)\s*(?:\(([a-z_ ,]+)\))?\s*\|\s*(.+?)\s+\u2014\s+(.*)$")
 
 
 @dataclass(frozen=True)
@@ -55,29 +50,15 @@ class SkillCatalog:
         return tuple(t for t in self.templates if t.stat == stat)
 
 
-def parse(text):
-    """Parse skills_list.md text into templates (in file order)."""
-    out, stat = [], None
-    for line in text.splitlines():
-        m = _SECTION.match(line.strip())
-        if m:
-            stat = STAT_CODES[m.group(1)]
-            continue
-        m = _ENTRY.match(line.strip())
-        if m and stat:
-            flags = {f.strip() for f in (m.group(2) or "").split(",") if f.strip()}
-            out.append(SkillTemplate(tid=m.group(1), stat=stat, name=m.group(3).strip(),
-                                     desc=m.group(4).strip(), param="param" in flags,
-                                     needs_flight="needs_flight" in flags))
-    ids = [t.tid for t in out]
-    if len(ids) != len(set(ids)):
-        raise ValueError("duplicate skill ids in the catalog file")
-    return SkillCatalog(tuple(out))
+def from_entries(entries):
+    return SkillCatalog(tuple(SkillTemplate(tid=e["id"], stat=e["stat"], name=e["name"], desc=e.get("desc", ""),
+                                            param=bool(e.get("param", False)),
+                                            needs_flight=bool(e.get("needs_flight", False))) for e in entries))
 
 
-def load_default(path=DEFAULT_PATH):
-    with io.open(path, encoding="utf-8") as f:
-        return parse(f.read())
+def load_default(user_folder=None):
+    layers = cs.load_layers(KIND, user_folder) if user_folder else cs.Layers(cs.load_shipped(KIND), cs.Catalog(KIND))
+    return from_entries([e for e, _ in cs.merged(layers)])
 
 
 def add_template(catalog, template):

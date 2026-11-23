@@ -1,24 +1,20 @@
 """Armor and shield catalogs shipped as DATA sets (package 9 K, RULES/gear.md, catalog.md).
 
-Every file wp/catalog/data/armor_set_*.json is one selectable data set (tables from a game; rules may
+Since package 18 all rows live in ONE catalog file of kind "armor_shields" (wp/catalog/data/armor_shields.json, test
+samples); the field "set" groups them into the selectable data sets (tables from a game; rules may
 differ per game, so nothing here is a hard rule). Row fields: id, name, kind (armor | shield),
 category (armor: light / medium / heavy; shield: light / heavy / tower), weight (L), price (text as
 written), access_class (or null), ac_bonus, touch_bonus, max_dex (or null), skill_penalty (a POSITIVE
 number meaning a penalty), speed_penalty_ft, spell_penalty_mana, spell_failure_pct, special, hardness,
 hp, durable. Weight in the source: "L" = 1 L, a number N = N * 10 L (already converted in the files).
 """
-import glob
-import io
-import json
-import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
+from wp.catalog import store as cs
 from wp.model.character import SHIELD, Item
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
-PATTERN = "armor_set_*.json"
-FORMAT = "wipefinder.armor"
+KIND = "armor_shields"
 ARMOR = "armor"
 KINDS = (ARMOR, SHIELD)
 CATEGORIES = {ARMOR: ("light", "medium", "heavy"), SHIELD: ("light", "heavy", "tower")}
@@ -75,29 +71,20 @@ def _row(d):
         durable=bool(d.get("durable", True)))
 
 
-def parse(text):
-    data = json.loads(text)
-    if data.get("format") != FORMAT:
-        raise ValueError("not a WipeFinder armor catalog")
-    rows = tuple(_row(d) for d in data.get("rows", ()))
-    ids = [r.aid for r in rows]
-    if len(set(ids)) != len(ids):
-        raise ValueError("duplicate armor id in set %s" % data.get("set"))
-    return ArmorSet(sid=data["set"], title=data.get("title", data["set"]), rows=rows)
+def sets_from(entries):
+    """{set id: ArmorSet} from catalog entries, in file order."""
+    rows, titles = {}, {}
+    for d in entries:
+        sid = d.get("set", "")
+        rows.setdefault(sid, []).append(_row(d))
+        titles.setdefault(sid, d.get("set_title", sid))
+    return {sid: ArmorSet(sid=sid, title=titles[sid], rows=tuple(r)) for sid, r in rows.items()}
 
 
-def load(path):
-    with io.open(path, encoding="utf-8") as f:
-        return parse(f.read())
-
-
-def load_sets(folder=DATA_DIR):
-    """{set id: ArmorSet} for every armor_set_*.json in the folder."""
-    out = {}
-    for path in sorted(glob.glob(os.path.join(folder, PATTERN))):
-        s = load(path)
-        out[s.sid] = s
-    return out
+def load_sets(user_folder=None):
+    """{set id: ArmorSet} of the armor_shields catalog (shipped + the user layer)."""
+    layers = cs.load_layers(KIND, user_folder) if user_folder else cs.Layers(cs.load_shipped(KIND), cs.Catalog(KIND))
+    return sets_from(e for e, _ in cs.merged(layers))
 
 
 def make_item(row, iid):

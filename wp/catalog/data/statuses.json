@@ -1,0 +1,51 @@
+{
+ "kind": "statuses",
+ "format": 1,
+ "title": "Statuses (test samples from buffs.md)",
+ "counter": 0,
+ "retired": [],
+ "meta": {},
+ "entries": [
+  {
+   "id": "rage",
+   "name": "Rage",
+   "sample": true,
+   "duration": "ticks",
+   "full_ticks": 3,
+   "charges_max": 3,
+   "effects": [
+    {
+     "target": "attack",
+     "value": 2,
+     "btype": "morale"
+    }
+   ]
+  },
+  {
+   "id": "ki_aura",
+   "name": "Ki aura",
+   "sample": true,
+   "duration": "ticks",
+   "full_ticks": 3,
+   "charge_source": "ki",
+   "charge_per_round": 1,
+   "effects": [
+    {
+     "target": "ac",
+     "value": 1,
+     "btype": "deflection"
+    }
+   ]
+  },
+  {
+   "id": "cursed_darkness",
+   "name": "Cursed darkness",
+   "sample": true,
+   "duration": "infinite",
+   "charges_max": 9,
+   "charge_source": "own",
+   "charge_per_round": 3,
+   "effects": []
+  }
+ ]
+}

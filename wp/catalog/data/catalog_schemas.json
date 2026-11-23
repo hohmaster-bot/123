@@ -1,0 +1,127 @@
+{
+ "format": 1,
+ "note": "Fields per catalog kind (package 18, D21): name, type (str int number bool list dict int_or_null str_or_null any), required, allowed values. Every entry also has id (made by the program), name and sample. Fields not listed here are kept as they are and never interpreted.",
+ "common": [
+  {"name": "id", "type": "str", "required": true},
+  {"name": "name", "type": "str", "required": true},
+  {"name": "sample", "type": "bool"},
+  {"name": "short_name", "type": "str"},
+  {"name": "source", "type": "str"}
+ ],
+ "kinds": {
+  "weapons": [
+   {"name": "name_en", "type": "str"},
+   {"name": "kind", "type": "str", "allowed": ["weapon", "ammo"]},
+   {"name": "attack_kind", "type": "str", "allowed": ["melee", "ranged", "thrown"]},
+   {"name": "groups", "type": "list"},
+   {"name": "node", "type": "dict"},
+   {"name": "damage_small", "type": "str"},
+   {"name": "damage_medium", "type": "str"},
+   {"name": "damage_small2", "type": "str"},
+   {"name": "damage_medium2", "type": "str"},
+   {"name": "double", "type": "bool"},
+   {"name": "damage_text", "type": "str"},
+   {"name": "variable", "type": "list"},
+   {"name": "crit_range", "type": "int"},
+   {"name": "crit_mult", "type": "int"},
+   {"name": "range_ft", "type": "int"},
+   {"name": "dmg_type", "type": "str"},
+   {"name": "hands", "type": "int", "allowed": [0, 1, 2]},
+   {"name": "finesse", "type": "bool"},
+   {"name": "no_parry", "type": "bool"},
+   {"name": "weight_l", "type": "int"},
+   {"name": "price_sp", "type": "int"},
+   {"name": "qualification", "type": "str"},
+   {"name": "hp", "type": "int"},
+   {"name": "durability", "type": "int"},
+   {"name": "quantity", "type": "int"}
+  ],
+  "armor_shields": [
+   {"name": "set", "type": "str"},
+   {"name": "set_title", "type": "str"},
+   {"name": "kind", "type": "str", "required": true, "allowed": ["armor", "shield"]},
+   {"name": "category", "type": "str", "required": true, "allowed": ["light", "medium", "heavy", "tower"]},
+   {"name": "weight", "type": "int"},
+   {"name": "price", "type": "str"},
+   {"name": "access_class", "type": "int_or_null"},
+   {"name": "ac_bonus", "type": "int"},
+   {"name": "touch_bonus", "type": "int"},
+   {"name": "max_dex", "type": "int_or_null"},
+   {"name": "skill_penalty", "type": "int"},
+   {"name": "speed_penalty_ft", "type": "int"},
+   {"name": "spell_penalty_mana", "type": "int"},
+   {"name": "spell_failure_pct", "type": "int"},
+   {"name": "special", "type": "bool"},
+   {"name": "hardness", "type": "int"},
+   {"name": "hp", "type": "int"},
+   {"name": "durable", "type": "bool"}
+  ],
+  "items": [
+   {"name": "kind", "type": "str", "allowed": ["", "misc", "ammo"]},
+   {"name": "hands", "type": "int", "allowed": [0, 1, 2]},
+   {"name": "slot", "type": "str"},
+   {"name": "weight_l", "type": "int"},
+   {"name": "quantity", "type": "int"},
+   {"name": "consumable", "type": "bool"},
+   {"name": "activation_day", "type": "int"},
+   {"name": "activation_decade", "type": "int"},
+   {"name": "effects_off", "type": "list"},
+   {"name": "effects_on", "type": "list"},
+   {"name": "on_use_status", "type": "str"},
+   {"name": "ignore_bag_weight", "type": "bool"},
+   {"name": "ilvl", "type": "int"},
+   {"name": "qualification_n", "type": "int"},
+   {"name": "base_slot_cost", "type": "int"},
+   {"name": "hp", "type": "int"},
+   {"name": "durability", "type": "int"}
+  ],
+  "spells": [
+   {"name": "circle", "type": "int", "required": true, "allowed": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]},
+   {"name": "school", "type": "str"},
+   {"name": "mana_cost", "type": "int_or_null"},
+   {"name": "description", "type": "str"}
+  ],
+  "statuses": [
+   {"name": "duration", "type": "str", "allowed": ["ticks", "end_of_combat", "infinite", "instant"]},
+   {"name": "full_ticks", "type": "int"},
+   {"name": "effects", "type": "list"},
+   {"name": "per_tick_hp", "type": "int"},
+   {"name": "charges_max", "type": "int"},
+   {"name": "charge_source", "type": "str"},
+   {"name": "charge_per_round", "type": "int"},
+   {"name": "cooldown_rounds", "type": "int"},
+   {"name": "temp_hp_stacks", "type": "bool"},
+   {"name": "ignores_iterative", "type": "bool"},
+   {"name": "description", "type": "str"}
+  ],
+  "skills": [
+   {"name": "stat", "type": "str", "required": true, "allowed": ["str", "dex", "con", "int", "wis", "cha"]},
+   {"name": "name_en", "type": "str"},
+   {"name": "desc", "type": "str"},
+   {"name": "param", "type": "bool"},
+   {"name": "needs_flight", "type": "bool"}
+  ],
+  "weapon_groups": [
+   {"name": "name_en", "type": "str"},
+   {"name": "scale", "type": "int", "allowed": [1, 2, 3]},
+   {"name": "difficulty", "type": "int"},
+   {"name": "parents", "type": "list"},
+   {"name": "basic", "type": "bool"}
+  ],
+  "feats": [
+   {"name": "name_en", "type": "str"},
+   {"name": "cost", "type": "int"},
+   {"name": "flags", "type": "list"},
+   {"name": "desc", "type": "str"},
+   {"name": "effects", "type": "list"},
+   {"name": "is_stance", "type": "bool"},
+   {"name": "granted_maneuvers", "type": "list"}
+  ],
+  "damage_types": [
+   {"name": "physical", "type": "bool"}
+  ],
+  "doll_slots": [
+   {"name": "hands", "type": "bool"}
+  ]
+ }
+}

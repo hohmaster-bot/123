@@ -9,9 +9,6 @@ reductions(ch, types, skip): the flat reduction per damage type for take_damage:
 and resist:<type> (one reduction per part, the rule "overlap is not modelled"; assumption Q119), minus the keys in
 `skip` (the player's choice before the hit: "dr", "resist:fire"...).
 """
-import io
-import json
-import os
 from dataclasses import dataclass
 from typing import Dict, Tuple
 
@@ -21,15 +18,17 @@ from wp.model import blocks as blk
 from wp.model import derived_view as dv
 from wp.model import sheet_targets as stg
 
-PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "catalog", "data", "damage_types.json")
 DR = "dr"
 SR = "spell_resistance"
 
 
-def _load(path=PATH):
-    with io.open(path, encoding="utf-8") as f:
-        d = json.load(f)
-    return tuple(d["types"]), frozenset(d["physical"])
+def _load():
+    """Damage types from the catalog file of kind "damage_types" (package 18)."""
+    from wp.catalog import store as cs
+    cat = cs.load_shipped("damage_types")
+    types = tuple(e["id"] for e in cat.entries)
+    physical = {e["id"] for e in cat.entries if e.get("physical")} | set(cat.meta.get("also_physical", ()))
+    return types, frozenset(physical)
 
 
 TYPES, PHYSICAL = _load()

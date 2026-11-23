@@ -1,6 +1,6 @@
 """Feat catalog shipped as data (RULES/catalog.md, training.md).
 
-Default feats live in wp/catalog/data/feats_default.json. A feat copied into a
+Default feats live in the catalog file wp/catalog/data/feats.json (kind "feats", package 18). A feat copied into a
 sheet keeps its flags (e.g. "finesse": attacks with finesse weapons may use Dex).
 Feat price: entered by the author, default 200 (training.md); only source
 "training" spends training points.
@@ -11,11 +11,11 @@ import os
 from dataclasses import dataclass, replace
 from typing import Tuple
 
+from wp.catalog import store as cs
 from wp.core.effects import Effect
 from wp.core.formula import validate as validate_formula
 
-DEFAULT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "feats_default.json")
-FORMAT = "wipefinder.feats"
+KIND = "feats"
 DEFAULT_COST = 200
 FINESSE = "finesse"
 
@@ -45,7 +45,8 @@ class FeatCatalog:
         raise KeyError("no feat template %r" % (fid,))
 
 
-EFFECT_KEYS = ("target", "value", "btype", "weapon", "dice", "note", "stat_mod", "multiplier")
+EFFECT_KEYS = ("target", "value", "btype", "weapon", "dice", "note", "stat_mod", "multiplier", "block_type",
+               "block_scope", "block_stats", "block_actions", "block_resources", "stacks")
 
 
 def _effect(d):
@@ -53,31 +54,37 @@ def _effect(d):
     unknown = set(d) - set(EFFECT_KEYS)
     if unknown:
         raise ValueError("unknown effect fields in the feat catalog: %s" % ", ".join(sorted(unknown)))
+    d = {k: tuple(v) if isinstance(v, (list, tuple)) else v for k, v in d.items()}
     e = Effect(**d)
     if isinstance(e.value, str) and e.value != "all":
         validate_formula(e.value)          # a broken formula is refused when the catalog is read (package 14 C)
     return e
 
 
-def parse(text):
-    data = json.loads(text)
-    if data.get("format") != FORMAT:
-        raise ValueError("not a WipeFinder feat catalog")
-    out = tuple(FeatTemplate(fid=f["fid"], name=f["name"], name_en=f.get("name_en", ""),
+def from_entries(entries):
+    out = tuple(FeatTemplate(fid=f["id"], name=f["name"], name_en=f.get("name_en", ""),
                              desc=f.get("desc", ""), cost=int(f.get("cost", DEFAULT_COST)),
                              flags=tuple(f.get("flags", ())),
                              effects=tuple(_effect(e) for e in f.get("effects", ())),
                              granted_maneuvers=tuple(f.get("granted_maneuvers", ())),
-                             is_stance=bool(f.get("is_stance", False))) for f in data["feats"])
+                             is_stance=bool(f.get("is_stance", False))) for f in entries)
     ids = [t.fid for t in out]
     if len(ids) != len(set(ids)):
         raise ValueError("duplicate feat ids in the catalog file")
     return FeatCatalog(out)
 
 
-def load_default(path=DEFAULT_PATH):
-    with io.open(path, encoding="utf-8") as f:
-        return parse(f.read())
+def parse(text):
+    """A feat catalog from the text of a catalog file of kind "feats"."""
+    cat = cs.loads(text)
+    if cat.kind != KIND:
+        raise ValueError("not a WipeFinder feat catalog")
+    return from_entries(cat.entries)
+
+
+def load_default(user_folder=None):
+    layers = cs.load_layers(KIND, user_folder) if user_folder else cs.Layers(cs.load_shipped(KIND), cs.Catalog(KIND))
+    return from_entries([e for e, _ in cs.merged(layers)])
 
 
 def add_template(catalog, template):

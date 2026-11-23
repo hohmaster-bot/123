@@ -1,0 +1,30 @@
+{
+ "kind": "weapon_groups",
+ "format": 1,
+ "title": "Weapon groups (weapons.md)",
+ "counter": 0,
+ "retired": [],
+ "meta": {},
+ "entries": [
+  {
+   "id": "contact",
+   "name": "Контактное",
+   "name_en": "Contact",
+   "sample": false,
+   "scale": 3,
+   "difficulty": 1,
+   "parents": [],
+   "basic": false
+  },
+  {
+   "id": "basic_simple",
+   "name": "Базовое/простое",
+   "name_en": "Basic/simple",
+   "sample": false,
+   "scale": 3,
+   "difficulty": 1,
+   "parents": [],
+   "basic": true
+  }
+ ]
+}

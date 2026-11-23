@@ -1,7 +1,87 @@
 {
-  "format": "wipefinder.damage_types",
-  "note": "Damage types (package 16 D, owner list; editable; cold added in package 17 from the owner's immunity example; water removed (owner: it does not exist)). 'physical' = the types DR works on; the old code default type 'physical' also counts as physical.",
-  "types": ["piercing", "slashing", "bludgeoning", "fire", "cold", "lightning", "acid", "sound", "force", "positive",
-            "negative", "pure"],
-  "physical": ["piercing", "slashing", "bludgeoning", "physical"]
+ "kind": "damage_types",
+ "format": 1,
+ "title": "Damage types",
+ "counter": 0,
+ "retired": [],
+ "meta": {
+  "also_physical": [
+   "physical"
+  ],
+  "note": "Owner list (packages 16, 17); 'also_physical' = the old code default type."
+ },
+ "entries": [
+  {
+   "id": "piercing",
+   "name": "piercing",
+   "sample": false,
+   "physical": true
+  },
+  {
+   "id": "slashing",
+   "name": "slashing",
+   "sample": false,
+   "physical": true
+  },
+  {
+   "id": "bludgeoning",
+   "name": "bludgeoning",
+   "sample": false,
+   "physical": true
+  },
+  {
+   "id": "fire",
+   "name": "fire",
+   "sample": false,
+   "physical": false
+  },
+  {
+   "id": "cold",
+   "name": "cold",
+   "sample": false,
+   "physical": false
+  },
+  {
+   "id": "lightning",
+   "name": "lightning",
+   "sample": false,
+   "physical": false
+  },
+  {
+   "id": "acid",
+   "name": "acid",
+   "sample": false,
+   "physical": false
+  },
+  {
+   "id": "sound",
+   "name": "sound",
+   "sample": false,
+   "physical": false
+  },
+  {
+   "id": "force",
+   "name": "force",
+   "sample": false,
+   "physical": false
+  },
+  {
+   "id": "positive",
+   "name": "positive",
+   "sample": false,
+   "physical": false
+  },
+  {
+   "id": "negative",
+   "name": "negative",
+   "sample": false,
+   "physical": false
+  },
+  {
+   "id": "pure",
+   "name": "pure",
+   "sample": false,
+   "physical": false
+  }
+ ]
 }

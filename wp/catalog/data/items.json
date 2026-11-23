@@ -1,0 +1,48 @@
+{
+ "kind": "items",
+ "format": 1,
+ "title": "Items (test samples)",
+ "counter": 0,
+ "retired": [],
+ "meta": {},
+ "entries": [
+  {
+   "id": "rope",
+   "name": "Rope",
+   "sample": true,
+   "kind": "misc",
+   "weight_l": 10,
+   "quantity": 1,
+   "slot": "",
+   "base_slot_cost": 1
+  },
+  {
+   "id": "healing_potion",
+   "name": "Healing potion",
+   "sample": true,
+   "kind": "misc",
+   "consumable": true,
+   "quantity": 3,
+   "weight_l": 1,
+   "on_use_status": "healing",
+   "slot": "belt_pouch"
+  },
+  {
+   "id": "ring_of_guard",
+   "name": "Ring of guard",
+   "sample": true,
+   "kind": "misc",
+   "slot": "fingers",
+   "activation_day": 1,
+   "effects_off": [],
+   "effects_on": [
+    {
+     "target": "ac",
+     "value": 1,
+     "btype": "deflection"
+    }
+   ],
+   "ilvl": 1
+  }
+ ]
+}

@@ -1,0 +1,28 @@
+{
+ "kind": "spells",
+ "format": 1,
+ "title": "Spells (test samples)",
+ "counter": 0,
+ "retired": [],
+ "meta": {},
+ "entries": [
+  {
+   "id": "light",
+   "name": "Light",
+   "sample": true,
+   "circle": 0,
+   "school": "",
+   "mana_cost": null,
+   "description": "Test sample."
+  },
+  {
+   "id": "fire_dart",
+   "name": "Fire dart",
+   "sample": true,
+   "circle": 2,
+   "school": "",
+   "mana_cost": null,
+   "description": "Test sample (no damage engine: spells.md BETA)."
+  }
+ ]
+}

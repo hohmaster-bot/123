@@ -8,17 +8,15 @@ Group "Basic/simple" is special (no qualification, cannot be trained).
 the Unarmed combat node and the Unarmed combat card (item id "unarmed").
 Qualification is written with the owner's words; the data file maps them to levels.
 """
-import io
-import json
-import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
+from wp.catalog import store as cs
 from wp.core.weapons import Weapon
 from wp.model.character import Item, WeaponEntry
 
-DEFAULT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "weapons_default.json")
-FORMAT = "wipefinder.weapons"
+WEAPONS = "weapons"                # catalog kinds (package 18): wp/catalog/data/weapons.json, weapon_groups.json
+GROUPS = "weapon_groups"
 CONTACT = "contact"
 UNARMED_COMBAT = "unarmed_combat"
 UNARMED_ITEM = "unarmed"
@@ -67,17 +65,14 @@ class WeaponCatalog:
         raise KeyError("no weapon %r" % (wid,))
 
 
-def parse(text):
-    data = json.loads(text)
-    if data.get("format") != FORMAT:
-        raise ValueError("not a WipeFinder weapon catalog")
-    levels = dict(data.get("qualification_levels", {}))
-    groups = tuple(GroupTemplate(gid=g["gid"], name=g["name"], name_en=g.get("name_en", ""),
+def from_entries(group_entries, weapon_entries, levels):
+    """A WeaponCatalog from catalog entries (store.merged of the two kinds) and the qualification levels."""
+    groups = tuple(GroupTemplate(gid=g["id"], name=g["name"], name_en=g.get("name_en", ""),
                                  scale=int(g.get("scale", 1)), difficulty=int(g.get("difficulty", 1)),
                                  parents=tuple(g.get("parents", ())), basic=bool(g.get("basic", False)))
-                   for g in data.get("groups", ()))
+                   for g in group_entries)
     weapons = []
-    for w in data.get("weapons", ()):
+    for w in weapon_entries:
         fields = []
         for k in ITEM_FIELDS:
             if k in w:
@@ -86,21 +81,28 @@ def parse(text):
         if "qualification" in w:
             q = w["qualification"]
             if q not in levels:
-                raise ValueError("unknown qualification %r for %s" % (q, w["wid"]))
+                raise ValueError("unknown qualification %r for %s" % (q, w["id"]))
             fields += [("qualification", q), ("required_level", int(levels[q]))]
         node = None
         if "node" in w:
             n = w["node"]
-            node = GroupTemplate(gid=w["wid"], name=w["name"], name_en=w.get("name_en", ""),
+            node = GroupTemplate(gid=w["id"], name=w["name"], name_en=w.get("name_en", ""),
                                  scale=int(n.get("scale", 1)), difficulty=int(n.get("difficulty", 1)),
                                  parents=tuple(n.get("parents", ())))
-        weapons.append(WeaponTemplate(wid=w["wid"], name=w["name"], fields=tuple(fields), node=node))
+        weapons.append(WeaponTemplate(wid=w["id"], name=w["name"], fields=tuple(fields), node=node))
     return WeaponCatalog(groups, tuple(weapons))
 
 
-def load_default(path=DEFAULT_PATH):
-    with io.open(path, encoding="utf-8") as f:
-        return parse(f.read())
+def load_default(user_folder=None):
+    """Shipped weapon and group catalogs (+ the user layer from user_folder, package 18)."""
+    def entries(kind):
+        layers = cs.load_layers(kind, user_folder) if user_folder else cs.Layers(cs.load_shipped(kind), cs.Catalog(kind))
+        return [e for e, _ in cs.merged(layers)], layers
+    groups, _ = entries(GROUPS)
+    weapons, wl = entries(WEAPONS)
+    levels = dict((wl.shipped.meta if wl.shipped else {}).get("qualification_levels", {}))
+    levels.update(dict(wl.user.meta).get("qualification_levels", {}))
+    return from_entries(groups, weapons, levels)
 
 
 def _node_template(catalog, gid):

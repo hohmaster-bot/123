@@ -1,0 +1,52 @@
+{
+ "kind": "feats",
+ "format": 1,
+ "title": "Feats",
+ "counter": 0,
+ "retired": [],
+ "meta": {},
+ "entries": [
+  {
+   "id": "finesse_training",
+   "name": "Фехтование",
+   "sample": false,
+   "name_en": "Finesse training",
+   "cost": 200,
+   "flags": [
+    "finesse"
+   ],
+   "desc": "Attacks with finesse weapons may use Dex instead of Str (the better of Str/Dex, combat.md Maneuvers)."
+  },
+  {
+   "id": "two_weapon_fighting",
+   "name": "Бой двумя оружиями",
+   "sample": false,
+   "name_en": "Two-Weapon Fighting",
+   "cost": 200,
+   "flags": [
+    "twf"
+   ],
+   "desc": "Primary hand penalty -2 less, off-hand penalty -6 less (combat.md two-weapon fighting)."
+  },
+  {
+   "id": "me_liquescit",
+   "name": "Me Liquescit",
+   "sample": true,
+   "cost": 200,
+   "is_stance": true,
+   "desc": "Stance (combat.md): no dodge bonus to AC, cannot be flanked.",
+   "effects": [
+    {
+     "target": "block_bonus",
+     "block_type": "dodge",
+     "block_scope": [
+      "ac"
+     ]
+    },
+    {
+     "target": "cannot_be_flanked"
+    }
+   ]
+  }
+ ]
+}

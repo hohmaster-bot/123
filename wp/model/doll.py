@@ -4,17 +4,13 @@ Item.slot names the slot ("" = no slot: worn without a slot check, as before pac
 shared hands slot holds ONE worn item; the hands slot is the two-hand rule of equip_hands. Bonuses of an item count
 only while it is worn (or held), as before; an item that is not worn stays in the bag.
 """
-import io
-import json
-import os
-
-PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "catalog", "data", "doll_slots.json")
 
 
-def _load(path=PATH):
-    with io.open(path, encoding="utf-8") as f:
-        d = json.load(f)
-    return tuple((s[0], s[1]) for s in d["slots"]), d["hands"]
+def _load():
+    """Doll slots from the catalog file of kind "doll_slots" (package 18)."""
+    from wp.catalog import store as cs
+    cat = cs.load_shipped("doll_slots")
+    return tuple((e["id"], e["name"]) for e in cat.entries), next(e["id"] for e in cat.entries if e.get("hands"))
 
 
 SLOTS, HANDS = _load()

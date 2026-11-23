@@ -1,45 +1,31 @@
 {
- "format": "wipefinder.weapons",
- "version": 3,
- "note": "Rows from the owner's table (Contact, Basic/simple). The full table comes later. Price in silver (1 gp = 10 sp). Weight in L: table 'L' -> 1 L, a plain number N -> N * 10 L (1 = 10 L = 1 B) [OWNER]. 'variable' lists fields the table gives as 'Vary.' (left empty). Column 'F.' = finesse = light.",
- "qualification_levels": {
-  "Новичок": 1,
-  "Ученик": 2,
-  "Любитель": 3,
-  "Опытный": 4,
-  "Специалист 1": 5,
-  "Специалист 2": 6,
-  "Специалист 3": 7,
-  "Эксперт 1": 8,
-  "Эксперт 2": 9,
-  "Эксперт 3": 10,
-  "Эксперт 4": 11,
-  "Мастер": 12
- },
- "groups": [
-  {
-   "gid": "contact",
-   "name": "Контактное",
-   "name_en": "Contact",
-   "scale": 3,
-   "difficulty": 1,
-   "parents": [],
-   "basic": false
+ "kind": "weapons",
+ "format": 1,
+ "title": "Weapon cards (test samples)",
+ "counter": 0,
+ "retired": [],
+ "meta": {
+  "qualification_levels": {
+   "Новичок": 1,
+   "Ученик": 2,
+   "Любитель": 3,
+   "Опытный": 4,
+   "Специалист 1": 5,
+   "Специалист 2": 6,
+   "Специалист 3": 7,
+   "Эксперт 1": 8,
+   "Эксперт 2": 9,
+   "Эксперт 3": 10,
+   "Эксперт 4": 11,
+   "Мастер": 12
   },
+  "note": "Rows from the owner's table (Contact, Basic/simple). The full table comes later. Price in silver (1 gp = 10 sp). Weight in L: table 'L' -> 1 L, a plain number N -> N * 10 L (1 = 10 L = 1 B) [OWNER]. 'variable' lists fields the table gives as 'Vary.' (left empty). Column 'F.' = finesse = light."
+ },
+ "entries": [
   {
-   "gid": "basic_simple",
-   "name": "Базовое/простое",
-   "name_en": "Basic/simple",
-   "scale": 3,
-   "difficulty": 1,
-   "parents": [],
-   "basic": true
-  }
- ],
- "weapons": [
-  {
-   "wid": "unarmed_combat",
+   "id": "unarmed_combat",
    "name": "Рукопашный бой",
+   "sample": false,
    "name_en": "Unarmed combat",
    "kind": "weapon",
    "groups": [
@@ -64,8 +50,9 @@
    "hp": 0
   },
   {
-   "wid": "stiletto",
+   "id": "stiletto",
    "name": "Стилет",
+   "sample": true,
    "kind": "weapon",
    "groups": [
     "contact"
@@ -84,8 +71,9 @@
    "hp": 1
   },
   {
-   "wid": "spiked_gauntlet",
+   "id": "spiked_gauntlet",
    "name": "Шипастые перчатки",
+   "sample": true,
    "kind": "weapon",
    "groups": [
     "contact"
@@ -103,8 +91,9 @@
    "no_parry": true
   },
   {
-   "wid": "improvised",
+   "id": "improvised",
    "name": "Импровизированное оружие",
+   "sample": true,
    "kind": "weapon",
    "groups": [
     "contact"
@@ -121,8 +110,9 @@
    ]
   },
   {
-   "wid": "hidden_thief",
+   "id": "hidden_thief",
    "name": "Скрытое воровское вооружение",
+   "sample": true,
    "kind": "weapon",
    "groups": [
     "contact"
@@ -144,8 +134,9 @@
    ]
   },
   {
-   "wid": "dagger",
+   "id": "dagger",
    "name": "Кинжал",
+   "sample": true,
    "kind": "weapon",
    "groups": [
     "basic_simple"
@@ -164,8 +155,9 @@
    "hp": 1
   },
   {
-   "wid": "club",
+   "id": "club",
    "name": "Дубинка",
+   "sample": true,
    "kind": "weapon",
    "groups": [
     "basic_simple"
@@ -182,8 +174,9 @@
    "hp": 2
   },
   {
-   "wid": "quarterstaff",
+   "id": "quarterstaff",
    "name": "Посох",
+   "sample": true,
    "kind": "weapon",
    "groups": [
     "basic_simple"
@@ -203,8 +196,9 @@
    "damage_medium2": "1d6"
   },
   {
-   "wid": "light_crossbow",
+   "id": "light_crossbow",
    "name": "Легкий арбалет",
+   "sample": true,
    "kind": "weapon",
    "groups": [
     "basic_simple"
@@ -222,8 +216,9 @@
    "hp": 2
   },
   {
-   "wid": "bolts",
+   "id": "bolts",
    "name": "Болты",
+   "sample": true,
    "kind": "ammo",
    "groups": [
     "basic_simple"
