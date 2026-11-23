@@ -22,4 +22,6 @@ One line each. Remove a line when the cause is fixed and covered by a test.
 - New core: every refusal is `CommandError(text, reason_id, values=...)`; a test checks every raise has a reason.
 - New core: views must never raise on a broken formula (it counts as 0); stored maxima (mana, slots) stay base values,
   effects are added on read, bridges write back the current only.
+- New core: a rule number is never written in code: rd.ref / rd.const / rd.default (ARCH/constants.md); the UI
+  reads views of a character inside `with rd.using(ch):` or it sees the table defaults, not the character's overrides.
 - New core: a stat:<id> effect reads the STORED scores (sheet_targets.base_context), never ability_mod: no loops.

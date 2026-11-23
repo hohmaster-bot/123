@@ -50,3 +50,6 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package 19: settings structure: schema in data, three domains (rules, character, app), app settings
   file with two layers and atomic save, settings / profile / layout / quick-button / image commands, cells resolved
   against the character, colour rules, macros of existing commands, hotkey conflicts. Report: tests/PACKAGE19_REPORT.md.
+- Done in package 20: all game-rule numbers into data (134 constants, wp/rules_data/constants.json; code reads them
+  through rules.py; per-character overrides; scan test), the rules pack for an independent reviewer
+  (REVIEW_PACK/RULES_PACK.md). Report: tests/PACKAGE20_REPORT.md.

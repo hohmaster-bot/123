@@ -38,3 +38,4 @@ D20 (owner, 2026-11-20): two UI modes only, Classic and Lite; split removed; the
 Q130 the damage type "water" does not exist (owner): removed; 12 types remain, cold included (damage_types.json, resources.md, defense.md).
 Package 18 (owner): medicine is an Int skill (skills_list.md, counts Int 23 / Wis 5); catalogs = D21 (catalog.md "Catalog files").
 D22 (owner, 2026-11-23, package 19): settings are data with a schema, three domains, layout profiles per mode, image registry (ARCH/settings.md).
+D23 (owner, 2026-11-23, package 20): every game-rule number is data with per-character overrides (ARCH/constants.md).

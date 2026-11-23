@@ -25,7 +25,7 @@ Plan: `Wp_claude/ROADMAP.md`. Legacy tkinter code at repo root is reference only
 - Branch Rework only. Never run commands that could discard uncommitted work.
 - Anything not stated by the owner and not in RULES: do NOT choose silently and do not invent formulas;
   put it in OPEN_QUESTIONS.md (new id) and in the report.
-- Every new rule constant or switch goes into data (Character.rules_settings / constants tables), not literals.
+- Every rule number goes into data: wp/rules_data/constants.json, read via rd.ref / rd.const (ARCH/constants.md, D23).
 
 ## Read only what the task needs
 | Task | Read |
