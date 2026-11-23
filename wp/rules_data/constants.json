@@ -96,7 +96,13 @@
   {"id": "skills.promote_base", "value": 40, "type": "int", "group": "skills", "unit": "training", "description": "make advanced = base + per_other * others", "label": "rules.skills.promote_base"},
   {"id": "skills.promote_per_other", "value": 20, "type": "int", "group": "skills", "unit": "training", "description": "per OTHER advanced or specialized skill", "label": "rules.skills.promote_per_other"},
   {"id": "skills.specialize_base", "value": 200, "type": "int", "group": "skills", "unit": "training", "description": "make specialized = base + per_other * others", "label": "rules.skills.specialize_base"},
-  {"id": "skills.specialize_per_other", "value": 50, "type": "int", "group": "skills", "unit": "training", "description": "per OTHER specialized skill", "label": "rules.skills.specialize_per_other"}
+  {"id": "skills.specialize_per_other", "value": 50, "type": "int", "group": "skills", "unit": "training", "description": "per OTHER specialized skill", "label": "rules.skills.specialize_per_other"},
+  {"id": "dying.action_slots", "value": 3, "type": "int", "group": "dying", "unit": "actions", "description": "action slots in a turn", "label": "rules.dying.action_slots"},
+  {"id": "dying.concentration_dc", "value": 20, "type": "int", "group": "dying", "unit": "DC", "description": "concentration DC to act while dying", "label": "rules.dying.concentration_dc"},
+  {"id": "dying.pain_per_painful_action", "value": 1, "type": "int", "group": "dying", "unit": "pain", "description": "pain per painful action", "label": "rules.dying.pain_per_painful_action"},
+  {"id": "dying.hp_loss", "value": {"dying": 2, "resting": 1, "stabilized": 0}, "type": "map", "group": "dying", "unit": "map", "description": "HP lost per tick by state", "label": "rules.dying.hp_loss"},
+  {"id": "dying.clean_actions", "value": 1, "type": "int", "group": "dying", "unit": "actions", "description": "clean actions while dying", "label": "rules.dying.clean_actions"},
+  {"id": "dying.diehard_clean_actions", "value": 2, "type": "int", "group": "dying", "unit": "actions", "description": "clean actions while dying with Diehard", "label": "rules.dying.diehard_clean_actions"}
  ],
  "allowlist": {}
 }

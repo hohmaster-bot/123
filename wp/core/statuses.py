@@ -10,16 +10,21 @@ Auto-stabilize: the player may always choose STABILIZED.
 Concentration DC 20 (rolled outside): each success clears one more action slot.
 """
 from dataclasses import dataclass
+from wp.rules_data import rules as rd
+
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+DYING_CLEAN_ACTIONS = rd.ref("dying.clean_actions")   # clean actions while dying
+DIEHARD_CLEAN_ACTIONS = rd.ref("dying.diehard_clean_actions")   # clean actions while dying with Diehard
 
 DYING = "dying"
 RESTING = "resting"
 STABILIZED = "stabilized"
 
-ACTION_SLOTS = 3
-CONCENTRATION_DC = 20
-PAIN_PER_PAINFUL_ACTION = 1
+ACTION_SLOTS = rd.ref("dying.action_slots")
+CONCENTRATION_DC = rd.ref("dying.concentration_dc")
+PAIN_PER_PAINFUL_ACTION = rd.ref("dying.pain_per_painful_action")
 
-HP_LOSS = {DYING: 2, RESTING: 1, STABILIZED: 0}
+HP_LOSS = rd.ref("dying.hp_loss")
 
 
 @dataclass(frozen=True)
@@ -64,7 +69,7 @@ def clean_actions(state, traits=NegativeTraits(), concentration_successes=0):
         return ACTION_SLOTS
     if state != DYING:
         return 0
-    base = 2 if traits.diehard else 1
+    base = int(DIEHARD_CLEAN_ACTIONS) if traits.diehard else int(DYING_CLEAN_ACTIONS)
     return min(ACTION_SLOTS, base + max(0, int(concentration_successes)))
 
 
