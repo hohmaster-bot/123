@@ -18,6 +18,7 @@ from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
 from wp.model.notebook import Court, Drive, Lens, Quest, Quirk, Story
 from wp.model.template import Template
+from wp.rules_data import rules as rd
 
 ABILITIES = ("str", "dex", "con", "int", "wis", "cha")
 DICT_FIELDS = ("abilities", "slots", "resources", "save_base", "save_stats", "char_settings")
@@ -285,11 +286,11 @@ class Character:
     bab: int = 0                       # base attack bonus (base value, class progression by hand)
     abilities: Dict[str, Ability] = field(default_factory=lambda: {a: Ability() for a in ABILITIES})
     # HP: hit die results entered by hand (progression.md)
-    hp_rolls: Tuple[int, ...] = (8,)   # hit-die HP per level: level 1 = the die max, later = entered
-    hit_die: int = 8                   # class hit die (cap for each roll and for training HP)
+    hp_rolls: Tuple[int, ...] = (rd.default("new.hit_die"),)   # hit-die HP per level: level 1 = the die max
+    hit_die: int = rd.default("new.hit_die")   # class hit die (cap for each roll and for training HP)
     hp_race: int = 0                   # race bonus to max HP (may be 0)
     hp_bonus: int = 0                  # other bonuses to max HP (feats, class, quirks, items)
-    hp_current: int = 8
+    hp_current: int = rd.default("new.hit_die")
     temp_hp: int = 0
     # balance / BP (maxima derived)
     balance_current: int = 0
@@ -349,16 +350,16 @@ class Character:
     balance_cap_start: Optional[int] = None   # balance cap taken at start_combat (snapshot); None = live
     ov: int = 0                        # time points (OV), no cap
     languages: Tuple[Language, ...] = ()
-    reactions: int = 1                 # +1 reaction for 200 * the new number (package 15)
+    reactions: int = rd.default("new.reactions")   # +1 reaction for 200 * the new number (package 15)
     seeds: Tuple[Seed, ...] = ()
     spells: Tuple[Spell, ...] = ()
     professionalism_bought: bool = False   # the 300-point professionalism option (package 15, Q29)
     shield_grade: str = "none"
     armor_grade: str = "none"
-    training: int = 1000
-    base_slots: int = 5
+    training: int = rd.default("training.start")
+    base_slots: int = rd.default("training.base_start")
     size: str = "medium"               # race size: small / medium / large (mods derived, combat.md)
-    base_speed: int = 20               # race base speed in feet (derived speed = base + bonuses)
+    base_speed: int = rd.default("speed.base_ft")   # race base speed in feet (derived = base + bonuses)
     save_base: Dict[str, int] = field(default_factory=lambda: {"fort": 0, "ref": 0, "will": 0})  # class table, by hand
     save_stats: Dict[str, str] = field(default_factory=lambda: {"fort": "con", "ref": "dex", "will": "wis"})
     active_stance: Optional[str] = None   # feat id of the active stance (combat.md "Stances", Q74)

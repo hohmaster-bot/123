@@ -133,7 +133,9 @@
   {"id": "hands.two_handed", "value": 2, "type": "int", "group": "attack", "unit": "hands", "description": "an item needing this many hands is two-handed", "label": "rules.hands.two_handed"},
   {"id": "attention.ov_min", "value": 2, "type": "int", "group": "narrative", "unit": "OV", "description": "1 attention gives max(this, Con mod) OV", "label": "rules.attention.ov_min"},
   {"id": "progression.hit_die_default", "value": 1, "type": "int", "group": "training", "unit": "HP", "description": "level_up without a roll takes this die value (Q111)", "label": "rules.progression.hit_die_default"},
-  {"id": "training.feat_default_cost", "value": 200, "type": "int", "group": "training", "unit": "training", "description": "feat price when the author gives none", "label": "rules.training.feat_default_cost"}
+  {"id": "training.feat_default_cost", "value": 200, "type": "int", "group": "training", "unit": "training", "description": "feat price when the author gives none", "label": "rules.training.feat_default_cost"},
+  {"id": "new.hit_die", "value": 8, "type": "int", "group": "new_character", "unit": "HP", "description": "hit die of a new character (and its level-1 HP)", "label": "rules.new.hit_die"},
+  {"id": "new.reactions", "value": 1, "type": "int", "group": "new_character", "unit": "reactions", "description": "reactions of a new character", "label": "rules.new.reactions"}
  ],
  "allowlist": {}
 }
