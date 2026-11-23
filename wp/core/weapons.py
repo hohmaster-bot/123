@@ -10,20 +10,34 @@ durability and HP of the item.
 """
 from dataclasses import dataclass
 from typing import Dict, Optional, Tuple
+from wp.rules_data import rules as rd
 
-MAX_LEVEL = 12
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+BASICS_COST = rd.ref("weapons.basics_cost")   # combat basics for scale 1 / 2 / 3
+BASICS_RAISE_BASE = rd.ref("weapons.basics_raise_base")   # combat basics raise = this - difficulty
+GRADE_COST_BASE = rd.ref("weapons.grade_cost_base")   # grade cost = (base + per_expert * X) * difficulty * scale
+GRADE_COST_PER_EXPERT = rd.ref("weapons.grade_cost_per_expert")   # grade cost per OTHER group at expert+
+REPEAT_SECOND = rd.ref("weapons.repeat_second")   # second pick of the same bonus
+REPEAT_THIRD = rd.ref("weapons.repeat_third")   # third pick of the same bonus
+DAMAGE_PICK = rd.ref("weapons.damage_pick")   # damage per 'damage +3' pick
+RANGE_PICK_FT = rd.ref("weapons.range_pick_ft")   # range per 'range +10 ft' pick
+DURABILITY_SPEC_PCT = rd.ref("weapons.durability_specialist_pct")   # hardness per specialist pick
+DURABILITY_EXPERT_PCT = rd.ref("weapons.durability_expert_pct")   # hardness per expert pick
+D20 = rd.ref("dice.d20_faces")   # the d20 (crit base range 20+)
+KEEN_MULTIPLIER = rd.ref("weapons.keen_multiplier")   # keen multiplies the BASE crit range
+
+MAX_LEVEL = rd.ref("weapons.max_level")
 LEVEL_NAMES = {
     0: "none", 1: "Novice", 2: "Apprentice", 3: "Amateur", 4: "Skilled",
     5: "Specialist I", 6: "Specialist II", 7: "Specialist III",
     8: "Expert I", 9: "Expert II", 10: "Expert III", 11: "Expert IV", 12: "Master",
 }
-EXPERT_LEVEL = 8
-BASICS_COST = {1: 50, 2: 100, 3: 150}
+EXPERT_LEVEL = rd.ref("weapons.expert_level")
 
 SPEC, EXPERT, MASTER = "specialist", "expert", "master"
-SPEC_SLOTS = (5, 6, 7)
-EXPERT_SLOTS = (8, 9, 10, 11)
-MASTER_SLOT = 12
+SPEC_SLOTS = rd.ref("weapons.specialist_slots")
+EXPERT_SLOTS = rd.ref("weapons.expert_slots")
+MASTER_SLOT = rd.ref("weapons.master_slot")
 
 # bonus id -> tier (weapons.md "Bonuses by tier")
 BONUS_TIER = {
@@ -34,12 +48,12 @@ BONUS_TIER = {
     "reroll_d20": MASTER, "no_attack_tag": MASTER, "restore_balance": MASTER,
 }
 
-QUALIFIED = 0
-ONE_BELOW_PENALTY = -2
-NOT_QUALIFIED_PENALTY = -4
-LUCKY_BASE = 20
-LUCKY_MASTERY_MAX = 3
-MIN_THRESHOLD = 2
+QUALIFIED = rd.ref("weapons.qualified_penalty")
+ONE_BELOW_PENALTY = rd.ref("weapons.one_below_penalty")
+NOT_QUALIFIED_PENALTY = rd.ref("weapons.not_qualified_penalty")
+LUCKY_BASE = rd.ref("weapons.lucky_base")
+LUCKY_MASTERY_MAX = rd.ref("weapons.lucky_mastery_max")
+MIN_THRESHOLD = rd.ref("weapons.min_threshold")
 
 
 @dataclass(frozen=True)
@@ -86,11 +100,11 @@ def ancestors(catalog, name):
 
 def basics_bump(difficulty):
     """Combat basics raise by (5 - difficulty) grades (difficulty 1 -> +4)."""
-    return max(0, 5 - int(difficulty))
+    return max(0, BASICS_RAISE_BASE - int(difficulty))
 
 
 def basics_cost(scale):
-    return BASICS_COST[int(scale)]
+    return BASICS_COST[int(scale) - 1]
 
 
 def effective_basics(catalog, name):
@@ -108,7 +122,7 @@ def grade_cost(catalog, name):
     """Cost of +1 grade: (30 + 5X) * difficulty * scale, X = OTHER weapons at 8+."""
     w = catalog[name]
     x = sum(1 for n in catalog if n != name and level(catalog, n) >= EXPERT_LEVEL)
-    return (30 + 5 * x) * w.difficulty * w.scale
+    return (GRADE_COST_BASE + GRADE_COST_PER_EXPERT * x) * w.difficulty * w.scale
 
 
 def qualification_penalty(weapon_level, required_level):
@@ -142,9 +156,9 @@ def _repeat_ok(tier, ordinal, slot):
     if ordinal == 1:
         return True
     if tier == SPEC:
-        return (ordinal == 2 and slot >= EXPERT_LEVEL) or (ordinal == 3 and slot == MASTER_SLOT)
+        return (ordinal == REPEAT_SECOND and slot >= EXPERT_LEVEL) or (ordinal == REPEAT_THIRD and slot == MASTER_SLOT)
     if tier == EXPERT:
-        return ordinal == 2 and slot == MASTER_SLOT
+        return ordinal == REPEAT_SECOND and slot == MASTER_SLOT
     return False
 
 
@@ -182,15 +196,15 @@ def mastery_flat(picks):
     return {
         "parry": count(picks, "parry_1"),
         "attack": count(picks, "attack_1"),
-        "damage": 3 * count(picks, "damage_3"),
-        "range_ft": 10 * count(picks, "range_10"),
+        "damage": DAMAGE_PICK * count(picks, "damage_3"),
+        "range_ft": RANGE_PICK_FT * count(picks, "range_10"),
         "balance_regen": count(picks, "balance_regen_1"),
     }
 
 
 def durability_percent(picks):
     """Specialist +30%, expert +70% per pick; they stack."""
-    return 30 * count(picks, "durability_30") + 70 * count(picks, "durability_70")
+    return DURABILITY_SPEC_PCT * count(picks, "durability_30") + DURABILITY_EXPERT_PCT * count(picks, "durability_70")
 
 
 ITEM_HP = "item_hp"                # ItemBonus kinds: effect targets on items (package 17, Q125)
@@ -220,18 +234,19 @@ def final_hp(base, picks):
 
 # --------------------------------------------------------- crit and lucky
 
-def crit_threshold(base_threshold=20, keen=False, picks=(), feat_widen=0):
+def crit_threshold(base_threshold=None, keen=False, picks=(), feat_widen=0):
     """Lowest d20 that threatens a crit. Keen doubles the BASE range; each
     'crit +1' pick and feat_widen widen it by 1. Never below 2."""
-    size = 21 - int(base_threshold)
+    faces = int(D20) + 1
+    size = faces - int(D20 if base_threshold is None else base_threshold)
     if keen:
-        size *= 2
+        size *= int(KEEN_MULTIPLIER)
     size += count(picks, "crit_1") + int(feat_widen)
-    return max(MIN_THRESHOLD, 21 - size)
+    return max(int(MIN_THRESHOLD), faces - size)
 
 
 def lucky_threshold(picks=(), enchant=0, extra=0):
     """Lucky attack die: base 20, -1 per mastery pick (max 3), -enchant level,
     -extra (class/race/feat for this weapon). No other bonuses. Never below 2."""
-    mastery = min(LUCKY_MASTERY_MAX, count(picks, "lucky_1"))
-    return max(MIN_THRESHOLD, LUCKY_BASE - mastery - int(enchant) - int(extra))
+    mastery = min(int(LUCKY_MASTERY_MAX), count(picks, "lucky_1"))
+    return max(int(MIN_THRESHOLD), LUCKY_BASE - mastery - int(enchant) - int(extra))
