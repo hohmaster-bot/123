@@ -25,6 +25,11 @@ from wp.model.body_view import (armor_slowdown, is_dead, morale_bonus, pain_pena
                                 pain_profile, pain_total, size_cmb, size_mod, speed)
 from wp.model.load_view import (WeightView, bag_weight_l, carried_weight_l, condition_tags,  # noqa: F401
                                 in_bag, load_status, overloaded, weight_view)
+from wp.rules_data import rules as rd
+
+# rule numbers that were inline literals (package 20: data, wp/rules_data/constants.json)
+BROKEN_DIVISOR = rd.ref("items.broken_defense_divisor")   # a broken armor / shield bonus is divided by this
+ATTENTION_LEVEL_STEP = rd.ref("attention.level_step")   # attention per cycle +1 per this many levels
 
 
 # ----------------------------------------------------------------- abilities
@@ -164,7 +169,7 @@ def _defense_value(it, base, p=()):
     if base <= 0 or not itm.works(it, p):
         return 0
     v = base + enchant(it, p)
-    return v // 2 if itm.broken(it, p) else v
+    return v // BROKEN_DIVISOR if itm.broken(it, p) else v
 
 
 def armor_value(it, p=()):
@@ -176,7 +181,7 @@ def touch_value(it, p=()):
     down) but no enchantment (see OPEN_QUESTIONS)."""
     if it.touch_bonus <= 0 or not itm.works(it, p):
         return 0
-    return it.touch_bonus // 2 if itm.broken(it, p) else it.touch_bonus
+    return it.touch_bonus // BROKEN_DIVISOR if itm.broken(it, p) else it.touch_bonus
 
 
 def touch_armor(ch):
@@ -201,8 +206,8 @@ def shield_bonus(ch):
 
 
 # Shield proficiency (training.md, package 8 D1): grade rank 0 none, 1 light, 2 heavy, 3 tower.
-SHIELD_RANK = {"none": 0, "light": 1, "heavy": 2, "tower": 3}
-SHIELD_NEED = {"": 1, "light": 1, "heavy": 2, "tower": 3}
+SHIELD_RANK = rd.ref("proficiency.shield_rank")
+SHIELD_NEED = rd.ref("proficiency.shield_need")
 BALANCE_SHIELDS = ("heavy", "tower")
 
 
@@ -218,8 +223,8 @@ def shield_proficient(ch, it):
 
 
 # Armor proficiency (training.md): grade rank 0 none, 1 light, 2 medium, 3 heavy (package 9 B).
-ARMOR_RANK = {"none": 0, "light": 1, "medium": 2, "heavy": 3}
-ARMOR_NEED = {"": 1, "light": 1, "medium": 2, "heavy": 3}
+ARMOR_RANK = rd.ref("proficiency.armor_rank")
+ARMOR_NEED = rd.ref("proficiency.armor_need")
 
 
 def is_armor(it):
@@ -280,8 +285,8 @@ def balance_regen(ch):
     return dv.balance_regen(ch.level, ability_mod(ch, "con"), other)
 
 
-SPIRIT_BASE = 5
-SPIRIT_PER_CHA = 5
+SPIRIT_BASE = rd.ref("spirit.base")
+SPIRIT_PER_CHA = rd.ref("spirit.per_cha")
 
 
 def spirit_max(ch):
@@ -294,12 +299,12 @@ def spirit_pool(ch):
     return Pool(ch.spirit_current, spirit_max(ch))
 
 
-ATTENTION_DRIVE_LEVEL = 4
+ATTENTION_DRIVE_LEVEL = rd.ref("attention.drive_level")
 
 
 def attention_per_cycle(ch):
     """1 + levels reached that are multiples of 3 + 1 per drive at level 4+ (narrative.md)."""
-    return (1 + ch.level // 3 + sum(1 for d in ch.drives if d.level >= ATTENTION_DRIVE_LEVEL)
+    return (1 + ch.level // ATTENTION_LEVEL_STEP + sum(1 for d in ch.drives if d.level >= ATTENTION_DRIVE_LEVEL)
             + stg.value(ch, "attention_per_cycle"))
 
 

@@ -102,7 +102,16 @@
   {"id": "dying.pain_per_painful_action", "value": 1, "type": "int", "group": "dying", "unit": "pain", "description": "pain per painful action", "label": "rules.dying.pain_per_painful_action"},
   {"id": "dying.hp_loss", "value": {"dying": 2, "resting": 1, "stabilized": 0}, "type": "map", "group": "dying", "unit": "map", "description": "HP lost per tick by state", "label": "rules.dying.hp_loss"},
   {"id": "dying.clean_actions", "value": 1, "type": "int", "group": "dying", "unit": "actions", "description": "clean actions while dying", "label": "rules.dying.clean_actions"},
-  {"id": "dying.diehard_clean_actions", "value": 2, "type": "int", "group": "dying", "unit": "actions", "description": "clean actions while dying with Diehard", "label": "rules.dying.diehard_clean_actions"}
+  {"id": "dying.diehard_clean_actions", "value": 2, "type": "int", "group": "dying", "unit": "actions", "description": "clean actions while dying with Diehard", "label": "rules.dying.diehard_clean_actions"},
+  {"id": "proficiency.shield_rank", "value": {"none": 0, "light": 1, "heavy": 2, "tower": 3}, "type": "map", "group": "sheet", "unit": "map", "description": "shield proficiency grade -> rank", "label": "rules.proficiency.shield_rank"},
+  {"id": "proficiency.shield_need", "value": {"": 1, "light": 1, "heavy": 2, "tower": 3}, "type": "map", "group": "sheet", "unit": "map", "description": "shield type -> rank needed", "label": "rules.proficiency.shield_need"},
+  {"id": "proficiency.armor_rank", "value": {"none": 0, "light": 1, "medium": 2, "heavy": 3}, "type": "map", "group": "sheet", "unit": "map", "description": "armor proficiency grade -> rank", "label": "rules.proficiency.armor_rank"},
+  {"id": "proficiency.armor_need", "value": {"": 1, "light": 1, "medium": 2, "heavy": 3}, "type": "map", "group": "sheet", "unit": "map", "description": "armor type -> rank needed", "label": "rules.proficiency.armor_need"},
+  {"id": "spirit.base", "value": 5, "type": "int", "group": "sheet", "unit": "spirit", "description": "spirit max = base + per_cha * Cha mod", "label": "rules.spirit.base"},
+  {"id": "spirit.per_cha", "value": 5, "type": "int", "group": "sheet", "unit": "spirit", "description": "spirit per Cha modifier", "label": "rules.spirit.per_cha"},
+  {"id": "attention.drive_level", "value": 4, "type": "int", "group": "sheet", "unit": "level", "description": "a drive at this level or above gives +1 attention", "label": "rules.attention.drive_level"},
+  {"id": "items.broken_defense_divisor", "value": 2, "type": "int", "group": "sheet", "unit": "", "description": "a broken armor / shield bonus is divided by this", "label": "rules.items.broken_defense_divisor"},
+  {"id": "attention.level_step", "value": 3, "type": "int", "group": "sheet", "unit": "levels", "description": "attention per cycle +1 per this many levels", "label": "rules.attention.level_step"}
  ],
  "allowlist": {}
 }
