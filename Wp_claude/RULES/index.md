@@ -7,7 +7,7 @@ Each file: rules, then numeric examples (use them as tests).
 | File | Covers |
 |---|---|
 | defense_layers.md | AC ladder: which layer an attack roll landed in, owner texts per layer |
-| ac_zones.md | DRAFT (not built): AC by direction, 3x3 cells, shield coverage |
+| ac_zones.md | AC by direction, 3x3 cells, shield coverage (owner draft); variants and settings built in package 24 |
 | defense.md | AC types, positioning, touch, typed bonuses, morale |
 | combat.md | actions, iterative attacks, crit, lucky attack, maneuvers, size, spells dmg |
 | buffs.md | effects, buffs, duration, charges |
@@ -35,8 +35,8 @@ Cross-cutting: ANY part of the sheet (item, feat, race, class, injury, quirk, bu
 ## Sections
 Search a file by its heading (`grep -n "^## "`), then read only that section.
 
-- `ac_zones.md` (46 lines): DRAFT (not built): AC by direction, 3x3 cells, shield coverage
-  sections: Cells (6) | Shield coverage (shield in the LEFT hand) (16) | Features change cells (27) | Requirement for the implementation (31) | Values per cell [OWNER, package 14, closes Q92] (35) | Parry and shields [OWNER, package 15, closes Q93] (39)
+- `ac_zones.md` (67 lines): AC by direction, 3x3 cells, shield coverage (owner draft); variants and settings built in package 24
+  sections: Cells (6) | Shield coverage (shield in the LEFT hand) (16) | Features change cells (27) | Requirement for the implementation (31) | Values per cell [OWNER, package 14, closes Q92] (35) | Parry and shields [OWNER, package 15, closes Q93] (39) | Variants and settings (package 24) [OWNER, package 24 B; built] (48)
 - `buffs.md` (199 lines): effects, buffs, duration, charges
   sections: What an effect can change (4) | Duration kinds (9) | Value from the current overload [OWNER] (25) | Value from a stat modifier [OWNER, package 11 B; closes Q65] (29) | Skills target [OWNER] (39) | Condition [OWNER, package 8] (42) | Status container [OWNER, package 11 A; closes Q63] (50) | Charges and activation (78) | Stacking (see defense.md) (86) | Ready-made buffs (90) | Stacking flags [OWNER] (93) | Block effects [OWNER, package 13 B; closes Q82] (100) | Per-round cost [OWNER, package 13 C] (119) | Formulas [OWNER, package 14 C] (149) | Action and restore blocks, restore by effect [OWNER, package 14 F] (163) | Effect targets of every sheet number [OWNER, package 16 A2] (177)
 - `catalog.md` (60 lines): catalogs, sharing, sorting
@@ -51,7 +51,7 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: Positioning [OWNER] (3) | Typed bonus pools [OWNER] (20) | Saves and initiative [package 10; Q55, Q56, Q61 answered in package 11] (33) | Morale (battle) [OWNER] (44) | Does NOT receive roll bonuses (55) | Damage pipeline [package 22 B6: the ONE text, checked against the code wp/core/damage.py] (59) | Damage order and percent modifiers [OWNER, package 17] (72)
 - `defense_layers.md` (53 lines): AC ladder: which layer an attack roll landed in, owner texts per layer
   sections: Penalties, dodge, flat [OWNER, packages 4-5] (17) | Owner texts (bound to the layer TYPE, stored as data: wp/catalog/data/defense_layers.json) (36)
-- `doll.md` (24 lines): 22 doll slots
+- `doll.md` (32 lines): 22 doll slots
   sections: (no ## headings)
 - `gear.md` (217 lines): doll, hands, belt, bag, weight/load, base, armor, qualification, item codes
   sections: Doll [OWNER] (3) | Qualification (15) | Belt (unload) [OWNER] (18) | Bag (22) | Weight [OWNER] (28) | Base (resource for strengthening) [OWNER] (44) | Armor [OWNER] (52) | Masterwork [OWNER, package 8; package 9 closes Q39, Q40] (84) | Enchantment [OWNER, package 5] (99) | Item HP [OWNER, package 6, closes Q31] (123) | Item codes / sharing [OWNER] (168) | Enabled / disabled (activation) [OWNER] (173) | Consumables [OWNER, package 13 D] (188) | Charges and cooldown [OWNER, package 14 B; closes Q94] (200) | Base contents [OWNER text above; built in package 16 G7] (213)

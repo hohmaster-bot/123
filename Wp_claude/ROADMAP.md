@@ -26,6 +26,10 @@ cache and perf budgets, AC zones as data. What is left (owner, package 23):
   2. Overlay prototype (Phase 4) - needs the owner's screen drawings A1, A2.
   3. The UI (Phase 5).
   PDF export is NOT built (not in RULES; no package asked for it).
+- Package 24 done: hands with sides, AC cell variants and defence settings as data, doll layout data (D26).
+- NOT built (each needs owner rules; package 24 E): class system; principles; journal revert; what an item
+  qualification unlocks (Q109); three weapon picks stored only (attack without the tag, ignore the first
+  vulnerability, ignore 20% cover); spell damage engine (editor BETA); PDF export (with Qt in the UI phase, QPdfWriter).
 Commands (D5), stable ids (D7), persistence (D11), settings split (D13), effects (D14-D17), catalogs contract, i18n (D4: RU / EN switch, wp/i18n/ru.json and en.json, refusal reason ids as keys; Russian only
 until then), theme, panel registry.
 - Before Phase 4: the owner sends screen drawings with labels (A1, A2...), Claude turns them into screen descriptions.

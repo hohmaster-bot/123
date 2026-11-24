@@ -22,3 +22,11 @@ Each slot holds ONE item that gives a bonus; items can be swapped for the situat
   (reason slot_occupied); equip_item(swap=True) takes the other item off (it stays in the bag). The hands slot is
   equip_hands (2 hands). An item without a slot is worn without a slot check (as before). Bonuses count only while
   worn / held.
+- [OWNER, package 24 A, C] The two hands are two positions, left and right. equip_hands takes an optional side
+  (default: a shield goes to the left hand, another item to the first free hand: right, then left); a two-handed
+  item takes both. move_hand_item moves an item to the other hand (a taken hand is refused; swap=True swaps).
+  A file without stored sides gets them by the order of the held items when read. The main hand of an attack record
+  is the right hand by default (set_main_hand); a weapon in the other hand is the off hand.
+- [package 24 C] Doll layout = data of the layout profile (coordinates relative to the body picture; SAMPLE values):
+  views "basic" (only the two hands) and "body" (every slot on a human figure). Commands equip_to_slot, unequip_slot,
+  swap_slots; an item fits only its own slot (Item.slot).

@@ -36,3 +36,10 @@ Kept apart from RULES/. Nothing here changes numbers.
 - General program settings: language RU / EN, theme, scale, font size, weight units, autosave, backups,
   confirmations for dangerous actions, hotkeys, notifications, log filters, how each resource is shown (number / bar /
   both / percent), window positions, the last character, the default mode.
+
+## Doll and AC cells (package 24 D)
+- Doll, two views: "basic" (only the right and left hand) and "body" (slots drawn on a human figure picture: a
+  minimal icon and the slot name in each rectangle). Hovering a slot shows the item (tooltip).
+- AC cell: a big number in the centre (the primary variant) and a small second number bottom right (the secondary
+  variant); or a slash list "A / B / C". Which variants and their order are settings.
+- The owner will send sketches / AI pictures for the doll and the cells later; the shipped coordinates are samples.
