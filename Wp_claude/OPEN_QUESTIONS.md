@@ -59,3 +59,8 @@ Closed questions (answered, removed from here): ARCH/decision_log.md (append-onl
 - Q171 | Undo: character-bound UI settings (set_char_setting / reset_char_setting) are not on the undo stack (wp/app/data/undo.json); every game command is. Undo depth default 50 (app setting undo_depth). | as is | assumption (package 25)
 - Q172 | The class hit die also caps the training HP purchase and the hit-die HP cap (die * level); level 1 HP stays the stored roll. | as is | assumption (package 25)
 - Q173 | Professionalism with a class: the chosen skills are compared by skill id (Skill.name, e.g. athletics) with the class skill list. | as is | assumption (package 25)
+- Q174 | Flask segments (app setting resource_segments): HP 10, balance 5, spirit 5, mana 5, class pools 5 (key pool or pool:<id>), BP and comfort 0 (no ticks). | as is | assumption (package 26)
+- Q175 | Experience: the total is derived from the log (base values only); the time stamp of an entry / a level is the Session clock (files.stamp, UTC), "" without a Session. | as is | assumption (package 26)
+- Q176 | UI/sketches/README.md names the subjects of A1-A6 by Claude's reading of the package text; the owner may rename them. | as is | assumption (package 26)
+- Q177 | Classic screen tabs Feats, Race, Class have no panel of their own in the registry: they read the sheet panel for now; a later package may add panels. | as is | assumption (package 26)
+- Q178 | cost_actions on spells and quick buttons (a profile field) is shown only, like on attack records and maneuvers; nothing spends actions automatically. | as is | assumption (package 26)

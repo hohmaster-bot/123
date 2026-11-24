@@ -11,6 +11,7 @@ Both modes have an edit mode; it works differently in each.
 - Editors open inside the window (pages/tabs), not as floating windows.
 - Global hotkey shows/hides it: Ctrl+Shift+W.
 - Edit mode: forms and lists inside the sheet.
+- Screen layout v1: `UI_WISHES.md` section "Classic screen v1" (package 26 D); sketches in `UI/sketches/`.
 
 ## Lite (the overlay)
 - Frameless always-on-top panels on the desktop. Empty space is click-through.

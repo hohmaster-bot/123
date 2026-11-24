@@ -69,3 +69,6 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   kind classes, derived BAB / saves / hit die, professionalism checks, spellbook and divine defaults), drives with
   level notes and principles, hidden item properties by qualification, stored-only picks as flags, spell damage as
   data. Report: tests/PACKAGE25_REPORT.md.
+- Done in package 26: actions as a resource (base 3 + effects, tick / end of combat refill, cost presets), flask
+  bars with segments, experience log with notes, goal and level history, the Classic screen v1 description
+  (UI_WISHES.md, UI/sketches/README.md). Report: tests/PACKAGE26_REPORT.md.

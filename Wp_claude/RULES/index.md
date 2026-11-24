@@ -39,12 +39,12 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: Cells (6) | Shield coverage (shield in the LEFT hand) (16) | Features change cells (27) | Requirement for the implementation (31) | Values per cell [OWNER, package 14, closes Q92] (35) | Parry and shields [OWNER, package 15, closes Q93] (39) | Variants and settings (package 24) [OWNER, package 24 B; built] (48)
 - `buffs.md` (199 lines): effects, buffs, duration, charges
   sections: What an effect can change (4) | Duration kinds (9) | Value from the current overload [OWNER] (25) | Value from a stat modifier [OWNER, package 11 B; closes Q65] (29) | Skills target [OWNER] (39) | Condition [OWNER, package 8] (42) | Status container [OWNER, package 11 A; closes Q63] (50) | Charges and activation (78) | Stacking (see defense.md) (86) | Ready-made buffs (90) | Stacking flags [OWNER] (93) | Block effects [OWNER, package 13 B; closes Q82] (100) | Per-round cost [OWNER, package 13 C] (119) | Formulas [OWNER, package 14 C] (149) | Action and restore blocks, restore by effect [OWNER, package 14 F] (163) | Effect targets of every sheet number [OWNER, package 16 A2] (177)
-- `catalog.md` (60 lines): catalogs, sharing, sorting
+- `catalog.md` (61 lines): catalogs, sharing, sorting
   sections: Two names [OWNER] (31) | Catalog files [OWNER, package 18, D21] (35)
 - `classes_magic.md` (59 lines): class editor tabs, mana/slots restore
   sections: Class editor, 3 tabs [OWNER] (3) | Restore [OWNER] (10) | Where abilities live [OWNER] (21) | Mana source [OWNER] (26) | Spell cost [OWNER, confirmed] (30) | Racial damage absorbers [OWNER] (53)
-- `combat.md` (208 lines): actions, iterative attacks, crit, lucky attack, maneuvers, size, spells dmg
-  sections: Actions [OWNER] (3) | Attack tag and iteration [OWNER] (6) | Crit [OWNER] (21) | Lucky attack [OWNER] (33) | Attack records [OWNER] (42) | Two-weapon fighting [OWNER, verbatim] (55) | Empty-hand parry [OWNER] (119) | Unarmed [OWNER] (127) | Maneuvers (130) | Size and speed [OWNER, package 11 C; closes Q57, Q66] (138) | Spells damage (159) | Stances (163) | Attack kinds [OWNER, package 17, part of Q122] (182) | Reactions [OWNER, package 22 A2] (192) | Damage roll and pain [package 22 B5] (202)
+- `combat.md` (212 lines): actions, iterative attacks, crit, lucky attack, maneuvers, size, spells dmg
+  sections: Actions [OWNER] (3) | Attack tag and iteration [OWNER] (10) | Crit [OWNER] (25) | Lucky attack [OWNER] (37) | Attack records [OWNER] (46) | Two-weapon fighting [OWNER, verbatim] (59) | Empty-hand parry [OWNER] (123) | Unarmed [OWNER] (131) | Maneuvers (134) | Size and speed [OWNER, package 11 C; closes Q57, Q66] (142) | Spells damage (163) | Stances (167) | Attack kinds [OWNER, package 17, part of Q122] (186) | Reactions [OWNER, package 22 A2] (196) | Damage roll and pain [package 22 B5] (206)
 - `crafting.md` (17 lines): recipes, OV, craft DC, unusual items, ILVL
   sections: Recipe (new entity, tab "Recipes/Crafting") (3) | Unusual items (first six categories only) (10) | Item level (16)
 - `defense.md` (82 lines): AC types, positioning, touch, typed bonuses, morale
@@ -57,8 +57,8 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: Doll [OWNER] (3) | Qualification (15) | Belt (unload) [OWNER] (18) | Bag (22) | Weight [OWNER] (28) | Base (resource for strengthening) [OWNER] (44) | Armor [OWNER] (52) | Masterwork [OWNER, package 8; package 9 closes Q39, Q40] (84) | Enchantment [OWNER, package 5] (99) | Item HP [OWNER, package 6, closes Q31] (123) | Item codes / sharing [OWNER] (168) | Enabled / disabled (activation) [OWNER] (173) | Consumables [OWNER, package 13 D] (188) | Charges and cooldown [OWNER, package 14 B; closes Q94] (200) | Base contents [OWNER text above; built in package 16 G7] (213)
 - `injuries.md` (44 lines): trauma points, injuries
   sections: Trauma points (OT) [OWNER] (3) | Injury [OWNER] (17) | Healing rating (RL) [OWNER] (35)
-- `narrative.md` (49 lines): quirks, stories, courts, quests, drives, attention
-  sections: Courts (Dvory) [OWNER] (9) | Cycle end button (idea) [OWNER] (15) | Lens [OWNER] (25) | Notebook commands [OWNER, package 16 F] (33) | Not built on purpose [OWNER, package 17, closes Q122] (41) | Drives: level notes and principles (package 25) [OWNER] (45)
+- `narrative.md` (53 lines): quirks, stories, courts, quests, drives, attention
+  sections: Courts (Dvory) [OWNER] (9) | Cycle end button (idea) [OWNER] (15) | Lens [OWNER] (25) | Notebook commands [OWNER, package 16 F] (33) | Not built on purpose [OWNER, package 17, closes Q122] (41) | Drives: level notes and principles (package 25) [OWNER] (49)
 - `progression.md` (50 lines): level up, training, weapon mastery, spell mastery
   sections: Level up [OWNER] (3) | Weapon mastery (22) | Spell mastery [OWNER] (25) | Class system v0 (package 25) [OWNER consent, package 25 B; ASSUMPTION values marked] (38)
 - `resources.md` (204 lines): HP, temp HP, balance, pain, trauma points, spirit, mana, overload, comfort, class resources, zero initiative, buffs

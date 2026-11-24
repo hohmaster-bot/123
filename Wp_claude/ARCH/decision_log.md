@@ -46,3 +46,5 @@ Q151 (owner, package 24): the damage pipeline order of the code is confirmed. Q1
 D26 (owner, 2026-11-24, package 24): hands have sides; AC cells return variants; defence rules are data editable per character and by effects (ARCH/doll_hands.md, ARCH/ac_variants.md). Assumptions recorded: Q160-Q166.
 Q104 closed (package 25 B): with a class, professionalism checks the class's own professionalism and the class skill list. Q109 closed (package 25 D): qualification unlocks hidden properties by level; the purchase stays 50 * N.
 D27 (owner, 2026-11-24, package 25): class v0 is data, one class, derived BAB / saves with a hand override; undo is a bounded state stack; drives carry level notes and a principle (ARCH/classes.md). Assumptions recorded: Q167-Q173.
+Q122 changed (owner, package 26 C): XP is a tracked counter with a log, notes and a level history (no threshold, no automatic level-up); money stays narrative.
+D28 (owner, 2026-11-24, package 26): actions are a resource (base 3, effects add); flask display style; experience is a log with notes and a level history. Assumptions recorded: Q174-Q178.

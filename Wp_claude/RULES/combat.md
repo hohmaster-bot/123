@@ -2,6 +2,10 @@
 
 ## Actions [OWNER]
 - Shift 1, Move 1, Standard 2, Full-round 3, Complete round 4 actions.
+- [OWNER, package 26 A] Actions are a resource: 3 per turn (data constant), effects "actions_max" add more (spells,
+  abilities, items, statuses; typed stacking). They come back on the zero-initiative tick and at the end of combat.
+  Attack records, maneuvers, quick buttons and spells may show a cost in actions (the costs above are presets);
+  nothing is spent automatically: the player presses spend.
 
 ## Attack tag and iteration [OWNER]
 - Options spent in own turn may carry tag "attack" (player sets tags himself, spells needing attack roll too).

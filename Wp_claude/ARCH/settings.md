@@ -38,3 +38,5 @@ max, group, i18n label and description ids). Code never lists setting keys by ha
 ## Hotkeys
 - Two actions on the same key (modifier order does not matter) are refused: app hotkeys, quick buttons and each
   Lite profile's own hotkeys are checked together.
+
+- [package 26 B] resource_display allows "flask"; resource_segments[resource] = the tick step of a flask (0 = none).

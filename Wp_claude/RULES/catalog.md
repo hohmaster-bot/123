@@ -54,6 +54,7 @@
   (temp file + replace; a failed save keeps the old file). The UI later reads catalogs through the catalog view (list
   with a filter text and a sort; get, with the layer shipped / user / override) and writes them only through these
   commands.
+- [package 26 C] Experience is not a catalog: it is a log on the character (narrative.md "Experience").
 - Sharing: one entry -> a text code (export) and back (import as a new entry, gear.md "Item codes"); a whole
   catalog file can be exported / imported as it is.
 - The rows shipped in package 18 for weapons, armor / shields, items, spells and statuses are TEST SAMPLES

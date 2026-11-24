@@ -29,6 +29,8 @@ cache and perf budgets, AC zones as data. What is left (owner, package 23):
 - Package 24 done: hands with sides, AC cell variants and defence settings as data, doll layout data (D26).
 - Package 25 done: undo / redo, class system v0 (data, one class), drives with level notes and principles,
   hidden item properties (Q109), the stored-only picks as flags, spell damage as data (D27).
+- Package 26 done: actions as a resource, flask bars, experience log and level history, the Classic screen v1
+  description (UI_WISHES.md; the owner's sketches go to UI/sketches/).
 - What is left: independent review 5; overlay prototype (needs the owner's drawings); the UI; PDF export with Qt in
   the UI phase (QPdfWriter). Not built: multiclass, reverting an arbitrary journal line (undo / redo is the session
   stack), mechanics of the stored-only picks (they are flags), dice rolling (never, by design).
@@ -45,7 +47,7 @@ until then), theme, panel registry.
   2. AC zones: built as data in package 23 from the draft (Q154-Q157); the full table can replace the data.
   3. Phase 4 Lite (overlay) spike, Phase 5 UI (two modes: Classic and Lite, D20), Phase 6 release.
   4. Class system later (below).
-- Q122 CLOSED (owner, package 17): XP and money are narrative; there is no "start session" or "end session" button,
+- Q122 CLOSED (owner, package 17; XP changed in package 26: a log with notes, no threshold): money is narrative; there is no "start session" or "end session" button,
   only the end of cycle. Not built on purpose.
 - Rule exists, no code yet: weapon picks without a numeric effect that are not once-per-combat (one attack per turn
   without the [attack] tag, ignore the first vulnerability, ignore 20% cover) are stored only; what an item

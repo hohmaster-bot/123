@@ -39,8 +39,12 @@
   +2 Str 12 -> burned 10 -> restored 12.
 
 ## Not built on purpose [OWNER, package 17, closes Q122]
-- Experience (XP) and money are NARRATIVE: no mechanics, no counters, no prices in the app. There is no "start session"
-  and no "end of session" button: only the end of cycle (above).
+- Money is NARRATIVE: no mechanics, no counters, no prices in the app. There is no "start session" and no "end of
+  session" button: only the end of cycle (above).
+- [OWNER, package 26 C; replaces "XP is narrative"] Experience (XP) is a tracked counter with a log and notes: every
+  entry has an amount (may be negative), an optional note and a time stamp; the total is the sum of the log. The player
+  may type a goal "next level at" shown as progress; it is NOT a rule: no threshold table, no automatic level-up.
+  Every level-up writes the level history (level, XP at that moment, hit-die roll, note, time).
 
 ## Drives: level notes and principles (package 25) [OWNER]
 - A drive list with numbers 0-5, the bonus/penalty text beside each level, and a principle = a narrative
