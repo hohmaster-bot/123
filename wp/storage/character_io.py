@@ -26,6 +26,7 @@ from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
 from wp.model import ids
 from wp.model.class_types import ClassInfo, HiddenProperty, SpellDamage
+from wp.model.experience import LevelRecord, XpEntry
 from wp.model.notebook import Court, Drive, Lens, Quest, Quirk, Story
 from wp.model.template import Template
 from wp.model.character import (Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
@@ -57,7 +58,7 @@ _TYPES = {cls.__name__: cls for cls in (
     Pool, Effect, OneShot, Status, Injury, PainEntry, PainProfile, Charge, Skill,
     NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
     ResourcePool, RulesSettings, Seed, Spell, SpellUpgrade, Usage, WeaponEntry,
-    Court, Drive, Lens, Quest, Quirk, Story, Template, ClassInfo, HiddenProperty, SpellDamage)}
+    Court, Drive, Lens, Quest, Quirk, Story, Template, ClassInfo, HiddenProperty, SpellDamage, XpEntry, LevelRecord)}
 
 
 class StorageError(Exception):

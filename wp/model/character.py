@@ -17,6 +17,7 @@ from wp.core.skills import Skill
 from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
 from wp.model.class_types import ClassInfo, HiddenProperty, SpellDamage
+from wp.model.experience import LevelRecord, XpEntry
 from wp.model.notebook import Court, Drive, Lens, Quest, Quirk, Story
 from wp.model.template import Template
 from wp.rules_data import rules as rd
@@ -147,6 +148,7 @@ class AttackRecord:
     usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
     iterative_step: Optional[int] = None   # own iterative step (e.g. -3); None = rules_settings (package 16 C)
     cost_reactions: int = 0            # reactions spent by use_attack (attack of opportunity...; package 22 A2)
+    cost_actions: int = 0              # shown only: the player presses spend_actions (package 26 A)
     kind: str = ""                     # melee / ranged / thrown; "" = the weapon card's attack_kind (package 17)
     damage_stat: Optional[str] = None  # "none" or a stat id; None = the kind's default (stat = the attack stat)
     damage_mult: Any = None            # multiplier of the damage stat; None = the kind's default / the grip
@@ -258,6 +260,7 @@ class Spell:
     cost: int = 0
     upgrades: Tuple[SpellUpgrade, ...] = ()
     damage: Tuple[SpellDamage, ...] = ()   # damage components (package 25 F)
+    cost_actions: int = 0              # shown only (package 26 A)
 
 
 @dataclass(frozen=True)
@@ -361,6 +364,7 @@ class Character:
     languages: Tuple[Language, ...] = ()
     reactions: int = rd.default("new.reactions")   # +1 reaction for 200 * the new number (package 15)
     reactions_current: Optional[int] = None   # reactions left this round; None = all (package 22 A2)
+    actions_current: Optional[int] = None     # actions left this turn; None = all (package 26 A)
     seeds: Tuple[Seed, ...] = ()
     spells: Tuple[Spell, ...] = ()
     professionalism_bought: bool = False   # the 300-point professionalism option (package 15, Q29)
@@ -382,6 +386,10 @@ class Character:
     class_info: Optional[ClassInfo] = None   # snapshot of the class catalog entry (set_class)
     bab_override: Optional[int] = None # with a class: a hand-typed BAB wins over the class value
     save_override: Dict[str, int] = field(default_factory=dict)   # with a class: hand-typed base saves win
+    xp_log: Tuple[XpEntry, ...] = ()   # experience entries (package 26 C); the total is derived
+    xp_counter: int = 0                # last experience / level history id number (never reused)
+    next_level_at: Optional[int] = None    # the player's goal, shown as progress (not a rule)
+    level_history: Tuple[LevelRecord, ...] = ()   # written by level_up
 
     def __post_init__(self):
         # dict fields are read-only mappings (package 16 A7): no in-place change without a command

@@ -33,7 +33,7 @@ HIT_DIE_DEFAULT_USED = "hit_die_default_used"
 
 
 @command
-def level_up(ch, hp_roll=None):
+def level_up(ch, hp_roll=None, note="", at=""):
     """Level +1, +100 * NEW level training (progression.md), and the player's hit-die roll for the new level
     (1..die; edit later with set_hp_roll or edit mode). No level cap (owner, Q103). Without a roll the die counts 1
     and the result carries the warning "hit_die_default_used" ("die not entered, 1 taken", package 17, Q111).
@@ -48,6 +48,8 @@ def level_up(ch, hp_roll=None):
     level = ch.level + 1
     gain = tr.level_up_training(level)
     new = replace(ch, level=level, hp_rolls=ch.hp_rolls + (roll,), training=ch.training + gain)
+    from wp.commands import xp_cmds                    # the level history (package 26 C)
+    new = xp_cmds.add_history(new, level, roll, note, at)
     return commit(new, "level_up", "level %d, training +%d" % (level, gain),
                   {"level": level, "training": gain, "roll": roll, "warnings": warnings})
 

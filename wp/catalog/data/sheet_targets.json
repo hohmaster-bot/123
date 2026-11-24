@@ -23,6 +23,7 @@
     "armor_skill_penalty": "added to the armor skill penalty (positive = smaller penalty, never above 0)",
     "load_mod": "added to the Str modifier used for the load thresholds",
     "reactions": "reactions per round",
+    "actions_max": "actions per turn (package 26 A): added to the base 3",
     "base_slots": "base slots",
     "attention_per_cycle": "attention at the end of a cycle",
     "crit_mult": "crit multiplier (weapon id = that weapon only)",

@@ -274,6 +274,7 @@ def tick(ch, reductions=None):
     new = us.tick_cooldowns(new)                               # cooldowns -1 (package 14 B)
     new = replace(new, iterative_count=0)                      # a new round: the iterative series starts again (pkg 16 C)
     new = replace(new, reactions_current=None)                 # a new round: reactions back to max (pkg 22 A2)
+    new = replace(new, actions_current=None)                   # and the actions (package 26 A)
     if ch.in_combat:
         new = replace(new, combat_round=ch.combat_round + 1)   # the next round starts (journal, package 14 H)
     if ch.in_combat and rep.cap_hits:

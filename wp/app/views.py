@@ -5,7 +5,7 @@ rules.using(character), so the UI never has to.
 A view: fn(ch, session, **params). Params are listed in PARAMS (the view contract, ARCH/view_contract.md).
 """
 from wp.catalog import schema as cat
-from wp.commands import edit_cmds, notebook_cmds, reaction_cmds
+from wp.commands import action_cmds, edit_cmds, notebook_cmds, reaction_cmds
 from wp.core import rest as rs
 from wp.model import active_list as al
 from wp.model import attack_view as av
@@ -15,6 +15,8 @@ from wp.model import container_view as cv
 from wp.model import defense_view as dfv
 from wp.model import derived_view as dv
 from wp.model import doll
+from wp.model import experience
+from wp.model import flask
 from wp.model import iterative as itv
 from wp.model import load_view as lv
 from wp.model import maneuver_view as mv
@@ -39,14 +41,16 @@ def resources(ch, session=None):
             "bp": _pool(dv.bp_pool(ch)), "spirit": _pool(dv.spirit_pool(ch)), "mana": _pool(dv.mana_pool(ch)),
             "comfort": _pool(dv.comfort_pool(ch)), "pain": dv.pain_total(ch), "ot": ch.trauma,
             "overload": ch.overload, "reactions": _pool(reaction_cmds.reactions_pool(ch)),
-            "pools": tuple((p.pid, p.name, {"current": pv.current(ch, p), "max": pv.max_of(ch, p)}) for p in ch.pools)}
+            "pools": tuple((p.pid, p.name, {"current": pv.current(ch, p), "max": pv.max_of(ch, p)}) for p in ch.pools),
+            "actions": action_cmds.actions_view(ch),
+            "flasks": flask.view(ch, session.app if session is not None else None)}
 
 
 def combat(ch, session=None):
     return {"in_combat": ch.in_combat, "round": ch.combat_round, "iterative_count": ch.iterative_count,
             "next_iterative": itv.penalty(ch), "morale_scale": ch.morale_scale, "morale_bonus": dv.morale_bonus(ch),
             "negative_state": ch.negative_state, "dead": dv.is_dead(ch), "reactions": _pool(reaction_cmds.reactions_pool(ch)),
-            "stance": stv.stance_view(ch), "defense": dfv.defense_view(ch)}
+            "stance": stv.stance_view(ch), "defense": dfv.defense_view(ch), "actions": action_cmds.actions_view(ch)}
 
 
 def defense(ch, session=None):
@@ -104,7 +108,7 @@ def notebook(ch, session=None):
 
 def training(ch, session=None):
     return {"training": ch.training, "level": ch.level, "base_slots": dv.base_slots(ch), "reactions": dv.reactions(ch),
-            "comfort": _pool(dv.comfort_pool(ch)), "attention": ch.attention}
+            "comfort": _pool(dv.comfort_pool(ch)), "attention": ch.attention, "experience": experience.view(ch)}
 
 
 def settings(ch, session=None):

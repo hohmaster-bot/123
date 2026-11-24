@@ -150,7 +150,9 @@
   {"id": "class.save_good_divisor", "value": 2, "type": "int", "group": "class", "unit": "levels", "description": "ASSUMPTION (ROADMAP): good save divisor", "label": "rules.class.save_good_divisor"},
   {"id": "class.save_poor_divisor", "value": 3, "type": "int", "group": "class", "unit": "levels", "description": "ASSUMPTION (ROADMAP): poor save = level / divisor, rounded down", "label": "rules.class.save_poor_divisor"},
   {"id": "narrative.principle_min_level", "value": 2, "type": "int", "group": "narrative", "unit": "level", "description": "a drive at this level or higher expects a principle (reminder only)", "label": "rules.narrative.principle_min_level"},
-  {"id": "spells.areas", "value": ["single", "cone", "line", "burst", "other"], "type": "list", "group": "magic", "unit": "ids", "description": "area ids of spell damage components (package 25 F)", "label": "rules.spells.areas"}
+  {"id": "spells.areas", "value": ["single", "cone", "line", "burst", "other"], "type": "list", "group": "magic", "unit": "ids", "description": "area ids of spell damage components (package 25 F)", "label": "rules.spells.areas"},
+  {"id": "actions.base", "value": 3, "type": "int", "group": "attack", "unit": "actions", "description": "actions per turn before effects actions_max (owner, package 26 A)", "label": "rules.actions.base"},
+  {"id": "actions.cost_presets", "value": {"shift": 1, "move": 1, "standard": 2, "full_round": 3, "complete_round": 4}, "type": "map", "group": "attack", "unit": "actions", "description": "action costs (combat.md Actions): presets for cost_actions", "label": "rules.actions.cost_presets"}
  ],
  "allowlist": {
   "note": "Numbers in code that are NOT game rules (package 20). named: module constants; inline: numbers inside functions. 0, 1, -1 are always allowed.",
@@ -184,6 +186,9 @@
     },
     "wp/model/ac_zones_view.py": {
       "PCT_MAX": "a percent is at most 100 (not a rule)"
+    },
+    "wp/model/experience.py": {
+      "PCT": "a percent is at most 100 (not a rule)"
     }
   },
   "inline": {

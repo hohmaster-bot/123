@@ -26,6 +26,11 @@
   "add_entry": [
    "all"
   ],
+  "add_experience": [
+   "training",
+   "sheet",
+   "log"
+  ],
   "add_feat": [
    "all"
   ],
@@ -208,6 +213,16 @@
   "edit_entry": [
    "all"
   ],
+  "edit_experience_entry": [
+   "training",
+   "sheet",
+   "log"
+  ],
+  "edit_level_history": [
+   "training",
+   "sheet",
+   "log"
+  ],
   "edit_maneuver": [
    "maneuvers",
    "log"
@@ -297,6 +312,11 @@
   "remove_entry": [
    "all"
   ],
+  "remove_experience_entry": [
+   "training",
+   "sheet",
+   "log"
+  ],
   "remove_feat": [
    "all"
   ],
@@ -308,6 +328,11 @@
   ],
   "remove_item": [
    "all"
+  ],
+  "remove_level_history": [
+   "training",
+   "sheet",
+   "log"
   ],
   "remove_maneuver": [
    "maneuvers",
@@ -356,6 +381,11 @@
    "log"
   ],
   "restore": [
+   "resources",
+   "log"
+  ],
+  "restore_actions": [
+   "combat",
    "resources",
    "log"
   ],
@@ -459,6 +489,11 @@
    "attacks",
    "log"
   ],
+  "set_next_level_at": [
+   "training",
+   "sheet",
+   "log"
+  ],
   "set_primary_attack": [
    "attacks",
    "defense",
@@ -506,6 +541,11 @@
   ],
   "short_rest": [
    "all"
+  ],
+  "spend_actions": [
+   "combat",
+   "resources",
+   "log"
   ],
   "spend_balance": [
    "resources",

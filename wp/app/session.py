@@ -51,6 +51,15 @@ def _non_undoable():
 
 
 NON_UNDOABLE = _non_undoable()
+STAMPS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "stamps.json")
+
+
+def _stamped():
+    with io.open(STAMPS_PATH, encoding="utf-8") as f:
+        return frozenset(json.load(f)["stamped"])
+
+
+STAMPED = _stamped()                   # commands that get at = the Session clock stamp (package 26 C)
 
 
 def topics_of(command):
@@ -165,6 +174,8 @@ class Session(object):
     def dispatch(self, command, **params):
         if self.character is None:
             return DispatchResult(False, reason="no_character", params={})
+        if command in STAMPED and "at" not in params:
+            params = dict(params, at=files.stamp(self.clock()))
         try:
             result = character_dispatch(self.character, command, **params)
         except CommandError as e:

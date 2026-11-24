@@ -1,0 +1,5 @@
+{
+ "format": 1,
+ "note": "Commands that get a time stamp parameter at from the Session clock when the caller gives none (package 26 C: experience entries and the level history).",
+ "stamped": ["add_experience", "level_up"]
+}
