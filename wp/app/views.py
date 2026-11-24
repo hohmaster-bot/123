@@ -24,6 +24,7 @@ from wp.model import stats_view as stats
 from wp.settings import settings_view
 from wp.settings import store as st
 
+DEFENSE_SETTINGS = "rules.ac_zones"     # the rule constants listed by the defense panel (package 24 B3)
 LOG_TAIL = 50                          # not a rule: how many journal lines the log view returns by default
 
 
@@ -49,7 +50,10 @@ def combat(ch, session=None):
 def defense(ch, session=None):
     from wp.core import ac as acm
     from wp.model import ac_zones_view
-    return {"modes": acm.all_modes(dv.ac_input(ch)), "cells": ac_zones_view.cells(ch), "defense": dfv.defense_view(ch)}
+    app = session.app if session is not None else st.AppSettings()
+    return {"modes": acm.all_modes(dv.ac_input(ch)), "cells": ac_zones_view.cells(ch),
+            "display": ac_zones_view.display(app), "defense": dfv.defense_view(ch),
+            "settings": settings_view.list_settings(app, ch, group=DEFENSE_SETTINGS)}
 
 
 def attacks(ch, session=None):
@@ -60,8 +64,17 @@ def maneuvers(ch, session=None):
     return mv.maneuver_view(ch)
 
 
-def items(ch, session=None):
-    return {"doll": doll.doll_view(ch), "items": tuple(dv.item_view(ch, it.iid) for it in ch.items),
+def items(ch, session=None, doll_view="body"):
+    from wp.model import doll_layout as dl
+    from wp.model import hands as hd
+    background = None
+    profile = None
+    if session is not None:
+        from wp.settings import images
+        profile = session.profile("classic")
+        background = images.resolve(session.app, dl.layout_of(profile).get("background", ""), session.user_dir)
+    return {"doll": doll.doll_view(ch), "hands": hd.view(ch), "layout": dl.view(ch, profile, doll_view, background),
+            "items": tuple(dv.item_view(ch, it.iid) for it in ch.items),
             "weight": lv.weight_view(ch), "base": dv.base_view(ch)}
 
 
@@ -121,4 +134,4 @@ VIEWS = {"resources": resources, "combat": combat, "defense": defense, "attacks"
          "items": items, "statuses": statuses, "skills": skills, "rest": rest, "log": log, "notebook": notebook,
          "training": training, "settings": settings, "catalogs": catalogs, "sheet": sheet, "spells": spells,
          "injuries": injuries, "editor": editor}
-PARAMS = {"log": ("tail",)}
+PARAMS = {"log": ("tail",), "items": ("doll_view",)}

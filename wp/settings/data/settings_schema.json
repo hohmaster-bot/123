@@ -9,6 +9,9 @@
   {"id": "units_weight", "domain": "app", "type": "enum", "default": "B", "allowed": ["B", "L"], "group": "general"},
   {"id": "default_mode", "domain": "app", "type": "enum", "default": "classic", "allowed": ["classic", "lite"], "group": "general"},
   {"id": "last_character", "domain": "app", "type": "string", "default": "", "group": "general"},
+  {"id": "ac_cell_primary", "domain": "app", "type": "string", "default": "melee", "group": "defense_display"},
+  {"id": "ac_cell_secondary", "domain": "app", "type": "string", "default": "melee_parry", "group": "defense_display"},
+  {"id": "ac_cell_slash", "domain": "app", "type": "list", "item": "string", "default": ["melee", "melee_parry", "ranged"], "group": "defense_display"},
   {"id": "autosave", "domain": "app", "type": "bool", "default": true, "group": "saving"},
   {"id": "autosave_mode", "domain": "app", "type": "enum", "default": "interval", "allowed": ["interval", "every_command"], "group": "saving"},
   {"id": "autosave_interval_s", "domain": "app", "type": "int", "default": 120, "min": 10, "max": 3600, "group": "saving"},
@@ -44,7 +47,8 @@
  ],
  "profile_fields": {
   "classic": [
-   {"id": "name", "type": "string"}, {"id": "panels", "type": "list"}, {"id": "cells", "type": "list"}
+   {"id": "name", "type": "string"}, {"id": "panels", "type": "list"}, {"id": "cells", "type": "list"},
+   {"id": "doll", "type": "map"}
   ],
   "lite": [
    {"id": "name", "type": "string"}, {"id": "elements", "type": "list"},
@@ -74,6 +78,11 @@
   "quick_button": [
    {"id": "label", "type": "string"}, {"id": "icon", "type": "string"}, {"id": "action", "type": "any"}, {"id": "macro", "type": "list"},
    {"id": "hotkey", "type": "hotkey"}, {"id": "group", "type": "string"}, {"id": "order", "type": "int"}
+  ],
+  "doll_slot": [
+   {"id": "id", "type": "string"}, {"id": "x", "type": "float", "min": 0, "max": 1}, {"id": "y", "type": "float", "min": 0, "max": 1},
+   {"id": "width", "type": "float", "min": 0, "max": 1}, {"id": "height", "type": "float", "min": 0, "max": 1},
+   {"id": "icon", "type": "string"}, {"id": "label", "type": "string"}, {"id": "visible", "type": "bool"}
   ],
   "image": [
    {"id": "name", "type": "string"}, {"id": "file", "type": "string"},

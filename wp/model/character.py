@@ -67,6 +67,7 @@ class Item:
     equipped: bool = False             # worn on the doll (armor, ring, belt...)
     in_hands: bool = False             # held in the hands slot (weapon, shield, special item)
     hands: int = 0                     # hands needed in the hands slot: 0, 1 or 2 (gear.md)
+    hand: str = ""                     # chosen hand while held: "left" / "right" ("" = by order, model/hands.py)
     carried: bool = True               # False = left at the base (no weight)
     armor: int = 0                     # worn armor bonus
     shield: int = 0                    # shield bonus to AC: only while in hands (gear.md)
@@ -140,6 +141,7 @@ class AttackRecord:
     primary: bool = False
     twf: bool = False                  # "combination of two attacks" toggle (two-weapon fighting)
     twf_off: str = ""                  # off-hand record id; "" = the other end of a double weapon
+    main_hand: str = ""                # left / right: the hand this record is the MAIN hand for ("" = hands.main_default)
     usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
     iterative_step: Optional[int] = None   # own iterative step (e.g. -3); None = rules_settings (package 16 C)
     cost_reactions: int = 0            # reactions spent by use_attack (attack of opportunity...; package 22 A2)

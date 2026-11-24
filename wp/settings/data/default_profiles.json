@@ -1,6 +1,6 @@
 {
  "format": 1,
- "note": "Shipped layout profiles (packages 19, 21): one default profile per mode; panels and elements name registry panels (wp/panels/data/panels.json).",
+ "note": "Shipped layout profiles (packages 19, 21): one default profile per mode; panels and elements name registry panels (wp/panels/data/panels.json); package 24 C: the classic profile carries the doll layout (SAMPLE coordinates, relative 0..1 on the body picture).",
  "classic": [
   {
    "id": "default",
@@ -97,7 +97,474 @@
      "tab_order": 5
     }
    ],
-   "cells": []
+   "cells": [],
+   "doll": {
+    "background": "doll_body",
+    "basic": [
+     {
+      "id": "right_hand",
+      "x": 0.25,
+      "y": 0.4,
+      "width": 0.2,
+      "height": 0.2,
+      "icon": "slot_right_hand",
+      "label": "doll.slot.right_hand",
+      "visible": true
+     },
+     {
+      "id": "left_hand",
+      "x": 0.55,
+      "y": 0.4,
+      "width": 0.2,
+      "height": 0.2,
+      "icon": "slot_left_hand",
+      "label": "doll.slot.left_hand",
+      "visible": true
+     },
+     {
+      "id": "head",
+      "x": 0.44,
+      "y": 0.02,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_head",
+      "label": "doll.slot.head",
+      "visible": false
+     },
+     {
+      "id": "eyes",
+      "x": 0.29,
+      "y": 0.02,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_eyes",
+      "label": "doll.slot.eyes",
+      "visible": false
+     },
+     {
+      "id": "neck",
+      "x": 0.44,
+      "y": 0.11,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_neck",
+      "label": "doll.slot.neck",
+      "visible": false
+     },
+     {
+      "id": "shoulders",
+      "x": 0.29,
+      "y": 0.11,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_shoulders",
+      "label": "doll.slot.shoulders",
+      "visible": false
+     },
+     {
+      "id": "back",
+      "x": 0.59,
+      "y": 0.11,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_back",
+      "label": "doll.slot.back",
+      "visible": false
+     },
+     {
+      "id": "chest",
+      "x": 0.44,
+      "y": 0.2,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_chest",
+      "label": "doll.slot.chest",
+      "visible": false
+     },
+     {
+      "id": "body",
+      "x": 0.44,
+      "y": 0.29,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_body",
+      "label": "doll.slot.body",
+      "visible": false
+     },
+     {
+      "id": "armor",
+      "x": 0.29,
+      "y": 0.29,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_armor",
+      "label": "doll.slot.armor",
+      "visible": false
+     },
+     {
+      "id": "gloves",
+      "x": 0.59,
+      "y": 0.29,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_gloves",
+      "label": "doll.slot.gloves",
+      "visible": false
+     },
+     {
+      "id": "fingers",
+      "x": 0.59,
+      "y": 0.38,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_fingers",
+      "label": "doll.slot.fingers",
+      "visible": false
+     },
+     {
+      "id": "belt",
+      "x": 0.44,
+      "y": 0.38,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_belt",
+      "label": "doll.slot.belt",
+      "visible": false
+     },
+     {
+      "id": "belt_pouch",
+      "x": 0.29,
+      "y": 0.38,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_belt_pouch",
+      "label": "doll.slot.belt_pouch",
+      "visible": false
+     },
+     {
+      "id": "legs",
+      "x": 0.44,
+      "y": 0.56,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_legs",
+      "label": "doll.slot.legs",
+      "visible": false
+     },
+     {
+      "id": "feet",
+      "x": 0.44,
+      "y": 0.74,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_feet",
+      "label": "doll.slot.feet",
+      "visible": false
+     },
+     {
+      "id": "modifier",
+      "x": 0.59,
+      "y": 0.02,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_modifier",
+      "label": "doll.slot.modifier",
+      "visible": false
+     },
+     {
+      "id": "companion",
+      "x": 0.04,
+      "y": 0.56,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_companion",
+      "label": "doll.slot.companion",
+      "visible": false
+     },
+     {
+      "id": "pet",
+      "x": 0.04,
+      "y": 0.65,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_pet",
+      "label": "doll.slot.pet",
+      "visible": false
+     },
+     {
+      "id": "craft_tools",
+      "x": 0.82,
+      "y": 0.56,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_craft_tools",
+      "label": "doll.slot.craft_tools",
+      "visible": false
+     },
+     {
+      "id": "camp_tools",
+      "x": 0.82,
+      "y": 0.65,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_camp_tools",
+      "label": "doll.slot.camp_tools",
+      "visible": false
+     },
+     {
+      "id": "magic_components",
+      "x": 0.82,
+      "y": 0.74,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_magic_components",
+      "label": "doll.slot.magic_components",
+      "visible": false
+     },
+     {
+      "id": "worship_item",
+      "x": 0.04,
+      "y": 0.74,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_worship_item",
+      "label": "doll.slot.worship_item",
+      "visible": false
+     }
+    ],
+    "body": [
+     {
+      "id": "right_hand",
+      "x": 0.04,
+      "y": 0.38,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_right_hand",
+      "label": "doll.slot.right_hand",
+      "visible": true
+     },
+     {
+      "id": "left_hand",
+      "x": 0.82,
+      "y": 0.38,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_left_hand",
+      "label": "doll.slot.left_hand",
+      "visible": true
+     },
+     {
+      "id": "head",
+      "x": 0.44,
+      "y": 0.02,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_head",
+      "label": "doll.slot.head",
+      "visible": true
+     },
+     {
+      "id": "eyes",
+      "x": 0.29,
+      "y": 0.02,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_eyes",
+      "label": "doll.slot.eyes",
+      "visible": true
+     },
+     {
+      "id": "neck",
+      "x": 0.44,
+      "y": 0.11,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_neck",
+      "label": "doll.slot.neck",
+      "visible": true
+     },
+     {
+      "id": "shoulders",
+      "x": 0.29,
+      "y": 0.11,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_shoulders",
+      "label": "doll.slot.shoulders",
+      "visible": true
+     },
+     {
+      "id": "back",
+      "x": 0.59,
+      "y": 0.11,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_back",
+      "label": "doll.slot.back",
+      "visible": true
+     },
+     {
+      "id": "chest",
+      "x": 0.44,
+      "y": 0.2,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_chest",
+      "label": "doll.slot.chest",
+      "visible": true
+     },
+     {
+      "id": "body",
+      "x": 0.44,
+      "y": 0.29,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_body",
+      "label": "doll.slot.body",
+      "visible": true
+     },
+     {
+      "id": "armor",
+      "x": 0.29,
+      "y": 0.29,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_armor",
+      "label": "doll.slot.armor",
+      "visible": true
+     },
+     {
+      "id": "gloves",
+      "x": 0.59,
+      "y": 0.29,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_gloves",
+      "label": "doll.slot.gloves",
+      "visible": true
+     },
+     {
+      "id": "fingers",
+      "x": 0.59,
+      "y": 0.38,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_fingers",
+      "label": "doll.slot.fingers",
+      "visible": true
+     },
+     {
+      "id": "belt",
+      "x": 0.44,
+      "y": 0.38,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_belt",
+      "label": "doll.slot.belt",
+      "visible": true
+     },
+     {
+      "id": "belt_pouch",
+      "x": 0.29,
+      "y": 0.38,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_belt_pouch",
+      "label": "doll.slot.belt_pouch",
+      "visible": true
+     },
+     {
+      "id": "legs",
+      "x": 0.44,
+      "y": 0.56,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_legs",
+      "label": "doll.slot.legs",
+      "visible": true
+     },
+     {
+      "id": "feet",
+      "x": 0.44,
+      "y": 0.74,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_feet",
+      "label": "doll.slot.feet",
+      "visible": true
+     },
+     {
+      "id": "modifier",
+      "x": 0.59,
+      "y": 0.02,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_modifier",
+      "label": "doll.slot.modifier",
+      "visible": true
+     },
+     {
+      "id": "companion",
+      "x": 0.04,
+      "y": 0.56,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_companion",
+      "label": "doll.slot.companion",
+      "visible": true
+     },
+     {
+      "id": "pet",
+      "x": 0.04,
+      "y": 0.65,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_pet",
+      "label": "doll.slot.pet",
+      "visible": true
+     },
+     {
+      "id": "craft_tools",
+      "x": 0.82,
+      "y": 0.56,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_craft_tools",
+      "label": "doll.slot.craft_tools",
+      "visible": true
+     },
+     {
+      "id": "camp_tools",
+      "x": 0.82,
+      "y": 0.65,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_camp_tools",
+      "label": "doll.slot.camp_tools",
+      "visible": true
+     },
+     {
+      "id": "magic_components",
+      "x": 0.82,
+      "y": 0.74,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_magic_components",
+      "label": "doll.slot.magic_components",
+      "visible": true
+     },
+     {
+      "id": "worship_item",
+      "x": 0.04,
+      "y": 0.74,
+      "width": 0.12,
+      "height": 0.07,
+      "icon": "slot_worship_item",
+      "label": "doll.slot.worship_item",
+      "visible": true
+     }
+    ]
+   }
   }
  ],
  "lite": [

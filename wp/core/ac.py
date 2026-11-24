@@ -96,15 +96,43 @@ def parts(inp, mode=FRONT, from_shield_side=False):
     if mode == FLAT_FOOTED and not from_shield_side:
         use_shield = False
     return layer_parts(inp, use_parry=mode == PARRY, use_shield=use_shield, lose_dex=mode == FLAT_FOOTED,
-                       touch=mode == TOUCH)
+                       touch=mode == TOUCH, cell=MODE_CELL.get(mode))
 
 
-def layer_parts(inp, use_parry=False, use_shield=True, lose_dex=False, touch=False):
-    """The ladder for explicit flags (the modes above and the AC cells, package 23 D, ac_zones.py)."""
+def _mode_cells():
+    """The AC cell each old mode is a preset of (wp/rules_data/ac_zones.json "presets"; touch counts as the front)."""
+    import io
+    import json
+    import os
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "rules_data", "ac_zones.json")
+    with io.open(path, encoding="utf-8") as f:
+        cells = json.load(f)["cells"]
+    out = {m: c for c, spec in cells.items() for m in spec.get("presets", ())}
+    out.setdefault(TOUCH, out.get(FRONT))
+    return out
+
+
+MODE_CELL = _mode_cells()
+
+
+def _counts(b, drop, cell, touch):
+    """A cell-scoped bonus (package 24 B2) counts only in its cells (touch AC still drops armor / shield types); an
+    unscoped one unless its type is dropped."""
+    if b.cells:
+        return cell is not None and str(cell) in b.cells and not (touch and b.btype in TOUCH_DROP)
+    return b.btype not in drop
+
+
+TOUCH_DROP = frozenset({bo.ARMOR, bo.NATURAL, bo.SHIELD, bo.ENHANCEMENT})
+
+
+def layer_parts(inp, use_parry=False, use_shield=True, lose_dex=False, touch=False, cell=None):
+    """The ladder for explicit flags (the modes above and the AC cells, package 23 D, ac_zones.py). cell: the AC cell
+    id for cell-scoped bonuses (package 24 B2); None = only unscoped bonuses."""
     armor_value = max(inp.armor, inp.parry) if use_parry else inp.armor
     drop = set()
     if touch:
-        drop |= {bo.ARMOR, bo.NATURAL, bo.SHIELD, bo.ENHANCEMENT}
+        drop |= TOUCH_DROP
     if not use_shield:
         drop.add(bo.SHIELD)
 
@@ -112,7 +140,7 @@ def layer_parts(inp, use_parry=False, use_shield=True, lose_dex=False, touch=Fal
              bo.Bonus(inp.natural, bo.NATURAL, bo.AC, source="natural"),
              bo.Bonus(inp.shield, bo.SHIELD, bo.AC, source="shield")]
     items += [b for b in inp.bonuses if bo.applies(b, bo.AC)]
-    items = [b for b in items if b.btype not in drop]
+    items = [b for b in items if _counts(b, drop, cell, touch)]
     blk = inp.blocked
     if blk:                            # block effects: positive values of blocked types go, penalties stay
         items = [b for b in items if not (b.value > 0 and ("any" in blk or b.btype in blk))]

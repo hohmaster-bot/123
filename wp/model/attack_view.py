@@ -76,6 +76,9 @@ class AttackView:
     in_hands: Tuple[str, ...] = ()     # item ids now in the hands
     drops_shield_ac: bool = False      # attacking with a shield: no shield bonus to AC until the next turn
     iterative: int = 0                 # iterative penalty of the next attack (its own to-hit line, package 16 C)
+    hand: str = ""                     # the hand holding its weapon: left / right / both / "" (package 24 A3)
+    main_hand: str = "right"           # the record's main hand (AttackRecord.main_hand or hands.main_default)
+    off_hand: bool = False             # its weapon is held in the other hand than its main hand
 
 
 # ------------------------------------------------------------------ helpers
@@ -305,7 +308,16 @@ def attack(ch, record, extra=()):
                       crit_range=crit_range(ch, record, item, blk.unblocked(ch, bonuses, bo.CRIT_RANGE), ids),
                       extra_dice=extra_dice(ch, item), cmb=record_cmb(ch, record),
                       available=ok, missing=why["missing"], in_hands=why["in_hands"],
-                      drops_shield_ac=item is not None and rec.is_shield(item), iterative=it_pen)
+                      drops_shield_ac=item is not None and rec.is_shield(item), iterative=it_pen,
+                      **hand_fields(ch, record))
+
+
+def hand_fields(ch, record):
+    """Package 24 A3: which hand holds the record's weapon and whether that is its main hand."""
+    from wp.model import hands as hd
+    main = record.main_hand or rd.const("hands.main_default", ch)
+    side = hd.side_of(ch, record.item) if record.item != rec.UNARMED else ""
+    return {"hand": side, "main_hand": main, "off_hand": side in hd.SIDES and side != main}
 
 
 def dice_row(item, row):

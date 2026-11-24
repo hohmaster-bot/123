@@ -64,7 +64,8 @@ def _has(ch, target):
 
 
 def stack_of(ch, bonuses, target):
-    bs = [b for b in bonuses if b.target == target and b.btype not in bo.AC_ONLY_TYPES]
+    """Unscoped bonuses only: an effect with AC cells counts in its cells (ac_zones_view, package 24 B2)."""
+    bs = [b for b in bonuses if b.target == target and b.btype not in bo.AC_ONLY_TYPES and not b.cells]
     return bo.stack(blk.unblocked(ch, bs, target))
 
 

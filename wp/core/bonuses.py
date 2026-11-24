@@ -15,7 +15,7 @@ CMB, damage), not on the lucky attack die, the crit die or AC.
 Type names follow the legacy list (modifiers.py, read only).
 """
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Tuple
 
 # types
 FLAT = "flat"
@@ -71,6 +71,7 @@ class Bonus:
     target: str = ROLLS
     weapon: Optional[str] = None   # set -> only for attacks with this weapon
     source: str = ""
+    cells: Tuple[str, ...] = ()     # AC cells this bonus counts in (package 24 B2); () = every cell / no cells
 
     def __post_init__(self):
         if self.btype not in TYPES:

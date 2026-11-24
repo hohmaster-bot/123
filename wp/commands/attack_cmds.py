@@ -10,6 +10,7 @@ from wp.catalog.weapons_catalog import CONTACT, UNARMED_COMBAT
 from wp.commands.base import CommandError, command, commit
 from wp.commands.item_cmds import check_wearable
 from wp.model import derived_view as dv
+from wp.model import hands as hd
 from wp.model import ids
 from wp.model import iterative as itv
 from wp.model import records as rec
@@ -29,9 +30,16 @@ def _set_item(ch, iid, **changes):
     return replace(ch, items=tuple(replace(it, **changes) if it.iid == iid else it for it in ch.items))
 
 
+def _check_side(side):
+    if side not in ("",) + hd.SIDES:
+        raise CommandError("hand must be left or right", "bad_hand_side", values=(side,))
+
+
 @command
-def equip_hands(ch, iid=""):
-    """Put an item into the hands slot; the hands of all held items add up to at most 2."""
+def equip_hands(ch, iid="", side=""):
+    """Put an item into the hands slot; the hands of all held items add up to at most 2 (package 24 A1: side = left |
+    right; "" = the default: a shield the default shield side, another item the first free hand; two-handed = both)."""
+    _check_side(side)
     it = ch.item(iid)
     if it.in_hands:
         raise CommandError("%s is already in the hands" % it.name, "already_hands", values=(it.name,))
@@ -40,7 +48,14 @@ def equip_hands(ch, iid=""):
     check_wearable(ch, it)             # a shield at HP 0 cannot be taken up; a weapon at HP 0 can
     if dv.hands_used(ch) + it.hands > MAX_HANDS:
         raise CommandError("not enough free hands for %s (%d of %d used)" % (it.name, dv.hands_used(ch), int(MAX_HANDS)), "not_enough_free_hands", values=(it.name, dv.hands_used(ch), int(MAX_HANDS)))
-    return commit(_set_item(ch, iid, in_hands=True), "equip_hands", "%s in hands" % it.name)
+    free = hd.free_sides(ch)
+    if hd.two_handed(it):
+        side = ""
+    elif side and side not in free:
+        raise CommandError("the %s hand is taken" % side, "hand_occupied", values=(side,))
+    elif not side:
+        side = next((s for s in hd.preferred(ch, it) if s in free), "")
+    return commit(_set_item(ch, iid, in_hands=True, hand=side), "equip_hands", "%s in hands" % it.name)
 
 
 @command
@@ -48,7 +63,43 @@ def unequip_hands(ch, iid=""):
     it = ch.item(iid)
     if not it.in_hands:
         raise CommandError("%s is not in the hands" % it.name, "not_hands", values=(it.name,))
-    return commit(_set_item(ch, iid, in_hands=False), "unequip_hands", "%s out of hands" % it.name)
+    return commit(_set_item(ch, iid, in_hands=False, hand=""), "unequip_hands", "%s out of hands" % it.name)
+
+
+@command
+def move_hand_item(ch, iid="", side="", swap=False):
+    """Move a held item to the other hand (package 24 A1). The target hand taken: refused, or with swap=True the two
+    items change hands. A two-handed item holds both hands and cannot move."""
+    _check_side(side)
+    if not side:
+        raise CommandError("hand must be left or right", "bad_hand_side", values=(side,))
+    it = ch.item(iid)
+    if not it.in_hands:
+        raise CommandError("%s is not in the hands" % it.name, "not_hands", values=(it.name,))
+    if hd.two_handed(it):
+        raise CommandError("%s holds both hands" % it.name, "two_handed_both_hands", values=(it.name,))
+    now = hd.side_of(ch, iid)
+    if now == side:
+        raise CommandError("%s is already in the %s hand" % (it.name, side), "already_in_hand", values=(it.name, side))
+    other = hd.occupant(ch, side)
+    if other is not None and hd.two_handed(other):
+        raise CommandError("the %s hand is taken" % side, "hand_occupied", values=(side,))
+    if other is not None and not swap:
+        raise CommandError("the %s hand is taken" % side, "hand_occupied", values=(side,))
+    new = _set_item(ch, iid, hand=side)
+    if other is not None:
+        new = _set_item(new, other.iid, hand=now)
+    return commit(new, "move_hand_item", "%s to the %s hand" % (it.name, side))
+
+
+@command
+def set_main_hand(ch, rid="", side=""):
+    """The main hand of an attack record (package 24 A3): left | right; "" = the default (hands.main_default)."""
+    _check_side(side)
+    if not any(r.rid == rid for r in ch.attacks):
+        raise CommandError("no attack record %r" % (rid,), "no_attack_record", values=(rid,))
+    attacks = tuple(replace(r, main_hand=side) if r.rid == rid else r for r in ch.attacks)
+    return commit(replace(ch, attacks=attacks), "set_main_hand", "%s main hand %s" % (rid, side or "default"))
 
 
 @command
@@ -94,6 +145,16 @@ def remove_attack(ch, rid=""):
     return commit(replace(ch, attacks=left), "remove_attack", "attack %s removed" % rid)
 
 
+def _other_hand_record(ch, main_rec):
+    """The record whose weapon is held in the hand other than main_rec's main hand ("" = none or more than one)."""
+    from wp.model import attack_view as av
+    main = av.hand_fields(ch, main_rec)["main_hand"]
+    found = [r.rid for r in ch.attacks if r.rid != main_rec.rid and r.item not in (rec.UNARMED, main_rec.item)
+             and hd.side_of(ch, r.item) == hd.other(main)]
+    weapons = {r.item for r in ch.attacks if r.rid in found}
+    return found[0] if len(weapons) == 1 else ""
+
+
 @command
 def set_twf(ch, rid="", off="", on=True):
     """Two-weapon combination on a record (main hand). off = off-hand record id, or "" for the other
@@ -102,6 +163,8 @@ def set_twf(ch, rid="", off="", on=True):
     rec_ = next((r for r in ch.attacks if r.rid == rid), None)
     if rec_ is None:
         raise CommandError("no attack record %r" % (rid,), "no_attack_record", values=(rid,))
+    if on and not off and not (rec_.item != rec.UNARMED and ch.item(rec_.item).double):
+        off = _other_hand_record(ch, rec_)     # package 24 A3: the record of the weapon in the other hand
     if on:
         if not twf.available(ch, rec_, off):
             raise CommandError("two-weapon combination needs two weapons in the hands or a double weapon", "two_weapon_combination_needs")

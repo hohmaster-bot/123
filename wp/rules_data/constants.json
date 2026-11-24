@@ -135,7 +135,16 @@
   {"id": "training.feat_default_cost", "value": 200, "type": "int", "group": "training", "unit": "training", "description": "feat price when the author gives none", "label": "rules.training.feat_default_cost"},
   {"id": "new.hit_die", "value": 8, "type": "int", "group": "new_character", "unit": "HP", "description": "hit die of a new character (and its level-1 HP)", "label": "rules.new.hit_die"},
   {"id": "new.reactions", "value": 1, "type": "int", "group": "new_character", "unit": "reactions", "description": "reactions of a new character", "label": "rules.new.reactions"},
-  {"id": "tick.max_order_items", "value": 6, "type": "int", "group": "tick", "unit": "items", "description": "all orders of the tick's balance items are tried up to this many (then greedy)", "label": "rules.tick.max_order_items"}
+  {"id": "tick.max_order_items", "value": 6, "type": "int", "group": "tick", "unit": "items", "description": "all orders of the tick's balance items are tried up to this many (then greedy)", "label": "rules.tick.max_order_items"},
+  {"id": "hands.default_shield_side", "value": "left", "type": "string", "group": "ac_zones", "unit": "hand", "description": "a shield taken up without a side goes to this hand (ac_zones.md: shield in the LEFT hand)", "label": "rules.hands.default_shield_side"},
+  {"id": "hands.default_weapon_sides", "value": ["right", "left"], "type": "list", "group": "attack", "unit": "hands", "description": "an item other than a shield goes to the first free hand of this list (assumption Q160)", "label": "rules.hands.default_weapon_sides"},
+  {"id": "hands.main_default", "value": "right", "type": "string", "group": "attack", "unit": "hand", "description": "the main hand of an attack record without its own main hand (package 24 A3)", "label": "rules.hands.main_default"},
+  {"id": "ac_zones.parry_cells", "value": [1, 2, 3], "type": "list", "group": "ac_zones", "unit": "cells", "description": "cells where parry works (ac_zones.md; Q155)", "label": "rules.ac_zones.parry_cells"},
+  {"id": "ac_zones.dex_loss_cells", "value": [8], "type": "list", "group": "ac_zones", "unit": "cells", "description": "cells where Dex and dodge are lost (ac_zones.md; Q154)", "label": "rules.ac_zones.dex_loss_cells"},
+  {"id": "ac_zones.shield_cells", "value": {"buckler": [1, 2, 4], "light": [1, 2, 3, 4, 7], "heavy": [1, 2, 3, 4, 7], "tower": [1, 2, 3, 4, 7], "": [1, 2, 3, 4, 7]}, "type": "map", "group": "ac_zones", "unit": "cells", "description": "cells a shield in the LEFT hand covers, by shield type (ac_zones.md); the right hand mirrors", "label": "rules.ac_zones.shield_cells"},
+  {"id": "ac_zones.ranged_ignores_parry", "value": 1, "type": "int", "group": "ac_zones", "unit": "flag", "description": "1 = parry does not work against ranged attacks (package 24 B1)", "label": "rules.ac_zones.ranged_ignores_parry"},
+  {"id": "ac_zones.ranged_keeps_shield", "value": 1, "type": "int", "group": "ac_zones", "unit": "flag", "description": "1 = the shield bonus counts against ranged attacks in covered cells (package 24 B1)", "label": "rules.ac_zones.ranged_keeps_shield"},
+  {"id": "ac_zones.dex_loss_chance_pct", "value": 0, "type": "int", "group": "ac_zones", "unit": "percent", "description": "chance that the Dex loss is cancelled in a Dex-loss cell; effects add (package 24 B1)", "label": "rules.ac_zones.dex_loss_chance_pct"}
  ],
  "allowlist": {
   "note": "Numbers in code that are NOT game rules (package 20). named: module constants; inline: numbers inside functions. 0, 1, -1 are always allowed.",
@@ -166,6 +175,9 @@
     },
     "wp/app/views.py": {
       "LOG_TAIL": "how many journal lines the log view shows (UI, not a rule)"
+    },
+    "wp/model/ac_zones_view.py": {
+      "PCT_MAX": "a percent is at most 100 (not a rule)"
     }
   },
   "inline": {

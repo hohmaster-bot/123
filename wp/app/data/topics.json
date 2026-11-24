@@ -226,6 +226,9 @@
   "equip_item": [
    "all"
   ],
+  "equip_to_slot": [
+   "all"
+  ],
   "exchange_comfort": [
    "resources",
    "training",
@@ -254,6 +257,9 @@
   "make_language_native": [
    "training",
    "log"
+  ],
+  "move_hand_item": [
+   "all"
   ],
   "pay_hp_cost": [
    "resources",
@@ -417,6 +423,10 @@
    "combat",
    "log"
   ],
+  "set_main_hand": [
+   "attacks",
+   "log"
+  ],
   "set_primary_attack": [
    "attacks",
    "defense",
@@ -494,6 +504,9 @@
   "start_combat": [
    "all"
   ],
+  "swap_slots": [
+   "all"
+  ],
   "take_damage": [
    "combat",
    "resources",
@@ -506,6 +519,9 @@
    "all"
   ],
   "unequip_item": [
+   "all"
+  ],
+  "unequip_slot": [
    "all"
   ],
   "use_attack": [

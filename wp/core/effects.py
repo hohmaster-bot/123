@@ -61,6 +61,9 @@ class Effect:
     block_resources: Tuple[str, ...] = ()  # block_restore: hp / mana / spirit / balance / pool:<id> / any
     when_iterative: str = ""            # behaviour while an iterative penalty exists: STORED ONLY (package 16 C)
     stacks: bool = False               # DR entry: adds to the others (package 17, Q115); False = only the largest
+    cells: Tuple[str, ...] = ()        # AC cell ids (package 24 B2): an AC / parry bonus counts only there; for the
+                                       # targets parry_cells / shield_cells / dex_loss_cells: the cells added (value >= 0)
+                                       # or removed (value < 0); () = every cell
 
     def resolve(self, context=None):
         """The effect's number: a fixed value, a context value (current overload), or the current
@@ -80,7 +83,8 @@ class Effect:
         return int(ctx.get(self.value_source, 0))
 
     def as_bonus(self, source="", context=None):
-        return bo.Bonus(self.resolve(context), self.btype, self.target, self.weapon, source)
+        return bo.Bonus(self.resolve(context), self.btype, self.target, self.weapon, source,
+                        tuple(str(c) for c in self.cells))
 
 
 @dataclass(frozen=True)
