@@ -108,7 +108,7 @@ Each file: rules, then numeric examples (use them as tests).
 | File | Covers |
 |---|---|
 | defense_layers.md | AC ladder: which layer an attack roll landed in, owner texts per layer |
-| ac_zones.md | DRAFT (not built): AC by direction, 3x3 cells, shield coverage |
+| ac_zones.md | AC by direction, 3x3 cells, shield coverage (owner draft); variants and settings built in package 24 |
 | defense.md | AC types, positioning, touch, typed bonuses, morale |
 | combat.md | actions, iterative attacks, crit, lucky attack, maneuvers, size, spells dmg |
 | buffs.md | effects, buffs, duration, charges |
@@ -1932,6 +1932,14 @@ Each slot holds ONE item that gives a bonus; items can be swapped for the situat
   (reason slot_occupied); equip_item(swap=True) takes the other item off (it stays in the bag). The hands slot is
   equip_hands (2 hands). An item without a slot is worn without a slot check (as before). Bonuses count only while
   worn / held.
+- [OWNER, package 24 A, C] The two hands are two positions, left and right. equip_hands takes an optional side
+  (default: a shield goes to the left hand, another item to the first free hand: right, then left); a two-handed
+  item takes both. move_hand_item moves an item to the other hand (a taken hand is refused; swap=True swaps).
+  A file without stored sides gets them by the order of the held items when read. The main hand of an attack record
+  is the right hand by default (set_main_hand); a weapon in the other hand is the off hand.
+- [package 24 C] Doll layout = data of the layout profile (coordinates relative to the body picture; SAMPLE values):
+  views "basic" (only the two hands) and "body" (every slot on a human figure). Commands equip_to_slot, unequip_slot,
+  swap_slots; an item fits only its own slot (Item.slot).
 
 ## Appendix: ac_zones.md (DRAFT, not built; review optional)
 
@@ -1981,6 +1989,27 @@ This is a DRAFT of the owner's future AC-by-direction scheme. Nothing here is bu
   4<->6, 7<->9): buckler 1, 2, 4; every other shield (light, heavy, tower) 1, 2, 3, 4, 7. Cells 6, 8, 9 never get a
   shield bonus. (The light-shield row of the table above was changed accordingly.)
 - The cell logic is NOT implemented yet (a later, data-driven package).
+
+#### Variants and settings (package 24) [OWNER, package 24 B; built]
+- Built as data: cells and variants in wp/rules_data/ac_zones.json; the cell rules are rule constants of group
+  ac_zones (constants.json), changeable per character (set_rule_setting) and by effects. The draft above stays as written.
+- Every cell returns a LIST of variants {id, label, ac, applies_when (melee | ranged), chance}:
+  - melee = the full AC; melee_parry = with parry, only in the parry cells; ranged = parry does NOT work against
+    ranged attacks (constant ac_zones.ranged_ignores_parry = 1), the shield counts where it covers
+    (ac_zones.ranged_keeps_shield = 1).
+  - A chance: in a cell that loses Dex / dodge, a cancel chance > 0 (ac_zones.dex_loss_chance_pct + effects, 0..100)
+    gives every variant a second value WITH Dex and dodge and that chance ("AC without Dex / AC with Dex"). The app
+    never rolls.
+- Settings (defaults): parry cells 1, 2, 3; Dex / dodge lost only in cell 8; shield cells of a LEFT-hand shield:
+  buckler 1, 2, 4, every other shield 1, 2, 3, 4, 7 (right hand: mirror); the default shield hand: left.
+- Effects (feat, class trait, status, item): parry_cells, shield_cells, dex_loss_cells (effect cells added with
+  value >= 0, removed with value < 0); dex_loss_chance_pct (a number); any AC bonus (also the shield type) and the
+  parry layer may carry cells = the cells it counts in (empty = every cell). Stacking per cell by the typed rules.
+- Hands have sides (gear.md, doll.md): a shield covers the cells of ITS hand; two shields (one per hand): per cell the
+  larger shield bonus (one bonus type, the larger wins).
+- Display (app settings): the primary variant (big number in the centre of the cell), the secondary (small number
+  bottom right), the slash list "A / B / C" (order and visible variants).
+- The old modes are presets: cell 2 = front and parry, cell 6 = flank, cell 8 = flat-footed (touch = cell 2).
 
 ## Data tables with rule numbers
 
@@ -2123,6 +2152,15 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | new.hit_die | 8 | HP | hit die of a new character (and its level-1 HP) |
 | new.reactions | 1 | reactions | reactions of a new character |
 | tick.max_order_items | 6 | items | all orders of the tick's balance items are tried up to this many (then greedy) |
+| hands.default_shield_side | "left" | hand | a shield taken up without a side goes to this hand (ac_zones.md: shield in the LEFT hand) |
+| hands.default_weapon_sides | ["right", "left"] | hands | an item other than a shield goes to the first free hand of this list (assumption Q160) |
+| hands.main_default | "right" | hand | the main hand of an attack record without its own main hand (package 24 A3) |
+| ac_zones.parry_cells | [1, 2, 3] | cells | cells where parry works (ac_zones.md; Q155) |
+| ac_zones.dex_loss_cells | [8] | cells | cells where Dex and dodge are lost (ac_zones.md; Q154) |
+| ac_zones.shield_cells | {"buckler": [1, 2, 4], "light": [1, 2, 3, 4, 7], "heavy": [1, 2, 3, 4, 7], "tower": [1, 2, 3, 4, 7], "": [1, 2, 3, 4, 7]} | cells | cells a shield in the LEFT hand covers, by shield type (ac_zones.md); the right hand mirrors |
+| ac_zones.ranged_ignores_parry | 1 | flag | 1 = parry does not work against ranged attacks (package 24 B1) |
+| ac_zones.ranged_keeps_shield | 1 | flag | 1 = the shield bonus counts against ranged attacks in covered cells (package 24 B1) |
+| ac_zones.dex_loss_chance_pct | 0 | percent | chance that the Dex loss is cancelled in a Dex-loss cell; effects add (package 24 B1) |
 
 ### Damage types (damage_types.json)
 
@@ -2199,6 +2237,8 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | comfort_rate_bonus | training per comfort point in exchange_comfort |
 | crit_mult | crit multiplier (weapon id = that weapon only) |
 | damage_per_pain | damage bonus per pain point (race rule) |
+| dex_loss_cells | AC cells losing Dex and dodge: cells added (value >= 0) or removed (value < 0) (package 24 B2) |
+| dex_loss_chance_pct | percent chance that the Dex loss is cancelled in a Dex-loss cell (package 24 B2) |
 | dr | damage reduction vs physical damage; Effect.note = the bypass text (narrative only); Effect.stacks: total = the largest non-stacking entry + all stacking entries |
 | extra_hit_dice | one extra hit die per effect; the value is the HP of that die; it counts max(1, value + current Con mod) like every die |
 | hp_max | max HP |
@@ -2213,10 +2253,12 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | pain_cap | pain count at which the character dies (default 8) |
 | pain_penalty_per_pain | roll penalty per pain point (default 1; -1 makes 0, never below 0) |
 | parry | parry layer |
+| parry_cells | AC cells where parry works: effect cells added (value >= 0) or removed (value < 0) (package 24 B2) |
 | percent: | signed percent damage modifier of one type (percent:fire 50 = 50% more, -100 = immune) |
 | pool_max: | max of one resource pool (pool_max:<pool id>) |
 | reactions | reactions per round |
 | resist: | flat resistance to one damage type (resist:fire ...); never stacks, the larger wins |
+| shield_cells | AC cells a held shield covers: cells added (value >= 0) or removed (value < 0) (package 24 B2) |
 | short_rest_bp | extra BP gained by the short rest |
 | short_rest_heal | added to the free heal of the short rest (after the 'larger of' rule) |
 | slots: | max spell slots of one circle (slots:1 ... slots:9, slots:0 = cantrips) |

@@ -2,7 +2,7 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (728)
+## Нет в ru.json (761)
 
 ### catalog (95)
 - `catalog.field.ac_bonus`
@@ -153,13 +153,14 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (195)
+### reason (202)
 - `reason.action_needed`
 - `reason.activates_status_which_not`
 - `reason.already_activated`
 - `reason.already_hands`
 - `reason.already_has_combat_basics`
 - `reason.already_has_rank`
+- `reason.already_in_hand`
 - `reason.already_max_grade`
 - `reason.already_native`
 - `reason.already_promoted`
@@ -171,6 +172,7 @@
 - `reason.attack_record_already_exists`
 - `reason.bad_color`
 - `reason.bad_effect_formula`
+- `reason.bad_hand_side`
 - `reason.bad_hotkey`
 - `reason.bad_image_type`
 - `reason.bad_name`
@@ -209,6 +211,7 @@
 - `reason.finesse_weapon_held_one`
 - `reason.grip_must_one_off`
 - `reason.group_basic_simple_cannot`
+- `reason.hand_occupied`
 - `reason.has_no_charges`
 - `reason.healing_blocked`
 - `reason.hit_die_hp_already`
@@ -220,6 +223,7 @@
 - `reason.image_too_big`
 - `reason.invalid_value`
 - `reason.item_destroyed`
+- `reason.item_not_fit_slot`
 - `reason.iterative_count_negative`
 - `reason.language_already_known`
 - `reason.language_needs_name`
@@ -297,6 +301,7 @@
 - `reason.restore_must_one`
 - `reason.restoring_blocked`
 - `reason.rule_refused`
+- `reason.same_slot`
 - `reason.save_failed`
 - `reason.seed_has_already_sprouted`
 - `reason.seed_needs_name`
@@ -304,6 +309,7 @@
 - `reason.shipped_read_only`
 - `reason.size_must_one`
 - `reason.skill_already_sheet`
+- `reason.slot_empty`
 - `reason.slot_occupied`
 - `reason.speed_cannot_negative`
 - `reason.spell_needs_name`
@@ -322,6 +328,7 @@
 - `reason.temp_hp_cannot_negative`
 - `reason.tier_must_advanced_specialized`
 - `reason.two_handed`
+- `reason.two_handed_both_hands`
 - `reason.two_handed_weapon_cannot`
 - `reason.two_weapon_combination_needs`
 - `reason.unarmed_attacks_use_unarmed`
@@ -355,7 +362,7 @@
 - `resource.ov`
 - `resource.training`
 
-### rules (268)
+### rules (286)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -370,6 +377,18 @@
 - `rules.ac.odd_level_step.desc`
 - `rules.ac.tower_grade_parry`
 - `rules.ac.tower_grade_parry.desc`
+- `rules.ac_zones.dex_loss_cells`
+- `rules.ac_zones.dex_loss_cells.desc`
+- `rules.ac_zones.dex_loss_chance_pct`
+- `rules.ac_zones.dex_loss_chance_pct.desc`
+- `rules.ac_zones.parry_cells`
+- `rules.ac_zones.parry_cells.desc`
+- `rules.ac_zones.ranged_ignores_parry`
+- `rules.ac_zones.ranged_ignores_parry.desc`
+- `rules.ac_zones.ranged_keeps_shield`
+- `rules.ac_zones.ranged_keeps_shield.desc`
+- `rules.ac_zones.shield_cells`
+- `rules.ac_zones.shield_cells.desc`
 - `rules.actions.standard`
 - `rules.actions.standard.desc`
 - `rules.attack.crit_hint`
@@ -404,6 +423,12 @@
 - `rules.dying.hp_loss.desc`
 - `rules.dying.pain_per_painful_action`
 - `rules.dying.pain_per_painful_action.desc`
+- `rules.hands.default_shield_side`
+- `rules.hands.default_shield_side.desc`
+- `rules.hands.default_weapon_sides`
+- `rules.hands.default_weapon_sides.desc`
+- `rules.hands.main_default`
+- `rules.hands.main_default.desc`
 - `rules.hands.max`
 - `rules.hands.max.desc`
 - `rules.hands.two_handed`
@@ -625,7 +650,13 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (106)
+### settings (114)
+- `settings.ac_cell_primary`
+- `settings.ac_cell_primary.desc`
+- `settings.ac_cell_secondary`
+- `settings.ac_cell_secondary.desc`
+- `settings.ac_cell_slash`
+- `settings.ac_cell_slash.desc`
 - `settings.autosave`
 - `settings.autosave.desc`
 - `settings.autosave_interval_s`
@@ -647,6 +678,7 @@
 - `settings.font_size`
 - `settings.font_size.desc`
 - `settings.group.character`
+- `settings.group.defense_display`
 - `settings.group.display`
 - `settings.group.general`
 - `settings.group.hotkeys`
@@ -654,6 +686,7 @@
 - `settings.group.log`
 - `settings.group.notifications`
 - `settings.group.rules`
+- `settings.group.rules.ac_zones`
 - `settings.group.rules.attack`
 - `settings.group.rules.defense`
 - `settings.group.rules.derived`
@@ -756,7 +789,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (581)
+## Нет в en.json (614)
 
 ### catalog (95)
 - `catalog.field.ac_bonus`
@@ -893,8 +926,10 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (24)
+### reason (31)
+- `reason.already_in_hand`
 - `reason.bad_color`
+- `reason.bad_hand_side`
 - `reason.bad_hotkey`
 - `reason.bad_name`
 - `reason.catalog_error`
@@ -904,7 +939,9 @@
 - `reason.field_required`
 - `reason.field_type`
 - `reason.file_corrupt`
+- `reason.hand_occupied`
 - `reason.invalid_value`
+- `reason.item_not_fit_slot`
 - `reason.name_taken`
 - `reason.no_backup`
 - `reason.no_character`
@@ -913,13 +950,16 @@
 - `reason.out_of_range`
 - `reason.over_mana_level`
 - `reason.rule_refused`
+- `reason.same_slot`
 - `reason.save_failed`
 - `reason.settings_error`
+- `reason.slot_empty`
+- `reason.two_handed_both_hands`
 - `reason.unknown_command`
 - `reason.unknown_view`
 - `reason.wrong_type`
 
-### rules (268)
+### rules (286)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -934,6 +974,18 @@
 - `rules.ac.odd_level_step.desc`
 - `rules.ac.tower_grade_parry`
 - `rules.ac.tower_grade_parry.desc`
+- `rules.ac_zones.dex_loss_cells`
+- `rules.ac_zones.dex_loss_cells.desc`
+- `rules.ac_zones.dex_loss_chance_pct`
+- `rules.ac_zones.dex_loss_chance_pct.desc`
+- `rules.ac_zones.parry_cells`
+- `rules.ac_zones.parry_cells.desc`
+- `rules.ac_zones.ranged_ignores_parry`
+- `rules.ac_zones.ranged_ignores_parry.desc`
+- `rules.ac_zones.ranged_keeps_shield`
+- `rules.ac_zones.ranged_keeps_shield.desc`
+- `rules.ac_zones.shield_cells`
+- `rules.ac_zones.shield_cells.desc`
 - `rules.actions.standard`
 - `rules.actions.standard.desc`
 - `rules.attack.crit_hint`
@@ -968,6 +1020,12 @@
 - `rules.dying.hp_loss.desc`
 - `rules.dying.pain_per_painful_action`
 - `rules.dying.pain_per_painful_action.desc`
+- `rules.hands.default_shield_side`
+- `rules.hands.default_shield_side.desc`
+- `rules.hands.default_weapon_sides`
+- `rules.hands.default_weapon_sides.desc`
+- `rules.hands.main_default`
+- `rules.hands.main_default.desc`
 - `rules.hands.max`
 - `rules.hands.max.desc`
 - `rules.hands.two_handed`
@@ -1189,7 +1247,13 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (106)
+### settings (114)
+- `settings.ac_cell_primary`
+- `settings.ac_cell_primary.desc`
+- `settings.ac_cell_secondary`
+- `settings.ac_cell_secondary.desc`
+- `settings.ac_cell_slash`
+- `settings.ac_cell_slash.desc`
 - `settings.autosave`
 - `settings.autosave.desc`
 - `settings.autosave_interval_s`
@@ -1211,6 +1275,7 @@
 - `settings.font_size`
 - `settings.font_size.desc`
 - `settings.group.character`
+- `settings.group.defense_display`
 - `settings.group.display`
 - `settings.group.general`
 - `settings.group.hotkeys`
@@ -1218,6 +1283,7 @@
 - `settings.group.log`
 - `settings.group.notifications`
 - `settings.group.rules`
+- `settings.group.rules.ac_zones`
 - `settings.group.rules.attack`
 - `settings.group.rules.defense`
 - `settings.group.rules.derived`

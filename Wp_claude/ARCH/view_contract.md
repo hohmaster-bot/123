@@ -2,7 +2,7 @@
 
 The UI talks only to `wp.app.session.Session` (D25): `session.view(panel id, **params)` gives the data of a panel, `session.dispatch(command, **params)` changes the character and returns the topics (panel ids) to refresh. Fields below are read from a sample character (tests/perf/heavy.py).
 
-Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `add_injury`, `add_template`, `burn_quirk`, `buy_ability`, `deactivate_item`, `edit_ability`, `edit_entry`, `edit_rules`, `edit_sheet`, `end_combat`, `equip_hands`, `equip_item`, `level_up`, `long_rest`, `long_rest_end_combat`, `remove_entry`, `remove_feat`, `remove_injury`, `remove_item`, `remove_template`, `reset_rule_setting`, `reset_settings_group`, `set_active_stance`, `set_rule_setting`, `set_size`, `short_rest`, `start_combat`, `tick`, `unequip_hands`, `unequip_item`
+Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `add_injury`, `add_template`, `burn_quirk`, `buy_ability`, `deactivate_item`, `edit_ability`, `edit_entry`, `edit_rules`, `edit_sheet`, `end_combat`, `equip_hands`, `equip_item`, `equip_to_slot`, `level_up`, `long_rest`, `long_rest_end_combat`, `move_hand_item`, `remove_entry`, `remove_feat`, `remove_injury`, `remove_item`, `remove_template`, `reset_rule_setting`, `reset_settings_group`, `set_active_stance`, `set_rule_setting`, `set_size`, `short_rest`, `start_combat`, `swap_slots`, `tick`, `unequip_hands`, `unequip_item`, `unequip_slot`
 
 ## attacks
 
@@ -34,6 +34,9 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `in_hands`: tuple[str]
   - `drops_shield_ac`: bool
   - `iterative`: int
+  - `hand`: str
+  - `main_hand`: str
+  - `off_hand`: bool
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_attack(iid='', group='', grip='one', stat='', rid='')` reasons: attack_record_already_exists, finesse_weapon_held_one, grip_must_one_off, not_group, not_weapon, two_handed, two_handed_weapon_cannot, unarmed_attacks_use_unarmed
@@ -50,6 +53,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
   - `set_item_masterwork(iid='', value=True)`
   - `set_iterative_count(n=0)` reasons: iterative_count_negative
+  - `set_main_hand(rid='', side='')` reasons: no_attack_record
   - `set_primary_attack(rid='', on=True)` reasons: most_primary_attack_records, no_attack_record
   - `set_twf(rid='', off='', on=True)` reasons: no_attack_record, off_hand_record_must, two_weapon_combination_needs, without_off_hand_record
   - `spend_charge(owner_kind='item', owner_id='', n=1)` reasons: cooldown_rounds_left, not_enough_charges_have, spend_least_1
@@ -127,12 +131,17 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `spell_resistance`: int
   - `sr_entries`: tuple[]
   - `percent`: tuple[]
+- `display`: map
+  - `primary`: str
+  - `secondary`: str
+  - `slash`: tuple[str]
 - `modes`: map
   - `flank`: int
   - `flat_footed`: int
   - `front`: int
   - `parry`: int
   - `touch`: int
+- `settings`: tuple[SettingView]
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_status(status=None, ticks=None, active=False)` reasons: bad_effect_formula, no_status_given, status_id_already_sheet, unknown_per_tick_restore
@@ -193,7 +202,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 
 ## items
 
-- view: `session.view('items')`
+- view: `session.view('items', doll_view=...)`
 - modes: classic; described in the docs: yes
 - refreshes on its topic `items` and on the commands that refresh every panel
 - returns: map
@@ -221,7 +230,16 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `pet`: str
   - `shoulders`: str
   - `worship_item`: str
+- `hands`: map
+  - `both`: bool
+  - `left`: str
+  - `right`: str
 - `items`: tuple[ItemView]
+- `layout`: map
+  - `background`: map
+  - `entries`: tuple[map]
+  - `view`: str
+  - `warnings`: tuple[]
 - `weight`: WeightView
   - `carried_l`: int
   - `bag_l`: int
@@ -321,6 +339,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
   - `set_item_masterwork(iid='', value=True)`
   - `set_iterative_count(n=0)` reasons: iterative_count_negative
+  - `set_main_hand(rid='', side='')` reasons: no_attack_record
   - `set_primary_attack(rid='', on=True)` reasons: most_primary_attack_records, no_attack_record
   - `set_status_duration(sid='', remaining=0)` reasons: status_has_no_tick
   - `set_status_favorite(sid='', value=True)`
