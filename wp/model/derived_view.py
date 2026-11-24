@@ -17,6 +17,7 @@ from wp.core import training as tr
 from wp.core import weapons as wpn
 from wp.core.damage import Pool
 from wp.model import blocks as blk
+from wp.model import classes as klass
 from wp.model.cache import cached
 from wp.model import items as itm
 from wp.model import stance_view as stv
@@ -62,7 +63,7 @@ def hit_die_hp(ch):
 
 def hit_die_cap(ch):
     """Most hit-die HP possible: die * level (training HP cannot go above it)."""
-    return ch.hit_die * ch.level
+    return klass.hit_die(ch) * ch.level
 
 
 def hit_dice(ch):
@@ -149,6 +150,8 @@ class ItemView:
     condition_tag: str = "none"        # display only (package 9 E)
     quantity: int = 1
     spent: bool = False                # consumable at quantity 0: grey, weight 0 (package 13 D)
+    hidden: tuple = ()                 # hidden properties: (id, text or "???", locked, tab, min level) (package 25 D)
+    qualification_level: int = 0
 
 
 def item_view(ch, iid):
@@ -163,7 +166,8 @@ def item_view(ch, iid):
                     shield_proficient=proficient(ch, it),
                     masterwork_active=mw[0], masterwork_reason=mw[1], touch_bonus=touch_value(it, p),
                     durable=itm.is_durable(it), spell_penalty_mana=it.spell_penalty_mana,
-                    spell_failure_pct=it.spell_failure_pct, condition_tag=it.condition_tag, quantity=it.quantity, spent=itm.spent(it))
+                    spell_failure_pct=it.spell_failure_pct, condition_tag=it.condition_tag, quantity=it.quantity, spent=itm.spent(it),
+                    hidden=itm.hidden_view(it), qualification_level=itm.qualification_level(it))
 
 
 def _defense_value(it, base, p=()):
@@ -333,7 +337,7 @@ def comfort_pool(ch):
 @cached
 def context(ch):
     """Values effects may read (buffs.md): the current overload and the CURRENT stat modifiers."""
-    ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": ch.bab}
+    ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": klass.bab(ch)}
     for name in ch.abilities:
         ctx[ef.stat_mod_key(name)] = ability_mod(ch, name)
         ctx["%s_mod" % name] = ctx[ef.stat_mod_key(name)]     # formula variables (package 14 C)

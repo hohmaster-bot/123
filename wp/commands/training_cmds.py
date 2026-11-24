@@ -4,6 +4,7 @@ Only source = training spends training points."""
 from dataclasses import replace
 
 from wp.commands.base import CommandError, command, commit
+from wp.model import classes as klass
 from wp.core import skills as sk
 from wp.core import training as tr
 from wp.core import weapons as wpn
@@ -53,7 +54,7 @@ def buy_skill_rank(ch, name="", target=None, source=tr.TRAINING):
 def buy_hp(ch, source=tr.TRAINING):
     """Max HP +1 for 50 (training.md): raises the hit-die HP only, never above die * level. The point
     goes to the first level whose roll is below the die."""
-    i = next((k for k, v in enumerate(ch.hp_rolls) if v < ch.hit_die), None)
+    i = next((k for k, v in enumerate(ch.hp_rolls) if v < klass.hit_die(ch)), None)
     if i is None or dv.hit_die_hp(ch) >= dv.hit_die_cap(ch):
         raise CommandError("hit-die HP already at the cap %d" % dv.hit_die_cap(ch), "hit_die_hp_already", values=(dv.hit_die_cap(ch),))
     rolls = ch.hp_rolls[:i] + (ch.hp_rolls[i] + 1,) + ch.hp_rolls[i + 1:]

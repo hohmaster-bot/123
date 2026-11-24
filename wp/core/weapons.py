@@ -76,7 +76,7 @@ class Pick:
 
 
 # Mastery picks that are a "once per combat" ability: usage charges max 1, recharge at the end of combat (package 17)
-COUNTER_PICKS = ("reroll_d20", "restore_balance", "parry_ranged")
+COUNTER_PICKS = ("reroll_d20", "restore_balance", "parry_ranged", "ignore_vulnerability")   # + package 25 E
 
 
 # ------------------------------------------------------------ levels / cost

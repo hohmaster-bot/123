@@ -8,10 +8,11 @@
 - Drive: level 0..5; each drive at level 4+ gives +1 attention at the end of a cycle (the only income role).
 Ids are made by the program (D7).
 """
-from dataclasses import dataclass
-from typing import Tuple
+from dataclasses import dataclass, field
+from typing import Dict, Tuple
 
 from wp.core.effects import Effect
+from wp.core.frozen import freeze_fields
 from wp.rules_data import rules as rd
 
 DRIVE_MAX = rd.ref("narrative.drive_max")
@@ -78,6 +79,11 @@ class Drive:
     name: str
     level: int = 0
     text: str = ""
+    level_notes: Dict[str, str] = field(default_factory=dict)   # level ("0".."5") -> "bonus / penalty" text (pkg 25 C)
+    principle: str = ""                # the narrative principle, expected from drive level 2 (narrative.md)
+
+    def __post_init__(self):
+        freeze_fields(self, ("level_notes",))
 
 
 # collection name on Character -> (record type, id field)

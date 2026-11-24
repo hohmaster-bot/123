@@ -55,6 +55,12 @@ def measure(repeat=3):
                 s.view(name)
         out["dispatch_all_views_ms"] = ms(dispatch_and_refresh, repeat)
         out["save_ms"] = ms(s.save, repeat)
+
+        def dispatch_undo_redo():                 # package 25 A: the undo stack keeps states, no copies
+            s.dispatch("take_damage", amount=1)
+            s.undo()
+            s.redo()
+        out["undo_redo_ms"] = ms(dispatch_undo_redo, repeat)
         return out
     finally:
         shutil.rmtree(d, ignore_errors=True)
@@ -85,6 +91,7 @@ def main(argv):
         print("view %-10s %.1f ms (budget %d)" % (name, v, b["view_ms"]))
     print("dispatch + all views %.1f ms (budget %d)" % (m["dispatch_all_views_ms"], b["dispatch_all_views_ms"]))
     print("save %.1f ms" % m["save_ms"])
+    print("dispatch + undo + redo %.1f ms" % m["undo_redo_ms"])
     if "--profile" in argv:
         print(profile())
     return 0

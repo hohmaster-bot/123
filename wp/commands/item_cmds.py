@@ -124,3 +124,45 @@ def use_consumable(ch, iid="", n=1):
         new, started = cc._start(new, st)
         new = cc._put_status(new, started)
     return commit(new, "use_consumable", "%s -%d (%d left)" % (it.name, n, it.quantity - n))
+
+
+def _effects(effects):
+    from wp.core.effects import Effect
+    from wp.core import formula as fm
+    from wp.model import formulas as fx
+    out = tuple(e if isinstance(e, Effect) else Effect(**dict(e)) for e in (effects or ()))
+    try:
+        fx.validate_effects(out)
+    except fm.FormulaError as e:
+        raise CommandError("bad effect formula: %s" % e, "bad_effect_formula", values=(str(e),))
+    return out
+
+
+HIDDEN_TABS = ("base", "activated")
+
+
+@command
+def add_hidden_property(ch, iid="", text="", effects=(), min_qualification=1, tab="base"):
+    """A hidden property of an item (package 25 D, Q109): "???" below min_qualification, then its text and effects
+    (in the tab it belongs to: base = not activated, activated)."""
+    from wp.model import ids
+    from wp.model.class_types import HiddenProperty
+    it = ch.item(iid)
+    if tab not in HIDDEN_TABS:
+        raise CommandError("tab must be base or activated", "bad_tab", values=(tab,))
+    if int(min_qualification) < 0:
+        raise CommandError("a qualification level cannot be negative", "qualification_negative",
+                           values=(min_qualification,))
+    hid = ids.make_id(text or "property", (h.hid for h in it.hidden_properties))
+    h = HiddenProperty(hid, text, _effects(effects), int(min_qualification), tab)
+    return commit(_put(ch, replace(it, hidden_properties=it.hidden_properties + (h,))), "add_hidden_property",
+                  "%s hidden %s" % (iid, hid), {"id": hid})
+
+
+@command
+def remove_hidden_property(ch, iid="", hid=""):
+    it = ch.item(iid)
+    if not any(h.hid == hid for h in it.hidden_properties):
+        raise CommandError("no hidden property %r" % (hid,), "not_found", values=("hidden_properties", hid))
+    return commit(_put(ch, replace(it, hidden_properties=tuple(h for h in it.hidden_properties if h.hid != hid))),
+                  "remove_hidden_property", "%s hidden %s removed" % (iid, hid))

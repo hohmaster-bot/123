@@ -12,6 +12,7 @@
   {"id": "ac_cell_primary", "domain": "app", "type": "string", "default": "melee", "group": "defense_display"},
   {"id": "ac_cell_secondary", "domain": "app", "type": "string", "default": "melee_parry", "group": "defense_display"},
   {"id": "ac_cell_slash", "domain": "app", "type": "list", "item": "string", "default": ["melee", "melee_parry", "ranged"], "group": "defense_display"},
+  {"id": "undo_depth", "domain": "app", "type": "int", "default": 50, "min": 0, "max": 1000, "group": "saving"},
   {"id": "autosave", "domain": "app", "type": "bool", "default": true, "group": "saving"},
   {"id": "autosave_mode", "domain": "app", "type": "enum", "default": "interval", "allowed": ["interval", "every_command"], "group": "saving"},
   {"id": "autosave_interval_s", "domain": "app", "type": "int", "default": 120, "min": 10, "max": 3600, "group": "saving"},

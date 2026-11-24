@@ -15,6 +15,7 @@ from wp.core import bonuses as bo
 from wp.core import derived as cdv
 from wp.core import effects as ef
 from wp.model import blocks as blk
+from wp.model import classes as klass
 from wp.model import derived_view as dv
 from wp.model.cache import cached
 
@@ -46,7 +47,7 @@ def raw_mod(ch, name):
 
 
 def base_context(ch):
-    ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": ch.bab}
+    ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": klass.bab(ch)}
     for name in ch.abilities:
         ctx[ef.stat_mod_key(name)] = raw_mod(ch, name)
         ctx["%s_mod" % name] = ctx[ef.stat_mod_key(name)]
@@ -102,7 +103,7 @@ def item_bonuses(ch, iid):
     effects += [e for f in ch.feats if stv.feat_applies(ch, f) for e in f.effects]
     effects += [e for j in ch.injuries for e in j.effects]
     effects += [e for _, es in dv.other_sources(ch) for e in es]
-    ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": ch.bab}
+    ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": klass.bab(ch)}
     out = ()
     for kind in (wpn.ITEM_HP, wpn.ITEM_HARDNESS):
         bs = [bo.Bonus(e.resolve(ctx), e.btype if e.btype not in bo.AC_ONLY_TYPES else bo.FLAT, kind)

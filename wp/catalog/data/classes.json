@@ -1,0 +1,77 @@
+{
+ "kind": "classes",
+ "format": 1,
+ "title": "Classes (package 25 B, class system v0; SAMPLE entries)",
+ "counter": 0,
+ "retired": [],
+ "meta": {},
+ "entries": [
+  {
+   "id": "sample_fighter",
+   "name": "Sample fighter",
+   "sample": true,
+   "hit_die": 10,
+   "bab_growth": "good",
+   "saves": {
+    "fort": "good",
+    "ref": "poor",
+    "will": "poor"
+   },
+   "class_skills": [
+    "athletics",
+    "intimidate",
+    "survival"
+   ],
+   "spellbook": false,
+   "divine": false,
+   "spell_failure_mode": "",
+   "own_professionalism": false,
+   "notes": "SAMPLE (assumption values)"
+  },
+  {
+   "id": "sample_mage",
+   "name": "Sample mage",
+   "sample": true,
+   "hit_die": 6,
+   "bab_growth": "poor",
+   "saves": {
+    "fort": "poor",
+    "ref": "poor",
+    "will": "good"
+   },
+   "class_skills": [
+    "magic_art",
+    "know_magic",
+    "linguistics",
+    "decipher"
+   ],
+   "spellbook": true,
+   "divine": false,
+   "spell_failure_mode": "",
+   "own_professionalism": false,
+   "notes": "SAMPLE: a spellbook (spells at half price)"
+  },
+  {
+   "id": "sample_cleric",
+   "name": "Sample cleric",
+   "sample": true,
+   "hit_die": 8,
+   "bab_growth": "medium",
+   "saves": {
+    "fort": "good",
+    "ref": "poor",
+    "will": "good"
+   },
+   "class_skills": [
+    "know_religion",
+    "medicine",
+    "diplomacy"
+   ],
+   "spellbook": false,
+   "divine": true,
+   "spell_failure_mode": "",
+   "own_professionalism": true,
+   "notes": "SAMPLE: divine caster with its own professionalism"
+  }
+ ]
+}

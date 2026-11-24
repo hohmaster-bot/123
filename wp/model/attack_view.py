@@ -24,9 +24,11 @@ from wp.core import pain as pn
 from wp.core import weapons as wpn
 from wp.model import attack_kind as akd
 from wp.model import blocks as blk
+from wp.model import classes as klass
 from wp.model import derived_view as dv
 from wp.model import iterative as itv
 from wp.model import items as itm
+from wp.model import pick_flags
 from wp.model import records as rec
 from wp.model import stats_view as stv
 from wp.rules_data import rules as rd
@@ -79,6 +81,7 @@ class AttackView:
     hand: str = ""                     # the hand holding its weapon: left / right / both / "" (package 24 A3)
     main_hand: str = "right"           # the record's main hand (AttackRecord.main_hand or hands.main_default)
     off_hand: bool = False             # its weapon is held in the other hand than its main hand
+    abilities: tuple = ()              # stored-only picks of the record's group as flags (package 25 E, pick_flags)
 
 
 # ------------------------------------------------------------------ helpers
@@ -266,7 +269,7 @@ def attack(ch, record, extra=()):
     bonuses = drum(ch, record, item) + list(extra)
     pain = pn.penalty(dv.pain_total(ch), dv.pain_profile(ch))
 
-    hit = [Line("bab", ch.bab), Line("stat:" + st, dv.ability_mod(ch, st))]
+    hit = [Line("bab", klass.bab(ch)), Line("stat:" + st, dv.ability_mod(ch, st))]
     if dv.size_mod(ch):
         hit.append(Line("size", dv.size_mod(ch)))      # size affects attack (combat.md, R9)
     q = qualification(ch, record, item)
@@ -309,7 +312,7 @@ def attack(ch, record, extra=()):
                       extra_dice=extra_dice(ch, item), cmb=record_cmb(ch, record),
                       available=ok, missing=why["missing"], in_hands=why["in_hands"],
                       drops_shield_ac=item is not None and rec.is_shield(item), iterative=it_pen,
-                      **hand_fields(ch, record))
+                      abilities=pick_flags.abilities(ch, record.group), **hand_fields(ch, record))
 
 
 def hand_fields(ch, record):

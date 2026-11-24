@@ -137,10 +137,32 @@ def skill_penalty(it, picks=()):
 
 
 def tab(it, picks=()):
-    """The one acting tab (D17): "activated" while active, else "not activated"; nothing at HP 0."""
+    """The one acting tab (D17): "activated" while active, else "not activated"; nothing at HP 0. Unlocked hidden
+    properties (package 25 D) add their effects to the tab they belong to (base = not activated)."""
     if not works(it, picks):
         return ()
-    return it.effects_on if item_active(it) else it.effects_off
+    on = item_active(it)
+    hidden = tuple(e for h in it.hidden_properties if unlocked(it, h) and (h.tab == ACTIVATED) == on for e in h.effects)
+    return (it.effects_on if on else it.effects_off) + hidden
+
+
+ACTIVATED = "activated"
+LOCKED_TEXT = "???"
+
+
+def qualification_level(it):
+    """The item's qualification level: its N once bought (buy_item_qualification, 50 * N), else 0 (Q109)."""
+    return it.qualification_n if it.qualified else 0
+
+
+def unlocked(it, h):
+    return qualification_level(it) >= h.min_qualification
+
+
+def hidden_view(it):
+    """((id, text or "???", locked, tab, min_qualification), ...) for the item view."""
+    return tuple((h.hid, h.text if unlocked(it, h) else LOCKED_TEXT, not unlocked(it, h), h.tab, h.min_qualification)
+                 for h in it.hidden_properties)
 
 
 def durability(it, picks=()):

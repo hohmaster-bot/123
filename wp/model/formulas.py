@@ -2,6 +2,7 @@
 A bad formula never crashes a derived view: safe_value gives 0 (validation happens when it is added or
 edited, see validate)."""
 from wp.core import formula as cf
+from wp.model import classes as klass
 from wp.model.character import ABILITIES
 
 STATS = ABILITIES
@@ -9,7 +10,7 @@ STATS = ABILITIES
 
 def variables(ch):
     from wp.model import derived_view as dv
-    out = {"level": ch.level, "bab": ch.bab}
+    out = {"level": ch.level, "bab": klass.bab(ch)}
     for a in STATS:
         out["%s_mod" % a] = dv.ability_mod(ch, a)
     return out

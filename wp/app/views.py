@@ -10,6 +10,7 @@ from wp.core import rest as rs
 from wp.model import active_list as al
 from wp.model import attack_view as av
 from wp.model import bridge
+from wp.model import classes as klass
 from wp.model import container_view as cv
 from wp.model import defense_view as dfv
 from wp.model import derived_view as dv
@@ -17,6 +18,7 @@ from wp.model import doll
 from wp.model import iterative as itv
 from wp.model import load_view as lv
 from wp.model import maneuver_view as mv
+from wp.model import pick_flags
 from wp.model import pool_view as pv
 from wp.model import spell_view as sv
 from wp.model import stance_view as stv
@@ -53,6 +55,7 @@ def defense(ch, session=None):
     app = session.app if session is not None else st.AppSettings()
     return {"modes": acm.all_modes(dv.ac_input(ch)), "cells": ac_zones_view.cells(ch),
             "display": ac_zones_view.display(app), "defense": dfv.defense_view(ch),
+            "abilities": pick_flags.abilities(ch),
             "settings": settings_view.list_settings(app, ch, group=DEFENSE_SETTINGS)}
 
 
@@ -114,11 +117,12 @@ def catalogs(ch, session=None):
 
 def sheet(ch, session=None):
     return {"abilities": {a: (dv.ability_current(ch, a), dv.ability_mod(ch, a)) for a in ch.abilities},
-            "stats": stats.view(ch), "level": ch.level, "bab": ch.bab, "speed": dv.speed(ch)}
+            "stats": stats.view(ch), "level": ch.level, "bab": klass.bab(ch), "class_id": ch.class_id, "speed": dv.speed(ch)}
 
 
 def spells(ch, session=None):
-    return {"view": sv.view(ch), "spells": ch.spells, "mana": _pool(dv.mana_pool(ch)),
+    from wp.model import spell_damage as sd
+    return {"view": sv.view(ch), "spells": ch.spells, "damage": sd.view(ch), "mana": _pool(dv.mana_pool(ch)),
             "slots": {c: _pool(p) for c, p in dv.slot_pools(ch).items()}}
 
 

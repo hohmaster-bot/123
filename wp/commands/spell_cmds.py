@@ -20,13 +20,16 @@ def _pay(ch, cost, source):
 
 
 @command
-def learn_spell(ch, name="", circle=1, discount=False, source=tr.TRAINING):
+def learn_spell(ch, name="", circle=1, discount=None, source=tr.TRAINING):
     """New spell = 20 + 10 * circle^2; discount=True for classes with a book or learning from a teacher or a scroll:
     half price (training.md)."""
     if not name:
         raise CommandError("a spell needs a name", "spell_needs_name")
     if int(circle) not in CIRCLES:
         raise CommandError("circle must be 0..9", "circle_must_0_9")
+    if discount is None:               # package 25 B: the class spellbook flag is the default
+        from wp.model import classes as klass
+        discount = klass.spellbook(ch)
     cost = tr.spell_cost(circle, bool(discount), stg.value(ch, "spell_price_discount"))
     sp = Spell(ids.make_id(name, (s.spid for s in ch.spells)), name, int(circle), source, cost)
     new = replace(ch, spells=ch.spells + (sp,), training=_pay(ch, cost, source))
@@ -67,3 +70,44 @@ def buy_spell_upgrade(ch, spid="", name="", metamagic=0, source=tr.TRAINING):
     new = replace(ch, spells=spells, training=_pay(ch, cost, source))
     return commit(new, "buy_spell_upgrade", "%s +%s (%d slots) for %d" % (spid, name, need, cost),
                   {"cost": cost, "slots": need})
+
+
+SAVE_IDS = ("fort", "ref", "will", "none")
+
+
+def _damage_types():
+    from wp.catalog import store as cs
+    return {e["id"] for e in cs.load_shipped("damage_types").entries}
+
+
+def _component(d):
+    from wp.core import formula as fm
+    from wp.model.class_types import SpellDamage
+    from wp.rules_data import rules as rd
+    d = d if isinstance(d, SpellDamage) else SpellDamage(**{k: (str(v) if k in ("dice_count", "flat", "range") else v)
+                                                             for k, v in dict(d).items()})
+    if d.damage_type not in _damage_types():
+        raise CommandError("unknown damage type %r" % (d.damage_type,), "unknown_damage_type", values=(d.damage_type,))
+    if d.area not in rd.const("spells.areas"):
+        raise CommandError("unknown area %r" % (d.area,), "unknown_area", values=(d.area,))
+    if d.save not in SAVE_IDS:
+        raise CommandError("save must be fort, ref, will or none", "unknown_save", values=(d.save,))
+    if int(d.die_size) < 1:
+        raise CommandError("a die has at least 1 side", "bad_die_size", values=(d.die_size,))
+    for text in (d.dice_count, d.flat):
+        try:
+            fm.evaluate(text, {"level": 1})
+        except fm.FormulaError as e:
+            raise CommandError("bad formula %r: %s" % (text, e), "bad_effect_formula", values=(str(e),))
+    return d
+
+
+@command
+def set_spell_damage(ch, spid="", damage=()):
+    """The damage components of a learned spell (package 25 F): a list of {dice_count, die_size, flat, damage_type,
+    area, range, save, save_effect}; an empty list removes the damage."""
+    if not any(s.spid == spid for s in ch.spells):
+        raise CommandError("no spell %r" % (spid,), "not_found", values=("spells", spid))
+    comps = tuple(_component(d) for d in damage)
+    spells = tuple(replace(s, damage=comps) if s.spid == spid else s for s in ch.spells)
+    return commit(replace(ch, spells=spells), "set_spell_damage", "%s damage (%d parts)" % (spid, len(comps)))

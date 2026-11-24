@@ -80,6 +80,7 @@
    {"name": "circle", "type": "int", "required": true, "allowed": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]},
    {"name": "school", "type": "str"},
    {"name": "mana_cost", "type": "int_or_null"},
+   {"name": "damage", "type": "list"},
    {"name": "description", "type": "str"}
   ],
   "statuses": [
@@ -123,6 +124,12 @@
   ],
   "doll_slots": [
    {"name": "hands", "type": "bool"}
+  ],
+  "classes": [
+   {"name": "hit_die", "type": "int"}, {"name": "bab_growth", "type": "str", "allowed": ["good", "medium", "poor"]},
+   {"name": "saves", "type": "dict"}, {"name": "class_skills", "type": "list"}, {"name": "spellbook", "type": "bool"},
+   {"name": "divine", "type": "bool"}, {"name": "spell_failure_mode", "type": "str", "allowed": ["", "cancel", "zero_balance"]},
+   {"name": "own_professionalism", "type": "bool"}, {"name": "notes", "type": "str"}
   ]
  }
 }

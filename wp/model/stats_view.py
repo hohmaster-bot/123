@@ -20,6 +20,7 @@ from typing import Tuple
 from wp.catalog.feats_catalog import FINESSE, has_flag
 from wp.core import bonuses as bo
 from wp.model import blocks as blk
+from wp.model import classes as klass
 from wp.model import derived_view as dv
 from wp.rules_data import rules as rd
 
@@ -51,7 +52,7 @@ def save(ch, key):
     if key not in SAVES:
         raise KeyError("no save %r" % (key,))
     stat = ch.save_stats.get(key, "")
-    parts = [("base", int(ch.save_base.get(key, 0)))]
+    parts = [("base", klass.save_base(ch, key))]
     if stat:
         parts.append(("stat:" + stat, dv.ability_mod(ch, stat)))
     parts.append(("bonuses", _typed(ch, bo.SAVE, bo.SAVE_PREFIX + key)))
@@ -75,12 +76,12 @@ def cmb_stat(ch):
 
 def cmb(ch):
     st = cmb_stat(ch)
-    return _stat("cmb", [("bab", ch.bab), ("stat:" + st, dv.ability_mod(ch, st)), ("size", dv.size_cmb(ch)),
+    return _stat("cmb", [("bab", klass.bab(ch)), ("stat:" + st, dv.ability_mod(ch, st)), ("size", dv.size_cmb(ch)),
                          ("bonuses", _typed(ch, bo.CMB))])
 
 
 def cmd(ch):
-    return _stat("cmd", [("base", CMD_BASE), ("bab", ch.bab), ("stat:str", dv.ability_mod(ch, "str")),
+    return _stat("cmd", [("base", CMD_BASE), ("bab", klass.bab(ch)), ("stat:str", dv.ability_mod(ch, "str")),
                          ("stat:dex", dv.ability_mod(ch, "dex")), ("size", dv.size_cmb(ch)),
                          ("bonuses", _typed(ch, bo.CMD))])
 

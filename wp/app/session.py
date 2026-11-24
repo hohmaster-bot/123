@@ -24,7 +24,9 @@ from wp.app import views as vw
 from wp.catalog import store as cs
 from wp.commands import CommandError
 from wp.commands import dispatch as character_dispatch
-from wp.model.character import Character
+from wp.commands import journal
+from wp.commands.base import Result
+from wp.model.character import Character, LogEntry
 from wp.rules_data import rules as rd
 from wp.settings import store as st
 from wp.theme import themes
@@ -40,6 +42,15 @@ def _topics():
 
 
 TOPICS = _topics()
+UNDO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "undo.json")
+
+
+def _non_undoable():
+    with io.open(UNDO_PATH, encoding="utf-8") as f:
+        return frozenset(json.load(f)["non_undoable"])
+
+
+NON_UNDOABLE = _non_undoable()
 
 
 def topics_of(command):
@@ -68,6 +79,8 @@ class Session(object):
         self.dirty_since = None
         self._subscribers = []
         self._catalogs = {}
+        self._undo = []                # [(Character before, command)] newest last (package 25 A)
+        self._redo = []
 
     # -------------------------------------------------------------- settings, catalogs, theme
     def setting(self, key):
@@ -98,6 +111,7 @@ class Session(object):
     def open(self, name):
         self.character = files.load(self.characters_dir, name, self._sub())
         self.name, self.dirty_since = name, None
+        self._undo, self._redo = [], []
         return self.character
 
     def restore_backup(self, name):
@@ -155,15 +169,45 @@ class Session(object):
             result = character_dispatch(self.character, command, **params)
         except CommandError as e:
             return DispatchResult(False, reason=e.reason, params=dict(e.params), info={"text": str(e)})
+        if command not in NON_UNDOABLE and int(self.setting("undo_depth")) > 0:
+            self._undo = (self._undo + [(self.character, command)])[-int(self.setting("undo_depth")):]
+            self._redo = []
         self.character = result.state
-        topics = topics_of(command)
+        return self._changed(topics_of(command), dict(result.info))
+
+    def _changed(self, topics, info):
         if self.dirty_since is None:
             self.dirty_since = self.clock()
         if self.setting("autosave") and self.setting("autosave_mode") == EVERY_COMMAND:
             self.save()
         for fn in self._subscribers:
             fn(topics)
-        return DispatchResult(True, topics=topics, info=dict(result.info))
+        return DispatchResult(True, topics=topics, info=info)
+
+    def can_undo(self):
+        return bool(self._undo)
+
+    def can_redo(self):
+        return bool(self._redo)
+
+    def _step(self, source, target, line):
+        if self.character is None:
+            return DispatchResult(False, reason="no_character", params={})
+        if not source:
+            return DispatchResult(False, reason="nothing_to_" + line, params={})
+        state, command = source.pop()
+        target.append((self.character, command))
+        entry = Result(state=state, entry=LogEntry(command=line))
+        self.character = journal.record(self.character, entry, line, {"command": command}).state
+        return self._changed(topics_of(command), {"command": command})
+
+    def undo(self):
+        """The Character as it was before the last undoable command (states share their unchanged parts: frozen
+        records, nothing is deep-copied); the journal gets a line "undo"; autosave sees a change."""
+        return self._step(self._undo, self._redo, "undo")
+
+    def redo(self):
+        return self._step(self._redo, self._undo, "redo")
 
     def view(self, name, **params):
         if name not in vw.VIEWS:

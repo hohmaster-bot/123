@@ -1,0 +1,5 @@
+{
+ "format": 1,
+ "note": "Undo / redo (package 25 A): character commands listed here are not put on the undo stack. Session operations (new, open, close, save, restore_backup, file operations), app settings and catalog edits never go through Session.dispatch, so they are never on the stack; opening or creating a character clears both stacks.",
+ "non_undoable": ["set_char_setting", "reset_char_setting"]
+}

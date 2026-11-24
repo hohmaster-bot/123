@@ -64,7 +64,10 @@ def failure_applies(ch):
 def failure_mode(ch):
     if ch.spell_failure_mode:
         return ch.spell_failure_mode
-    return ZERO_BALANCE if ch.divine_slots else CANCEL
+    from wp.model import classes as klass
+    if klass.failure_mode_default(ch):
+        return klass.failure_mode_default(ch)
+    return ZERO_BALANCE if klass.divine(ch) else CANCEL
 
 
 def view(ch):

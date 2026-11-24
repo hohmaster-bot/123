@@ -10,6 +10,7 @@ from wp.core.magic import CasterState
 from wp.core.tick import TickState
 from wp.model import blocks as blk
 from wp.model import derived_view as dv
+from wp.model import classes as klass
 from wp.model import pool_view as pv
 
 OVERFLOW = "balance overflow"
@@ -69,7 +70,7 @@ def to_rest(ch):
     stats = {n: Pool(a.current, a.score_max) for n, a in ch.abilities.items()}
     return rs.RestState(level=ch.level, hp=dv.hp_pool(ch), bp=dv.bp_pool(ch),
                         pain=ch.pain, spirit=dv.spirit_pool(ch), mana=dv.mana_pool(ch), mana_enabled=ch.mana_enabled,
-                        divine=ch.divine_slots, slots=dv.slot_pools(ch), resources=dict(ch.resources),
+                        divine=klass.divine(ch), slots=dv.slot_pools(ch), resources=dict(ch.resources),
                         charges=ch.charges + _status_charges(ch),
                         stats=stats, trauma=ch.trauma, comfort=dv.comfort_pool(ch))
 

@@ -16,12 +16,13 @@ from wp.core.rest import Charge
 from wp.core.skills import Skill
 from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
+from wp.model.class_types import ClassInfo, HiddenProperty, SpellDamage
 from wp.model.notebook import Court, Drive, Lens, Quest, Quirk, Story
 from wp.model.template import Template
 from wp.rules_data import rules as rd
 
 ABILITIES = ("str", "dex", "con", "int", "wis", "cha")
-DICT_FIELDS = ("abilities", "slots", "resources", "save_base", "save_stats", "char_settings")
+DICT_FIELDS = ("abilities", "slots", "resources", "save_base", "save_stats", "char_settings", "save_override")
 
 
 @dataclass(frozen=True)
@@ -99,7 +100,8 @@ class Item:
     required_level: int = 0            # qualification level (weapons.md), from the card's qualification
     qualification: str = ""            # qualification as written in the owner's table
     qualification_n: int = 0           # item qualification "Qualification N" (gear.md); 0 = none needed
-    qualified: bool = False            # bought for 50 * N (package 15); hidden properties are not modelled
+    qualified: bool = False            # bought for 50 * N (package 15); level = qualification_n when bought
+    hidden_properties: Tuple[HiddenProperty, ...] = ()   # unlocked by the qualification (package 25 D, Q109)
     finesse: bool = False              # column "F." of the table: finesse AND light (one flag, owner)
     price_sp: int = 0                  # price in silver (1 gp = 10 sp)
     damage_small: str = ""             # dice, small size
@@ -255,6 +257,7 @@ class Spell:
     source: str = "training"
     cost: int = 0
     upgrades: Tuple[SpellUpgrade, ...] = ()
+    damage: Tuple[SpellDamage, ...] = ()   # damage components (package 25 F)
 
 
 @dataclass(frozen=True)
@@ -375,6 +378,10 @@ class Character:
     log_seq: int = 0                   # last journal order number (package 14 H)
     combat_round: int = 0              # 1 at start_combat, +1 per tick in combat, 0 out of combat
     iterative_count: int = 0           # attacks used in this round's series (package 16 C); tick / end_combat: 0
+    class_id: str = ""                 # one class (package 25 B); "" = no class: BAB / saves typed by hand as before
+    class_info: Optional[ClassInfo] = None   # snapshot of the class catalog entry (set_class)
+    bab_override: Optional[int] = None # with a class: a hand-typed BAB wins over the class value
+    save_override: Dict[str, int] = field(default_factory=dict)   # with a class: hand-typed base saves win
 
     def __post_init__(self):
         # dict fields are read-only mappings (package 16 A7): no in-place change without a command

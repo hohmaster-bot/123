@@ -19,10 +19,17 @@
    "maneuvers",
    "log"
   ],
+  "add_drive": [
+   "notebook",
+   "log"
+  ],
   "add_entry": [
    "all"
   ],
   "add_feat": [
+   "all"
+  ],
+  "add_hidden_property": [
    "all"
   ],
   "add_injury": [
@@ -194,6 +201,10 @@
   "edit_ability": [
    "all"
   ],
+  "edit_drive": [
+   "notebook",
+   "log"
+  ],
   "edit_entry": [
    "all"
   ],
@@ -279,10 +290,17 @@
    "maneuvers",
    "log"
   ],
+  "remove_drive": [
+   "notebook",
+   "log"
+  ],
   "remove_entry": [
    "all"
   ],
   "remove_feat": [
+   "all"
+  ],
+  "remove_hidden_property": [
    "all"
   ],
   "remove_injury": [
@@ -370,6 +388,9 @@
   "set_active_stance": [
    "all"
   ],
+  "set_bab_override": [
+   "all"
+  ],
   "set_base_speed": [
    "sheet",
    "log"
@@ -385,6 +406,9 @@
    "statuses",
    "log"
   ],
+  "set_class": [
+   "all"
+  ],
   "set_condition_tag": [
    "items",
    "statuses",
@@ -393,6 +417,14 @@
   "set_drive_level": [
    "notebook",
    "training",
+   "log"
+  ],
+  "set_drive_level_note": [
+   "notebook",
+   "log"
+  ],
+  "set_drive_principle": [
+   "notebook",
    "log"
   ],
   "set_hp_roll": [
@@ -437,8 +469,15 @@
   "set_rule_setting": [
    "all"
   ],
+  "set_save_override": [
+   "all"
+  ],
   "set_size": [
    "all"
+  ],
+  "set_spell_damage": [
+   "spells",
+   "log"
   ],
   "set_status_duration": [
    "statuses",

@@ -81,6 +81,73 @@ def set_drive_level(ch, did="", level=0):
     return commit(_put(ch, "drives", "did", d), "set_drive_level", "drive %s level %d" % (did, d.level))
 
 
+def drive_view(ch, d):
+    """A drive for the panel (package 25 C): the level, the note of every level, the principle and the reminder
+    principle_missing (level >= narrative.principle_min_level and no principle; never a block)."""
+    from wp.rules_data import rules as rd
+    need = d.level >= int(rd.const("narrative.principle_min_level", ch))
+    return {"did": d.did, "name": d.name, "level": d.level, "level_notes": dict(d.level_notes),
+            "note": d.level_notes.get(str(d.level), ""), "principle": d.principle,
+            "principle_missing": need and not d.principle.strip()}
+
+
+def _level_key(level):
+    level = int(level)
+    if not 0 <= level <= nb.DRIVE_MAX:
+        raise CommandError("a drive level is 0..%d" % nb.DRIVE_MAX, "drive_level_range", values=(level,))
+    return str(level)
+
+
+@command
+def add_drive(ch, name="", level=0, principle="", level_notes=None, text=""):
+    if not name:
+        raise CommandError("a note needs a name", "note_needs_name")
+    notes = {_level_key(k): str(v) for k, v in dict(level_notes or {}).items()}
+    d = _check(nb.Drive(ids.make_id(name, (x.did for x in ch.drives)), name, int(level), text, notes, principle))
+    return commit(replace(ch, drives=ch.drives + (d,)), "add_drive", "drive %s" % d.did, {"id": d.did})
+
+
+DRIVE_FIELDS = ("name", "level", "text", "level_notes", "principle")
+
+
+@command
+def edit_drive(ch, did="", **fields):
+    unknown = sorted(set(fields) - set(DRIVE_FIELDS))
+    if unknown:
+        raise CommandError("unknown drive fields: %s" % ", ".join(unknown), "unknown_field", values=(", ".join(unknown),))
+    if "level_notes" in fields:
+        fields["level_notes"] = {_level_key(k): str(v) for k, v in dict(fields["level_notes"]).items()}
+    if "level" in fields:
+        fields["level"] = int(fields["level"])
+    d = _check(replace(_get(ch, "drives", "did", did), **fields))
+    return commit(_put(ch, "drives", "did", d), "edit_drive", "drive %s edited" % did)
+
+
+@command
+def remove_drive(ch, did=""):
+    _get(ch, "drives", "did", did)
+    return commit(replace(ch, drives=tuple(x for x in ch.drives if x.did != did)), "remove_drive", "drive %s removed" % did)
+
+
+@command
+def set_drive_level_note(ch, did="", level=0, text=""):
+    d = _get(ch, "drives", "did", did)
+    notes = dict(d.level_notes)
+    if text:
+        notes[_level_key(level)] = str(text)
+    else:
+        notes.pop(_level_key(level), None)
+    return commit(_put(ch, "drives", "did", replace(d, level_notes=notes)), "set_drive_level_note",
+                  "drive %s level %s note" % (did, level))
+
+
+@command
+def set_drive_principle(ch, did="", text=""):
+    d = _get(ch, "drives", "did", did)
+    return commit(_put(ch, "drives", "did", replace(d, principle=str(text))), "set_drive_principle",
+                  "drive %s principle" % did)
+
+
 @command
 def burn_quirk(ch, kid="", burned=True):
     """Burn = grey, status destroyed, its effects stop; reversible by hand (burned=False). Delete: remove_entry."""
@@ -142,5 +209,5 @@ def notebook_view(ch):
     return {"lenses": tuple((x.lid, x.value, x.max, nb.lens_state(x)) for x in ch.lenses),
             "courts": tuple((x.cid, x.label()) for x in ch.courts),
             "quirks": tuple((x.kid, nb.quirk_state(x)) for x in ch.quirks),
-            "drives": tuple((x.did, x.level) for x in ch.drives),
+            "drives": tuple(drive_view(ch, x) for x in ch.drives),
             "quests": tuple((x.qid, x.done) for x in ch.quests), "stories": tuple(x.stid for x in ch.stories)}

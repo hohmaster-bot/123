@@ -144,7 +144,13 @@
   {"id": "ac_zones.shield_cells", "value": {"buckler": [1, 2, 4], "light": [1, 2, 3, 4, 7], "heavy": [1, 2, 3, 4, 7], "tower": [1, 2, 3, 4, 7], "": [1, 2, 3, 4, 7]}, "type": "map", "group": "ac_zones", "unit": "cells", "description": "cells a shield in the LEFT hand covers, by shield type (ac_zones.md); the right hand mirrors", "label": "rules.ac_zones.shield_cells"},
   {"id": "ac_zones.ranged_ignores_parry", "value": 1, "type": "int", "group": "ac_zones", "unit": "flag", "description": "1 = parry does not work against ranged attacks (package 24 B1)", "label": "rules.ac_zones.ranged_ignores_parry"},
   {"id": "ac_zones.ranged_keeps_shield", "value": 1, "type": "int", "group": "ac_zones", "unit": "flag", "description": "1 = the shield bonus counts against ranged attacks in covered cells (package 24 B1)", "label": "rules.ac_zones.ranged_keeps_shield"},
-  {"id": "ac_zones.dex_loss_chance_pct", "value": 0, "type": "int", "group": "ac_zones", "unit": "percent", "description": "chance that the Dex loss is cancelled in a Dex-loss cell; effects add (package 24 B1)", "label": "rules.ac_zones.dex_loss_chance_pct"}
+  {"id": "ac_zones.dex_loss_chance_pct", "value": 0, "type": "int", "group": "ac_zones", "unit": "percent", "description": "chance that the Dex loss is cancelled in a Dex-loss cell; effects add (package 24 B1)", "label": "rules.ac_zones.dex_loss_chance_pct"},
+  {"id": "class.bab_factor", "value": {"good": 1.0, "medium": 0.75, "poor": 0.5}, "type": "map", "group": "class", "unit": "factor", "description": "ASSUMPTION (PF-like, Q167): BAB = level * factor, rounded down", "label": "rules.class.bab_factor"},
+  {"id": "class.save_good_base", "value": 2, "type": "int", "group": "class", "unit": "points", "description": "ASSUMPTION (ROADMAP): good save = base + level / divisor, rounded down", "label": "rules.class.save_good_base"},
+  {"id": "class.save_good_divisor", "value": 2, "type": "int", "group": "class", "unit": "levels", "description": "ASSUMPTION (ROADMAP): good save divisor", "label": "rules.class.save_good_divisor"},
+  {"id": "class.save_poor_divisor", "value": 3, "type": "int", "group": "class", "unit": "levels", "description": "ASSUMPTION (ROADMAP): poor save = level / divisor, rounded down", "label": "rules.class.save_poor_divisor"},
+  {"id": "narrative.principle_min_level", "value": 2, "type": "int", "group": "narrative", "unit": "level", "description": "a drive at this level or higher expects a principle (reminder only)", "label": "rules.narrative.principle_min_level"},
+  {"id": "spells.areas", "value": ["single", "cone", "line", "burst", "other"], "type": "list", "group": "magic", "unit": "ids", "description": "area ids of spell damage components (package 25 F)", "label": "rules.spells.areas"}
  ],
  "allowlist": {
   "note": "Numbers in code that are NOT game rules (package 20). named: module constants; inline: numbers inside functions. 0, 1, -1 are always allowed.",

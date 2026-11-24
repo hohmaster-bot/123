@@ -5,6 +5,7 @@ Only source "training" spends training points; no refunds anywhere."""
 from dataclasses import replace
 
 from wp.commands.base import CommandError, command, commit
+from wp.model import classes as klass
 from wp.core import injuries as inj
 from wp.core import skills as sk
 from wp.core import training as tr
@@ -41,8 +42,9 @@ def level_up(ch, hp_roll=None):
     if hp_roll is None:
         hp_roll, warnings = HIT_DIE_DEFAULT, (HIT_DIE_DEFAULT_USED,)
     roll = int(hp_roll)
-    if not 1 <= roll <= ch.hit_die:
-        raise CommandError("hit-die roll must be 1..%d" % ch.hit_die, "hit_die_roll_must", values=(ch.hit_die,))
+    die = klass.hit_die(ch)            # the class die when a class is set (package 25 B)
+    if not 1 <= roll <= die:
+        raise CommandError("hit-die roll must be 1..%d" % die, "hit_die_roll_must", values=(die,))
     level = ch.level + 1
     gain = tr.level_up_training(level)
     new = replace(ch, level=level, hp_rolls=ch.hp_rolls + (roll,), training=ch.training + gain)
@@ -184,9 +186,18 @@ def promote_skill(ch, name="", to_tier=sk.ADVANCED, source=tr.TRAINING):
 def buy_professionalism(ch, skills=(), class_skill_points=0, source=tr.TRAINING):
     """Professionalism 300 (training.md, Q29): 1 / 2 / 3 / 4 class skills become specialized for classes with 2+ / 4+ /
     6+ / 8+ skill points; only for classes WITHOUT their own professionalism (not checkable yet: no class data,
-    Q104). Bought once (assumption Q105). The class skill list is not checked (no class data)."""
+    Q104). Bought once (assumption Q105). With a class (package 25 B, closes Q104): refused when the class has its own
+    professionalism, and every chosen skill must be in the class skill list."""
     if ch.professionalism_bought:
         raise CommandError("professionalism is already bought", "professionalism_already_bought")
+    if klass.own_professionalism(ch):
+        raise CommandError("the class has its own professionalism", "class_own_professionalism",
+                           values=(ch.class_id,))
+    allowed = klass.class_skills(ch)
+    if allowed is not None:
+        wrong = [s for s in skills if s not in allowed]
+        if wrong:
+            raise CommandError("not class skills: %s" % ", ".join(wrong), "not_class_skill", values=(", ".join(wrong),))
     n = tr.professionalism_skills(class_skill_points)
     if n == 0:
         raise CommandError("professionalism needs a class with at least 2 skill points", "professionalism_needs_class_least")
