@@ -41,3 +41,9 @@
 ## Not built on purpose [OWNER, package 17, closes Q122]
 - Experience (XP) and money are NARRATIVE: no mechanics, no counters, no prices in the app. There is no "start session"
   and no "end of session" button: only the end of cycle (above).
+
+## Drives: level notes and principles (package 25) [OWNER]
+- A drive list with numbers 0-5, the bonus/penalty text beside each level, and a principle = a narrative
+  description the player must write when the drive is 2+.
+- [package 25 C] The texts are narrative only (no calculation). From level 2 (data constant) the drive shows a
+  reminder while the principle is empty; it never blocks anything. The attention income is unchanged.

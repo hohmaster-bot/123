@@ -176,3 +176,6 @@ and never refunds. Prices are the constants of wp/core/training.py (data, not sc
 - buy_item_qualification(iid): 50 * N (N = Item.qualification_n); refused without N or twice. What the qualification
   unlocks is not modelled (Q109).
 - Tests: package 15 (test_pkg15.py), every price with the numbers above.
+- [package 25 D, closes Q109] Qualification unlocks the hidden properties of the item: each property has a
+  minimum qualification level; below it the item shows "???", at or above it the text and its effects act (in the
+  tab it belongs to: base = not activated, or activated). The purchase stays 50 * N for qualification N at once.

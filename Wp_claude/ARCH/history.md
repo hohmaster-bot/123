@@ -65,3 +65,7 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package 24: hands with sides (equip side, move / swap, sides by order for old files, main / off hand),
   AC cell variants (melee / parry / ranged, Dex-loss cancel chance), defence rules as per-character constants and
   effects (cells), cell-scoped bonuses, doll layout data (basic / body) with slot commands. Report: tests/PACKAGE24_REPORT.md.
+- Done in package 25: undo / redo in the Session (bounded stack of shared states), class system v0 (catalog
+  kind classes, derived BAB / saves / hit die, professionalism checks, spellbook and divine defaults), drives with
+  level notes and principles, hidden item properties by qualification, stored-only picks as flags, spell damage as
+  data. Report: tests/PACKAGE25_REPORT.md.

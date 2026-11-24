@@ -99,3 +99,7 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   "<weapon node id>:<slot>" (spend_charge / set_charges / restore_charges). restore_all_balance(pick_id) spends the
   charge and sets the balance to its max (no dice, nothing else; refused while a block_restore covers the balance,
   Q128). The app tracks abilities and never rolls dice.
+- [package 25 E] The stored-only picks "one attack per turn without the [attack] tag", "ignore the first
+  vulnerability in a fight" and "ignore 20% cover" are shown as available abilities in the attack and defense
+  views. "Ignore the first vulnerability in a fight" is once per fight: a usage charge (max 1, recharge at the end
+  of combat). No numbers change.

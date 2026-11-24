@@ -34,3 +34,17 @@ See weapons.md (full rules). Training cost = (30+5X)*difficulty*scale per grade.
   по обычным правилам."
   ("slots" here = the "stars" above.) Tests for later code: two identical upgrades = 1 + 2 = 3 slots (full);
   a metamagic of +2 circles takes 2 slots.
+
+## Class system v0 (package 25) [OWNER consent, package 25 B; ASSUMPTION values marked]
+- One class per character (no multiclass); a class is a catalog entry (kind "classes"): hit die, BAB growth
+  (good / medium / poor), a progression per save (good / poor), class skill list, spellbook flag, divine flag, spell
+  failure mode default, own professionalism flag, notes. Shipped entries are SAMPLES (fighter-like, mage-like with a
+  spellbook, cleric-like divine).
+- No class: BAB and base saves are typed by hand, as before. With a class they are derived from class + level; a
+  hand-typed override wins when it is set.
+- ASSUMPTION (data constants, editable): BAB = level * factor (good 1, medium 0.75, poor 0.5), rounded down;
+  good save = 2 + level / 2, poor save = level / 3, rounded down. Tests: good level 5 = 4, poor level 5 = 1.
+- The class hit die caps level_up. The spellbook flag makes learn_spell half price by default; the divine flag
+  makes the spell failure mode default "balance to 0".
+- Professionalism (training.md, closes Q104): a class with its own professionalism refuses the 300 option; the
+  chosen skills must be in the class skill list.

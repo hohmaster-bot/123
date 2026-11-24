@@ -202,3 +202,7 @@
 ## Damage roll and pain [package 22 B5]
 - The damage roll is a roll with a die: the pain penalty and morale apply to it, like to the attack roll
   (resources.md "Pain", defense.md "Morale").
+- [package 25 F] Spell damage as data: components {dice count (formula, may use level), die size, flat
+  (formula), damage type (one of the 12), area (single / cone / line / burst / other), range, save, save effect}.
+  The spell view gives them for the caster level with the pain penalty and morale of the damage roll; the app
+  never rolls dice.
