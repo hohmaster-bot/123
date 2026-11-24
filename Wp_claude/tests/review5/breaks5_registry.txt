@@ -1,0 +1,168 @@
+clean copy: failing suites ['test_view_contract.py']
+p16-circle-check             caught       by test_pkg16a | pkg 16 A1/B: circle outside 0..9 is a CommandError
+p16-twf-dangling             caught       by test_pkg16a | pkg 16 A1: remove_item clears the two-weapon link
+p16-noop-logged              caught       by test_pkg16a | resources.md: no-op commands are not logged
+p16-stat-effects-ignored     caught       by test_pkg16a,test_pkg16b | buffs.md / pkg 16 A2: effects on stat:<id> change the score
+p16-target-stack-adds        caught       by test_pkg16a,test_pkg17 | defense.md: same-type bonuses to a sheet number do not add
+p16-hp-max-effect            caught       by test_pkg16a | pkg 16 A2: effect hp_max
+p16-mana-max-stored          caught       by test_pkg16a | pkg 16 A2: mana_max is added on read, the stored max stays t
+p16-armor-penalty-above-0    caught       by test_pkg16a | pkg 16 A2: the armor skill penalty never goes above 0
+p16-edit-id                  caught       by test_pkg16a | D7: ids cannot be edited
+p16-long-rest-in-combat      caught       by test_pkg16a | pkg 16 A5: long_rest refused in combat
+p16-pool-clamped             caught       by test_pkg14,test_pkg16a | resources.md Over max / pkg 16 A6: pools are not clamped
+p16-iterative-step           caught       by test_pkg16a | pkg 16 C: record step and iterative_penalty effects
+p16-iterative-tick           caught       by test_pkg16a | pkg 16 C: the tick resets the series
+p16-dr-on-fire               caught       by test_pkg16b | resources.md: DR does not work on fire
+p16-skip-ignored             caught       by test_pkg16b | resources.md: the player can switch a reduction off for a hi
+p16-slot-occupied            caught       by test_pkg16b,test_pkg24 | doll.md: one item per slot
+p16-lens-clamp               caught       by test_pkg16b | narrative.md: lens strictly 0..X
+p16-quirk-burned-works       caught       by test_pkg16b | narrative.md: a burned quirk gives nothing
+p16-hit-die-min-1            caught       by test_pkg16b | pkg 16 G1: each die at least 1
+p16-q108-revert              caught       by test_pkg16b | Q108: a status without a source is not refilled
+p16-opt4-min                 caught       by test_pkg16b | training.md option 4: minimum 0.4 per attention
+p16-spell-min-1              caught       by test_pkg16b | pkg 16 G5: spell price at least 1
+p16-base-grey-counts         caught       by test_pkg16b | gear.md Base: grey items take 0 slots
+p16-template-remove          caught       by test_pkg16b | pkg 16 G6: removing a template removes its feats
+p17-pain-cap                 caught       by test_pkg17 | pkg 17: effect pain_cap
+p17-pain-per                 caught       by test_pkg17 | pkg 17: penalty per pain
+p17-item-hp-scope            caught       by test_pkg17 | pkg 17: item_hp with an item id is for that item only
+p17-hardness-floor           caught       by test_pkg17 | pkg 17: hardness never below 0
+p17-morale-shift             caught       by test_pkg17 | defense.md: count morale X higher
+p17-short-rest-heal          caught       by test_pkg17 | pkg 17: effect short_rest_heal
+p17-spell-overload           caught       by test_pkg17 | pkg 17: effect spell_overload
+p17-mana-level               caught       by test_pkg17 | pkg 17: effect mana_level
+p17-level-up-default         caught       by test_pkg17 | Q111: the default die carries the warning
+p17-dr-stacking              caught       by test_pkg16b,test_pkg17 | Q115: stacking DR entries add
+p17-dr-nonstack-adds         caught       by test_pkg16b,test_pkg17 | Q115: non-stacking DR -> the largest only
+p17-resist-adds              caught       by test_pkg17 | pkg 17: resistances never stack
+p17-percent-sum              caught       by test_pkg17 | pkg 17: one percent per element, larger absolute wins
+p17-percent-round            caught       by test_pkg17 | resources.md: damage rounds up
+p17-order-fixed              caught       by test_pkg17 | defense.md: the damage order is data
+p17-ranged-str               caught       by test_pkg17 | combat.md: ranged has no Str to damage
+p17-kind-attack-stat         caught       by test_pkg17 | combat.md: ranged / thrown attack with Dex
+p17-counter-reset            caught       by test_pkg17,test_pkg25 | pkg 17: counters recharge at the end of combat
+p17-restore-balance-free     caught       by test_pkg17 | pkg 17: restore all balance once per combat
+p18-override-ignored         caught       by test_catalogs,test_themes_panels | catalog.md: a user entry with the same id wins over the ship
+p18-tombstone-ignored        caught       by test_catalogs,test_themes_panels | catalog.md: a tombstone hides the shipped entry
+p18-ids-reused               caught       by test_catalogs | catalog.md: a deleted id is never given again
+p18-shipped-writable         caught       by test_catalogs | catalog.md: the program never writes into the shipped folder
+p18-save-not-atomic          caught       by test_catalogs,test_settings | catalog.md: a failed save leaves the old file
+p18-unknown-top-kept         caught       by test_catalogs | catalog.md: unknown top-level fields are dropped
+p18-shipped-edited-in-place  caught       by test_catalogs | catalog.md: editing a shipped entry writes an override
+p18-remove-shipped-deletes   caught       by test_catalogs | catalog.md: removing a shipped entry writes a tombstone
+p18-no-validation            caught       by test_catalogs | catalog.md: entries are checked by the schema table
+p18-id-editable              caught       by test_catalogs | D7: catalog ids never change
+p18-import-other-kind        caught       by test_catalogs | catalog.md: an entry code goes only into its own kind
+p18-schema-allowed           caught       by test_catalogs | spells.md: circle 0..9 (allowed values)
+p18-medicine-wis             caught       by test_skills_catalog,test_catalogs | skills_list.md [OWNER pkg 18]: medicine is Int
+p19-range-ignored            caught       by test_settings | pkg 19: values inside min / max
+p19-enum-ignored             caught       by test_settings | pkg 19: enum values from the allowed list
+p19-hotkey-format            caught       by test_settings | pkg 19: a modifier once per hotkey
+p19-map-values               caught       by test_settings | pkg 19: map values checked
+p19-reset-group              caught       by test_settings | pkg 19: reset a group
+p19-app-only                 caught       by test_settings | pkg 19: rule settings go through character commands
+p19-delete-active            caught       by test_settings | Q138: the active profile is not deleted
+p19-hotkey-conflict          caught       by test_settings | Q139: hotkey conflicts refused
+p19-hotkey-order             caught       by test_settings | pkg 19: Shift+Ctrl+W is the same key as Ctrl+Shift+W
+p19-color-first-match        caught       by test_settings | Q140: the first colour rule wins
+p19-macro-partial            caught       by test_settings | Q141: a macro is all or nothing
+p19-image-missing            caught       by test_settings | pkg 19: a missing image file -> placeholder + warning
+p19-image-ids-reused         caught       by test_settings | pkg 19: a removed image id is never given again
+p19-image-ext                caught       by test_settings | pkg 19: image types checked
+p19-rule-range               caught       by test_pkg20,test_settings | pkg 19: rule settings checked by the schema
+p20-training-literal         caught       by test_pkg20,test_rule_literals | D23: the ability price is read from the table
+p20-weapons-literal          caught       by test_pkg20,test_rule_literals | D23: weapon grade cost from the table
+p20-load-literal             caught       by test_pkg20,test_rule_literals | D23: load thresholds from the table
+p20-ac-literal               caught       by test_pkg20,test_session,test_perf,test_rule_literals | D23: AC base from the table
+p20-injury-literal           caught       by test_pkg20,test_rule_literals | D23: OT per comfort from the table
+p20-magic-literal            caught       by test_pkg20,test_rule_literals | D23: circle mana from the table
+p20-rest-literal             caught       by test_pkg20,test_rule_literals | D23: free heal from the table
+p20-skills-literal           caught       by test_pkg20,test_rule_literals | D23: skill tier price from the table
+p20-dying-literal            caught       by test_pkg20,test_rule_literals | D23: dying HP loss from the table
+p20-spirit-literal           caught       by test_pkg20,test_rule_literals | D23: spirit from the table
+p20-items-literal            caught       by test_pkg20,test_rule_literals | D23: item hardness from the table
+p20-twf-literal              caught       by test_pkg20,test_rule_literals | D23: TWF penalties from the table
+p20-hands-literal            caught       by test_pkg20,test_rule_literals | D23: hands from the table
+p20-ov-literal               caught       by test_pkg20,test_rule_literals | D23: OV per attention from the table
+p20-scope-lost               caught       by test_pkg20 | D23: a command sees the character's constants
+p20-literal-scan             generic only by test_rule_literals | D23: a new rule literal in code fails the scan
+p21-no-ru-fallback           caught       by test_i18n | pkg 21: a missing key falls back to Russian
+p21-key-fallback             caught       by test_i18n | pkg 21: a missing key shows the key id
+p21-params-ignored           caught       by test_i18n | pkg 21: {param} substitution
+p21-plural-ru                caught       by test_i18n | pkg 21: Russian plural (11 is 'many')
+p21-name-i18n                caught       by test_i18n | pkg 21: catalog names by language
+p21-ilvl-dropped             caught       by test_i18n | Q133: catalog ilvl maps to Item.ilvl
+p21-theme-color              caught       by test_themes_panels | pkg 21: theme colours #rrggbb / #rrggbbaa
+p21-theme-missing            caught       by test_themes_panels | pkg 21: every colour token is required
+p21-qss-format               caught       by test_themes_panels | pkg 21: the QSS layout from the template
+p21-theme-shipped-edited     caught       by test_themes_panels | pkg 21: editing a shipped theme writes a user override
+p21-active-unchecked         caught       by test_themes_panels | pkg 21: only an existing theme is active
+p21-panel-unknown            caught       by test_themes_panels | pkg 21: profiles name registry panels
+p21-panel-mode               caught       by test_themes_panels | pkg 21: a panel only in its modes
+p21-panel-check-skipped      caught       by test_themes_panels | pkg 21: layout_add checks the panel
+p22-mana-block               caught       by test_pkg22 | pkg 22 A1: a block_restore mana refuses restore_mana
+p22-mana-over-max            caught       by test_pkg22 | resources.md Over max: an over-max value is kept
+p22-reaction-refusal         caught       by test_pkg22 | pkg 22 A2: no reaction left -> refused
+p22-reaction-tick            caught       by test_pkg22 | pkg 22 A2: the tick restores reactions
+p22-reaction-attack          caught       by test_pkg22 | pkg 22 A2: an attack with a reaction cost spends it
+p22-maneuver-reactions       caught       by test_pkg22 | pkg 22 A2: a maneuver needs its reactions
+p22-cap-clamp                caught       by test_pkg22 | pkg 22 A3: balance never above the cap in combat
+p22-tick-fixed-order         caught       by test_cap_cycle,test_pkg22 | pkg 22 A4: the most favourable tick order
+p22-tick-balance-first       caught       by test_tick,test_pkg22,test_scenarios | Q150: overflow first, then balance
+p22-tick-greedy              caught       by test_pkg22 | pkg 22 A4: greedy tries the regen at every place
+p23-topics-lookup            caught       by test_pkg25,test_pkg26,test_session | pkg 23 A: dispatch returns the topics of the command from th
+p23-subscriber               caught       by test_session | pkg 23 A: subscribers are called after a command
+p23-autosave-interval        caught       by test_session | pkg 23 A: autosave waits for the interval
+p23-every-command            caught       by test_session | pkg 23 A: autosave_mode every_command saves after each comma
+p23-backup-rotation          caught       by test_session | pkg 23 A: only backups_count backups kept
+p23-corrupt-refusal          caught       by test_session | pkg 23 A: a damaged file is a refusal file_corrupt, never a 
+p23-delete-trash             caught       by test_session | pkg 23 A: delete moves the file to the trash
+p23-cache-scope              generic only by test_perf | pkg 23 B: a cached value is keyed by the rule scope
+p23-cache-clear              generic only by test_perf | pkg 23 B: a command drops the read cache
+p23-zone-back-dex            caught       by test_ac_zones,test_pkg24 | ac_zones.md: cell 8 (back) has no Dex / dodge
+p23-zone-shield-cover        caught       by test_ac_zones,test_pkg24 | ac_zones.md: a shield covers only its cells
+p23-zone-mirror              caught       by test_ac_zones,test_pkg24 | ac_zones.md: a shield in the right hand mirrors the cells
+p23-zone-parry-cells         caught       by test_ac_zones,test_pkg24 | pkg 23 D (Q155): parry only in cells 1-3
+p24-shield-side              caught       by test_ac_zones,test_pkg24 | pkg 24 A1: a shield goes to the left hand by default
+p24-stored-side              caught       by test_pkg24 | pkg 24 A1: a stored side wins
+p24-two-handed-both          caught       by test_pkg24 | gear.md: a two-handed item takes both hands
+p24-hand-taken               caught       by test_pkg24 | pkg 24 A1: equip into a taken hand is refused
+p24-move-refused             caught       by test_pkg24 | pkg 24 A1: move into a taken hand refused without swap
+p24-swap-other               caught       by test_pkg24 | pkg 24 A1: swap moves the other item to the freed hand
+p24-off-hand                 caught       by test_pkg24 | pkg 24 A3: a weapon in the other hand is the off hand
+p24-twf-auto                 caught       by test_pkg24 | Q161: set_twf takes the other-hand record
+p24-mirror                   caught       by test_ac_zones,test_pkg24 | ac_zones.md: the right hand mirrors the cells
+p24-two-shields              caught       by test_pkg24 | pkg 24 A2: two shields: the larger per cell
+p24-ranged-parry             caught       by test_pkg24 | pkg 24 B1: parry does not work against ranged attacks
+p24-parry-cells-only         caught       by test_ac_zones,test_pkg24 | Q155: melee_parry only in parry cells
+p24-chance                   caught       by test_pkg24 | pkg 24 B1: a Dex-loss cancel chance gives the alternate valu
+p24-cell-remove              caught       by test_pkg24 | pkg 24 B2: an effect with value < 0 removes cells
+p24-scoped-bonus             caught       by test_pkg24 | Q157: a cell-scoped AC bonus counts only in its cells
+p24-scoped-parry             caught       by test_pkg24 | pkg 24 B2: a cell-scoped parry is not in the unscoped parry
+p24-ranged-setting           caught       by test_pkg24 | pkg 24 B3: the ranged / parry rule is a per-character settin
+p24-doll-overlap             caught       by test_pkg24 | pkg 24 C2: overlapping rectangles are a warning
+p24-doll-fit                 caught       by test_pkg24 | pkg 24 C1: an item must fit the slot
+p25-undo-limit               caught       by test_pkg25 | pkg 25 A: the stack is bounded
+p25-undo-skip                caught       by test_pkg25 | pkg 25 A: listed commands are not undoable
+p25-redo-clear               caught       by test_pkg25 | pkg 25 A: a new command clears redo
+p25-undo-journal             caught       by test_pkg25,test_pkg26 | pkg 25 A: undo writes a journal line
+p25-bab-factor               caught       by test_pkg25 | Q167: BAB = level * factor
+p25-save-good                caught       by test_pkg25,test_rule_literals | ROADMAP: good save = 2 + level / 2
+p25-save-poor                caught       by test_pkg25,test_rule_literals | ROADMAP: poor save = level / 3
+p25-bab-override             caught       by test_pkg25 | pkg 25 B: the hand value wins
+p25-hit-die                  caught       by test_pkg25 | pkg 25 B: the class hit die
+p25-own-prof                 caught       by test_pkg25 | training.md Q29: a class with its own professionalism refuse
+p25-class-skill              caught       by test_pkg25 | training.md: professionalism skills from the class list
+p25-spellbook                caught       by test_pkg25 | training.md: a class with a book pays half
+p25-divine                   caught       by test_pkg25 | pkg 25 B: the divine flag sets the failure mode
+p25-principle                caught       by test_pkg25 | narrative.md: a principle is expected from level 2
+p25-level-note               caught       by test_pkg25 | narrative.md: the note of the level next to the number
+p25-hidden-lock              caught       by test_pkg25 | Q109: hidden below the qualification level
+p25-hidden-tab               caught       by test_pkg25 | pkg 25 D: a property acts in its own tab
+p25-qual-level               caught       by test_pkg25 | Q109: the level counts once bought
+p25-vuln-charge              caught       by test_pkg25 | weapons.md: ignore the first vulnerability is once per fight
+p25-flags                    caught       by test_pkg25 | pkg 25 E: the three stored-only picks are flags
+p25-spell-level              caught       by test_pkg25 | combat.md: spell damage scales with the level
+p25-spell-pain               caught       by test_pkg25 | combat.md: pain and morale apply to the damage roll
+p25-damage-type              caught       by test_pkg25 | pkg 25 F: one of the 12 damage types
+registry: entries 166, caught 163, generic only 3, missed 0, not applied 0, not by named 0

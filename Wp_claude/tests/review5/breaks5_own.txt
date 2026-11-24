@@ -1,0 +1,51 @@
+clean copy: failing suites ['test_view_contract.py']
+r5-ceil-floor                caught       by test_damage,test_pkg17 | damage rounds UP
+r5-percent-floor             caught       by test_damage | percent reduction rounded up
+r5-modifier-cap              generic only by test_rule_literals | modifier never below -100 (core)
+r5-dr-no-stacking            caught       by test_pkg16b,test_pkg17 | stacking DR entries add
+r5-dr-sum-all                caught       by test_pkg16b,test_pkg17 | non-stacking DR: the largest
+r5-modifier-winner           caught       by test_pkg17 | percent modifier: larger absolute value wins
+r5-modifier-floor-view       generic only by test_rule_literals | modifier never below -100 (view)
+r5-dr-resist-add             missed       by - | one flat reduction: the larger
+r5-dr-on-fire                caught       by test_pkg16b | DR only on physical types
+r5-hidden-gt                 caught       by test_pkg25 | hidden property unlocked at N
+r5-hidden-unbought           caught       by test_pkg25 | qualification counts only once bought
+r5-spell-dice-negative       missed       by - | spell dice never below 0
+r5-spell-rollmod             missed       by - | spell roll modifier = pain + morale
+r5-spell-level               caught       by test_pkg25 | caster level = character level
+r5-shield-side               caught       by test_ac_zones,test_pkg24 | default shield hand from the constant
+r5-stored-side               caught       by test_pkg24 | a stored hand side wins
+r5-bab-round                 caught       by test_pkg25 | class BAB rounded down
+r5-save-good                 caught       by test_pkg25 | good save = 2 + level/2 down
+r5-bab-override              caught       by test_pkg25 | BAB override wins
+r5-save-override             caught       by test_pkg25 | save override wins
+r5-class-hit-die             caught       by test_pkg25 | class hit die caps level_up
+r5-iter-cap                  missed       by - | an iterative step never goes above 0
+r5-iter-ignore               caught       by test_pkg16a | ignores_iterative status: no penalty
+r5-principle-gt              caught       by test_pkg25 | principle needed at N
+r5-undo-nonundoable          caught       by test_pkg25 | non-undoable commands skip the stack
+r5-undo-redo-kept            caught       by test_pkg25 | a new command clears redo
+r5-undo-unbounded            caught       by test_pkg25 | undo stack bounded by undo_depth
+r5-open-keeps-undo           missed       by - | open / new clear the stacks
+r5-autosave-every            caught       by test_session | autosave every_command saves
+r5-autosave-interval         caught       by test_session | autosave waits for the interval
+r5-topics-unknown            caught       by test_session | a command missing from topics refreshes all
+r5-subscribers-skipped       caught       by test_session | subscribers get the topics
+r5-backup-keep-plus          caught       by test_session | only backups_count backups kept
+r5-backup-oldest             missed       by - | recovery = the NEWEST valid
+r5-hard-delete               caught       by test_session | delete goes to the trash
+r5-rename-backups            missed       by - | backups follow a rename
+r5-name-dotdot               missed       by - | '..' is not a name
+r5-cache-scope               generic only by test_perf | cache key holds the rule scope
+r5-cache-identity            missed       by - | cache entry kept objects checked
+r5-cache-noclear             generic only by test_perf | dispatch clears the cache (expected harmless)
+r5-noop-logged               caught       by test_pkg16a | a no-op is not journaled
+r5-cap-clamp                 caught       by test_pkg22 | in combat balance clamped to the cap
+r5-mana-block                caught       by test_pkg22 | restore_mana refused while blocked
+r5-mana-negative             generic only by test_rule_literals | restore_mana amount >= 0
+r5-pick-flags-group          missed       by - | pick flags filtered by group
+r5-ac-ranged-shield          caught       by test_pkg24 | ranged keeps the shield
+r5-ac-shield-mirror          caught       by test_ac_zones,test_pkg24 | right-hand shield mirrors the cells
+r5-ac-two-shields            caught       by test_pkg24 | two shields: the larger per cell
+r5-undo-json-empty           caught       by test_pkg25 | undo.json lists the non-undoable commands
+own: entries 49, caught 34, generic only 5, missed 10, not applied 0, not by named 0
