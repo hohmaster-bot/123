@@ -2,14 +2,15 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (761)
+## Нет в ru.json (797)
 
-### catalog (95)
+### catalog (106)
 - `catalog.field.ac_bonus`
 - `catalog.field.access_class`
 - `catalog.field.activation_day`
 - `catalog.field.activation_decade`
 - `catalog.field.attack_kind`
+- `catalog.field.bab_growth`
 - `catalog.field.base_slot_cost`
 - `catalog.field.basic`
 - `catalog.field.category`
@@ -17,11 +18,13 @@
 - `catalog.field.charge_source`
 - `catalog.field.charges_max`
 - `catalog.field.circle`
+- `catalog.field.class_skills`
 - `catalog.field.consumable`
 - `catalog.field.cooldown_rounds`
 - `catalog.field.cost`
 - `catalog.field.crit_mult`
 - `catalog.field.crit_range`
+- `catalog.field.damage`
 - `catalog.field.damage_medium`
 - `catalog.field.damage_medium2`
 - `catalog.field.damage_small`
@@ -30,6 +33,7 @@
 - `catalog.field.desc`
 - `catalog.field.description`
 - `catalog.field.difficulty`
+- `catalog.field.divine`
 - `catalog.field.dmg_type`
 - `catalog.field.double`
 - `catalog.field.durability`
@@ -45,6 +49,7 @@
 - `catalog.field.groups`
 - `catalog.field.hands`
 - `catalog.field.hardness`
+- `catalog.field.hit_die`
 - `catalog.field.hp`
 - `catalog.field.id`
 - `catalog.field.ignore_bag_weight`
@@ -60,7 +65,9 @@
 - `catalog.field.needs_flight`
 - `catalog.field.no_parry`
 - `catalog.field.node`
+- `catalog.field.notes`
 - `catalog.field.on_use_status`
+- `catalog.field.own_professionalism`
 - `catalog.field.param`
 - `catalog.field.parents`
 - `catalog.field.per_tick_hp`
@@ -72,6 +79,7 @@
 - `catalog.field.quantity`
 - `catalog.field.range_ft`
 - `catalog.field.sample`
+- `catalog.field.saves`
 - `catalog.field.scale`
 - `catalog.field.school`
 - `catalog.field.set`
@@ -82,8 +90,10 @@
 - `catalog.field.source`
 - `catalog.field.special`
 - `catalog.field.speed_penalty_ft`
+- `catalog.field.spell_failure_mode`
 - `catalog.field.spell_failure_pct`
 - `catalog.field.spell_penalty_mana`
+- `catalog.field.spellbook`
 - `catalog.field.stat`
 - `catalog.field.temp_hp_stacks`
 - `catalog.field.touch_bonus`
@@ -91,6 +101,7 @@
 - `catalog.field.weight`
 - `catalog.field.weight_l`
 - `catalog.kind.armor_shields`
+- `catalog.kind.classes`
 - `catalog.kind.damage_types`
 - `catalog.kind.doll_slots`
 - `catalog.kind.feats`
@@ -153,7 +164,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (202)
+### reason (212)
 - `reason.action_needed`
 - `reason.activates_status_which_not`
 - `reason.already_activated`
@@ -170,7 +181,9 @@
 - `reason.amount_must_0`
 - `reason.attack_not_available`
 - `reason.attack_record_already_exists`
+- `reason.bad_class_progression`
 - `reason.bad_color`
+- `reason.bad_die_size`
 - `reason.bad_effect_formula`
 - `reason.bad_hand_side`
 - `reason.bad_hotkey`
@@ -178,6 +191,7 @@
 - `reason.bad_name`
 - `reason.bad_pool_max_formula`
 - `reason.bad_profile`
+- `reason.bad_tab`
 - `reason.cannot_put_item_hp`
 - `reason.cannot_spend_negative_amount`
 - `reason.casting_blocked`
@@ -190,6 +204,7 @@
 - `reason.choose_exactly_different_skills`
 - `reason.circle_must_0_9`
 - `reason.circle_out_of_range`
+- `reason.class_own_professionalism`
 - `reason.combat_active`
 - `reason.combat_already_active`
 - `reason.condition_tag_must_one`
@@ -265,6 +280,7 @@
 - `reason.not_activated`
 - `reason.not_allowed`
 - `reason.not_app_setting`
+- `reason.not_class_skill`
 - `reason.not_consumable`
 - `reason.not_enough_attention_have`
 - `reason.not_enough_balance_need`
@@ -298,6 +314,7 @@
 - `reason.professionalism_already_bought`
 - `reason.professionalism_needs_class_least`
 - `reason.profile_active`
+- `reason.qualification_negative`
 - `reason.restore_must_one`
 - `reason.restoring_blocked`
 - `reason.rule_refused`
@@ -332,8 +349,11 @@
 - `reason.two_handed_weapon_cannot`
 - `reason.two_weapon_combination_needs`
 - `reason.unarmed_attacks_use_unarmed`
+- `reason.unknown_area`
 - `reason.unknown_collection`
 - `reason.unknown_command`
+- `reason.unknown_damage_type`
+- `reason.unknown_field`
 - `reason.unknown_fields`
 - `reason.unknown_group`
 - `reason.unknown_kind`
@@ -343,6 +363,7 @@
 - `reason.unknown_per_tick_restore`
 - `reason.unknown_pool_fields`
 - `reason.unknown_resource`
+- `reason.unknown_save`
 - `reason.unknown_setting`
 - `reason.unknown_slot`
 - `reason.unknown_target`
@@ -362,7 +383,7 @@
 - `resource.ov`
 - `resource.training`
 
-### rules (286)
+### rules (298)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -407,6 +428,14 @@
 - `rules.attention.ov_min.desc`
 - `rules.bp.cap_divisor`
 - `rules.bp.cap_divisor.desc`
+- `rules.class.bab_factor`
+- `rules.class.bab_factor.desc`
+- `rules.class.save_good_base`
+- `rules.class.save_good_base.desc`
+- `rules.class.save_good_divisor`
+- `rules.class.save_good_divisor.desc`
+- `rules.class.save_poor_divisor`
+- `rules.class.save_poor_divisor.desc`
 - `rules.cmd.base`
 - `rules.cmd.base.desc`
 - `rules.dice.d20_faces`
@@ -477,6 +506,8 @@
 - `rules.narrative.drive_max.desc`
 - `rules.narrative.lens_start`
 - `rules.narrative.lens_start.desc`
+- `rules.narrative.principle_min_level`
+- `rules.narrative.principle_min_level.desc`
 - `rules.new.hit_die`
 - `rules.new.hit_die.desc`
 - `rules.new.reactions`
@@ -519,6 +550,8 @@
 - `rules.speed.base_ft.desc`
 - `rules.speed.encumbrance_ft`
 - `rules.speed.encumbrance_ft.desc`
+- `rules.spells.areas`
+- `rules.spells.areas.desc`
 - `rules.spirit.base`
 - `rules.spirit.base.desc`
 - `rules.spirit.per_cha`
@@ -650,7 +683,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (114)
+### settings (117)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -688,6 +721,7 @@
 - `settings.group.rules`
 - `settings.group.rules.ac_zones`
 - `settings.group.rules.attack`
+- `settings.group.rules.class`
 - `settings.group.rules.defense`
 - `settings.group.rules.derived`
 - `settings.group.rules.dying`
@@ -759,6 +793,8 @@
 - `settings.thrown_damage_stat.desc`
 - `settings.ui_scale`
 - `settings.ui_scale.desc`
+- `settings.undo_depth`
+- `settings.undo_depth.desc`
 - `settings.units_weight`
 - `settings.units_weight.desc`
 - `settings.window_classic`
@@ -789,14 +825,15 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (614)
+## Нет в en.json (650)
 
-### catalog (95)
+### catalog (106)
 - `catalog.field.ac_bonus`
 - `catalog.field.access_class`
 - `catalog.field.activation_day`
 - `catalog.field.activation_decade`
 - `catalog.field.attack_kind`
+- `catalog.field.bab_growth`
 - `catalog.field.base_slot_cost`
 - `catalog.field.basic`
 - `catalog.field.category`
@@ -804,11 +841,13 @@
 - `catalog.field.charge_source`
 - `catalog.field.charges_max`
 - `catalog.field.circle`
+- `catalog.field.class_skills`
 - `catalog.field.consumable`
 - `catalog.field.cooldown_rounds`
 - `catalog.field.cost`
 - `catalog.field.crit_mult`
 - `catalog.field.crit_range`
+- `catalog.field.damage`
 - `catalog.field.damage_medium`
 - `catalog.field.damage_medium2`
 - `catalog.field.damage_small`
@@ -817,6 +856,7 @@
 - `catalog.field.desc`
 - `catalog.field.description`
 - `catalog.field.difficulty`
+- `catalog.field.divine`
 - `catalog.field.dmg_type`
 - `catalog.field.double`
 - `catalog.field.durability`
@@ -832,6 +872,7 @@
 - `catalog.field.groups`
 - `catalog.field.hands`
 - `catalog.field.hardness`
+- `catalog.field.hit_die`
 - `catalog.field.hp`
 - `catalog.field.id`
 - `catalog.field.ignore_bag_weight`
@@ -847,7 +888,9 @@
 - `catalog.field.needs_flight`
 - `catalog.field.no_parry`
 - `catalog.field.node`
+- `catalog.field.notes`
 - `catalog.field.on_use_status`
+- `catalog.field.own_professionalism`
 - `catalog.field.param`
 - `catalog.field.parents`
 - `catalog.field.per_tick_hp`
@@ -859,6 +902,7 @@
 - `catalog.field.quantity`
 - `catalog.field.range_ft`
 - `catalog.field.sample`
+- `catalog.field.saves`
 - `catalog.field.scale`
 - `catalog.field.school`
 - `catalog.field.set`
@@ -869,8 +913,10 @@
 - `catalog.field.source`
 - `catalog.field.special`
 - `catalog.field.speed_penalty_ft`
+- `catalog.field.spell_failure_mode`
 - `catalog.field.spell_failure_pct`
 - `catalog.field.spell_penalty_mana`
+- `catalog.field.spellbook`
 - `catalog.field.stat`
 - `catalog.field.temp_hp_stacks`
 - `catalog.field.touch_bonus`
@@ -878,6 +924,7 @@
 - `catalog.field.weight`
 - `catalog.field.weight_l`
 - `catalog.kind.armor_shields`
+- `catalog.kind.classes`
 - `catalog.kind.damage_types`
 - `catalog.kind.doll_slots`
 - `catalog.kind.feats`
@@ -926,14 +973,18 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (31)
+### reason (41)
 - `reason.already_in_hand`
+- `reason.bad_class_progression`
 - `reason.bad_color`
+- `reason.bad_die_size`
 - `reason.bad_hand_side`
 - `reason.bad_hotkey`
 - `reason.bad_name`
+- `reason.bad_tab`
 - `reason.catalog_error`
 - `reason.character_open`
+- `reason.class_own_professionalism`
 - `reason.combat_active`
 - `reason.field_not_allowed`
 - `reason.field_required`
@@ -946,20 +997,26 @@
 - `reason.no_backup`
 - `reason.no_character`
 - `reason.not_allowed`
+- `reason.not_class_skill`
 - `reason.not_enough_reactions`
 - `reason.out_of_range`
 - `reason.over_mana_level`
+- `reason.qualification_negative`
 - `reason.rule_refused`
 - `reason.same_slot`
 - `reason.save_failed`
 - `reason.settings_error`
 - `reason.slot_empty`
 - `reason.two_handed_both_hands`
+- `reason.unknown_area`
 - `reason.unknown_command`
+- `reason.unknown_damage_type`
+- `reason.unknown_field`
+- `reason.unknown_save`
 - `reason.unknown_view`
 - `reason.wrong_type`
 
-### rules (286)
+### rules (298)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -1004,6 +1061,14 @@
 - `rules.attention.ov_min.desc`
 - `rules.bp.cap_divisor`
 - `rules.bp.cap_divisor.desc`
+- `rules.class.bab_factor`
+- `rules.class.bab_factor.desc`
+- `rules.class.save_good_base`
+- `rules.class.save_good_base.desc`
+- `rules.class.save_good_divisor`
+- `rules.class.save_good_divisor.desc`
+- `rules.class.save_poor_divisor`
+- `rules.class.save_poor_divisor.desc`
 - `rules.cmd.base`
 - `rules.cmd.base.desc`
 - `rules.dice.d20_faces`
@@ -1074,6 +1139,8 @@
 - `rules.narrative.drive_max.desc`
 - `rules.narrative.lens_start`
 - `rules.narrative.lens_start.desc`
+- `rules.narrative.principle_min_level`
+- `rules.narrative.principle_min_level.desc`
 - `rules.new.hit_die`
 - `rules.new.hit_die.desc`
 - `rules.new.reactions`
@@ -1116,6 +1183,8 @@
 - `rules.speed.base_ft.desc`
 - `rules.speed.encumbrance_ft`
 - `rules.speed.encumbrance_ft.desc`
+- `rules.spells.areas`
+- `rules.spells.areas.desc`
 - `rules.spirit.base`
 - `rules.spirit.base.desc`
 - `rules.spirit.per_cha`
@@ -1247,7 +1316,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (114)
+### settings (117)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -1285,6 +1354,7 @@
 - `settings.group.rules`
 - `settings.group.rules.ac_zones`
 - `settings.group.rules.attack`
+- `settings.group.rules.class`
 - `settings.group.rules.defense`
 - `settings.group.rules.derived`
 - `settings.group.rules.dying`
@@ -1356,6 +1426,8 @@
 - `settings.thrown_damage_stat.desc`
 - `settings.ui_scale`
 - `settings.ui_scale.desc`
+- `settings.undo_depth`
+- `settings.undo_depth.desc`
 - `settings.units_weight`
 - `settings.units_weight.desc`
 - `settings.window_classic`

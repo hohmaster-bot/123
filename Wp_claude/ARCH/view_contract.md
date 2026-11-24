@@ -2,7 +2,7 @@
 
 The UI talks only to `wp.app.session.Session` (D25): `session.view(panel id, **params)` gives the data of a panel, `session.dispatch(command, **params)` changes the character and returns the topics (panel ids) to refresh. Fields below are read from a sample character (tests/perf/heavy.py).
 
-Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `add_injury`, `add_template`, `burn_quirk`, `buy_ability`, `deactivate_item`, `edit_ability`, `edit_entry`, `edit_rules`, `edit_sheet`, `end_combat`, `equip_hands`, `equip_item`, `equip_to_slot`, `level_up`, `long_rest`, `long_rest_end_combat`, `move_hand_item`, `remove_entry`, `remove_feat`, `remove_injury`, `remove_item`, `remove_template`, `reset_rule_setting`, `reset_settings_group`, `set_active_stance`, `set_rule_setting`, `set_size`, `short_rest`, `start_combat`, `swap_slots`, `tick`, `unequip_hands`, `unequip_item`, `unequip_slot`
+Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `add_hidden_property`, `add_injury`, `add_template`, `burn_quirk`, `buy_ability`, `deactivate_item`, `edit_ability`, `edit_entry`, `edit_rules`, `edit_sheet`, `end_combat`, `equip_hands`, `equip_item`, `equip_to_slot`, `level_up`, `long_rest`, `long_rest_end_combat`, `move_hand_item`, `remove_entry`, `remove_feat`, `remove_hidden_property`, `remove_injury`, `remove_item`, `remove_template`, `reset_rule_setting`, `reset_settings_group`, `set_active_stance`, `set_bab_override`, `set_class`, `set_rule_setting`, `set_save_override`, `set_size`, `short_rest`, `start_combat`, `swap_slots`, `tick`, `unequip_hands`, `unequip_item`, `unequip_slot`
 
 ## attacks
 
@@ -37,6 +37,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `hand`: str
   - `main_hand`: str
   - `off_hand`: bool
+  - `abilities`: tuple[]
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_attack(iid='', group='', grip='one', stat='', rid='')` reasons: attack_record_already_exists, finesse_weapon_held_one, grip_must_one_off, not_group, not_weapon, two_handed, two_handed_weapon_cannot, unarmed_attacks_use_unarmed
@@ -114,6 +115,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - modes: classic; described in the docs: yes
 - refreshes on its topic `defense` and on the commands that refresh every panel
 - returns: map
+- `abilities`: tuple[]
 - `cells`: map
   - `1`: map
   - `2`: map
@@ -276,6 +278,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_attack(iid='', group='', grip='one', stat='', rid='')` reasons: attack_record_already_exists, finesse_weapon_held_one, grip_must_one_off, not_group, not_weapon, two_handed, two_handed_weapon_cannot, unarmed_attacks_use_unarmed
+  - `add_drive(name='', level=0, principle='', level_notes=None, text='')` reasons: note_needs_name
   - `add_maneuver(name='', **fields)`
   - `add_note(kind='', name='', **fields)` reasons: note_needs_name
   - `add_pool(name='', max=0, current=None, restore='manual')`
@@ -292,7 +295,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_item_qualification(iid='', source='training')` reasons: already_qualified, needs_no_qualification
   - `buy_language(lid='', title='', native=False, projects=1, source='training')` reasons: language_already_known, language_needs_name, rule_refused
   - `buy_maneuver(name='', source='training', **fields)`
-  - `buy_professionalism(skills=(), class_skill_points=0, source='training')` reasons: already_specialized, choose_exactly_different_skills, no_skill, professionalism_already_bought, professionalism_needs_class_least
+  - `buy_professionalism(skills=(), class_skill_points=0, source='training')` reasons: already_specialized, choose_exactly_different_skills, class_own_professionalism, no_skill, not_class_skill, professionalism_already_bought, professionalism_needs_class_least
   - `buy_reaction(source='training')`
   - `buy_seed(name='', source='training')` reasons: seed_needs_name
   - `buy_shield_grade(source='training')`
@@ -305,17 +308,19 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
   - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
+  - `edit_drive(did='', **fields)` reasons: unknown_field
   - `edit_maneuver(mid='', **fields)`
   - `edit_pool(pid='', **fields)` reasons: unknown_pool_fields
   - `end_cycle()`
   - `exchange_comfort(n=1)` reasons: exchange_least_1_comfort, not_enough_comfort_have
   - `hit_item(iid='', damage=0)` reasons: damage_cannot_negative, item_destroyed
-  - `learn_spell(name='', circle=1, discount=False, source='training')` reasons: circle_must_0_9, spell_needs_name
+  - `learn_spell(name='', circle=1, discount=None, source='training')` reasons: circle_must_0_9, spell_needs_name
   - `make_language_native(lid='', source='training')` reasons: already_native, no_language
   - `pay_hp_cost(amount=0)`
   - `promote_skill(name='', to_tier='advanced', source='training')` reasons: already_promoted, no_skill, rule_refused, tier_must_advanced_specialized
   - `raise_heal_rating(injury_id='')` reasons: no_attention, no_injury_id
   - `remove_attack(rid='')` reasons: no_attack_record
+  - `remove_drive(did='')`
   - `remove_maneuver(mid='')`
   - `remove_ot_attention(n=1)` reasons: no_ot_remove, not_enough_attention_have, spend_least_1_attention
   - `remove_ot_comfort(n=1)` reasons: no_ot_remove, not_enough_comfort_have, spend_least_1_comfort
@@ -334,6 +339,8 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_charges(owner_kind='item', owner_id='', value=0)` reasons: charges_must_0
   - `set_condition_tag(target='item', oid='', tag='none')` reasons: not_found, tag_must_one, target_must_item_status
   - `set_drive_level(did='', level=0)`
+  - `set_drive_level_note(did='', level=0, text='')`
+  - `set_drive_principle(did='', text='')`
   - `set_hp_roll(level=1, value=1)` reasons: hit_die_hp_must, no_hit_die_roll
   - `set_ignore_bag_weight(value=True)`
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
@@ -341,6 +348,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_iterative_count(n=0)` reasons: iterative_count_negative
   - `set_main_hand(rid='', side='')` reasons: no_attack_record
   - `set_primary_attack(rid='', on=True)` reasons: most_primary_attack_records, no_attack_record
+  - `set_spell_damage(spid='', damage=())` reasons: not_found
   - `set_status_duration(sid='', remaining=0)` reasons: status_has_no_tick
   - `set_status_favorite(sid='', value=True)`
   - `set_status_hidden(sid='', value=True)`
@@ -399,6 +407,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `quirks`: tuple[]
 - `stories`: tuple[]
 - commands:
+  - `add_drive(name='', level=0, principle='', level_notes=None, text='')` reasons: note_needs_name
   - `add_note(kind='', name='', **fields)` reasons: note_needs_name
   - `attention_to_base_points(n=1)`
   - `attention_to_training(n=1)`
@@ -406,8 +415,12 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_seed(name='', source='training')` reasons: seed_needs_name
   - `change_lens(lid='', delta=0)`
   - `convert_attention()` reasons: no_attention
+  - `edit_drive(did='', **fields)` reasons: unknown_field
   - `end_cycle()`
+  - `remove_drive(did='')`
   - `set_drive_level(did='', level=0)`
+  - `set_drive_level_note(did='', level=0, text='')`
+  - `set_drive_principle(did='', text='')`
   - `spend_ov(n=1)` reasons: not_enough_ov_need
   - `sprout_seed(seed_id='', source='training')` reasons: no_seed, seed_has_already_sprouted
 
@@ -530,6 +543,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `str`: tuple[int]
   - `wis`: tuple[int]
 - `bab`: int
+- `class_id`: str
 - `level`: int
 - `speed`: int
 - `stats`: map
@@ -559,7 +573,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_skill(catalog=None, tid='', sub='')` reasons: no_skill_catalog_given, skill_already_sheet
-  - `buy_professionalism(skills=(), class_skill_points=0, source='training')` reasons: already_specialized, choose_exactly_different_skills, no_skill, professionalism_already_bought, professionalism_needs_class_least
+  - `buy_professionalism(skills=(), class_skill_points=0, source='training')` reasons: already_specialized, choose_exactly_different_skills, class_own_professionalism, no_skill, not_class_skill, professionalism_already_bought, professionalism_needs_class_least
   - `buy_skill_rank(name='', target=None, source='training')` reasons: already_has_rank, no_skill
   - `delete_status(sid='')`
   - `promote_skill(name='', to_tier='advanced', source='training')` reasons: already_promoted, no_skill, rule_refused, tier_must_advanced_specialized
@@ -571,6 +585,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - modes: classic; described in the docs: no
 - refreshes on its topic `spells` and on the commands that refresh every panel
 - returns: map
+- `damage`: tuple[]
 - `mana`: map
   - `current`: int
   - `max`: int
@@ -588,9 +603,10 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - commands:
   - `buy_spell_upgrade(spid='', name='', metamagic=0, source='training')` reasons: metamagic_circles_cannot_negative, no_spell, not_enough_slots_uses, upgrade_needs_name
   - `cast_spell(circle=1, cast_actions=Ref('actions.standard'=2), mana_cost=None, from_item=False, overload=None, penalty_balance=0)` reasons: casting_blocked, character_not_caster, circle_out_of_range, not_enough_mana_slots, over_mana_level, penalty_paid_balance_must
-  - `learn_spell(name='', circle=1, discount=False, source='training')` reasons: circle_must_0_9, spell_needs_name
+  - `learn_spell(name='', circle=1, discount=None, source='training')` reasons: circle_must_0_9, spell_needs_name
   - `resolve_spell_failure(failed=False)`
   - `restore_mana(amount=0)` reasons: amount_must_0, restoring_blocked
+  - `set_spell_damage(spid='', damage=())` reasons: not_found
 
 ## statuses
 
@@ -648,7 +664,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_item_qualification(iid='', source='training')` reasons: already_qualified, needs_no_qualification
   - `buy_language(lid='', title='', native=False, projects=1, source='training')` reasons: language_already_known, language_needs_name, rule_refused
   - `buy_maneuver(name='', source='training', **fields)`
-  - `buy_professionalism(skills=(), class_skill_points=0, source='training')` reasons: already_specialized, choose_exactly_different_skills, no_skill, professionalism_already_bought, professionalism_needs_class_least
+  - `buy_professionalism(skills=(), class_skill_points=0, source='training')` reasons: already_specialized, choose_exactly_different_skills, class_own_professionalism, no_skill, not_class_skill, professionalism_already_bought, professionalism_needs_class_least
   - `buy_reaction(source='training')`
   - `buy_seed(name='', source='training')` reasons: seed_needs_name
   - `buy_shield_grade(source='training')`
@@ -658,7 +674,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `convert_attention()` reasons: no_attention
   - `end_cycle()`
   - `exchange_comfort(n=1)` reasons: exchange_least_1_comfort, not_enough_comfort_have
-  - `learn_spell(name='', circle=1, discount=False, source='training')` reasons: circle_must_0_9, spell_needs_name
+  - `learn_spell(name='', circle=1, discount=None, source='training')` reasons: circle_must_0_9, spell_needs_name
   - `make_language_native(lid='', source='training')` reasons: already_native, no_language
   - `promote_skill(name='', to_tier='advanced', source='training')` reasons: already_promoted, no_skill, rule_refused, tier_must_advanced_specialized
   - `set_drive_level(did='', level=0)`

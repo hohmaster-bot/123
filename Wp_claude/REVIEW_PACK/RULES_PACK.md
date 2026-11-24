@@ -479,6 +479,10 @@ above and temp HP BEFORE the absorbers: OPEN_QUESTIONS Q151.)
 #### Damage roll and pain [package 22 B5]
 - The damage roll is a roll with a die: the pain penalty and morale apply to it, like to the attack roll
   (resources.md "Pain", defense.md "Morale").
+- [package 25 F] Spell damage as data: components {dice count (formula, may use level), die size, flat
+  (formula), damage type (one of the 12), area (single / cone / line / burst / other), range, save, save effect}.
+  The spell view gives them for the caster level with the pain penalty and morale of the damage roll; the app
+  never rolls dice.
 
 ## File: buffs.md
 
@@ -1340,6 +1344,20 @@ See weapons.md (full rules). Training cost = (30+5X)*difficulty*scale per grade.
   ("slots" here = the "stars" above.) Tests for later code: two identical upgrades = 1 + 2 = 3 slots (full);
   a metamagic of +2 circles takes 2 slots.
 
+#### Class system v0 (package 25) [OWNER consent, package 25 B; ASSUMPTION values marked]
+- One class per character (no multiclass); a class is a catalog entry (kind "classes"): hit die, BAB growth
+  (good / medium / poor), a progression per save (good / poor), class skill list, spellbook flag, divine flag, spell
+  failure mode default, own professionalism flag, notes. Shipped entries are SAMPLES (fighter-like, mage-like with a
+  spellbook, cleric-like divine).
+- No class: BAB and base saves are typed by hand, as before. With a class they are derived from class + level; a
+  hand-typed override wins when it is set.
+- ASSUMPTION (data constants, editable): BAB = level * factor (good 1, medium 0.75, poor 0.5), rounded down;
+  good save = 2 + level / 2, poor save = level / 3, rounded down. Tests: good level 5 = 4, poor level 5 = 1.
+- The class hit die caps level_up. The spellbook flag makes learn_spell half price by default; the divine flag
+  makes the spell failure mode default "balance to 0".
+- Professionalism (training.md, closes Q104): a class with its own professionalism refuses the 300 option; the
+  chosen skills must be in the class skill list.
+
 ## File: skills.md
 
 ### Skills [OWNER]
@@ -1489,6 +1507,10 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   "<weapon node id>:<slot>" (spend_charge / set_charges / restore_charges). restore_all_balance(pick_id) spends the
   charge and sets the balance to its max (no dice, nothing else; refused while a block_restore covers the balance,
   Q128). The app tracks abilities and never rolls dice.
+- [package 25 E] The stored-only picks "one attack per turn without the [attack] tag", "ignore the first
+  vulnerability in a fight" and "ignore 20% cover" are shown as available abilities in the attack and defense
+  views. "Ignore the first vulnerability in a fight" is once per fight: a usage charge (max 1, recharge at the end
+  of combat). No numbers change.
 
 ## File: narrative.md
 
@@ -1535,6 +1557,12 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
 #### Not built on purpose [OWNER, package 17, closes Q122]
 - Experience (XP) and money are NARRATIVE: no mechanics, no counters, no prices in the app. There is no "start session"
   and no "end of session" button: only the end of cycle (above).
+
+#### Drives: level notes and principles (package 25) [OWNER]
+- A drive list with numbers 0-5, the bonus/penalty text beside each level, and a principle = a narrative
+  description the player must write when the drive is 2+.
+- [package 25 C] The texts are narrative only (no calculation). From level 2 (data constant) the drive shows a
+  reminder while the principle is empty; it never blocks anything. The attention income is unchanged.
 
 ## File: catalog.md
 
@@ -1885,6 +1913,9 @@ and never refunds. Prices are the constants of wp/core/training.py (data, not sc
 - buy_item_qualification(iid): 50 * N (N = Item.qualification_n); refused without N or twice. What the qualification
   unlocks is not modelled (Q109).
 - Tests: package 15 (test_pkg15.py), every price with the numbers above.
+- [package 25 D, closes Q109] Qualification unlocks the hidden properties of the item: each property has a
+  minimum qualification level; below it the item shows "???", at or above it the text and its effects act (in the
+  tab it belongs to: base = not activated, or activated). The purchase stays 50 * N for qualification N at once.
 
 ## File: crafting.md
 
@@ -2161,6 +2192,12 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | ac_zones.ranged_ignores_parry | 1 | flag | 1 = parry does not work against ranged attacks (package 24 B1) |
 | ac_zones.ranged_keeps_shield | 1 | flag | 1 = the shield bonus counts against ranged attacks in covered cells (package 24 B1) |
 | ac_zones.dex_loss_chance_pct | 0 | percent | chance that the Dex loss is cancelled in a Dex-loss cell; effects add (package 24 B1) |
+| class.bab_factor | {"good": 1.0, "medium": 0.75, "poor": 0.5} | factor | ASSUMPTION (PF-like, Q167): BAB = level * factor, rounded down |
+| class.save_good_base | 2 | points | ASSUMPTION (ROADMAP): good save = base + level / divisor, rounded down |
+| class.save_good_divisor | 2 | levels | ASSUMPTION (ROADMAP): good save divisor |
+| class.save_poor_divisor | 3 | levels | ASSUMPTION (ROADMAP): poor save = level / divisor, rounded down |
+| narrative.principle_min_level | 2 | level | a drive at this level or higher expects a principle (reminder only) |
+| spells.areas | ["single", "cone", "line", "burst", "other"] | ids | area ids of spell damage components (package 25 F) |
 
 ### Damage types (damage_types.json)
 
