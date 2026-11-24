@@ -1,0 +1,227 @@
+fuzz5: sequences 420, steps 20565, ok 8247, commands used 131 of 131, distinct findings 225
+- BP below 0 | seed 167 step 22 | short_rest {'other_heal': '3', 'extra_bp': '-1000000000', 'keep_overcap': 'True'}
+- EXCEPTION AttributeError in add_entry: 'dict' object has no attribute 'tid' | seed 107 step 29 | add_entry {'collection': 'templates', 'record': '{}'}
+- EXCEPTION AttributeError in add_entry: 'float' object has no attribute 'spid' | seed 1 step 18 | add_entry {'collection': 'spells', 'record': 'nan'}
+- EXCEPTION AttributeError in add_entry: 'float' object has no attribute 'tid' | seed 202 step 47 | add_entry {'collection': 'templates', 'record': '2.5'}
+- EXCEPTION AttributeError in add_entry: 'int' object has no attribute 'kid' | seed 185 step 46 | add_entry {'collection': 'quirks', 'record': '1000000000000000000'}
+- EXCEPTION AttributeError in add_entry: 'int' object has no attribute 'spid' | seed 93 step 21 | add_entry {'collection': 'spells', 'record': '1000000000000000000'}
+- EXCEPTION AttributeError in add_entry: 'int' object has no attribute 'tid' | seed 56 step 38 | add_entry {'collection': 'templates', 'record': '-1000000000'}
+- EXCEPTION AttributeError in add_entry: 'str' object has no attribute 'kid' | seed 330 step 37 | add_entry {'collection': 'quirks', 'record': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}
+- EXCEPTION AttributeError in add_entry: 'str' object has no attribute 'spid' | seed 216 step 21 | add_entry {'collection': 'spells', 'record': ''}
+- EXCEPTION AttributeError in add_feat: 'bool' object has no attribute 'get' | seed 286 step 46 | add_feat {'catalog': 'True', 'fid': '1000000000000000000', 'source': 'zzz'}
+- EXCEPTION AttributeError in add_feat: 'float' object has no attribute 'get' | seed 28 step 41 | add_feat {'catalog': '2.5', 'source': 'training'}
+- EXCEPTION AttributeError in add_feat: 'int' object has no attribute 'get' | seed 387 step 2 | add_feat {'catalog': '1000000000000000000', 'fid': 'inf', 'source': '-1000000000'}
+- EXCEPTION AttributeError in add_feat: 'str' object has no attribute 'get' | seed 50 step 34 | add_feat {'catalog': '../../etc', 'fid': 'power', 'source': 'training'}
+- EXCEPTION AttributeError in add_skill: 'NoneType' object has no attribute 'param' | seed 114 step 14 | add_skill {'catalog': '{}', 'tid': 'nope', 'sub': 'жук'}
+- EXCEPTION AttributeError in add_skill: 'bool' object has no attribute 'get' | seed 35 step 21 | add_skill {'catalog': 'True', 'sub': '-0.0'}
+- EXCEPTION AttributeError in add_skill: 'float' object has no attribute 'get' | seed 98 step 0 | add_skill {'catalog': '-0.0', 'tid': 'nope', 'sub': 'a'}
+- EXCEPTION AttributeError in add_skill: 'int' object has no attribute 'get' | seed 143 step 0 | add_skill {'catalog': '-1000000000', 'tid': 'nope', 'sub': 'a'}
+- EXCEPTION AttributeError in add_skill: 'str' object has no attribute 'get' | seed 31 step 1 | add_skill {'catalog': '', 'tid': '-1', 'sub': 'жук'}
+- EXCEPTION AttributeError in add_skill: 'tuple' object has no attribute 'get' | seed 45 step 25 | add_skill {'catalog': "('a',)", 'tid': 'nope', 'sub': 'a'}
+- EXCEPTION AttributeError in add_status: 'dict' object has no attribute 'effects' | seed 38 step 16 | add_status {'status': '{}', 'ticks': '3', 'active': 'True'}
+- EXCEPTION AttributeError in add_status: 'float' object has no attribute 'effects' | seed 166 step 41 | add_status {'status': '-0.0', 'ticks': '0', 'active': 'True'}
+- EXCEPTION AttributeError in add_status: 'int' object has no attribute 'effects' | seed 9 step 24 | add_status {'status': '-1000000000', 'ticks': '3', 'active': 'False'}
+- EXCEPTION AttributeError in add_status: 'list' object has no attribute 'effects' | seed 10 step 48 | add_status {'status': '[]', 'ticks': '12', 'active': 'True'}
+- EXCEPTION AttributeError in add_status: 'str' object has no attribute 'effects' | seed 22 step 3 | add_status {'status': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'ticks': '3'}
+- EXCEPTION AttributeError in add_template: 'bool' object has no attribute 'name' | seed 210 step 35 | add_template {'template': 'True'}
+- EXCEPTION AttributeError in add_template: 'dict' object has no attribute 'name' | seed 183 step 20 | add_template {'template': '{}'}
+- EXCEPTION AttributeError in add_template: 'float' object has no attribute 'name' | seed 23 step 17 | add_template {'template': '2.5'}
+- EXCEPTION AttributeError in add_template: 'int' object has no attribute 'name' | seed 106 step 31 | add_template {'template': '-1000000000'}
+- EXCEPTION AttributeError in add_template: 'str' object has no attribute 'name' | seed 9 step 30 | add_template {'template': ''}
+- EXCEPTION AttributeError in add_template: 'tuple' object has no attribute 'name' | seed 240 step 6 | add_template {'template': "('a',)"}
+- EXCEPTION AttributeError in long_rest: 'int' object has no attribute 'items' | seed 187 step 31 | long_rest {}
+- EXCEPTION AttributeError in set_class: 'float' object has no attribute 'user' | seed 327 step 48 | set_class {'class_id': 'a', 'catalog': '-0.0'}
+- EXCEPTION AttributeError in set_class: 'int' object has no attribute 'user' | seed 286 step 39 | set_class {'class_id': 'nope', 'catalog': '-1'}
+- EXCEPTION AttributeError in set_class: 'list' object has no attribute 'user' | seed 146 step 7 | set_class {'class_id': 'a', 'catalog': '[]'}
+- EXCEPTION AttributeError in set_class: 'str' object has no attribute 'user' | seed 241 step 45 | set_class {'class_id': '-1', 'catalog': ''}
+- EXCEPTION AttributeError in short_rest: 'int' object has no attribute 'items' | seed 159 step 5 | short_rest {'other_heal': "('a',)", 'extra_bp': '12', 'keep_overcap': 'False'}
+- EXCEPTION AttributeError in take_damage: 'bool' object has no attribute 'flat' | seed 103 step 24 | take_damage {'amount': '1', 'dtype': 'cold', 'parts': 'None', 'reductions': 'True', 'skip': '()'}
+- EXCEPTION AttributeError in take_damage: 'float' object has no attribute 'flat' | seed 14 step 21 | take_damage {'amount': '0', 'dtype': 'cold', 'parts': 'None', 'reductions': 'nan', 'skip': '()'}
+- EXCEPTION AttributeError in take_damage: 'int' object has no attribute 'flat' | seed 325 step 24 | take_damage {'amount': '1', 'dtype': 'cold', 'parts': 'None', 'reductions': '1000000000000000000', 'skip': '()'}
+- EXCEPTION AttributeError in take_damage: 'str' object has no attribute 'flat' | seed 28 step 36 | take_damage {'dtype': 'nope', 'parts': 'None', 'reductions': '../../etc', 'skip': '()'}
+- EXCEPTION OverflowError in activate_status: cannot convert float infinity to integer | seed 1 step 13 | activate_status {'sid': 'calm', 'ticks': 'inf'}
+- EXCEPTION OverflowError in add_drive: cannot convert float infinity to integer | seed 365 step 22 | add_drive {'name': 'climb', 'level': 'inf', 'level_notes': 'None', 'text': 'a'}
+- EXCEPTION OverflowError in add_pool: cannot convert float infinity to integer | seed 96 step 12 | add_pool {'name': '', 'current': 'inf', 'restore': ''}
+- EXCEPTION OverflowError in attention_to_base_points: cannot convert float infinity to integer | seed 151 step 28 | attention_to_base_points {'n': 'inf'}
+- EXCEPTION OverflowError in cast_spell: cannot convert float infinity to integer | seed 135 step 46 | cast_spell {'cast_actions': '5', 'mana_cost': 'inf', 'from_item': 'True', 'overload': '-1000000000', 'penalty_balance': '-1000000000'}
+- EXCEPTION OverflowError in exchange_comfort: cannot convert float infinity to integer | seed 99 step 45 | exchange_comfort {'n': 'inf'}
+- EXCEPTION OverflowError in level_up: cannot convert float infinity to integer | seed 341 step 38 | level_up {'hp_roll': 'inf'}
+- EXCEPTION OverflowError in pay_hp_cost: cannot convert float infinity to integer | seed 348 step 37 | pay_hp_cost {'amount': 'inf'}
+- EXCEPTION OverflowError in remove_ot_attention: cannot convert float infinity to integer | seed 180 step 13 | remove_ot_attention {'n': 'inf'}
+- EXCEPTION OverflowError in remove_ot_comfort: cannot convert float infinity to integer | seed 297 step 18 | remove_ot_comfort {'n': 'inf'}
+- EXCEPTION OverflowError in restore_mana: cannot convert float infinity to integer | seed 70 step 47 | restore_mana {'amount': 'inf'}
+- EXCEPTION OverflowError in set_bab_override: cannot convert float infinity to integer | seed 210 step 40 | set_bab_override {'value': 'inf'}
+- EXCEPTION OverflowError in set_hp_roll: cannot convert float infinity to integer | seed 251 step 0 | set_hp_roll {'level': '12', 'value': 'inf'}
+- EXCEPTION OverflowError in set_item_hp: cannot convert float infinity to integer | seed 186 step 47 | set_item_hp {'iid': 'sh', 'value': 'inf'}
+- EXCEPTION OverflowError in set_iterative_count: cannot convert float infinity to integer | seed 26 step 18 | set_iterative_count {'n': 'inf'}
+- EXCEPTION OverflowError in set_save_override: cannot convert float infinity to integer | seed 146 step 38 | set_save_override {'save': 'fort', 'value': 'inf'}
+- EXCEPTION OverflowError in set_temp_hp: cannot convert float infinity to integer | seed 255 step 11 | set_temp_hp {'value': 'inf'}
+- EXCEPTION OverflowError in set_value: cannot convert float infinity to integer | seed 113 step 32 | set_value {'resource': 'comfort', 'value': 'inf'}
+- EXCEPTION OverflowError in short_rest: cannot convert float infinity to integer | seed 71 step 42 | short_rest {'other_heal': '[]', 'extra_bp': 'inf'}
+- EXCEPTION OverflowError in spend_balance: cannot convert float infinity to integer | seed 61 step 8 | spend_balance {'n': 'inf'}
+- EXCEPTION OverflowError in spend_pool: cannot convert float infinity to integer | seed 294 step 30 | spend_pool {'pid': 'fp', 'n': 'inf'}
+- EXCEPTION OverflowError in spend_reaction: cannot convert float infinity to integer | seed 366 step 49 | spend_reaction {'n': 'inf'}
+- EXCEPTION OverflowError in take_damage: cannot convert float infinity to integer | seed 216 step 17 | take_damage {'amount': 'inf', 'dtype': 'fire', 'parts': 'None', 'reductions': 'None', 'skip': '()'}
+- EXCEPTION TypeError in activate_item: unhashable type: 'dict' | seed 229 step 45 | activate_item {'iid': 'dg', 'kind': '{}'}
+- EXCEPTION TypeError in activate_item: unhashable type: 'list' | seed 58 step 37 | activate_item {'iid': 'ar', 'kind': '[]'}
+- EXCEPTION TypeError in activate_status: int() argument must be a string, a bytes-like object or a real number, | seed 197 step 40 | activate_status {'sid': 'guard', 'ticks': '[]'}
+- EXCEPTION TypeError in add_drive: 'bool' object is not iterable | seed 294 step 19 | add_drive {'name': 'climb', 'level': 'жук', 'principle': '', 'level_notes': 'True', 'text': ''}
+- EXCEPTION TypeError in add_drive: 'float' object is not iterable | seed 52 step 40 | add_drive {'name': 'str', 'principle': 'nope', 'level_notes': 'nan', 'text': 'nope'}
+- EXCEPTION TypeError in add_drive: 'int' object is not iterable | seed 112 step 4 | add_drive {'name': 'new thing', 'level': '12', 'principle': 'a', 'level_notes': '1000000000000000000', 'text': 'nope'}
+- EXCEPTION TypeError in add_drive: int() argument must be a string, a bytes-like object or a real number, | seed 49 step 39 | add_drive {'name': 'con', 'level': 'None', 'principle': '', 'level_notes': 'None', 'text': 'nope'}
+- EXCEPTION TypeError in add_entry: unhashable type: 'dict' | seed 247 step 33 | add_entry {'collection': '{}', 'record': '1000000000000000000'}
+- EXCEPTION TypeError in add_hidden_property: 'int' object is not iterable | seed 5 step 49 | add_hidden_property {'iid': 'sw', 'effects': '1000000000000000000', 'min_qualification': '2'}
+- EXCEPTION TypeError in add_injury: unhashable type: 'dict' | seed 326 step 30 | add_injury {'severity': '{}', 'name': 'dex'}
+- EXCEPTION TypeError in add_injury: unhashable type: 'list' | seed 247 step 31 | add_injury {'severity': '[]'}
+- EXCEPTION TypeError in add_note: unhashable type: 'list' | seed 205 step 46 | add_note {'kind': '[]', 'name': 'climb'}
+- EXCEPTION TypeError in add_pool: int() argument must be a string, a bytes-like object or a real number, | seed 122 step 5 | add_pool {'name': 'dex', 'max': '[]', 'current': '0', 'restore': 'a'}
+- EXCEPTION TypeError in attention_to_base_points: int() argument must be a string, a bytes-like object or a real number, | seed 18 step 17 | attention_to_base_points {'n': '[]'}
+- EXCEPTION TypeError in attention_to_training: 'int' object is not subscriptable | seed 159 step 37 | attention_to_training {}
+- EXCEPTION TypeError in attention_to_training: int() argument must be a string, a bytes-like object or a real number, | seed 280 step 25 | attention_to_training {'n': "('a',)"}
+- EXCEPTION TypeError in buy_ability: unhashable type: 'dict' | seed 234 step 8 | buy_ability {'name': '{}', 'source': 'free'}
+- EXCEPTION TypeError in buy_combat_basics: unhashable type: 'dict' | seed 67 step 45 | buy_combat_basics {'wid': '{}', 'source': 'zzz'}
+- EXCEPTION TypeError in buy_combat_basics: unhashable type: 'list' | seed 79 step 10 | buy_combat_basics {'wid': '[]', 'source': '-1000000000'}
+- EXCEPTION TypeError in buy_language: int() argument must be a string, a bytes-like object or a real number, | seed 35 step 16 | buy_language {'title': 'nope', 'native': 'False', 'projects': '{}', 'source': 'zzz'}
+- EXCEPTION TypeError in buy_professionalism: 'NoneType' object is not iterable | seed 166 step 5 | buy_professionalism {'skills': 'None', 'class_skill_points': '15'}
+- EXCEPTION TypeError in buy_professionalism: 'float' object is not iterable | seed 269 step 7 | buy_professionalism {'skills': 'inf', 'class_skill_points': '18', 'source': 'training'}
+- EXCEPTION TypeError in buy_professionalism: int() argument must be a string, a bytes-like object or a real number, | seed 51 step 7 | buy_professionalism {'skills': '()', 'class_skill_points': "('a',)"}
+- EXCEPTION TypeError in buy_skill_rank: int() argument must be a string, a bytes-like object or a real number, | seed 210 step 28 | buy_skill_rank {'name': 'climb', 'target': '[]'}
+- EXCEPTION TypeError in buy_weapon_grade: unhashable type: 'dict' | seed 384 step 28 | buy_weapon_grade {'wid': '{}', 'source': 'zzz'}
+- EXCEPTION TypeError in buy_weapon_grade: unhashable type: 'list' | seed 255 step 46 | buy_weapon_grade {'wid': '[]'}
+- EXCEPTION TypeError in cast_spell: int() argument must be a string, a bytes-like object or a real number, | seed 44 step 45 | cast_spell {'circle': '5', 'cast_actions': '8', 'mana_cost': 'None', 'from_item': 'inf', 'overload': 'None', 'penalty_balance': '{}'}
+- EXCEPTION TypeError in damage_item: '<' not supported between instances of 'NoneType' and 'int' | seed 337 step 16 | damage_item {'iid': 'ring', 'amount': 'None'}
+- EXCEPTION TypeError in damage_item: '<' not supported between instances of 'dict' and 'int' | seed 273 step 39 | damage_item {'iid': 'ar', 'amount': '{}'}
+- EXCEPTION TypeError in damage_item: '<' not supported between instances of 'str' and 'int' | seed 86 step 24 | damage_item {'iid': 'ar', 'amount': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}
+- EXCEPTION TypeError in damage_to_balance: 'int' object is not subscriptable | seed 159 step 11 | damage_to_balance {'amount': '12'}
+- EXCEPTION TypeError in damage_to_balance: int() argument must be a string, a bytes-like object or a real number, | seed 84 step 47 | damage_to_balance {'amount': 'None'}
+- EXCEPTION TypeError in edit_entry: unhashable type: 'dict' | seed 86 step 35 | edit_entry {'collection': '{}', 'oid': ''}
+- EXCEPTION TypeError in edit_entry: unhashable type: 'list' | seed 359 step 44 | edit_entry {'collection': '[]', 'oid': '', 'current': '3'}
+- EXCEPTION TypeError in edit_pool: '<' not supported between instances of 'NoneType' and 'int' | seed 141 step 13 | edit_pool {'pid': 'ki', 'max': 'None'}
+- EXCEPTION TypeError in end_cycle: 'int' object is not subscriptable | seed 159 step 9 | end_cycle {}
+- EXCEPTION TypeError in exchange_comfort: int() argument must be a string, a bytes-like object or a real number, | seed 97 step 12 | exchange_comfort {'n': 'None'}
+- EXCEPTION TypeError in hit_item: '<' not supported between instances of 'NoneType' and 'int' | seed 188 step 17 | hit_item {'iid': 'sw', 'damage': 'None'}
+- EXCEPTION TypeError in hit_item: '<' not supported between instances of 'dict' and 'int' | seed 246 step 7 | hit_item {'iid': 'ring', 'damage': '{}'}
+- EXCEPTION TypeError in hit_item: '<' not supported between instances of 'str' and 'int' | seed 206 step 15 | hit_item {'iid': 'sh', 'damage': '../../etc'}
+- EXCEPTION TypeError in hit_item: '<' not supported between instances of 'tuple' and 'int' | seed 62 step 39 | hit_item {'iid': 'ar', 'damage': "('a',)"}
+- EXCEPTION TypeError in learn_spell: int() argument must be a string, a bytes-like object or a real number, | seed 61 step 0 | learn_spell {'name': 'str', 'circle': '[]', 'discount': 'None', 'source': 'zzz'}
+- EXCEPTION TypeError in level_up: int() argument must be a string, a bytes-like object or a real number, | seed 65 step 18 | level_up {'hp_roll': '[]'}
+- EXCEPTION TypeError in pay_hp_cost: 'int' object is not subscriptable | seed 187 step 29 | pay_hp_cost {'amount': '2'}
+- EXCEPTION TypeError in pay_hp_cost: int() argument must be a string, a bytes-like object or a real number, | seed 277 step 36 | pay_hp_cost {'amount': '[]'}
+- EXCEPTION TypeError in remove_entry: unhashable type: 'dict' | seed 95 step 15 | remove_entry {'collection': '{}', 'oid': 'a'}
+- EXCEPTION TypeError in remove_ot_attention: int() argument must be a string, a bytes-like object or a real number, | seed 127 step 9 | remove_ot_attention {'n': '{}'}
+- EXCEPTION TypeError in remove_ot_comfort: int() argument must be a string, a bytes-like object or a real number, | seed 82 step 40 | remove_ot_comfort {'n': '{}'}
+- EXCEPTION TypeError in reset_char_setting: unhashable type: 'dict' | seed 319 step 42 | reset_char_setting {'key': '{}'}
+- EXCEPTION TypeError in reset_char_setting: unhashable type: 'list' | seed 170 step 1 | reset_char_setting {'key': '[]'}
+- EXCEPTION TypeError in reset_rule_setting: unhashable type: 'dict' | seed 64 step 13 | reset_rule_setting {'key': '{}'}
+- EXCEPTION TypeError in restore: '<' not supported between instances of 'NoneType' and 'int' | seed 65 step 5 | restore {'resource': 'balance', 'amount': 'None'}
+- EXCEPTION TypeError in restore: '<' not supported between instances of 'dict' and 'int' | seed 141 step 27 | restore {'resource': 'mana', 'amount': '{}'}
+- EXCEPTION TypeError in restore: '<' not supported between instances of 'str' and 'int' | seed 15 step 8 | restore {'resource': 'nope', 'amount': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}
+- EXCEPTION TypeError in restore: '<' not supported between instances of 'tuple' and 'int' | seed 73 step 40 | restore {'resource': 'nope', 'amount': "('a',)"}
+- EXCEPTION TypeError in restore: unhashable type: 'dict' | seed 161 step 39 | restore {'resource': '{}', 'amount': '13'}
+- EXCEPTION TypeError in restore: unhashable type: 'list' | seed 29 step 42 | restore {'resource': '[]', 'amount': '0'}
+- EXCEPTION TypeError in restore_mana: int() argument must be a string, a bytes-like object or a real number, | seed 9 step 8 | restore_mana {'amount': 'None'}
+- EXCEPTION TypeError in set_bab_override: int() argument must be a string, a bytes-like object or a real number, | seed 132 step 7 | set_bab_override {'value': '[]'}
+- EXCEPTION TypeError in set_base_speed: int() argument must be a string, a bytes-like object or a real number, | seed 12 step 0 | set_base_speed {'feet': '[]'}
+- EXCEPTION TypeError in set_char_setting: unhashable type: 'list' | seed 71 step 5 | set_char_setting {'key': '[]', 'value': '1000000000000000000'}
+- EXCEPTION TypeError in set_condition_tag: unhashable type: 'list' | seed 223 step 4 | set_condition_tag {'target': '[]', 'oid': '{}'}
+- EXCEPTION TypeError in set_hp_roll: int() argument must be a string, a bytes-like object or a real number, | seed 120 step 6 | set_hp_roll {'level': '[]', 'value': '3'}
+- EXCEPTION TypeError in set_item_hp: int() argument must be a string, a bytes-like object or a real number, | seed 212 step 8 | set_item_hp {'iid': 'dg', 'value': '{}'}
+- EXCEPTION TypeError in set_iterative_count: int() argument must be a string, a bytes-like object or a real number, | seed 150 step 10 | set_iterative_count {'n': '{}'}
+- EXCEPTION TypeError in set_rule_setting: unhashable type: 'dict' | seed 356 step 48 | set_rule_setting {'key': '{}', 'value': '0'}
+- EXCEPTION TypeError in set_spell_damage: 'int' object is not iterable | seed 96 step 49 | set_spell_damage {'spid': 'lore', 'damage': '7'}
+- EXCEPTION TypeError in set_status_duration: int() argument must be a string, a bytes-like object or a real number, | seed 159 step 27 | set_status_duration {'sid': 'aura', 'remaining': 'None'}
+- EXCEPTION TypeError in set_temp_hp: '<' not supported between instances of 'NoneType' and 'int' | seed 54 step 48 | set_temp_hp {'value': 'None'}
+- EXCEPTION TypeError in set_temp_hp: '<' not supported between instances of 'dict' and 'int' | seed 74 step 36 | set_temp_hp {'value': '{}'}
+- EXCEPTION TypeError in set_temp_hp: '<' not supported between instances of 'str' and 'int' | seed 50 step 6 | set_temp_hp {'value': 'жук'}
+- EXCEPTION TypeError in set_temp_hp: '<' not supported between instances of 'tuple' and 'int' | seed 5 step 20 | set_temp_hp {'value': "('a',)"}
+- EXCEPTION TypeError in set_value: int() argument must be a string, a bytes-like object or a real number, | seed 125 step 41 | set_value {'resource': 'bp', 'value': "('a',)"}
+- EXCEPTION TypeError in set_value: unhashable type: 'list' | seed 62 step 26 | set_value {'resource': '[]', 'value': '-1'}
+- EXCEPTION TypeError in short_rest: 'NoneType' object is not iterable | seed 16 step 39 | short_rest {'spends': 'None', 'other_heal': '5', 'extra_bp': '0', 'keep_overcap': 'False'}
+- EXCEPTION TypeError in short_rest: 'float' object is not iterable | seed 70 step 15 | short_rest {'spends': '-0.0', 'other_heal': '5', 'extra_bp': '8', 'keep_overcap': 'False'}
+- EXCEPTION TypeError in short_rest: 'int' object is not iterable | seed 296 step 23 | short_rest {'spends': '-1', 'other_heal': '12', 'extra_bp': '8', 'keep_overcap': 'False'}
+- EXCEPTION TypeError in short_rest: int() argument must be a string, a bytes-like object or a real number, | seed 20 step 45 | short_rest {'spends': '()', 'other_heal': '-1', 'extra_bp': 'None'}
+- EXCEPTION TypeError in spend_balance: int() argument must be a string, a bytes-like object or a real number, | seed 95 step 47 | spend_balance {'n': '[]'}
+- EXCEPTION TypeError in spend_bp: '<' not supported between instances of 'NoneType' and 'int' | seed 16 step 9 | spend_bp {'n': 'None'}
+- EXCEPTION TypeError in spend_bp: '<' not supported between instances of 'dict' and 'int' | seed 257 step 1 | spend_bp {'n': '{}'}
+- EXCEPTION TypeError in spend_bp: '<' not supported between instances of 'str' and 'int' | seed 127 step 48 | spend_bp {'n': '../../etc'}
+- EXCEPTION TypeError in spend_bp: '<' not supported between instances of 'tuple' and 'int' | seed 296 step 38 | spend_bp {'n': "('a',)"}
+- EXCEPTION TypeError in spend_ov: int() argument must be a string, a bytes-like object or a real number, | seed 27 step 15 | spend_ov {'n': 'None'}
+- EXCEPTION TypeError in spend_pool: int() argument must be a string, a bytes-like object or a real number, | seed 324 step 3 | spend_pool {'pid': 'ki', 'n': 'None'}
+- EXCEPTION TypeError in spend_reaction: int() argument must be a string, a bytes-like object or a real number, | seed 14 step 23 | spend_reaction {'n': '[]'}
+- EXCEPTION TypeError in take_damage: 'NoneType' object is not iterable | seed 195 step 42 | take_damage {'amount': '2', 'dtype': 'nope', 'parts': 'None', 'reductions': '-0.0', 'skip': 'None'}
+- EXCEPTION TypeError in take_damage: 'bool' object is not iterable | seed 43 step 36 | take_damage {'amount': '1000000000000000000', 'dtype': 'physical', 'parts': 'None', 'reductions': 'None', 'skip': 'True'}
+- EXCEPTION TypeError in take_damage: 'float' object is not iterable | seed 61 step 10 | take_damage {'amount': '1', 'dtype': 'cold', 'skip': '2.5'}
+- EXCEPTION TypeError in take_damage: 'int' object is not iterable | seed 51 step 26 | take_damage {'amount': '15', 'dtype': 'fire', 'parts': '-1000000000', 'skip': '()'}
+- EXCEPTION TypeError in take_damage: can only concatenate str (not "float") to str | seed 57 step 2 | take_damage {'amount': '2', 'dtype': '2.5', 'parts': 'None', 'reductions': 'None', 'skip': '()'}
+- EXCEPTION TypeError in take_damage: can only concatenate str (not "int") to str | seed 45 step 0 | take_damage {'amount': '1', 'dtype': '1000000000000000000', 'skip': '()'}
+- EXCEPTION TypeError in take_damage: can only concatenate str (not "tuple") to str | seed 51 step 23 | take_damage {'dtype': "('a',)", 'parts': 'None'}
+- EXCEPTION TypeError in take_damage: int() argument must be a string, a bytes-like object or a real number, | seed 44 step 43 | take_damage {'amount': 'None', 'dtype': 'physical', 'parts': 'None', 'reductions': 'None', 'skip': '()'}
+- EXCEPTION TypeError in use_consumable: int() argument must be a string, a bytes-like object or a real number, | seed 128 step 45 | use_consumable {'iid': 'pot', 'n': 'None'}
+- balance below 0 | seed 140 step 19 | set_value {'resource': 'balance', 'value': '-1'}
+- derived view raised KeyError: 'nope' | seed 111 step 48 | add_attack {'iid': 'dg', 'grip': 'two', 'stat': 'nope', 'rid': 'nope'}
+- derived view raised TypeError: 'int' object is not subscriptable | seed 159 step 2 | edit_sheet {'abilities': '3'}
+- derived view raised TypeError: can only concatenate str (not "bool") to str | seed 276 step 38 | add_attack {'iid': 'dg', 'grip': 'off', 'stat': 'True'}
+- derived view raised TypeError: int() argument must be a string, a bytes-like object or a real number, not 'NoneType' | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+- mana or slot below 0 | seed 38 step 13 | set_value {'resource': 'mana', 'value': '-1'}
+- pool read out of bounds | seed 7 step 20 | edit_ability {'name': 'con', 'base': '5'}
+- resource below 0 | seed 70 step 39 | set_value {'resource': 'spirit', 'value': '-1'}
+- save/load round trip differs | seed 3 step 45 | buy_language {'title': 'nope', 'native': 'nan', 'projects': '5', 'source': 'free'}
+- view attacks raised KeyError | seed 111 step 48 | add_attack {'iid': 'dg', 'grip': 'two', 'stat': 'nope', 'rid': 'nope'}
+- view attacks raised TypeError | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+- view combat raised TypeError | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+- view defense raised TypeError | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+- view items raised TypeError | seed 159 step 2 | edit_sheet {'abilities': '3'}
+- view log has NaN/inf at [0].params['source'] | seed 257 step 0 | buy_language {'lid': '', 'title': 'nope', 'native': 'False', 'projects': '2', 'source': 'nan'}
+- view log has NaN/inf at [0].params['value'] | seed 152 step 5 | set_item_masterwork {'iid': 'sh', 'value': 'inf'}
+- view log has NaN/inf at [10].params['discount'] | seed 416 step 44 | learn_spell {'name': 'lore', 'circle': '8', 'discount': 'nan', 'source': 'free'}
+- view log has NaN/inf at [10].params['name'] | seed 83 step 39 | buy_seed {'name': 'inf', 'source': 'zzz'}
+- view log has NaN/inf at [10].params['source'] | seed 75 step 30 | buy_seed {'name': 'con', 'source': 'nan'}
+- view log has NaN/inf at [10].params['swap'] | seed 408 step 33 | equip_item {'iid': 'sw', 'swap': 'inf'}
+- view log has NaN/inf at [10].params['value'] | seed 402 step 37 | set_status_favorite {'sid': 'heal', 'value': 'nan'}
+- view log has NaN/inf at [12].params['name'] | seed 177 step 44 | learn_spell {'name': 'inf', 'circle': '-0.0', 'discount': 'None', 'source': 'free'}
+- view log has NaN/inf at [12].params['source'] | seed 259 step 30 | buy_maneuver {'name': "('a',)", 'source': 'inf', 'to_hit': '1'}
+- view log has NaN/inf at [13].params['lid'] | seed 271 step 45 | buy_language {'lid': 'nan', 'title': '', 'native': '', 'projects': '8'}
+- view log has NaN/inf at [13].params['projects'] | seed 418 step 39 | buy_language {'title': 'a', 'native': 'True', 'projects': 'nan', 'source': 'zzz'}
+- view log has NaN/inf at [14].params['native'] | seed 3 step 45 | buy_language {'title': 'nope', 'native': 'nan', 'projects': '5', 'source': 'free'}
+- view log has NaN/inf at [15].params['value'] | seed 232 step 48 | set_item_masterwork {'iid': 'ring', 'value': 'nan'}
+- view log has NaN/inf at [18].params['name'] | seed 90 step 46 | add_maneuver {'name': 'nan'}
+- view log has NaN/inf at [1].params['source'] | seed 390 step 2 | learn_spell {'name': 'new thing', 'circle': '5', 'discount': 'None', 'source': 'inf'}
+- view log has NaN/inf at [1].params['value'] | seed 43 step 13 | set_ignore_bag_weight {'value': 'inf'}
+- view log has NaN/inf at [21].params['source'] | seed 113 step 49 | promote_skill {'name': 'climb', 'source': 'inf'}
+- view log has NaN/inf at [2].params['keep_overcap'] | seed 192 step 11 | short_rest {'spends': '()', 'other_heal': '12', 'extra_bp': '12', 'keep_overcap': 'nan'}
+- view log has NaN/inf at [2].params['source'] | seed 182 step 11 | buy_armor_grade {'source': 'inf'}
+- view log has NaN/inf at [2].params['swap'] | seed 134 step 7 | equip_item {'iid': 'dg', 'swap': 'nan'}
+- view log has NaN/inf at [2].params['value'] | seed 178 step 3 | set_ignore_bag_weight {'value': 'nan'}
+- view log has NaN/inf at [3].params['name'] | seed 340 step 9 | buy_seed {'name': 'nan', 'source': 'free'}
+- view log has NaN/inf at [3].params['source'] | seed 206 step 22 | buy_base_slot {'source': 'nan'}
+- view log has NaN/inf at [3].params['value'] | seed 208 step 15 | set_status_favorite {'sid': 'aura', 'value': 'nan'}
+- view log has NaN/inf at [4].params['name'] | seed 148 step 24 | learn_spell {'name': 'nan', 'circle': '2', 'discount': 'None', 'source': 'training'}
+- view log has NaN/inf at [4].params['source'] | seed 140 step 29 | buy_shield_grade {'source': 'nan'}
+- view log has NaN/inf at [4].params['value'] | seed 170 step 16 | set_ignore_bag_weight {'value': 'inf'}
+- view log has NaN/inf at [5].params['title'] | seed 74 step 17 | buy_language {'lid': 'True', 'title': 'nan', 'native': 'True', 'projects': '0', 'source': 'zzz'}
+- view log has NaN/inf at [5].params['value'] | seed 82 step 23 | set_status_favorite {'sid': 'rage', 'value': 'inf'}
+- view log has NaN/inf at [6].params['name'] | seed 14 step 15 | buy_seed {'name': 'inf', 'source': 'zzz'}
+- view log has NaN/inf at [6].params['source'] | seed 20 step 17 | buy_base_slot {'source': 'inf'}
+- view log has NaN/inf at [7].params['swap'] | seed 266 step 25 | equip_item {'iid': 'pot', 'swap': 'inf'}
+- view log has NaN/inf at [7].params['value'] | seed 205 step 24 | set_status_hidden {'sid': 'guard', 'value': 'nan'}
+- view log has NaN/inf at [8].params['lid'] | seed 93 step 37 | buy_language {'lid': 'inf', 'title': 'nope', 'native': '{}', 'source': 'training'}
+- view log has NaN/inf at [8].params['name'] | seed 110 step 36 | buy_seed {'name': 'nan', 'source': 'inf'}
+- view log has NaN/inf at [8].params['projects'] | seed 28 step 37 | buy_language {'lid': 'nope', 'title': 'a', 'native': 'True', 'projects': 'inf', 'source': 'free'}
+- view log has NaN/inf at [8].params['source'] | seed 224 step 31 | buy_shield_grade {'source': 'inf'}
+- view log has NaN/inf at [9].params['lid'] | seed 160 step 32 | buy_language {'lid': 'nan', 'title': '', 'native': 'True', 'projects': 'жук', 'source': 'zzz'}
+- view log has NaN/inf at [9].params['name'] | seed 197 step 39 | add_drive {'name': 'inf', 'level': '5', 'principle': 'nope', 'level_notes': 'None'}
+- view log has NaN/inf at [9].params['source'] | seed 122 step 43 | buy_language {'lid': 'nope', 'title': '', 'native': 'False', 'projects': '5', 'source': 'inf'}
+- view maneuvers has NaN/inf at [1].name | seed 90 step 46 | add_maneuver {'name': 'nan'}
+- view maneuvers raised TypeError | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+- view notebook has NaN/inf at ['drives'][0]['name'] | seed 197 step 39 | add_drive {'name': 'inf', 'level': '5', 'principle': 'nope', 'level_notes': 'None'}
+- view notebook raised AttributeError | seed 8 step 9 | add_drive {'name': 'climb', 'level': '2', 'principle': 'None', 'level_notes': 'None', 'text': '{}'}
+- view resources raised TypeError | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+- view rest raised AttributeError | seed 159 step 2 | edit_sheet {'abilities': '3'}
+- view rest raised TypeError | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+- view sheet raised TypeError | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+- view skills raised TypeError | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+- view spells has NaN/inf at ['spells'][0].name | seed 148 step 24 | learn_spell {'name': 'nan', 'circle': '2', 'discount': 'None', 'source': 'training'}
+- view spells has NaN/inf at ['spells'][0].source | seed 390 step 2 | learn_spell {'name': 'new thing', 'circle': '5', 'discount': 'None', 'source': 'inf'}
+- view spells raised TypeError | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+- view statuses raised TypeError | seed 5 step 9 | edit_sheet {'hp_current': 'None'}
+partial write: CommandError save_failed; old file intact: True; tmp files left: []

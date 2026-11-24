@@ -1,0 +1,18 @@
+commands with own topic list: 89, succeeded at least once: 93, tries: 3201
+UNDER-DECLARED activate_status            declared=attacks,defense,resources,sheet,skills,statuses,log changed-but-missing=maneuvers,rest example={'sid': 'rage', 'ticks': 6}
+UNDER-DECLARED buy_hp                     declared=resources,training,log changed-but-missing=rest example={'source': 'free'}
+UNDER-DECLARED damage_item                declared=attacks,defense,items,log changed-but-missing=maneuvers,statuses example={'iid': 'sw', 'amount': 12}
+UNDER-DECLARED damage_to_balance          declared=combat,resources,log changed-but-missing=attacks,injuries,maneuvers,rest,sheet,skills,statuses example={'amount': 1000000000000000000}
+UNDER-DECLARED pay_hp_cost                declared=resources,log changed-but-missing=attacks,injuries,maneuvers,rest,sheet,skills,statuses example={'amount': 20}
+UNDER-DECLARED remove_attack              declared=attacks,maneuvers,log changed-but-missing=items,statuses example={'rid': 'd'}
+UNDER-DECLARED remove_ot_attention        declared=injuries,resources,log changed-but-missing=training example={'n': 3}
+UNDER-DECLARED remove_ot_comfort          declared=injuries,resources,log changed-but-missing=training example={'n': 3}
+UNDER-DECLARED restore                    declared=resources,log changed-but-missing=rest,training example={'resource': 'spirit', 'amount': 12}
+UNDER-DECLARED set_item_hp                declared=attacks,defense,items,log changed-but-missing=maneuvers,resources,skills,spells,statuses example={'iid': 'sh', 'value': 2}
+UNDER-DECLARED set_item_masterwork        declared=attacks,defense,items,log changed-but-missing=skills example={'iid': 'sh', 'value': True}
+UNDER-DECLARED set_iterative_count        declared=attacks,combat,log changed-but-missing=maneuvers,statuses example={'n': 1}
+UNDER-DECLARED set_value                  declared=resources,sheet,log changed-but-missing=rest,training example={'resource': 'spirit', 'value': 12}
+UNDER-DECLARED take_damage                declared=combat,resources,log changed-but-missing=attacks,injuries,maneuvers,rest,sheet,skills,statuses example={'amount': 8, 'dtype': 'cold', 'parts': None, 'skip': ()}
+UNDER-DECLARED use_attack                 declared=attacks,combat,resources,log changed-but-missing=maneuvers,statuses example={'rid': 'r'}
+under-declared commands: 15
+commands that changed the character but NO panel view (only the log) shows it: 5 ['buy_combat_basics', 'buy_weapon_grade', 'set_bab_override', 'set_primary_attack', 'set_save_override']
