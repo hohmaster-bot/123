@@ -2,7 +2,7 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (797)
+## Нет в ru.json (806)
 
 ### catalog (106)
 - `catalog.field.ac_bonus`
@@ -164,7 +164,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (212)
+### reason (215)
 - `reason.action_needed`
 - `reason.activates_status_which_not`
 - `reason.already_activated`
@@ -224,6 +224,7 @@
 - `reason.file_corrupt`
 - `reason.file_not_found`
 - `reason.finesse_weapon_held_one`
+- `reason.goal_must_positive`
 - `reason.grip_must_one_off`
 - `reason.group_basic_simple_cannot`
 - `reason.hand_occupied`
@@ -282,6 +283,7 @@
 - `reason.not_app_setting`
 - `reason.not_class_skill`
 - `reason.not_consumable`
+- `reason.not_enough_actions`
 - `reason.not_enough_attention_have`
 - `reason.not_enough_balance_need`
 - `reason.not_enough_bp`
@@ -349,6 +351,7 @@
 - `reason.two_handed_weapon_cannot`
 - `reason.two_weapon_combination_needs`
 - `reason.unarmed_attacks_use_unarmed`
+- `reason.unknown_action_cost`
 - `reason.unknown_area`
 - `reason.unknown_collection`
 - `reason.unknown_command`
@@ -383,7 +386,7 @@
 - `resource.ov`
 - `resource.training`
 
-### rules (298)
+### rules (302)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -410,6 +413,10 @@
 - `rules.ac_zones.ranged_keeps_shield.desc`
 - `rules.ac_zones.shield_cells`
 - `rules.ac_zones.shield_cells.desc`
+- `rules.actions.base`
+- `rules.actions.base.desc`
+- `rules.actions.cost_presets`
+- `rules.actions.cost_presets.desc`
 - `rules.actions.standard`
 - `rules.actions.standard.desc`
 - `rules.attack.crit_hint`
@@ -683,7 +690,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (117)
+### settings (119)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -777,6 +784,8 @@
 - `settings.ranged_damage_stat.desc`
 - `settings.resource_display`
 - `settings.resource_display.desc`
+- `settings.resource_segments`
+- `settings.resource_segments.desc`
 - `settings.rest_regen_bonus`
 - `settings.rest_regen_bonus.desc`
 - `settings.rest_regen_multiplier`
@@ -825,7 +834,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (650)
+## Нет в en.json (659)
 
 ### catalog (106)
 - `catalog.field.ac_bonus`
@@ -973,7 +982,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (41)
+### reason (44)
 - `reason.already_in_hand`
 - `reason.bad_class_progression`
 - `reason.bad_color`
@@ -990,6 +999,7 @@
 - `reason.field_required`
 - `reason.field_type`
 - `reason.file_corrupt`
+- `reason.goal_must_positive`
 - `reason.hand_occupied`
 - `reason.invalid_value`
 - `reason.item_not_fit_slot`
@@ -998,6 +1008,7 @@
 - `reason.no_character`
 - `reason.not_allowed`
 - `reason.not_class_skill`
+- `reason.not_enough_actions`
 - `reason.not_enough_reactions`
 - `reason.out_of_range`
 - `reason.over_mana_level`
@@ -1008,6 +1019,7 @@
 - `reason.settings_error`
 - `reason.slot_empty`
 - `reason.two_handed_both_hands`
+- `reason.unknown_action_cost`
 - `reason.unknown_area`
 - `reason.unknown_command`
 - `reason.unknown_damage_type`
@@ -1016,7 +1028,7 @@
 - `reason.unknown_view`
 - `reason.wrong_type`
 
-### rules (298)
+### rules (302)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -1043,6 +1055,10 @@
 - `rules.ac_zones.ranged_keeps_shield.desc`
 - `rules.ac_zones.shield_cells`
 - `rules.ac_zones.shield_cells.desc`
+- `rules.actions.base`
+- `rules.actions.base.desc`
+- `rules.actions.cost_presets`
+- `rules.actions.cost_presets.desc`
 - `rules.actions.standard`
 - `rules.actions.standard.desc`
 - `rules.attack.crit_hint`
@@ -1316,7 +1332,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (117)
+### settings (119)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -1410,6 +1426,8 @@
 - `settings.ranged_damage_stat.desc`
 - `settings.resource_display`
 - `settings.resource_display.desc`
+- `settings.resource_segments`
+- `settings.resource_segments.desc`
 - `settings.rest_regen_bonus`
 - `settings.rest_regen_bonus.desc`
 - `settings.rest_regen_multiplier`

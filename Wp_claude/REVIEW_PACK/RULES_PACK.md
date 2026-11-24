@@ -279,6 +279,10 @@ above and temp HP BEFORE the absorbers: OPEN_QUESTIONS Q151.)
 
 #### Actions [OWNER]
 - Shift 1, Move 1, Standard 2, Full-round 3, Complete round 4 actions.
+- [OWNER, package 26 A] Actions are a resource: 3 per turn (data constant), effects "actions_max" add more (spells,
+  abilities, items, statuses; typed stacking). They come back on the zero-initiative tick and at the end of combat.
+  Attack records, maneuvers, quick buttons and spells may show a cost in actions (the costs above are presets);
+  nothing is spent automatically: the player presses spend.
 
 #### Attack tag and iteration [OWNER]
 - Options spent in own turn may carry tag "attack" (player sets tags himself, spells needing attack roll too).
@@ -1555,8 +1559,12 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   +2 Str 12 -> burned 10 -> restored 12.
 
 #### Not built on purpose [OWNER, package 17, closes Q122]
-- Experience (XP) and money are NARRATIVE: no mechanics, no counters, no prices in the app. There is no "start session"
-  and no "end of session" button: only the end of cycle (above).
+- Money is NARRATIVE: no mechanics, no counters, no prices in the app. There is no "start session" and no "end of
+  session" button: only the end of cycle (above).
+- [OWNER, package 26 C; replaces "XP is narrative"] Experience (XP) is a tracked counter with a log and notes: every
+  entry has an amount (may be negative), an optional note and a time stamp; the total is the sum of the log. The player
+  may type a goal "next level at" shown as progress; it is NOT a rule: no threshold table, no automatic level-up.
+  Every level-up writes the level history (level, XP at that moment, hit-die roll, note, time).
 
 #### Drives: level notes and principles (package 25) [OWNER]
 - A drive list with numbers 0-5, the bonus/penalty text beside each level, and a principle = a narrative
@@ -1622,6 +1630,7 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   (temp file + replace; a failed save keeps the old file). The UI later reads catalogs through the catalog view (list
   with a filter text and a sort; get, with the layer shipped / user / override) and writes them only through these
   commands.
+- [package 26 C] Experience is not a catalog: it is a log on the character (narrative.md "Experience").
 - Sharing: one entry -> a text code (export) and back (import as a new entry, gear.md "Item codes"); a whole
   catalog file can be exported / imported as it is.
 - The rows shipped in package 18 for weapons, armor / shields, items, spells and statuses are TEST SAMPLES
@@ -2198,6 +2207,8 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | class.save_poor_divisor | 3 | levels | ASSUMPTION (ROADMAP): poor save = level / divisor, rounded down |
 | narrative.principle_min_level | 2 | level | a drive at this level or higher expects a principle (reminder only) |
 | spells.areas | ["single", "cone", "line", "burst", "other"] | ids | area ids of spell damage components (package 25 F) |
+| actions.base | 3 | actions | actions per turn before effects actions_max (owner, package 26 A) |
+| actions.cost_presets | {"shift": 1, "move": 1, "standard": 2, "full_round": 3, "complete_round": 4} | actions | action costs (combat.md Actions): presets for cost_actions |
 
 ### Damage types (damage_types.json)
 
@@ -2264,6 +2275,7 @@ Every number can be changed per character (rules_settings). Values as shipped.
 
 | target | meaning |
 |---|---|
+| actions_max | actions per turn (package 26 A): added to the base 3 |
 | armor_skill_penalty | added to the armor skill penalty (positive = smaller penalty, never above 0) |
 | attention_per_cycle | attention at the end of a cycle |
 | balance_max | balance max (also inside the start-of-combat snapshot) |
