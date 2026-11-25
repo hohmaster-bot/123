@@ -2,7 +2,7 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (806)
+## Нет в ru.json (821)
 
 ### catalog (106)
 - `catalog.field.ac_bonus`
@@ -164,7 +164,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (215)
+### reason (222)
 - `reason.action_needed`
 - `reason.activates_status_which_not`
 - `reason.already_activated`
@@ -185,12 +185,16 @@
 - `reason.bad_color`
 - `reason.bad_die_size`
 - `reason.bad_effect_formula`
+- `reason.bad_folder_name`
 - `reason.bad_hand_side`
 - `reason.bad_hotkey`
+- `reason.bad_image_content`
+- `reason.bad_image_record`
 - `reason.bad_image_type`
 - `reason.bad_name`
 - `reason.bad_pool_max_formula`
 - `reason.bad_profile`
+- `reason.bad_settings_file`
 - `reason.bad_tab`
 - `reason.cannot_put_item_hp`
 - `reason.cannot_spend_negative_amount`
@@ -251,6 +255,7 @@
 - `reason.must_whole_number`
 - `reason.name_needed`
 - `reason.name_taken`
+- `reason.name_too_long`
 - `reason.needs_no_hands`
 - `reason.needs_no_qualification`
 - `reason.no_attack_record`
@@ -363,6 +368,7 @@
 - `reason.unknown_maneuver_fields_put`
 - `reason.unknown_mode`
 - `reason.unknown_note_kind`
+- `reason.unknown_parameter`
 - `reason.unknown_per_tick_restore`
 - `reason.unknown_pool_fields`
 - `reason.unknown_resource`
@@ -376,6 +382,7 @@
 - `reason.use_least_1`
 - `reason.weapon_already_level_12`
 - `reason.without_off_hand_record`
+- `reason.wrong_keys`
 - `reason.wrong_kind`
 - `reason.wrong_mode`
 - `reason.wrong_pick`
@@ -690,7 +697,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (119)
+### settings (127)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -762,6 +769,14 @@
 - `settings.image_max_kb.desc`
 - `settings.iterative_step`
 - `settings.iterative_step.desc`
+- `settings.journal_archive_at`
+- `settings.journal_archive_at.desc`
+- `settings.journal_archive_keep`
+- `settings.journal_archive_keep.desc`
+- `settings.journal_mode`
+- `settings.journal_mode.desc`
+- `settings.journal_short_max`
+- `settings.journal_short_max.desc`
 - `settings.language`
 - `settings.language.desc`
 - `settings.last_character`
@@ -834,7 +849,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (659)
+## Нет в en.json (623)
 
 ### catalog (106)
 - `catalog.field.ac_bonus`
@@ -981,52 +996,6 @@
 - `panel.statuses.desc`
 - `panel.training`
 - `panel.training.desc`
-
-### reason (44)
-- `reason.already_in_hand`
-- `reason.bad_class_progression`
-- `reason.bad_color`
-- `reason.bad_die_size`
-- `reason.bad_hand_side`
-- `reason.bad_hotkey`
-- `reason.bad_name`
-- `reason.bad_tab`
-- `reason.catalog_error`
-- `reason.character_open`
-- `reason.class_own_professionalism`
-- `reason.combat_active`
-- `reason.field_not_allowed`
-- `reason.field_required`
-- `reason.field_type`
-- `reason.file_corrupt`
-- `reason.goal_must_positive`
-- `reason.hand_occupied`
-- `reason.invalid_value`
-- `reason.item_not_fit_slot`
-- `reason.name_taken`
-- `reason.no_backup`
-- `reason.no_character`
-- `reason.not_allowed`
-- `reason.not_class_skill`
-- `reason.not_enough_actions`
-- `reason.not_enough_reactions`
-- `reason.out_of_range`
-- `reason.over_mana_level`
-- `reason.qualification_negative`
-- `reason.rule_refused`
-- `reason.same_slot`
-- `reason.save_failed`
-- `reason.settings_error`
-- `reason.slot_empty`
-- `reason.two_handed_both_hands`
-- `reason.unknown_action_cost`
-- `reason.unknown_area`
-- `reason.unknown_command`
-- `reason.unknown_damage_type`
-- `reason.unknown_field`
-- `reason.unknown_save`
-- `reason.unknown_view`
-- `reason.wrong_type`
 
 ### rules (302)
 - `rules.ability.mod_base`
@@ -1332,7 +1301,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (119)
+### settings (127)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -1404,6 +1373,14 @@
 - `settings.image_max_kb.desc`
 - `settings.iterative_step`
 - `settings.iterative_step.desc`
+- `settings.journal_archive_at`
+- `settings.journal_archive_at.desc`
+- `settings.journal_archive_keep`
+- `settings.journal_archive_keep.desc`
+- `settings.journal_mode`
+- `settings.journal_mode.desc`
+- `settings.journal_short_max`
+- `settings.journal_short_max.desc`
 - `settings.language`
 - `settings.language.desc`
 - `settings.last_character`

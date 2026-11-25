@@ -43,9 +43,13 @@ S.case("t-fallback-key", "pkg 21: a key missing everywhere shows the key id, nev
     lambda: i18n.t("ui.no_such_key", "en"))
 S.case("t-params", "pkg 21: {values[i]} from the refusal params: Ki need 5, have 3", "not enough Ki: need 5, have 3")(
     lambda: i18n.text_for(refusal(Character(pools=(ResourcePool("ki", "Ki", 3, 3),)), "spend_pool", pid="ki", n=5), "en"))
-S.case("t-reason-ru-missing", "pkg 21: no Russian text yet -> the key id (the owner fills ru.json)",
-       "reason.not_enough_need_have")(
+S.case("t-reason-ru-missing", "owner (package 27 F12): no Russian refusal text yet -> the English one (lang -> en -> "
+       "ru -> key)", "not enough Ki: need 5, have 3")(
     lambda: i18n.text_for(refusal(Character(pools=(ResourcePool("ki", "Ki", 3, 3),)), "spend_pool", pid="ki", n=5), "ru"))
+S.case("t-reason-no-text", "package 27 F12: a refusal with no text in any language -> its key id",
+       "reason.zz_none")(lambda: i18n.t("reason.zz_none", "ru"))
+S.case("t-other-ru-first", "package 27 F12: only reason.* keys try English first; skill.search in ru stays Russian",
+       POISK)(lambda: i18n.t("skill.search", "ru"))
 S.case("t-unknown-param", "pkg 21: an unknown {name} stays as it is", "a {x} b")(lambda: i18n._format("a {x} b", {"y": 1}))
 S.case("t-plural-ru", "pkg 21: RU plural forms of 1, 2, 5, 11, 21, 22, 112",
        ("one", "few", "many", "many", "one", "few", "many"))(

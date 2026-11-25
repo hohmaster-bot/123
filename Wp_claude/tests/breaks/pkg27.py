@@ -183,3 +183,7 @@ ENTRIES += [   # review 5 F30: the 15 rules no content suite caught (breaks5.py 
          new="    return {\"modes\": __import__(\"wp.core.ac\", fromlist=[\"x\"]).all_modes(dv.ac_input(ch)),", suites=R,
          rule="F15: the old modes show their cell numbers"),
 ]
+ENTRIES += [
+    dict(id="p27-reason-en-first", file="wp/i18n/i18n.py", old="    return (lang, EN, BASE) if key.startswith(REASON) else (lang, BASE)",
+         new="    return (lang, BASE)", suites=("storage/test_i18n.py",), rule="F12: a refusal shows English until ru has it"),
+]

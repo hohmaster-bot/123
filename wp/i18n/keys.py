@@ -45,7 +45,8 @@ def reason_ids():
                     and isinstance(node.value.elts[0].value, str):
                 out.add(node.value.elts[0].value)
     from wp.commands import base
-    out |= {base.INVALID, base.NOT_FOUND, base.UNKNOWN_COMMAND}
+    from wp.commands import params
+    out |= {base.INVALID, base.NOT_FOUND, base.UNKNOWN_COMMAND} | set(params.REASONS)
     return out
 
 

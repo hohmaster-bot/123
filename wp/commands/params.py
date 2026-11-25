@@ -21,6 +21,7 @@ import os
 
 from wp.commands.base import CommandError
 
+REASONS = ("wrong_type", "invalid_value", "out_of_range", "unknown_parameter", "unknown_damage_type", "not_allowed")
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "params.json")
 
 

@@ -38,6 +38,8 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `main_hand`: str
   - `off_hand`: bool
   - `abilities`: tuple[]
+  - `primary`: bool
+  - `main_hand_set`: str
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_attack(iid='', group='', grip='one', stat='', rid='')` reasons: attack_record_already_exists, finesse_weapon_held_one, grip_must_one_off, not_group, not_weapon, two_handed, two_handed_weapon_cannot, unarmed_attacks_use_unarmed
@@ -45,10 +47,13 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_combat_basics(wid='', source='training')` reasons: already_has_combat_basics, group_basic_simple_cannot, no_weapon
   - `buy_weapon_grade(wid='', source='training')` reasons: group_basic_simple_cannot, no_weapon, weapon_already_level_12
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
+  - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
   - `hit_item(iid='', damage=0)` reasons: damage_cannot_negative, item_destroyed
+  - `pay_hp_cost(amount=0)`
   - `remove_attack(rid='')` reasons: no_attack_record
   - `remove_status(sid='')` reasons: status_not_active
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `restore_charges(owner_kind='item', owner_id='')`
   - `set_charges(owner_kind='item', owner_id='', value=0)` reasons: charges_must_0
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
@@ -57,7 +62,9 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_main_hand(rid='', side='')` reasons: no_attack_record
   - `set_primary_attack(rid='', on=True)` reasons: most_primary_attack_records, no_attack_record
   - `set_twf(rid='', off='', on=True)` reasons: no_attack_record, off_hand_record_must, two_weapon_combination_needs, without_off_hand_record
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_charge(owner_kind='item', owner_id='', n=1)` reasons: cooldown_rounds_left, not_enough_charges_have, spend_least_1
+  - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
   - `use_attack(rid='')` reasons: attack_not_available, no_attack_record
 
 ## catalogs
@@ -106,10 +113,13 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_reaction(source='training')`
   - `cast_spell(circle=1, cast_actions=Ref('actions.standard'=2), mana_cost=None, from_item=False, overload=None, penalty_balance=0)` reasons: casting_blocked, character_not_caster, circle_out_of_range, not_enough_mana_slots, over_mana_level, penalty_paid_balance_must
   - `damage_to_balance(amount=0)`
+  - `pay_hp_cost(amount=0)`
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `restore_actions()`
   - `restore_all_balance(pick_id='')` reasons: not_enough_charges_have, restoring_blocked, wrong_pick
   - `restore_reactions()`
   - `set_iterative_count(n=0)` reasons: iterative_count_negative
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_actions(n=1)` reasons: cannot_spend_negative_amount
   - `spend_reaction(n=1)`
   - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
@@ -158,13 +168,18 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_shield_grade(source='training')`
   - `buy_weapon_grade(wid='', source='training')` reasons: group_basic_simple_cannot, no_weapon, weapon_already_level_12
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
+  - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
   - `hit_item(iid='', damage=0)` reasons: damage_cannot_negative, item_destroyed
+  - `pay_hp_cost(amount=0)`
   - `remove_status(sid='')` reasons: status_not_active
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `set_ignore_bag_weight(value=True)`
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
   - `set_item_masterwork(iid='', value=True)`
   - `set_primary_attack(rid='', on=True)` reasons: most_primary_attack_records, no_attack_record
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
+  - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
 
 ## editor
 
@@ -204,9 +219,14 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `injuries`: tuple[Injury]
 - `trauma`: int
 - commands:
+  - `damage_to_balance(amount=0)`
+  - `pay_hp_cost(amount=0)`
   - `raise_heal_rating(injury_id='')` reasons: no_attention, no_injury_id
   - `remove_ot_attention(n=1)` reasons: no_ot_remove, not_enough_attention_have, spend_least_1_attention
   - `remove_ot_comfort(n=1)` reasons: no_ot_remove, not_enough_comfort_have, spend_least_1_comfort
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
+  - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
 
 ## items
 
@@ -259,6 +279,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_item_qualification(iid='', source='training')` reasons: already_qualified, needs_no_qualification
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
   - `hit_item(iid='', damage=0)` reasons: damage_cannot_negative, item_destroyed
+  - `remove_attack(rid='')` reasons: no_attack_record
   - `restore_charges(owner_kind='item', owner_id='')`
   - `set_charges(owner_kind='item', owner_id='', value=0)` reasons: charges_must_0
   - `set_condition_tag(target='item', oid='', tag='none')` reasons: not_found, tag_must_one, target_must_item_status
@@ -281,6 +302,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `params`: map
   - `result`: map
   - `round`: int
+  - `at`: str
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_attack(iid='', group='', grip='one', stat='', rid='')` reasons: attack_record_already_exists, finesse_weapon_held_one, grip_must_one_off, not_group, not_weapon, two_handed, two_handed_weapon_cannot, unarmed_attacks_use_unarmed
@@ -367,7 +389,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_status_hidden(sid='', value=True)`
   - `set_temp_hp(value=0)` reasons: temp_hp_cannot_negative
   - `set_twf(rid='', off='', on=True)` reasons: no_attack_record, off_hand_record_must, two_weapon_combination_needs, without_off_hand_record
-  - `set_value(resource='hp', value=0)`
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_actions(n=1)` reasons: cannot_spend_negative_amount
   - `spend_balance(n=0)` reasons: not_enough_balance_need
   - `spend_bp(n=1)` reasons: not_enough_bp
@@ -397,16 +419,27 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `condition_tag`: str
   - `granted_by`: tuple[]
 - commands:
+  - `activate_status(sid='', ticks=None)`
   - `add_attack(iid='', group='', grip='one', stat='', rid='')` reasons: attack_record_already_exists, finesse_weapon_held_one, grip_must_one_off, not_group, not_weapon, two_handed, two_handed_weapon_cannot, unarmed_attacks_use_unarmed
   - `add_maneuver(name='', **fields)`
   - `buy_maneuver(name='', source='training', **fields)`
+  - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
+  - `damage_to_balance(amount=0)`
   - `edit_maneuver(mid='', **fields)`
+  - `pay_hp_cost(amount=0)`
   - `remove_attack(rid='')` reasons: no_attack_record
   - `remove_maneuver(mid='')`
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `restore_charges(owner_kind='item', owner_id='')`
   - `set_charges(owner_kind='item', owner_id='', value=0)` reasons: charges_must_0
+  - `set_item_hp(iid='', value=0)` reasons: item_destroyed
+  - `set_item_masterwork(iid='', value=True)`
+  - `set_iterative_count(n=0)` reasons: iterative_count_negative
   - `set_primary_attack(rid='', on=True)` reasons: most_primary_attack_records, no_attack_record
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_charge(owner_kind='item', owner_id='', n=1)` reasons: cooldown_rounds_left, not_enough_charges_have, spend_least_1
+  - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
+  - `use_attack(rid='')` reasons: attack_not_available, no_attack_record
 
 ## notebook
 
@@ -490,6 +523,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_reaction(source='training')`
   - `buy_shield_grade(source='training')`
   - `cast_spell(circle=1, cast_actions=Ref('actions.standard'=2), mana_cost=None, from_item=False, overload=None, penalty_balance=0)` reasons: casting_blocked, character_not_caster, circle_out_of_range, not_enough_mana_slots, over_mana_level, penalty_paid_balance_must
+  - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
   - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
   - `edit_pool(pid='', **fields)` reasons: unknown_pool_fields
@@ -508,9 +542,10 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `restore_pool(pid='')` reasons: restoring_blocked
   - `restore_reactions()`
   - `set_hp_roll(level=1, value=1)` reasons: hit_die_hp_must, no_hit_die_roll
+  - `set_item_hp(iid='', value=0)` reasons: item_destroyed
   - `set_primary_attack(rid='', on=True)` reasons: most_primary_attack_records, no_attack_record
   - `set_temp_hp(value=0)` reasons: temp_hp_cannot_negative
-  - `set_value(resource='hp', value=0)`
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_actions(n=1)` reasons: cannot_spend_negative_amount
   - `spend_balance(n=0)` reasons: not_enough_balance_need
   - `spend_bp(n=1)` reasons: not_enough_bp
@@ -529,6 +564,13 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `free_heal`: int
 - `options`: tuple[tuple[int|str]]
 - commands:
+  - `activate_status(sid='', ticks=None)`
+  - `buy_hp(source='training')` reasons: hit_die_hp_already
+  - `damage_to_balance(amount=0)`
+  - `pay_hp_cost(amount=0)`
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
+  - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
 
 ## settings
 
@@ -564,8 +606,10 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `str`: tuple[int]
   - `wis`: tuple[int]
 - `bab`: int
+- `bab_override`: NoneType
 - `class_id`: str
 - `level`: int
+- `save_override`: map
 - `speed`: int
 - `stats`: map
   - `cmb`: Stat
@@ -578,17 +622,21 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `activate_status(sid='', ticks=None)`
   - `add_experience(amount=0, note='', at='')`
   - `add_status(status=None, ticks=None, active=False)` reasons: bad_effect_formula, no_status_given, status_id_already_sheet, unknown_per_tick_restore
+  - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
   - `edit_experience_entry(xid='', amount=None, note=None)`
   - `edit_level_history(lid='', **fields)` reasons: unknown_field
+  - `pay_hp_cost(amount=0)`
   - `remove_experience_entry(xid='')`
   - `remove_level_history(lid='')`
   - `remove_status(sid='')` reasons: status_not_active
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `set_base_speed(feet=None)` reasons: speed_cannot_negative
   - `set_hp_roll(level=1, value=1)` reasons: hit_die_hp_must, no_hit_die_roll
   - `set_ignore_bag_weight(value=True)`
   - `set_next_level_at(value=None)` reasons: goal_must_positive
-  - `set_value(resource='hp', value=0)`
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
+  - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
 
 ## skills
 
@@ -602,9 +650,17 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `add_skill(catalog=None, tid='', sub='')` reasons: no_skill_catalog_given, skill_already_sheet
   - `buy_professionalism(skills=(), class_skill_points=0, source='training')` reasons: already_specialized, choose_exactly_different_skills, class_own_professionalism, no_skill, not_class_skill, professionalism_already_bought, professionalism_needs_class_least
   - `buy_skill_rank(name='', target=None, source='training')` reasons: already_has_rank, no_skill
+  - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
+  - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
+  - `pay_hp_cost(amount=0)`
   - `promote_skill(name='', to_tier='advanced', source='training')` reasons: already_promoted, no_skill, rule_refused, tier_must_advanced_specialized
   - `remove_status(sid='')` reasons: status_not_active
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
+  - `set_item_hp(iid='', value=0)` reasons: item_destroyed
+  - `set_item_masterwork(iid='', value=True)`
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
+  - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
 
 ## spells
 
@@ -630,10 +686,16 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - commands:
   - `buy_spell_upgrade(spid='', name='', metamagic=0, source='training')` reasons: metamagic_circles_cannot_negative, no_spell, not_enough_slots_uses, upgrade_needs_name
   - `cast_spell(circle=1, cast_actions=Ref('actions.standard'=2), mana_cost=None, from_item=False, overload=None, penalty_balance=0)` reasons: casting_blocked, character_not_caster, circle_out_of_range, not_enough_mana_slots, over_mana_level, penalty_paid_balance_must
+  - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
+  - `damage_to_balance(amount=0)`
   - `learn_spell(name='', circle=1, discount=None, source='training')` reasons: circle_must_0_9, spell_needs_name
+  - `pay_hp_cost(amount=0)`
   - `resolve_spell_failure(failed=False)`
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `restore_mana(amount=0)` reasons: amount_must_0, restoring_blocked
   - `set_spell_damage(spid='', damage=())` reasons: not_found
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
+  - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
 
 ## statuses
 
@@ -653,16 +715,27 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_status(status=None, ticks=None, active=False)` reasons: bad_effect_formula, no_status_given, status_id_already_sheet, unknown_per_tick_restore
+  - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
+  - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
+  - `pay_hp_cost(amount=0)`
+  - `remove_attack(rid='')` reasons: no_attack_record
   - `remove_pool(pid='')`
   - `remove_status(sid='')` reasons: status_not_active
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `restore_charges(owner_kind='item', owner_id='')`
   - `set_charges(owner_kind='item', owner_id='', value=0)` reasons: charges_must_0
   - `set_condition_tag(target='item', oid='', tag='none')` reasons: not_found, tag_must_one, target_must_item_status
+  - `set_item_hp(iid='', value=0)` reasons: item_destroyed
+  - `set_item_masterwork(iid='', value=True)`
+  - `set_iterative_count(n=0)` reasons: iterative_count_negative
   - `set_status_duration(sid='', remaining=0)` reasons: status_has_no_tick
   - `set_status_favorite(sid='', value=True)`
   - `set_status_hidden(sid='', value=True)`
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_charge(owner_kind='item', owner_id='', n=1)` reasons: cooldown_rounds_left, not_enough_charges_have, spend_least_1
+  - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
+  - `use_attack(rid='')` reasons: attack_not_available, no_attack_record
   - `use_consumable(iid='', n=1)` reasons: activates_status_which_not, not_consumable, not_enough_have_use, use_least_1
 
 ## training
@@ -683,9 +756,11 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `next_level_at`: NoneType
   - `progress_pct`: NoneType
   - `total`: int
+- `languages`: tuple[]
 - `level`: int
 - `reactions`: int
 - `training`: int
+- `weapons`: tuple[tuple[bool|int|str]]
 - commands:
   - `add_experience(amount=0, note='', at='')`
   - `attention_to_base_points(n=1)`
@@ -706,16 +781,23 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_spell_upgrade(spid='', name='', metamagic=0, source='training')` reasons: metamagic_circles_cannot_negative, no_spell, not_enough_slots_uses, upgrade_needs_name
   - `buy_weapon_grade(wid='', source='training')` reasons: group_basic_simple_cannot, no_weapon, weapon_already_level_12
   - `convert_attention()` reasons: no_attention
+  - `damage_to_balance(amount=0)`
   - `edit_experience_entry(xid='', amount=None, note=None)`
   - `edit_level_history(lid='', **fields)` reasons: unknown_field
   - `end_cycle()`
   - `exchange_comfort(n=1)` reasons: exchange_least_1_comfort, not_enough_comfort_have
   - `learn_spell(name='', circle=1, discount=None, source='training')` reasons: circle_must_0_9, spell_needs_name
   - `make_language_native(lid='', source='training')` reasons: already_native, no_language
+  - `pay_hp_cost(amount=0)`
   - `promote_skill(name='', to_tier='advanced', source='training')` reasons: already_promoted, no_skill, rule_refused, tier_must_advanced_specialized
   - `remove_experience_entry(xid='')`
   - `remove_level_history(lid='')`
+  - `remove_ot_attention(n=1)` reasons: no_ot_remove, not_enough_attention_have, spend_least_1_attention
+  - `remove_ot_comfort(n=1)` reasons: no_ot_remove, not_enough_comfort_have, spend_least_1_comfort
+  - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `set_drive_level(did='', level=0)`
   - `set_next_level_at(value=None)` reasons: goal_must_positive
+  - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `sprout_seed(seed_id='', source='training')` reasons: no_seed, seed_has_already_sprouted
+  - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
 

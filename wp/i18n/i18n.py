@@ -1,6 +1,7 @@
 """Texts by key (package 21, D4, D24). Files: wp/i18n/ru.json, wp/i18n/en.json (flat key -> string, UTF-8 data).
 
-t(key, lang, **params): the string of `lang`, else the Russian one, else the key id itself (never raises).
+t(key, lang, **params): the string of `lang`, else the Russian one, else the key id itself (never raises); a refusal
+text (reason.*) tries lang, then English, then Russian (package 27 F12).
 {name} is replaced by params[name] ({values[0]} works for the "values" of a refusal); an unknown {name} stays as is.
 plural(key, n, lang): picks key.one / key.few / key.many (ru) or key.one / key.other (en) by n.
 text_for(error, lang): the text of a refusal (CommandError) from "reason.<reason id>" and its params.
@@ -60,9 +61,19 @@ def _format(text, params):
         return text
 
 
+REASON = "reason."
+EN = "en"
+
+
+def chain(key, lang=BASE):
+    """The languages tried for a key: lang, then Russian. A refusal text (reason.*) tries English before Russian
+    (owner, package 27, review 5 F12: the English text shows until ru.json has one)."""
+    return (lang, EN, BASE) if key.startswith(REASON) else (lang, BASE)
+
+
 def raw(key, lang=BASE):
     """The text without params, with the fallback chain, or None."""
-    for lg in (lang, BASE):
+    for lg in chain(key, lang):
         v = load(lg).get(key)
         if v:
             return v
