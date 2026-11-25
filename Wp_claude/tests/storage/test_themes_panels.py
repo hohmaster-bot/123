@@ -82,8 +82,9 @@ def _missing():
 
 
 S.case("q-missing-token", "pkg 21: a token the theme lacks -> missing_token", ("missing_token", "nope"))(_missing)
-S.case("q-no-qt", "pkg 21: no PySide6 import anywhere in wp/", [])(
-    lambda: [p for p in glob.glob(os.path.join(ROOT, "wp", "**", "*.py"), recursive=True) if any(ln.lstrip().startswith(("import PySide", "from PySide")) for ln in open(p, encoding="ascii"))])
+S.case("q-no-qt", "pkg 21: no PySide6 import anywhere in wp/ except the window package wp/ui (package 32, D32)", [])(
+    lambda: [p for p in glob.glob(os.path.join(ROOT, "wp", "**", "*.py"), recursive=True)
+             if os.sep + "ui" + os.sep not in p and any(ln.lstrip().startswith(("import PySide", "from PySide")) for ln in open(p, encoding="ascii"))])
 
 
 # ---------------------------------------------------------------- layers, active theme
@@ -148,7 +149,7 @@ S.case("p-refusals", "pkg 21: unknown panel refused; a classic-only panel in lit
              reason(add("classic", "panels", {"dock": "left"})), reason(add("classic", "panels", {"panel": "maneuvers"}))))
 S.case("p-edit-refused", "pkg 21: editing a panel item to an unknown panel is refused", "unknown_panel")(
     lambda: reason(lambda: do(st.AppSettings(), "layout_edit", mode="classic", pid="default", collection="panels",
-                              item_id="log", panel="nope")))
+                              item_id="combat", panel="nope")))
 
 
 def _load_warning():
@@ -159,7 +160,7 @@ def _load_warning():
 
 
 S.case("p-load-warning", "pkg 21: a stored profile with an unknown panel loads with a warning, not a refusal",
-       {("classic", "default"): (("unknown_panel", "resources", "ghost"),)})(_load_warning)
+       {("classic", "default"): (("unknown_panel", "experience_strip", "ghost"),)})(_load_warning)
 
 if __name__ == "__main__":
     try:

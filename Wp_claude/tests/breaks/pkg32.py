@@ -1,0 +1,41 @@
+"""Break registry: package 32 (the window shell: style sheet, one-time hint, live settings, D25 subscription)."""
+Q = ("storage/test_qss_shell.py",)
+UI = ("ui/test_shell.py",)
+P = ("storage/test_themes_panels.py",)
+
+ENTRIES = [
+    dict(id="p32-qss-scale", file="wp/theme/qss.py", old="            toks[k] = str(int(round(v * float(scale))))",
+         new="            toks[k] = str(int(round(v)))", suites=Q, rule="pkg 32: the scale multiplies fonts and gaps"),
+    dict(id="p32-qss-fallback", file="wp/theme/qss.py", old="    toks = tokens(_dark() if fallback is None else fallback)",
+         new="    toks = {}", suites=Q, rule="pkg 32: a missing token falls back to the dark theme"),
+    dict(id="p32-qss-min-font", file="wp/theme/qss.py", old="                v = max(v, float(shell[\"min_font_px\"]))",
+         new="                v = v", suites=Q, rule="UI_WISHES Classic v2 11: the smallest font is 11 px at 100%"),
+    dict(id="p32-qss-rgba", file="wp/theme/qss.py", old="    m = _HEX8.match(str(value))", new="    m = None", suites=Q,
+         rule="pkg 32: #rrggbbaa becomes rgba() (Qt reads #aarrggbb)"),
+    dict(id="p32-hint-shown-once", file="wp/ui/window.py",
+         old="        self.hint.setVisible(self.session.hint_visible(self.hint.hint_id))",
+         new="        self.hint.setVisible(True)", suites=UI, rule="owner: a one-time hint never shows after Understood"),
+    dict(id="p32-hint-session", file="wp/app/session.py", old="        return ss.hint_visible(self.app, hint_id)",
+         new="        return True", suites=UI, rule="owner: the dismissed hint ids decide what shows"),
+    dict(id="p32-settings-saved", file="wp/app/session.py",
+         old="            self.app = st.save(result.state) if result.state.path else result.state",
+         new="            self.app = result.state", suites=UI, rule="pkg 32: an app settings change is saved at once"),
+    dict(id="p32-live-settings", file="wp/ui/window.py",
+         old="        if tuple(topics) == SETTINGS_TOPICS:\n            self.apply_settings()",
+         new="        if tuple(topics) == SETTINGS_TOPICS:\n            pass", suites=UI,
+         rule="pkg 32: theme, language and scale switch live"),
+    dict(id="p32-topics-refresh", file="wp/ui/window.py", old="            if ALL in topics or set(b.reads) & set(topics):",
+         new="            if ALL in topics:", suites=UI, rule="D25: a block refreshes on the topics of its views"),
+    dict(id="p32-geometry", file="wp/ui/window.py",
+         old="        self.set_setting(\"window_classic\", [g.x(), g.y(), g.width(), g.height()])", new="        pass",
+         suites=UI, rule="pkg 32: the window geometry is saved on close"),
+    dict(id="p32-only-session", file="wp/ui/blocks.py", old="from wp.panels import registry\n",
+         new="from wp.panels import registry\nfrom wp.model import character  # noqa: F401\n", suites=UI,
+         rule="D25: the UI never imports the core / model / commands"),
+    dict(id="p32-block-size", file="wp/ui/blocks.py", old="            self.setFixedSize(self.saved)", new="            pass",
+         suites=UI, rule="pkg 32: blocks keep their saved sizes"),
+    dict(id="p32-refusal-shown", file="wp/ui/files_ui.py", old="        self.win.refusal(err)\n        return False",
+         new="        return False", suites=UI, rule="pkg 32: a refusal is shown as its text, never silently"),
+    dict(id="p32-registry-blocks", file="wp/panels/registry.py", old="    if pid in BLOCKS:\n        return None if",
+         new="    if False:\n        return None if", suites=P, rule="pkg 32: the Classic v2 blocks are known layout items"),
+]

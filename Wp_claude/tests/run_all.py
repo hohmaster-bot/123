@@ -1,6 +1,7 @@
 """Run every test suite of the new code and print ONE summary line.
 
-Suites: Wp_claude/tests/core/test_*.py, model/test_*.py, storage/test_*.py, test_module_size.py,
+Suites: Wp_claude/tests/core/test_*.py, model/test_*.py, storage/test_*.py, app/, perf/, ui/ (package 32: the
+window shell without a screen; skipped when PySide6 is missing), test_module_size.py,
 test_ascii_code.py. The legacy baseline (test_rules_baseline.py) is NOT run here: it has known failures
 (BASELINE_REPORT.md) and is run separately.
 Prints only failing suites (with their last output lines), then: "suites N, passed P, failed F".
@@ -19,7 +20,7 @@ TAIL = 15
 
 def suites(base=HERE):
     out = []
-    for sub in ("core", "model", "storage", "app", "perf"):
+    for sub in ("core", "model", "storage", "app", "perf", "ui"):
         out += sorted(glob.glob(os.path.join(base, sub, "test_*.py")))
     out += [os.path.join(base, "test_module_size.py"), os.path.join(base, "test_ascii_code.py"),
             os.path.join(base, "test_rule_literals.py"), os.path.join(base, "test_review_pack.py")]
