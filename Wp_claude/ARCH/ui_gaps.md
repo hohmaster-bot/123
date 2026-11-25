@@ -16,6 +16,10 @@ number command (edit_sheet needs a Pool; Q224).
 Package 34 part 1 (step 3 built): the view "sources" (number=...) gives the sources of every number (D34), the
 manual rows are the commands source_add / source_edit / source_toggle / source_remove (editor mode); mana max comes
 only from its sources (Q224 closed). The rows parameters / ac_block below are now built blocks.
+Package 34 part 2 (step 5 built): rows statuses, favorites, reminders, combat tab and quick access grid are built
+blocks; new core pieces: Session.reminders_view / dismiss_note (one-shot reminders of results, kept until dismissed,
+not saved), Session.quick_view (the grid from the profile and the app quick buttons), sources view "status:<sid>"
+(the effects of a buff).
 
 Spec: `UI_WISHES.md` "Classic screen v2". Names are the exact views (`session.view(...)`, ARCH/view_contract.md)
 and commands of the registry. "Gap" = what the block needs and the core does not give yet; "Proposed" = the

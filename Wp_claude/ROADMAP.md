@@ -87,7 +87,8 @@ Step 2 DONE (package 33): the resources block (tubes, value editor, temp HP stri
 button with the 1000 xp cost (owner), the font settings (D33).
 Step 3 DONE (package 34 part 1): the Sources view and dialog for every number (editor mode), the Parameters block,
 the AC block, the small-window steps (D34).
-Steps in order (each a package); next = step 5, statuses / favourites / reminders and the combat tab:
+Step 5 DONE (package 34 part 2): statuses / favourites / reminders blocks, the tab bar and the combat tab.
+Steps in order (each a package); next = step 6, the bottom strip:
   1. [DONE, package 32] Window shell + the three shipped themes (dark default, light, grey-blue), the Session wiring, one-time hints
      storage (hints_seen, hints_off).
   1b. Theme editor and background: every screen colour a token (the missing tokens of ARCH/ui_gaps.md "Themes"), live
@@ -97,7 +98,7 @@ Steps in order (each a package); next = step 5, statuses / favourites / reminder
      custom buttons through Session.run_quick, resource style / colour / size settings.
   3. [DONE, package 34] Parameters block and AC block (the experience strip is done: packages 32, 33): cell sources view, attack_melee / attack_ranged (Q198), load limits in
      items.weight, shield_side and cell lines in defense, ac_cell labels.
-  5. Statuses, favourites (char setting favorites), reminders view; the combat tab (actions / reaction squares,
+  5. [DONE, package 34] Statuses, favourites (char setting favorites), reminders view; the combat tab (actions / reaction squares,
      quick access grid with quick_view, quick_cells / quick_columns).
   6. Bottom strip (+ a second strip: profile field strips).
   7. Tabs: Journal, Skills, Feats, Race, Class (class / race views), Injuries, Drives, Inventory / Doll, Training,

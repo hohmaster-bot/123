@@ -99,3 +99,6 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   resources block (glass / flat tubes, value editor, temp HP strip, mechanics buttons, pools, own buttons), the Level
   up button, font settings, the "what changes with the level" suite (base_at_max refusal fixed, spend_charge topic
   rest added). Report: tests/PACKAGE33_REPORT.md.
+- Done in package 34: sources of every number (view, manual rows in the editor mode, Sources dialog; Q224 closed),
+  the Parameters and AC blocks, the small-window steps (part 1); the statuses / favourites / reminders blocks, the tab
+  bar and the combat tab with action squares and the quick grid (part 2). Report: tests/PACKAGE34_REPORT.md.

@@ -1583,7 +1583,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (212)
+## Лишние ключи (нигде не нужны) (252)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1597,6 +1597,17 @@
 - `ac_cell.7`
 - `ac_cell.8`
 - `ac_cell.9`
+- `combat.actions`
+- `combat.attacks`
+- `combat.cycle`
+- `combat.end`
+- `combat.out`
+- `combat.quick`
+- `combat.reactions`
+- `combat.restore`
+- `combat.round`
+- `combat.start`
+- `combat.turn`
 - `counter.attention`
 - `counter.load`
 - `counter.morale`
@@ -1639,6 +1650,7 @@
 - `exp.kind.level_up`
 - `exp.remind.excess`
 - `exp.remind.training`
+- `favorites.empty`
 - `hint.ac_block`
 - `hint.cell_block`
 - `hint.custom_buttons`
@@ -1714,6 +1726,8 @@
 - `param.ref`
 - `param.will`
 - `reason.editor_mode_needed`
+- `reminders.dismiss`
+- `reminders.empty`
 - `resources.amount`
 - `resources.bad_edit`
 - `resources.button.damage_to_balance`
@@ -1775,6 +1789,7 @@
 - `sources.col.name`
 - `sources.col.on`
 - `sources.col.value`
+- `sources.effects`
 - `sources.kind.effect`
 - `sources.kind.manual`
 - `sources.kind.rule`
@@ -1788,6 +1803,31 @@
 - `sources.remove`
 - `sources.title`
 - `sources.total`
+- `statuses.end`
+- `statuses.end_of_combat`
+- `statuses.filter.active`
+- `statuses.filter.all`
+- `statuses.filter.favorites`
+- `statuses.infinite`
+- `statuses.off`
+- `statuses.on`
+- `statuses.rounds`
+- `statuses.star_off`
+- `statuses.star_on`
+- `tab.catalogs`
+- `tab.class`
+- `tab.combat`
+- `tab.drives`
+- `tab.feats`
+- `tab.injuries`
+- `tab.inventory`
+- `tab.journal`
+- `tab.placeholder`
+- `tab.race`
+- `tab.rest`
+- `tab.settings`
+- `tab.skills`
+- `tab.training`
 - `warning.block_outside_window`
 - `warning.block_under_minimum`
 - `warning.hp_controls_hidden`
