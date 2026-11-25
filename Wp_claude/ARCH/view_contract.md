@@ -674,6 +674,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `class_id`: str
 - `feats`: tuple[tuple[NoneType|str|tuple[int]]]
 - `level`: int
+- `name`: str
 - `save_override`: map
 - `speed`: int
 - `stats`: map

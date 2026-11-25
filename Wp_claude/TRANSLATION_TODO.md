@@ -2,7 +2,7 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (861)
+## Нет в ru.json (858)
 
 ### catalog (107)
 - `catalog.field.ac_bonus`
@@ -127,12 +127,11 @@
 - `damage.slashing`
 - `damage.sound`
 
-### panel (36)
+### panel (33)
 - `panel.attacks`
 - `panel.attacks.desc`
 - `panel.catalogs`
 - `panel.catalogs.desc`
-- `panel.combat`
 - `panel.combat.desc`
 - `panel.defense`
 - `panel.defense.desc`
@@ -148,7 +147,6 @@
 - `panel.maneuvers.desc`
 - `panel.notebook`
 - `panel.notebook.desc`
-- `panel.resources`
 - `panel.resources.desc`
 - `panel.rest`
 - `panel.rest.desc`
@@ -160,7 +158,6 @@
 - `panel.skills.desc`
 - `panel.spells`
 - `panel.spells.desc`
-- `panel.statuses`
 - `panel.statuses.desc`
 - `panel.training`
 - `panel.training.desc`
@@ -889,7 +886,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (663)
+## Нет в en.json (660)
 
 ### catalog (107)
 - `catalog.field.ac_bonus`
@@ -1000,12 +997,11 @@
 - `catalog.kind.weapon_groups`
 - `catalog.kind.weapons`
 
-### panel (36)
+### panel (33)
 - `panel.attacks`
 - `panel.attacks.desc`
 - `panel.catalogs`
 - `panel.catalogs.desc`
-- `panel.combat`
 - `panel.combat.desc`
 - `panel.defense`
 - `panel.defense.desc`
@@ -1021,7 +1017,6 @@
 - `panel.maneuvers.desc`
 - `panel.notebook`
 - `panel.notebook.desc`
-- `panel.resources`
 - `panel.resources.desc`
 - `panel.rest`
 - `panel.rest.desc`
@@ -1033,7 +1028,6 @@
 - `panel.skills.desc`
 - `panel.spells`
 - `panel.spells.desc`
-- `panel.statuses`
 - `panel.statuses.desc`
 - `panel.training`
 - `panel.training.desc`
@@ -1572,7 +1566,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (71)
+## Лишние ключи (нигде не нужны) (102)
 - `ac_cell.1`
 - `ac_cell.2`
 - `ac_cell.3`
@@ -1628,10 +1622,28 @@
 - `hint.quick_access`
 - `hint.tube_editor`
 - `hint.understood`
+- `identity.level`
+- `identity.no_class`
+- `identity.portrait`
+- `lang.en`
+- `lang.ru`
 - `load.heavy`
 - `load.light`
 - `load.of`
 - `load.overload`
+- `menu.character`
+- `menu.exit`
+- `menu.help`
+- `menu.hints_reset`
+- `menu.language`
+- `menu.new_demo`
+- `menu.open`
+- `menu.save`
+- `menu.save_as`
+- `menu.scale`
+- `menu.theme`
+- `menu.theme_follow_system`
+- `menu.view`
 - `param.attack_melee`
 - `param.attack_ranged`
 - `param.cmb`
@@ -1640,7 +1652,20 @@
 - `param.initiative`
 - `param.ref`
 - `param.will`
+- `shell.error`
+- `shell.file_filter`
+- `shell.no_backup`
+- `shell.placeholder`
+- `shell.reads`
+- `shell.restore_backup`
+- `shell.saved`
+- `shell.title`
+- `shell.unexpected`
 - `warning.block_outside_window`
 - `warning.block_under_minimum`
 - `warning.hp_controls_hidden`
 - `warning.low_contrast`
+- `xp.goal`
+- `xp.log`
+- `xp.no_goal`
+- `xp.total`

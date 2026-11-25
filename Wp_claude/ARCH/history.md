@@ -90,3 +90,8 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package 31: one-time hints, three layout warnings and profile_reset, tube settings (style, size, auto-switch,
   pool order, three large pools), three shipped themes with all Classic tokens, theme_copy / theme_reset, follow the
   system, background settings, WCAG contrast warnings. Report: tests/PACKAGE31_REPORT.md.
+- Done in package 32: the Classic window shell in PySide6 (wp/ui, python run_wp.py): regions from the classic profile,
+  layout blocks in the panel registry, the three themes live (qss.build_qss with scale and dark fallback), RU / EN,
+  scale, follow the system, the first-run hint, window geometry, the experience strip and the identity block with real
+  data, the demo character; headless UI tests with screenshots; the overlay spike tray icon. Report:
+  tests/PACKAGE32_REPORT.md.

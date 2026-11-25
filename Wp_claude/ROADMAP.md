@@ -81,8 +81,10 @@ Exactly two modes: Classic and Lite (D20; no split mode). Sheet (Classic), then 
 (see `UI_WISHES.md`), incl. pain editor and morale scale editor. RU / EN switch (D4). Delete tkinter.
 Binding spec: `UI_WISHES.md` "Classic screen v2" (package 29, D31); the core gaps per block: `ARCH/ui_gaps.md`.
 Step 0 DONE (packages 30, 31): the core is ready for the screen (every row of ARCH/ui_gaps.md built).
-Steps in order (each a package); next = step 1, the window shell + themes in PySide6:
-  1. Window shell + the three shipped themes (dark default, light, grey-blue), the Session wiring, one-time hints
+Step 1 DONE (package 32): the window shell (python run_wp.py), regions from the profile, the three themes live,
+RU / EN, scale, the first-run hint, the experience strip and the identity block with real data (D32).
+Steps in order (each a package); next = step 2, the resources block:
+  1. [DONE, package 32] Window shell + the three shipped themes (dark default, light, grey-blue), the Session wiring, one-time hints
      storage (hints_seen, hints_off).
   1b. Theme editor and background: every screen colour a token (the missing tokens of ARCH/ui_gaps.md "Themes"), live
      preview, copy / reset to shipped, follow the system, the 4.5:1 contrast warning, an own background picture with

@@ -29,6 +29,9 @@ Kept apart from RULES/. Nothing here changes numbers.
 ## Settings and layouts [OWNER, package 19: wishes, the structure exists in ARCH/settings.md]
 - Classic: resize panels; put ANY parameter / ability / status / pool / skill into a cell; cells may change colour by
   thresholds and run an action on click.
+- [owner, package 32] Lite tray icon: the icon shows whether the overlay is shown or hidden and whether
+  click-through is on (colour / badge), a tooltip with the state, a menu Show / Hide, Click-through on / off, Exit;
+  a visible close button (x) on the overlay; a hotkey to exit (the spike: Ctrl+Alt+Q).
 - Lite: move every element; window opacity together with click-through (and a hotkey that toggles click-through);
   always on top; lock the layout; snap to a grid; per-monitor scale.
 - Pictures for buttons, abilities, slots, statuses (image registry, placeholder when a file is missing).

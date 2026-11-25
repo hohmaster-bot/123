@@ -17,3 +17,7 @@
   scalar tube_gloss). theme_copy, theme_reset (drops the user override of a shipped theme), active(app, layers,
   system_dark) with theme_follow_system / theme_light / theme_dark; contrast_ratio (WCAG 2) and warnings(theme)
   (low_contrast below theme_schema contrast_min 4.5, never a refusal); view(app, layers).
+- [package 32] qss.build_qss(theme, scale=1.0, fallback=None): the window shell style sheet = the template rules + the
+  "shell" rules of qss_template.json; a token the theme lacks comes from the dark theme; fonts at least min_font_px 11
+  (before the scale), fonts and spacing times the scale (Python round); #rrggbbaa -> rgba(r, g, b, a) because Qt reads
+  8-digit hex as #aarrggbb. qss.scaled(theme, scale) gives the same tokens to the UI (layout gaps).

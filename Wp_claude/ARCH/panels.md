@@ -22,3 +22,11 @@ block ids below are layout blocks, added to the registry in the UI phase, ARCH/u
   other sources), combat (combat, attacks, maneuvers, spells, quick buttons), tabs (the other panels as tabs:
   log, skills, sheet, injuries, notebook, items, training, rest, catalogs, settings), bottom_strip (resources, combat,
   sheet, items.weight; a cell block).
+
+## Layout blocks in the registry (package 32)
+- panels.json has a "blocks" list: experience_strip, identity, ac_block, parameters, favorites, reminders, tabs,
+  bottom_strip (classic only; title panel.<id>, min_size, defaults, reads = the registry views the block shows).
+  registry.BLOCKS, known(pid), reads(pid) (a block's reads, a panel's own id); get(pid) knows both; a classic layout
+  item may name a panel or a block. PANELS stays the list of views (18).
+- The shipped classic default profile is the Classic screen v2: experience_strip (top); identity, resources (left);
+  ac_block + parameters (one row), statuses, favorites, reminders (center); tabs, combat (right); bottom_strip.

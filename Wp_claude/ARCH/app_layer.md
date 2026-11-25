@@ -50,3 +50,6 @@ The future Qt UI talks ONLY to `wp.app.session.Session`. It never imports wp.cor
   sheet attack_melee / attack_ranged / class, items load, defense shield_side / cell_lines / cell_labels, combat
   morale_active / action_squares / reaction_squares, statuses favorites / reminders. Command adjust_value is the
   tube editor correction (no mechanics).
+- [package 32] Session.settings(command, **params): the app settings commands for the UI (saved to the user folder at
+  once; a refusal is a result; subscribers get the topic "settings"); Session.theme(system_dark), themes_view(system_dark),
+  hint_visible(hint_id). The sheet view gains `name` (the open character's file name).
