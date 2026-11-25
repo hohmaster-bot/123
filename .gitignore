@@ -3,3 +3,4 @@ __pycache__/
 catalogs/
 app_settings.json
 images/
+tools/overlay_spike.json

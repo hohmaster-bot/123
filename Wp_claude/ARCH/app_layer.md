@@ -42,3 +42,6 @@ The future Qt UI talks ONLY to `wp.app.session.Session`. It never imports wp.cor
   append-only (fsync; a failed append keeps the lines in memory), indexed by date (`<name>.history.idx.json`), and
   travels with rename / duplicate / trash; an export holds the whole journal. Session: `journal_view(count,
   offset)`, `history_view(from_date, to_date, page, size)`, `full_log()`. Undo does not depend on the journal.
+- [package 28] The notebook view gives every drive its flags (taboo_required, principle_missing, quest_allowed,
+  quest_mandatory, quest_missing, obsessed), the spirit hint and text keys, and drive_summary (distributed / start
+  points, reminders). level_up and end_cycle results carry `info["reminders"]` ((text key, values) pairs).

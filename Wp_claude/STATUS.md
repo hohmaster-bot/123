@@ -1,22 +1,22 @@
 # Status (update at the end of every package; at most 40 lines)
 
 Branch: `Rework`. Phase: 3 DONE (rules core, model, data, settings, session layer); no UI yet.
-Last finished package: 27 (fixes of independent review 5: input checks by declared types, files and constants,
-topics, undo, journal modes with a history archive). Last report: `Wp_claude/tests/PACKAGE27_REPORT.md`.
+Last finished package: 28 (log_max removed, drives with types / quests / reminders / buying with comfort, overlay
+spike tools/overlay_spike.py). Last report: `Wp_claude/tests/PACKAGE28_REPORT.md`.
 
-## Tests (last run in package 27)
-- `python Wp_claude/tests/run_all.py`: suites 65, passed 65, failed 0.
-- `python Wp_claude/tests/break_check.py`: entries 289, caught 289, missed 0.
+## Tests (last run in package 28)
+- `python Wp_claude/tests/run_all.py`: suites 66, passed 66, failed 0.
+- `python Wp_claude/tests/break_check.py`: entries 301, caught 299, missed 2 (p23-cache-scope, p23-cache-clear "not applied": test_perf.py failed once on the clean copy, a timing budget under load; run again alone: test_perf 8/8, both entries caught). The 2 drive entries of pkg25 were moved to drive_cmds.py first (caught).
 - Legacy baseline (separate): 105 examples, 69 pass, 17 fail, 19 not built (BASELINE_REPORT.md).
 
 ## Open questions (OPEN_QUESTIONS.md)
-- Waiting for the owner: Q188 (remove the unused setting log_max), nothing blocking. Russian texts to fill: Wp_claude/TRANSLATION_TODO.md.
+- Waiting for the owner: the overlay spike test (Wp_claude/OVERLAY_SPIKE.md), nothing blocking. Russian texts to fill: Wp_claude/TRANSLATION_TODO.md.
 - Assumptions to confirm: Q23, Q96, Q98-Q102, Q105, Q106, Q112, Q114, Q116-Q121, Q123, Q124, Q126-Q129, Q131,
-  Q132, Q134-Q144, Q146, Q148-Q150, Q152, Q153, Q160-Q187, Q189, Q190.
+  Q132, Q134-Q144, Q146, Q148-Q150, Q152, Q153, Q160-Q187, Q189-Q196.
 
 ## Next (ROADMAP.md)
 1. The owner fills ru.json (TRANSLATION_TODO.md; refusals show English until then, F12).
-2. Overlay prototype (Phase 4) - needs the owner's drawings (UI/sketches/); Classic screen v1 is described in UI_WISHES.md.
+2. Overlay (Phase 4): the owner tries tools/overlay_spike.py over a browser / VTT and reports (OVERLAY_SPIKE.md).
 3. The UI (Phase 5, two modes Classic / Lite, D20) through the Session only (D25, ARCH/app_layer.md,
    ARCH/view_contract.md); Phase 6 release. PDF export with Qt in the UI phase (QPdfWriter).
 

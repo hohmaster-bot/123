@@ -76,3 +76,5 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   declared parameter kinds with a type check of results and files, constant limits, topics checked by a test, undo
   keeps settings and journal, journal modes with a history archive, flank by cells, English refusal texts, 15 rule
   tests. Report: tests/PACKAGE27_REPORT.md.
+- Done in package 28: log_max removed; drives with 10 types, quests, flags, reminders and buying a level with comfort;
+  the overlay spike tools/overlay_spike.py (Wp_claude/OVERLAY_SPIKE.md). Report: tests/PACKAGE28_REPORT.md.
