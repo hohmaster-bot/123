@@ -54,10 +54,20 @@ def _passes(suite, tmp):
     return r.returncode == 0
 
 
+def _clean_pass(suite, tmp):
+    """Does the suite pass on the clean copy? A failure is run once more alone before it counts (package 29 C: a
+    timing budget may fail once on a loaded machine); the second result is final."""
+    if _passes(suite, tmp):
+        return True
+    again = _passes(suite, tmp)
+    print("%-8s %-40s %s" % ("rerun", suite, "passes on the second run" if again else "fails twice on the clean copy"))
+    return again
+
+
 def check(entry, tmp, clean):
     """'caught', 'missed' or 'not applied (...)' for one entry, run inside the temp copy.
     clean: {suite: passes without any break}; a suite that already fails proves nothing (package 18)."""
-    bad = [s for s in entry["suites"] if not clean.setdefault(s, _passes(s, tmp))]
+    bad = [s for s in entry["suites"] if not clean.setdefault(s, _clean_pass(s, tmp))]
     if bad:
         return "not applied (suite fails without a break: %s)" % ", ".join(bad)
     path = os.path.join(tmp, entry["file"])

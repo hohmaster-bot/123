@@ -1,24 +1,23 @@
 # Status (update at the end of every package; at most 40 lines)
 
 Branch: `Rework`. Phase: 3 DONE (rules core, model, data, settings, session layer); no UI yet.
-Last finished package: 28 (log_max removed, drives with types / quests / reminders / buying with comfort, overlay
-spike tools/overlay_spike.py). Last report: `Wp_claude/tests/PACKAGE28_REPORT.md`.
+Last finished package: 29 (Classic screen v2 recorded as the binding UI spec, D31; core gap audit ARCH/ui_gaps.md;
+break_check rerun, perf best of 3). Last report: `Wp_claude/tests/PACKAGE29_REPORT.md`.
 
-## Tests (last run in package 28)
+## Tests (last run in package 29)
 - `python Wp_claude/tests/run_all.py`: suites 66, passed 66, failed 0.
-- `python Wp_claude/tests/break_check.py`: entries 301, caught 299, missed 2 (p23-cache-scope, p23-cache-clear "not applied": test_perf.py failed once on the clean copy, a timing budget under load; run again alone: test_perf 8/8, both entries caught). The 2 drive entries of pkg25 were moved to drive_cmds.py first (caught).
+- `python Wp_claude/tests/break_check.py`: entries 301, caught 301, missed 0.
 - Legacy baseline (separate): 105 examples, 69 pass, 17 fail, 19 not built (BASELINE_REPORT.md).
 
 ## Open questions (OPEN_QUESTIONS.md)
-- Waiting for the owner: the overlay spike test (Wp_claude/OVERLAY_SPIKE.md), nothing blocking. Russian texts to fill: Wp_claude/TRANSLATION_TODO.md.
+- Waiting for the owner: Q197 (load categories), Q198 (general melee / ranged attack); the overlay spike test. Russian texts to fill: Wp_claude/TRANSLATION_TODO.md.
 - Assumptions to confirm: Q23, Q96, Q98-Q102, Q105, Q106, Q112, Q114, Q116-Q121, Q123, Q124, Q126-Q129, Q131,
-  Q132, Q134-Q144, Q146, Q148-Q150, Q152, Q153, Q160-Q187, Q189-Q196.
+  Q132, Q134-Q144, Q146, Q148-Q150, Q152, Q153, Q160-Q187, Q189-Q196, Q199.
 
 ## Next (ROADMAP.md)
-1. The owner fills ru.json (TRANSLATION_TODO.md; refusals show English until then, F12).
-2. Overlay (Phase 4): the owner tries tools/overlay_spike.py over a browser / VTT and reports (OVERLAY_SPIKE.md).
-3. The UI (Phase 5, two modes Classic / Lite, D20) through the Session only (D25, ARCH/app_layer.md,
-   ARCH/view_contract.md); Phase 6 release. PDF export with Qt in the UI phase (QPdfWriter).
+1. Phase 5 step 1: the window shell + themes (light / dark), Session wiring, one-time hints storage. Spec: UI_WISHES.md
+   "Classic screen v2"; core gaps per block: ARCH/ui_gaps.md.
+2. The owner: ru.json texts (TRANSLATION_TODO.md), the overlay spike test (OVERLAY_SPIKE.md), Q197 / Q198.
 
 ## Known gaps (rule exists, no code)
 - Stored-only weapon picks are flags without mechanics (package 25 E). Multiclass, reverting an arbitrary journal

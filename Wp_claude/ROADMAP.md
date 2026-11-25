@@ -79,6 +79,20 @@ PySide6: click-through, always-on-top, global hotkey, tray, multi-monitor. The o
 ## Phase 5 - UI
 Exactly two modes: Classic and Lite (D20; no split mode). Sheet (Classic), then Lite panels (the overlay), then editors
 (see `UI_WISHES.md`), incl. pain editor and morale scale editor. RU / EN switch (D4). Delete tkinter.
+Binding spec: `UI_WISHES.md` "Classic screen v2" (package 29, D31); the core gaps per block: `ARCH/ui_gaps.md`.
+Steps in order (each a package; the core additions of ui_gaps.md go into the step that needs them):
+  1. Window shell + themes (light / dark), the Session wiring, one-time hints storage (hints_seen, hints_off).
+  2. Resources: horizontal tubes (glass / flat), the value editor, adjust_value, temp HP strip, pools (3 large),
+     custom buttons through Session.run_quick, resource style / colour / size settings.
+  3. Experience strip (training.experience).
+  4. Parameters block and AC block: cell sources view, attack_melee / attack_ranged (Q198), load limits in
+     items.weight, shield_side and cell lines in defense, ac_cell labels.
+  5. Statuses, favourites (char setting favorites), reminders view; the combat tab (actions / reaction squares,
+     quick access grid with quick_view, quick_cells / quick_columns).
+  6. Bottom strip (+ a second strip: profile field strips).
+  7. Tabs: Journal, Skills, Feats, Race, Class (class / race views), Injuries, Drives, Inventory / Doll, Training,
+     Rest, Catalogs, Settings; expand to full screen without touching the profile.
+  8. Layout editor: grid snap, resize, profiles, the three validation warnings, profile_reset.
 
 ## Phase 6 - release v1.0
 Archive old docs, final cleanup.

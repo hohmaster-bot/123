@@ -24,7 +24,8 @@ from wp.rules_data import rules as rd  # noqa: E402
 
 S = Suite("test_perf")
 B = bench.budgets()
-M = bench.measure(repeat=2)
+BEST_OF = 3                            # package 29 C: a budget never fails from one slow run
+M = bench.measure(repeat=BEST_OF)
 
 
 def slow_views():
@@ -119,7 +120,7 @@ def _journal_save():
         s.new("heavy", ch)
         s.dispatch("add_experience", amount=1)
         best = None
-        for _ in range(2):
+        for _ in range(BEST_OF):
             t = time.perf_counter()
             s.save()
             ms = (time.perf_counter() - t) * 1000.0

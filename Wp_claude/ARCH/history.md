@@ -78,3 +78,6 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   tests. Report: tests/PACKAGE27_REPORT.md.
 - Done in package 28: log_max removed; drives with 10 types, quests, flags, reminders and buying a level with comfort;
   the overlay spike tools/overlay_spike.py (Wp_claude/OVERLAY_SPIKE.md). Report: tests/PACKAGE28_REPORT.md.
+- Done in package 29: Classic screen v2 recorded as the binding UI spec (UI_WISHES.md, wireframe, D31), surfaces and
+  panels updated, gap audit ARCH/ui_gaps.md with Phase 5 steps in ROADMAP.md; break_check reruns a clean-copy
+  failure once, perf budgets best of 3. Report: tests/PACKAGE29_REPORT.md.

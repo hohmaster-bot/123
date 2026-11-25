@@ -44,67 +44,129 @@ Kept apart from RULES/. Nothing here changes numbers.
   variant); or a slash list "A / B / C". Which variants and their order are settings.
 - The owner will send sketches / AI pictures for the doll and the cells later; the shipped coordinates are samples.
 
-## Classic screen v1 (package 26 D; from the owner's hand sketch and the AI reference A1-A6, files in UI/sketches/)
-Every block reads ONE panel view through the Session (`session.view(panel)`, ARCH/view_contract.md) and changes the
-character only with `session.dispatch(command)`; it refreshes on the topics of the result (D25).
+## Classic screen v2 (owner approved, package 29) - the binding spec of the UI phase
+Every block reads panel views through the Session (`session.view(panel)`, ARCH/view_contract.md) and changes the
+character only with `session.dispatch(command)`; it refreshes on the topics of the result (D25, D31). What the core
+still lacks for each block: ARCH/ui_gaps.md.
 
-### Layout
-- Left / bottom column: identity and resources. Middle top: the always-visible strip and the cells block. Middle:
-  buffs and statuses strip. Right: the switcher area (the combat block by default).
-- Spacing between blocks and the gaps between cells are settings (layout profile, classic); light and dark themes.
+### Wireframe (regions)
+```
++--------------------------------------------------------------------------------------------+
+| EXPERIENCE strip: [glass bar ======-----]  1450 xp   to next level: 2000   [Experience log] |
++-------------------+------------------------------------------+-----------------------------+
+| AVATAR            | AC block (3x3)       | Parameters (3x3)  | Tabs: Combat Journal Skills  |
+| (portrait,        | FL  F   FR           | Melee Ranged Init | Feats Race Class Injuries    |
+|  resizable)       | SL  You SR           | CMB   CMD   Enc   | Drives Inventory Training    |
++-------------------+ BL  B   BR           | Fort  Ref   Will  | Rest Catalogs Settings  [^]  |
+| HP   [=====|...]  +------------------------------------------+-----------------------------+
+|  [Take dmg][Heal] | Buffs / statuses: chips  [All|Active|Fav] [Add] | COMBAT tab:            |
+| Balance [===...]  +-------------------------------------------------+ [Start/End] [Short]    |
+|  [Dmg to balance] | Favourites: statuses and abilities              | [Long] [End of cycle]  |
+| Spirit [==..] -1+1+-------------------------------------------------+ Actions [#][#][#] R[#] |
+| Mana  [===.] -1+1 | Reminders: write the taboo of Growth; take ...  | [Zero initiative]      |
+|  overload - +     |                                                 | attacks list           |
+| Pools (3 large,   |                                                 | quick access 4x2       |
+|  rest compact,    |                                                 |                        |
+|  scrolls)         |                                                 |                        |
++-------------------+-------------------------------------------------+------------------------+
+| BOTTOM strip: OT 2 | Pain 1 | Morale +2 | Speed 30 | Encumbrance 40 of 59 (light)  [+ strip]  |
+|               [Journal]                                                                     |
++--------------------------------------------------------------------------------------------+
+```
 
-### Identity and resources (left / bottom; views `resources`, `sheet`, `training`)
-- Avatar picture: image registry target `character` (missing -> placeholder); the name (session file name) and the
-  class (`sheet.class_id`, the class name from the snapshot).
-- Resource FLASKS (style flask, `resources.flasks`): spirit, mana, every class pool (e.g. the owner's "darkness",
-  key `pool:<id>`), segmented by 5 (app setting resource_segments). Click = the number breakdown; buttons call
-  `restore` / `restore_pool` / `restore_mana`; spending is done by the actions that cost it.
-- HP flask (separate, `resources.flasks.hp`, temp HP shown on top: `resources.temp_hp`): `take_damage(amount)`,
-  `restore(resource="hp", amount)`.
-- Balance: a VERTICAL bar with + / - buttons (`spend_balance`, `restore(resource="balance")`), the cap marker
-  (`flasks.balance.cap`) and the restore per tick (`flasks.balance.restore`).
-- EXP bar: `training.experience` (total, progress % of next_level_at); a button opens the experience log (newest
-  first) and the level history timeline; commands `add_experience(amount, note)`, `set_next_level_at`, edit mode
-  `edit_experience_entry` / `remove_experience_entry` / `edit_level_history` / `remove_level_history`.
+### 1. Regions
+- A full-width EXPERIENCE strip at the top: a glass bar, the current experience, the "to next level" goal, the
+  button "Experience log". Left column: the avatar, then the resources. Middle: TWO blocks on one row (the AC block
+  and the Parameters block), then buffs / statuses. Right column: the tabs and the combat tab. A full-width BOTTOM
+  strip. No background illustration. Light and dark themes.
 
-### Always-visible strip (cells; views `sheet`, `resources`, `combat`, `training`)
-- Temp HP, Pain and OT as TWO separate cells (`resources.pain`, `resources.ot`), Attention, OV, Initiative, the saves
-  (Fort / Ref / Will), Speed, BAB / CMB / CMD (`sheet.stats`, `sheet.bab`, `sheet.speed`).
+### 2. Avatar
+- A portrait only, its own block, resizable (small to large). A frame colour by the character state may be added
+  later as a setting.
 
-### Cells block (2-3 rows; number of rows, cell size and gaps are settings; layout profile `cells`, package 19)
-- AC is the 3x3 ZONE GRID around the character (`defense.cells`): cell 5 = the character (avatar or an icon), every
-  other cell shows the primary variant as a big number in the centre and the secondary variant as a small number
-  bottom right (`defense.display`); cell 8 = the back. The four AC numbers of the early sketch (Full / Flat / Touch /
-  Parry) are NOT used; the old modes are inside the grid (cell 2, 6, 8).
-- Beside the grid: Initiative, Speed.
-- "+" adds a custom cell (package 19 cells: source = any sheet number, a skill +x, ability or item charges, spell
-  slots, OT, encumbrance, a custom counter).
+### 3. Resources (under the avatar, top to bottom: HP, balance, spirit, mana, class pools)
+- Each: a label (with an optional coloured chip, e.g. the caster overload next to mana), the value text, a HORIZONTAL
+  glass tube with liquid, a highlight and segments (app setting resource_segments, 5 or 10), buttons under it.
+- Style glass or flat is a setting; changing the style never changes size, position or logic. The size is set
+  separately in width and height. Auto-switch big glass -> medium -> a thin bar with the number inside when space is
+  short (can be disabled).
+- Colours are settings; defaults: HP red, balance muted orange, spirit teal, mana blue, class pools their own
+  colours, the overload chip magenta.
 
-### Buffs and statuses strip (view `statuses`)
-- Chips: name, rounds left, charges; click = details and sources; "Add" opens the status catalog (`add_status`,
-  `activate_status`, `remove_status`).
+### 4. Click on a tube = the value EDITOR (a correction, no game mechanics)
+- "+N" adds, "-N" subtracts, a plain number replaces. For HP the popup has a second field for temporary HP.
+- Negative values are refused (HP excepted), as in the rules.
+- Game mechanics are BUTTONS: HP "Take damage", "Heal"; balance "Damage to balance" (they can cause pain); no separate
+  + / - or "restore" buttons for them. Pools, spirit and mana get small "-1" / "+1" buttons; mana also has overload
+  "-" / "+".
+- The player may add custom buttons ("write off X", "add X", a macro) under any resource.
 
-### Combat block (right, default switcher page; views `combat`, `attacks`, `maneuvers`, `items`, `spells`)
-- Buttons: Start / End combat (`start_combat`, `end_combat`), Short / Long rest (`short_rest`, `long_rest`), End of
-  cycle (`end_cycle`), Take damage (`take_damage`), Lose balance (`damage_to_balance` / `spend_balance`), Heal
-  (`restore`), Zero initiative (`tick`), Restore mana X (`restore_mana(amount)`).
-- Actions cells: current / max (`combat.actions`; more than 3 possible), tooltip = `actions.sources`; `spend_actions`,
-  `restore_actions`. Reactions: `combat.reactions`, `spend_reaction`.
-- Quick access: consumables (`use_consumable`), activated items and abilities with charges (`activate_item`,
-  `spend_charge`), magic (`cast_spell`), attack records (`use_attack`).
-- Ability icons show charges (a number in a corner), cooldown (dimmed), the hotkey (a small digit).
+### 5. Temporary HP
+- A thin grey / silver strip along the bottom third of the HP tube, filling left to right, segmented by 5 points; it
+  may be longer than the HP fill.
 
-### Switcher (tabs) - replaces the right part together with the combat block
-- Combat (the buttons above), Skills (`skills`), Feats (`sheet` for now), Race (`sheet`), Class (`sheet`; the class
-  panel does not exist yet, Q177), Injuries (`injuries`), Drives / Quirks (`notebook`), Inventory / Doll (`items`:
-  the item list or the doll; the doll Body view has the two hands and all 22 slots, `layout`), Training (`training`),
-  Rest (`rest`), Catalogs (`catalogs`), Settings (`settings`: opens the settings menu).
+### 6. Class pools
+- Unlimited. The first three are drawn large (the player chooses which), the rest compact; the pool list scrolls on
+  its own.
 
-### Rules of the screen
-- Every number is clickable: the breakdown of its sources (the views' lines / sources data); tooltips everywhere.
-- Lite mode is a separate compact overlay (A2), not this screen.
+### 7. Middle row 1: two separate blocks on one level and one top line
+- (a) AC block: the 3x3 zone grid, labels front-left / front / front-right / side left / "You" / side right /
+  back-left / back / back-right; the shield side highlighted with an icon; each zone a big main number and a small
+  second number; every number clickable (its sources).
+- (b) Parameters block, 3x3 cells in this order: melee attack, ranged attack, initiative; CMB, CMD, encumbrance;
+  Fortitude, Reflex, Will. The encumbrance cell shows "40 of X" and the category in small type under it and must fit
+  the square. Categories by RULES/gear.md "Weight": light, heavy, and above heavy the encumbrance state (overload,
+  "drag only or drop something"); see Q197.
+- Both are cell blocks: the player can change which number every cell shows (any sheet number, skill, pool, counter),
+  its colour thresholds and its click action.
 
-### Corrections to the AI reference (A1-A6)
+### 8. Middle row 2
+- Buffs and statuses: chips (name, note, rounds, charges); filters All / Active / Favorites; Add.
+- Then a favourites row (favourite statuses and abilities), then a reminders row (e.g. a drive principle missing, a
+  quest needed).
+
+### 9. Right column
+- Tab bar: Combat, Journal, Skills, Feats, Race, Class, Injuries, Drives, Inventory, Training, Rest, Catalogs,
+  Settings. An "expand to full screen" button for Skills, Inventory, Doll, Training, Catalogs: expanding hides the
+  other regions temporarily and NEVER rewrites the saved profile; closing returns the previous layout and state.
+- Combat tab: Start / End combat, Short rest, Long rest, End of cycle; ACTIONS as squares (colour = available, grey =
+  spent) and a REACTION square; "Zero initiative"; the attack list; the quick access grid (default 8 cells, 4-16, the
+  number of columns is a setting): a cell = name, icon, charges in a corner, dimmed on cooldown, the hotkey digit.
+
+### 10. Bottom strip (full width, like the experience strip)
+- OT, Pain, Morale (scale), Speed, Encumbrance as "40 of X (light)" with the limits (light up to, heavy up to). Its
+  content is editable (any numbers, any order). A button "+ strip" adds a second optional strip (spell slots / quick
+  access). A "Journal" button opens the journal as a tab of the right column (not a separate window).
+
+### 11. Number hierarchy and sizes
+- Critical numbers large (HP, AC, balance, initiative), working numbers medium, reference numbers by click / hover
+  with the source breakdown. Minimum font 11 px at 100% scale.
+- Sizes (px at 100%, orientation only): avatar 90-180, HP flask 150x300 recommended, other flasks 110x230, parameter
+  card 100x85, quick cell 130x100, AC cell 110x110.
+
+### 12. Small window
+- Order: shrink the gaps, then the secondary captions, then the optional details, then the compact mode of blocks,
+  scroll LAST. Data are never deleted; a mark shows that something is temporarily hidden and the player can open it.
+  Adaptation never overwrites the saved layout.
+
+### 13. Layout
+- Classic = columns and cells with grid snap; the user resizes blocks; several saved profiles. Free placement without
+  a grid only in Lite. Editor mode shows borders, names and resize handles.
+- Validation WARNS (a block under its minimum, all HP controls hidden, a block outside the window) but never forbids;
+  a "restore the default profile" action always exists.
+
+### 14. One-time hints
+- Every explanatory hint ("how to use this", first-run tips, a how-to picture) is shown once and stays until the
+  player ticks "Understood!" ("Понятно!"). The per-hint state is stored in the app settings (a list of hint ids);
+  there is a "show all hints again" action and a switch "hints off". Texts live in i18n.
+
+### 15. Architecture rules (D31)
+- Data and display are independent (one resource may be a large flask, a small flask or a flat bar: different views
+  of the same data). Layout and content are independent (the resources block gets a list and draws it by settings).
+  Adaptation to a small window changes the presentation, never the saved layout. Classic never changes the character
+  except through Session commands.
+
+### Corrections (kept from v1; the AI reference A1-A6 is historical)
 - The training price unit is training points, not gp.
 - Pain and OT are separate. Temp HP, Attention, OV, Initiative, saves, speed, BAB / CMB / CMD are cells of the
   always-visible strip.

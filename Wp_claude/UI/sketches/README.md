@@ -1,7 +1,8 @@
 # UI sketches (owner files; package 26 D)
 
-The owner places the pictures here; Claude does not create image files. The text description of the Classic screen
-is in `Wp_claude/UI_WISHES.md`, section "Classic screen v1".
+The owner places the pictures here; Claude does not create image files. The BINDING description of the Classic
+screen is the owner's approved wireframe v2: `Wp_claude/UI_WISHES.md`, section "Classic screen v2" (package 29).
+The AI pictures A1-A6 below and the v1 hand sketch are historical references only.
 
 Expected files:
 - `A1_reference_v1.png` - AI reference, the whole Classic screen

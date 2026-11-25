@@ -11,7 +11,12 @@ Both modes have an edit mode; it works differently in each.
 - Editors open inside the window (pages/tabs), not as floating windows.
 - Global hotkey shows/hides it: Ctrl+Shift+W.
 - Edit mode: forms and lists inside the sheet.
-- Screen layout v1: `UI_WISHES.md` section "Classic screen v1" (package 26 D); sketches in `UI/sketches/`.
+- Screen layout v2 (owner approved, package 29, binding): `UI_WISHES.md` section "Classic screen v2"; gaps of the
+  core for it: `ARCH/ui_gaps.md`. Regions: a full-width experience strip (top); the left column = avatar + resources;
+  the middle = the AC block and the Parameters block on one row, then buffs / statuses, favourites, reminders; the
+  right column = tabs (Combat by default); a full-width bottom strip (+ an optional second strip). Classic uses
+  columns and grid-snapped cells; free placement only in Lite. Adaptation to a small window never rewrites the saved
+  layout (D31).
 
 ## Lite (the overlay)
 - Frameless always-on-top panels on the desktop. Empty space is click-through.

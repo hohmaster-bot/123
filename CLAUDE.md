@@ -43,7 +43,7 @@ Plan: `Wp_claude/ROADMAP.md`. Legacy tkinter code at repo root is reference only
 | quirks, courts, lenses / catalogs | `RULES/narrative.md` / `RULES/catalog.md` |
 | UI design | `Wp_claude/UI_WISHES.md` + `Wp_claude/ARCH/surfaces.md` |
 | architecture, new module | `Wp_claude/ARCH/decisions.md` + topic file in `Wp_claude/ARCH/` |
-| ARCH topic files | `app_layer.md` (Session), `view_contract.md` (views, generated), `settings.md`, `constants.md`, `i18n.md`, `panels.md`, `themes.md`, `classes.md`, `ac_variants.md`, `doll_hands.md` |
+| ARCH topic files | `app_layer.md` (Session), `view_contract.md` (views, generated), `settings.md`, `constants.md`, `i18n.md`, `panels.md`, `themes.md`, `classes.md`, `ac_variants.md`, `doll_hands.md`, `ui_gaps.md` (core gaps of the Classic v2 spec) |
 | known code vs rules gaps | `Wp_claude/tests/BASELINE_REPORT.md` |
 | unresolved choices / closed ones | `Wp_claude/OPEN_QUESTIONS.md` / `Wp_claude/ARCH/decision_log.md` |
 | what to do next / finished packages | `Wp_claude/ROADMAP.md` / `Wp_claude/ARCH/history.md` |
