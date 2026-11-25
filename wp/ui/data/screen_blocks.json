@@ -1,8 +1,67 @@
 {
  "format": 1,
- "note": "Package 34: the default content of the Parameters block and the AC grid (UI data, not rules). A layout item of the classic profile may carry its own \"cells\" (rows of number ids) for the Parameters block; numbers = the sheet numbers of wp/model/sources.py. ac_grid = the 3x3 AC zones (cell ids of RULES/ac_zones.md; 5 = you). levels = the number hierarchy (UI_WISHES point 11): large / medium / small object names of the labels.",
- "parameters": [["attack_melee", "attack_ranged", "initiative"], ["cmb", "cmd", "load"], ["fort", "ref", "will"]],
- "ac_grid": [["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"]],
+ "note": "Package 34: the default content of the Parameters block and the AC grid (UI data, not rules). A layout item of the classic profile may carry its own \"cells\" (rows of number ids) for the Parameters block; numbers = the sheet numbers of wp/model/sources.py. ac_grid = the 3x3 AC zones (cell ids of RULES/ac_zones.md; 5 = you). levels = the number hierarchy (UI_WISHES point 11): large / medium / small object names of the labels. Package 34 part 2: tabs = the tab bar of the right column (a layout item may carry its own \"tabs\"); only \"combat\" has content now; quick = the quick grid size limits (UI_WISHES 9: default 8, 4-16).",
+ "parameters": [
+  [
+   "attack_melee",
+   "attack_ranged",
+   "initiative"
+  ],
+  [
+   "cmb",
+   "cmd",
+   "load"
+  ],
+  [
+   "fort",
+   "ref",
+   "will"
+  ]
+ ],
+ "ac_grid": [
+  [
+   "1",
+   "2",
+   "3"
+  ],
+  [
+   "4",
+   "5",
+   "6"
+  ],
+  [
+   "7",
+   "8",
+   "9"
+  ]
+ ],
  "ac_you": "5",
- "levels": {"critical": "big", "working": "value", "reference": "muted"}
+ "levels": {
+  "critical": "big",
+  "working": "value",
+  "reference": "muted"
+ },
+ "tabs": [
+  "combat",
+  "journal",
+  "skills",
+  "feats",
+  "race",
+  "class",
+  "injuries",
+  "drives",
+  "inventory",
+  "training",
+  "rest",
+  "catalogs",
+  "settings"
+ ],
+ "implemented_tabs": [
+  "combat"
+ ],
+ "quick": {
+  "default": 8,
+  "lo": 4,
+  "hi": 16
+ }
 }

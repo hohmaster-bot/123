@@ -258,6 +258,9 @@
       "COLS": "the columns of the Sources table (UI, not a rule)",
       "VALUE_LIMIT": "the value spin box range of the Sources dialog (UI, not a rule)"
     },
+    "wp/ui/combat_tab.py": {
+      "STEP": "a square click spends one action / reaction (UI, not a rule)"
+    },
     "wp/ui/window.py": {
       "GAP_DIVISOR": "the small window halves the gaps (UI_WISHES 12, not a rule)"
     }

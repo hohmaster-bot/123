@@ -41,7 +41,9 @@ ALL = "all"
 EVERY_COMMAND = "every_command"
 SETTINGS_TOPICS = ("settings",)        # what subscribers get after an app settings change (package 32)
 ANY_TOPIC_VIEWS = ("sources",)         # views that read every number: re-read on ANY non-empty topics (package 34)
-EDITOR_TOPICS = ("editor",)            # the editor mode switched (package 34)
+EDITOR_TOPICS = ("editor",)
+REMINDER_TOPIC = "reminders"           # one-shot reminders added / dismissed (package 34)
+RESOURCE_GROUP = "resource:"           # quick buttons shown under a resource (package 33), not in the grid            # the editor mode switched (package 34)
 EDITOR_NEEDED = "editor_mode_needed"   # refusal of an editor-only command outside the editor mode
 
 
@@ -103,6 +105,28 @@ class Session(object):
         self._undo = []                # [(Character before, command)] newest last (package 25 A)
         self._redo = []
         self.editor_mode = False       # package 34: the editor mode (UI state, not saved); gates EDITOR_ONLY
+        self.notes = ()                # package 34: one-shot reminders of command results, until dismissed
+
+    def reminders_view(self):
+        """The standing reminders of the character (statuses view) + the one-shot ones of this Session
+        ({"standing": ((key, values), ...), "notes": ((key, values), ...)})."""
+        standing = self.view("statuses")["reminders"] if self.character is not None else ()
+        return {"standing": tuple(standing), "notes": tuple(self.notes)}
+
+    def dismiss_note(self, index):
+        """Drop one one-shot reminder (or all with index None); subscribers get the topic "reminders"."""
+        self.notes = () if index is None else tuple(n for i, n in enumerate(self.notes) if i != int(index))
+        for fn in self._subscribers:
+            fn((REMINDER_TOPIC,))
+
+    def quick_view(self, mode="classic"):
+        """The quick-access grid (package 34): {"cells", "columns", "buttons": ((id, label, cost_actions), ...)} =
+        the profile fields quick_cells / quick_columns and the app quick buttons without a resource group, by order."""
+        prof = self.profile(mode)
+        bs = sorted((b for b in self.app.quick_buttons if not str(b.get("group") or "").startswith(RESOURCE_GROUP)),
+                    key=lambda b: (int(b.get("order") or 0), b["id"]))
+        return {"cells": int(prof.get("quick_cells") or 0), "columns": int(prof.get("quick_columns") or 0),
+                "buttons": tuple((b["id"], b.get("label") or b["id"], int(b.get("cost_actions") or 0)) for b in bs)}
 
     def set_editor_mode(self, on):
         """The editor mode on / off (package 34): the subscribers get the topic "editor"."""
@@ -165,6 +189,7 @@ class Session(object):
         self.character = files.load(self.characters_dir, name, self._sub())
         self.name, self.dirty_since = name, None
         self._undo, self._redo = [], []
+        self.notes = ()                # one-shot reminders belong to the open character
         self._journal()                # an imported long journal goes into the archive at once
         return self.character
 
@@ -239,6 +264,10 @@ class Session(object):
         return self._changed(topics_of(command), dict(result.info))
 
     def _changed(self, topics, info):
+        new = tuple((k, tuple(v)) for k, v in info.get("reminders", ()))
+        if new:                        # one-shot reminders kept until dismissed (package 34; not saved)
+            self.notes = self.notes + new
+            topics = tuple(topics) + (REMINDER_TOPIC,)
         self._journal()
         if self.dirty_since is None:
             self.dirty_since = self.clock()

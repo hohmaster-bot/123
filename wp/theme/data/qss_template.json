@@ -44,6 +44,17 @@
    {"selector": "QFrame#cell, QFrame#shield_cell", "declarations": [["background-color", "transparent"], ["border", "{border_width}px solid {border}"], ["border-radius", "{radius}px"]]},
    {"selector": "QFrame#shield_cell", "declarations": [["border", "3px solid {ac_shield}"]]},
    {"selector": "QLabel#overload", "declarations": [["color", "{danger}"], ["font-weight", "bold"]]},
-   {"selector": "QDialog#sources, QDialog#sources QTableWidget", "declarations": [["background-color", "{surface}"], ["color", "{text}"]]}
+   {"selector": "QDialog#sources, QDialog#sources QTableWidget", "declarations": [["background-color", "{surface}"], ["color", "{text}"]]},
+   {"selector": "QPushButton#action_square", "declarations": [["background-color", "{action_square}"], ["color", "{accent_text}"], ["min-width", "22px"]]},
+   {"selector": "QPushButton#action_spent, QPushButton#reaction_spent", "declarations": [["background-color", "{action_spent}"], ["color", "{muted}"], ["min-width", "22px"]]},
+   {"selector": "QPushButton#reaction_square", "declarations": [["background-color", "{reaction_square}"], ["color", "{accent_text}"], ["min-width", "22px"]]},
+   {"selector": "QPushButton#fav_on", "declarations": [["color", "{chip_favorite}"], ["background-color", "transparent"], ["font-size", "{font_large}px"]]},
+   {"selector": "QPushButton#fav_off", "declarations": [["color", "{muted}"], ["background-color", "transparent"], ["font-size", "{font_large}px"]]},
+   {"selector": "QPushButton#link", "declarations": [["color", "{text}"], ["background-color", "transparent"], ["text-align", "left"], ["padding", "0px"]]},
+   {"selector": "QFrame#block QLabel#fav_chip", "declarations": [["background-color", "{chip_favorite}"], ["color", "{chip_text}"], ["border-radius", "{radius}px"], ["padding", "0px 6px"]]},
+   {"selector": "QPushButton#quick_cell", "declarations": [["background-color", "{surface}"], ["color", "{text}"], ["border", "{border_width}px solid {border}"], ["min-height", "28px"]]},
+   {"selector": "QScrollArea#list_area, QWidget#list_inner", "declarations": [["background-color", "transparent"], ["border", "none"]]},
+   {"selector": "QTabBar::tab", "declarations": [["background-color", "{surface}"], ["color", "{text}"], ["padding", "3px 6px"]]},
+   {"selector": "QTabBar::tab:selected", "declarations": [["background-color", "{accent}"], ["color", "{accent_text}"]]}
   ]}
 }

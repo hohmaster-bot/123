@@ -24,6 +24,7 @@ NUMBERS = ("hp_max", "balance_max", "spirit_max", "mana_max", "temp_hp", "attack
            "initiative", "cmb", "cmd", "fort", "ref", "will", "speed", "load", "attention")
 SAVES = ("fort", "ref", "will")
 MANUAL_PREFIX = "source:"
+STATUS = "status:"                     # package 34 part 2: the effects of one buff / status (read-only)
 
 
 def known(ch, number):
@@ -34,6 +35,8 @@ def known(ch, number):
     if number.startswith(sr.AC):
         from wp.core import ac_zones as acz
         return number[len(sr.AC):] in acz.CELLS
+    if number.startswith(STATUS):
+        return any(s.sid == number[len(STATUS):] for s in ch.statuses)
     return False
 
 
@@ -259,7 +262,26 @@ _BUILD = {"hp_max": _hp, "balance_max": _balance, "spirit_max": _spirit, "mana_m
           "speed": _speed, "load": _load, "attention": _attention}
 
 
+def _status(ch, sid):
+    """The effects of a status: one row per effect (target, value; a formula / "all" shown as its text)."""
+    st = next(s for s in ch.statuses if s.sid == sid)
+    ctx = dv.context(ch)
+    rows = []
+    for i, e in enumerate(st.effects):
+        try:
+            v = int(e.resolve(ctx))
+        except Exception:              # noqa: BLE001 - a broken formula counts as 0 in a view (GOTCHAS)
+            v = 0
+        rule = "" if isinstance(e.value, int) else str(e.value)
+        rows.append(_row("effect:%d" % i, e.target, EFFECT, v, on=st.active, rule=rule))
+    return 0, rows
+
+
 def view(ch, number):
+    if number.startswith(STATUS):
+        total, rows = _status(ch, number[len(STATUS):])
+        return {"number": number, "total": 0, "rows": tuple(rows), "target": "", "editable_target": False,
+                "effects_only": True}
     if number.startswith(sr.POOL):
         total, rows = _pool(ch, number[len(sr.POOL):])
     elif number.startswith(sr.AC):
@@ -270,4 +292,4 @@ def view(ch, number):
         total, rows = _BUILD[number](ch)
     target, _ = sr.target_of(number)
     return {"number": number, "total": int(total), "rows": tuple(rows), "target": target or "",
-            "editable_target": bool(target)}
+            "editable_target": bool(target), "effects_only": False}

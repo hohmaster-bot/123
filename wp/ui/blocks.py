@@ -212,6 +212,13 @@ def make(pid, item, shell):
     if pid == "resources":
         from wp.ui.resources_block import ResourcesBlock      # imports Block from here
         return ResourcesBlock(pid, item, shell)
+    if pid in ("statuses", "favorites", "reminders"):
+        from wp.ui import status_blocks as stb               # package 34 part 2
+        return {"statuses": stb.StatusesBlock, "favorites": stb.FavoritesBlock,
+                "reminders": stb.RemindersBlock}[pid](pid, item, shell)
+    if pid in ("tabs", "combat"):
+        from wp.ui import combat_tab as ct
+        return (ct.TabsBlock if pid == "tabs" else ct.CombatBlock)(pid, item, shell)
     if pid in ("parameters", "ac_block"):
         from wp.ui import screen_blocks as sb                 # package 34
         return (sb.ParametersBlock if pid == "parameters" else sb.AcBlock)(pid, item, shell)

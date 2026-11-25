@@ -58,8 +58,8 @@ class SourcesDialog(QDialog):
         self.view = v = self.session.view("sources", number=self.number)
         edit = bool(v["editable"])
         self.setWindowTitle(tr("sources.title", number=tr("number." + self.number)
-                               if not self.number.startswith(("pool:", "ac:")) else self.number))
-        self.total.setText(tr("sources.total", total=v["total"]))
+                               if not self.number.startswith(("pool:", "ac:", "status:")) else self.number))
+        self.total.setText(tr("sources.effects") if v.get("effects_only") else tr("sources.total", total=v["total"]))
         self.table.setHorizontalHeaderLabels([tr("sources.col." + c) for c in ("name", "kind", "value", "on")] + [""])
         rows = v["rows"]
         self.table.setRowCount(len(rows))
