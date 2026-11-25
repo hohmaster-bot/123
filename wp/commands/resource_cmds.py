@@ -63,7 +63,12 @@ def restore(ch, resource="hp", amount=0):
 
 @command
 def set_value(ch, resource="hp", value=0):
-    """Manual set: no clamp; over max is flagged (derived: current > max)."""
+    """Manual set: no clamp above; over max is flagged (derived: current > max). Owner (package 27, review 5 F19):
+    no negative value by hand for balance, mana, spirit and the other resources; HP may go below zero (the rules
+    have negative HP)."""
+    if value < 0 and resource != "hp":
+        raise CommandError("%s cannot be set below 0" % resource, "out_of_range", values=(value, 0, None), min=0,
+                           max=None, parameter="value")
     after = dm.set_value(_get(ch, resource), value)
     return commit(_put(ch, resource, after), "set_value", "%s = %d%s" % (
         resource, after.current, " (over max)" if after.over_max else ""))

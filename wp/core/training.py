@@ -199,7 +199,7 @@ def spell_cost(circle, discount=False, minus=0):
     c = int(circle)
     cost = SPELL_BASE + SPELL_PER_CIRCLE_SQ * c * c
     cost = cost // SPELL_DISCOUNT_DIVISOR if discount else cost
-    return max(SPELL_MIN_PRICE, cost - max(0, int(minus)))
+    return max(int(SPELL_MIN_PRICE), cost - max(0, int(minus)))
 
 
 def mastery_cost(circle):

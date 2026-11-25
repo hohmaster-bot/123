@@ -117,8 +117,12 @@ def _decode(v):
 
 
 def dumps(ch):
-    return json.dumps({"format": FORMAT, "version": VERSION, "character": _encode(ch)},
-                      ensure_ascii=True, indent=1, sort_keys=False)
+    """The file text; NaN / inf are never written (review 5 F13: allow_nan=False -> StorageError)."""
+    try:
+        return json.dumps({"format": FORMAT, "version": VERSION, "character": _encode(ch)},
+                          ensure_ascii=True, indent=1, sort_keys=False, allow_nan=False)
+    except ValueError as e:
+        raise StorageError("cannot save a value that is not a finite number: %s" % e)
 
 
 def loads(text):

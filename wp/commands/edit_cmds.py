@@ -59,6 +59,13 @@ def _fields(rec, fields, protect=()):
     fixed = sorted(set(fields) & set(protect))
     if fixed:
         raise CommandError("ids cannot be changed: %s" % ", ".join(fixed), "id_not_editable", values=(", ".join(fixed),))
+    from wp.storage import typecheck
+    h = typecheck.hints(type(rec))
+    for name in sorted(fields):        # the value must fit the field type (review 5 F5): hp_current=None is refused
+        why = typecheck.problem(fields[name], h[name], name)
+        if why:
+            raise CommandError("wrong value for %s: %s" % (name, why), "wrong_type", values=(name,), field=name,
+                               parameter=name)
     return replace(rec, **fields)
 
 

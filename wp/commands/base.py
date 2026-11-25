@@ -13,6 +13,7 @@ CHANGED = "changed"
 INVALID = "invalid_value"          # reason of a plain ValueError from the core
 NOT_FOUND = "not_found"            # reason of a KeyError (unknown id)
 UNKNOWN_COMMAND = "unknown_command"
+WRONG_TYPE = "wrong_type"
 
 
 class CommandError(ValueError):
@@ -68,11 +69,14 @@ def dispatch(ch, cmd, listeners=(), /, **params):
     """Run a command by name; on success notify listeners(result)."""
     if cmd not in REGISTRY:
         raise CommandError("unknown command: %r" % (cmd,), UNKNOWN_COMMAND, command=cmd)
+    from wp.commands import params as cp
     from wp.model import cache
     from wp.rules_data import rules as rd
+    from wp.storage import typecheck
     cache.clear()                      # a read cache never survives a command (package 23 B)
     try:
         with rd.using(ch):             # rule constants of this character (package 20, D23)
+            cp.check(cmd, REGISTRY[cmd], params, ch)     # declared parameter types first (package 27 B, D29)
             result = REGISTRY[cmd](ch, **params)
     except CommandError:
         raise
@@ -80,6 +84,13 @@ def dispatch(ch, cmd, listeners=(), /, **params):
         raise CommandError(str(e), NOT_FOUND)
     except ValueError as e:
         raise CommandError(str(e), INVALID)
+    except (TypeError, AttributeError, OverflowError, RecursionError, ZeroDivisionError) as e:
+        # a safety net, not the main check (package 27 B): a wrong value never crashes the UI
+        raise CommandError("invalid value for %s: %s" % (cmd, e), INVALID, command=cmd)
+    bad = typecheck.character_problem(result.state, ch)
+    if bad:                            # the result must still fit the stored types (review 5 F5)
+        raise CommandError("the result of %s does not fit the character: %s" % (cmd, bad), WRONG_TYPE, command=cmd,
+                           values=(bad,))
     if CHANGED in result.events and result.state == ch:
         result = replace(result, events=tuple(e for e in result.events if e != CHANGED))   # no-op: not logged (F7)
     if CHANGED in result.events:       # read-only / refused-softly / no-op commands are not logged

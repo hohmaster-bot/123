@@ -244,6 +244,10 @@ def profile_set(app, mode="", pid="", **fields):
     if "id" in fields:
         raise CommandError("an id cannot be changed", "id_not_editable", values=("id",))
     p = dict(_profile(app, mode, pid))
+    unknown = sorted(set(fields) - set(sch.FIELDS[_mode(mode)]))
+    if unknown:                        # review 5 F25: profile_set(dock=...) is not a profile field (a panel one)
+        raise CommandError("not a %s profile field: %s" % (mode, ", ".join(unknown)), "unknown_fields",
+                           values=(", ".join(unknown),), allowed=tuple(sch.FIELDS[mode]))
     p.update(fields)
     bad = sch.check_fields(mode, fields)
     if bad:

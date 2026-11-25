@@ -18,7 +18,7 @@ Pure functions, frozen data.
 """
 import math
 from dataclasses import dataclass, field, replace
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Union
 
 from wp.core import bonuses as bo
 from wp.core import formula as fm
@@ -46,7 +46,7 @@ def stat_mod_key(stat):
 @dataclass(frozen=True)
 class Effect:
     target: str
-    value: int = 0
+    value: Union[int, str] = 0          # a number, a formula text (package 14 C) or "all"
     btype: str = bo.FLAT
     weapon: Optional[str] = None
     value_source: Optional[str] = None   # e.g. OVERLOAD: value = current overload

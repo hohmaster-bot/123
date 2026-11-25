@@ -20,6 +20,9 @@ class FormulaError(ValueError):
     pass
 
 
+DIGITS = "0123456789"
+
+
 def _tokens(text):
     out = []
     i = 0
@@ -27,18 +30,18 @@ def _tokens(text):
         c = text[i]
         if c.isspace():
             i += 1
-        elif c.isdigit() or c == ".":
+        elif c in DIGITS or c == ".":         # only ASCII 0-9 (review 5 F24: an Arabic digit is not a number)
             j = i
-            while j < len(text) and (text[j].isdigit() or text[j] == "."):
+            while j < len(text) and (text[j] in DIGITS or text[j] == "."):
                 j += 1
             num = text[i:j]
             if num.count(".") > 1 or num == ".":
                 raise FormulaError("bad number %r" % num)
             out.append(("num", Fraction(num)))
             i = j
-        elif c.isalpha() or c == "_":
+        elif (c.isascii() and c.isalpha()) or c == "_":
             j = i
-            while j < len(text) and (text[j].isalnum() or text[j] == "_"):
+            while j < len(text) and ((text[j].isascii() and text[j].isalnum()) or text[j] == "_"):
                 j += 1
             out.append(("name", text[i:j]))
             i = j

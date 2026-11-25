@@ -255,6 +255,9 @@
       "1000": "milliseconds in a second (backup time stamps)",
       "32": "first printable character code (not a rule)",
       "127": "DEL character code (not a rule)"
+    },
+    "wp/storage/typecheck.py": {
+      "2": "a Tuple[X, ...] annotation has two arguments (not a rule)"
     }
   }
 }

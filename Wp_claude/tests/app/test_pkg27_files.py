@@ -156,6 +156,12 @@ S.case("f25-content", "F25: a text named .png and a jpg named .png refused; png,
        ("bad_image_content", "allowed", "allowed", "allowed", "allowed", "bad_image_content"))(_content)
 
 
+S.case("f25-profile-dock", "F25: profile_set dock 'space' (a panel field, not a profile one) -> unknown_fields; a panel "
+       "dock 'space' -> not_allowed", ("unknown_fields", "not_allowed"))(
+    lambda: (reason(lambda: settings_dispatch(st.AppSettings(), "profile_set", mode="classic", pid="default", dock="space")),
+             __import__("wp.settings.schema", fromlist=["x"]).check_fields("panel", {"dock": "space"})[0]))
+
+
 # ---------------------------------------------------------------- F11 entry codes
 def code_of(obj, raw=None):
     raw = raw if raw is not None else json.dumps(obj).encode("utf-8")
