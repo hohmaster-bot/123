@@ -35,8 +35,8 @@ Cross-cutting: ANY part of the sheet (item, feat, race, class, injury, quirk, bu
 ## Sections
 Search a file by its heading (`grep -n "^## "`), then read only that section.
 
-- `ac_zones.md` (67 lines): AC by direction, 3x3 cells, shield coverage (owner draft); variants and settings built in package 24
-  sections: Cells (6) | Shield coverage (shield in the LEFT hand) (16) | Features change cells (27) | Requirement for the implementation (31) | Values per cell [OWNER, package 14, closes Q92] (35) | Parry and shields [OWNER, package 15, closes Q93] (39) | Variants and settings (package 24) [OWNER, package 24 B; built] (48)
+- `ac_zones.md` (74 lines): AC by direction, 3x3 cells, shield coverage (owner draft); variants and settings built in package 24
+  sections: Cells (6) | Shield coverage (shield in the LEFT hand) (16) | Features change cells (27) | Requirement for the implementation (31) | Values per cell [OWNER, package 14, closes Q92] (35) | Parry and shields [OWNER, package 15, closes Q93] (39) | Variants and settings (package 24) [OWNER, package 24 B; built] (48) | Flank with the shield in either hand (package 27) [OWNER, review 5 F15; built] (69)
 - `buffs.md` (199 lines): effects, buffs, duration, charges
   sections: What an effect can change (4) | Duration kinds (9) | Value from the current overload [OWNER] (25) | Value from a stat modifier [OWNER, package 11 B; closes Q65] (29) | Skills target [OWNER] (39) | Condition [OWNER, package 8] (42) | Status container [OWNER, package 11 A; closes Q63] (50) | Charges and activation (78) | Stacking (see defense.md) (86) | Ready-made buffs (90) | Stacking flags [OWNER] (93) | Block effects [OWNER, package 13 B; closes Q82] (100) | Per-round cost [OWNER, package 13 C] (119) | Formulas [OWNER, package 14 C] (149) | Action and restore blocks, restore by effect [OWNER, package 14 F] (163) | Effect targets of every sheet number [OWNER, package 16 A2] (177)
 - `catalog.md` (61 lines): catalogs, sharing, sorting

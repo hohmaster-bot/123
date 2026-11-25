@@ -174,7 +174,7 @@ and never refunds. Prices are the constants of wp/core/training.py (data, not sc
 - buy_maneuver(name, ...): 250, an entry in the maneuver list (edit its tags and numbers with edit_maneuver). Its
   `source` parameter is the purchase source, so the maneuver's own source label is set with edit_maneuver (Q112).
 - buy_item_qualification(iid): 50 * N (N = Item.qualification_n); refused without N or twice. What the qualification
-  unlocks is not modelled (Q109).
+  unlocks: the hidden properties (package 25 D note below; Q109 closed).
 - Tests: package 15 (test_pkg15.py), every price with the numbers above.
 - [package 25 D, closes Q109] Qualification unlocks the hidden properties of the item: each property has a
   minimum qualification level; below it the item shows "???", at or above it the text and its effects act (in the

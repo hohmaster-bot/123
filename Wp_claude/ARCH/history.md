@@ -72,3 +72,7 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package 26: actions as a resource (base 3 + effects, tick / end of combat refill, cost presets), flask
   bars with segments, experience log with notes, goal and level history, the Classic screen v1 description
   (UI_WISHES.md, UI/sketches/README.md). Report: tests/PACKAGE26_REPORT.md.
+- Done in package 27: fixes of independent review 5 (F1-F30): backups and names, image paths, bounded entry codes,
+  declared parameter kinds with a type check of results and files, constant limits, topics checked by a test, undo
+  keeps settings and journal, journal modes with a history archive, flank by cells, English refusal texts, 15 rule
+  tests. Report: tests/PACKAGE27_REPORT.md.

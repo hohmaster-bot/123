@@ -1,5 +1,5 @@
 # Roadmap
-Current: Phase 2-3 (core and model). Last finished package and what is next: STATUS.md.
+Current: Phase 3 done (rules core, model, data, settings, session layer); next Phase 4-5 (overlay, UI). Last finished package and what is next: STATUS.md.
 Finished-package history: ARCH/history.md.
 
 ## Phase 0 - setup
@@ -22,10 +22,12 @@ Test runner that can fail (done: baseline script). Golden tests from RULES. Fix 
 ## Phase 3 - nodes without visuals
 PHASE 3 DONE (package 23): session layer (D25, ARCH/app_layer.md), view contract (ARCH/view_contract.md), read
 cache and perf budgets, AC zones as data. What is left (owner, package 23):
-  1. Independent review 5 (RULES_PACK.md).
+  1. Independent review 5 (RULES_PACK.md): DONE; its fixes are package 27.
   2. Overlay prototype (Phase 4) - needs the owner's screen drawings A1, A2.
   3. The UI (Phase 5).
   PDF export is NOT built (not in RULES; no package asked for it).
+- Package 27 done: fixes of review 5 (input checks by declared types, file and constant limits, topics test, undo
+  keeps settings and journal, journal modes with a history archive, D29).
 - Package 24 done: hands with sides, AC cell variants and defence settings as data, doll layout data (D26).
 - Package 25 done: undo / redo, class system v0 (data, one class), drives with level notes and principles,
   hidden item properties (Q109), the stored-only picks as flags, spell damage as data (D27).

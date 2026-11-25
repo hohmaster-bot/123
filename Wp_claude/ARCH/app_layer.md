@@ -21,3 +21,24 @@ The future Qt UI talks ONLY to `wp.app.session.Session`. It never imports wp.cor
   (`tests/perf/heavy.py`); `tools/bench.py [--profile]` prints the timings.
 - AC zones (`RULES/ac_zones.md` draft as data): `wp/rules_data/ac_zones.json`, `wp/core/ac_zones.py`,
   `wp/model/ac_zones_view.py`; the defense view carries the 8 cells.
+
+## Input checks, undo, journal (package 27, D29, review 5)
+- Parameters: `wp/commands/params.py` checks every parameter BEFORE the command runs: the kind from
+  `wp/commands/data/params.json` or the signature default (str, int without floats or bools, bool, list, map, ids of
+  a known set, records type-checked), no NaN / inf anywhere, counts >= 0. Refusals wrong_type, invalid_value,
+  out_of_range, unknown_parameter, unknown_damage_type, not_allowed. The command result must fit the stored types
+  (`wp/storage/typecheck.py`, the loader runs the same check on every file); other errors are invalid_value.
+- Names and files: a character name is refused (bad_name) with a control character, more than 100 characters, a
+  reserved Windows name, a trailing dot / space or a .json end (`files.name_problem`); backups of "a" are only
+  `a.<YYYYMMDD-HHMMSS-mmm>.json`; backups_folder is one folder name; image records must be `images/<id>.<ext>`.
+- Undo / redo keep the CURRENT values of `undo.json` keep_current (char_settings, the journal) and append the undo
+  line to the current journal. A command that changed nothing is not an undo step, calls no subscriber and does not
+  mark the file dirty (topics ()).
+- Topics: `tests/app/test_topics.py` compares every view before / after random commands (seeds 5, 6) and requires
+  every changed panel in the command's topics and no change visible only in the log.
+- Journal: every line has its time stamp `at` (the Session clock). App setting `journal_mode`: short keeps the
+  newest `journal_short_max` (100) lines; full (default) moves the oldest lines into `<name>.history.jsonl` when the
+  journal reaches `journal_archive_at` (1000), keeping `journal_archive_keep` (100) in memory. The archive is
+  append-only (fsync; a failed append keeps the lines in memory), indexed by date (`<name>.history.idx.json`), and
+  travels with rename / duplicate / trash; an export holds the whole journal. Session: `journal_view(count,
+  offset)`, `history_view(from_date, to_date, page, size)`, `full_log()`. Undo does not depend on the journal.

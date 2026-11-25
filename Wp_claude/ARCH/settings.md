@@ -40,3 +40,9 @@ max, group, i18n label and description ids). Code never lists setting keys by ha
   Lite profile's own hotkeys are checked together.
 
 - [package 26 B] resource_display allows "flask"; resource_segments[resource] = the tick step of a flask (0 = none).
+- [package 27] Type folder_name (backups_folder): one folder name, not "", ".", "..", no separator. Rule constants
+  carry min / max (dividers >= 1), map key sets and value types from constants.json; NaN / inf are refused; a character
+  file with a constant outside its limits is damaged. New app settings: journal_mode (short | full, default full),
+  journal_short_max 100, journal_archive_at 1000, journal_archive_keep 100. image_add checks the file content
+  (png / jpg / gif / webp / svg); profile_set takes only the profile fields; settings_import refuses image records
+  outside images/ and deep nesting.

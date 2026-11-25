@@ -110,3 +110,5 @@ character only with `session.dispatch(command)`; it refreshes on the topics of t
   always-visible strip.
 - The doll Body view also has the two hands and all 22 slots.
 - Ability icons: charges in a corner, cooldown dimmed, the hotkey as a small digit.
+- [owner, package 27] Temporary HP in the flask: a grey strip at the bottom of the flask that may be longer than the
+  HP, or a silver fill right after the red HP; the choice is a setting of the bar.

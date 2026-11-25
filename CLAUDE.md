@@ -38,10 +38,12 @@ Plan: `Wp_claude/ROADMAP.md`. Legacy tkinter code at repo root is reference only
 | HP, balance, pain, mana, overload, comfort | `RULES/resources.md` |
 | rest, BP / injuries, OT | `RULES/rest.md` / `RULES/injuries.md` |
 | classes, spells cost / gear, weight, base, items | `RULES/classes_magic.md` / `RULES/gear.md` |
-| training, skills, weapon mastery | `RULES/progression.md`, `RULES/skills.md`, `RULES/weapons.md` |
+| training, skills, weapon mastery | `RULES/progression.md`, `RULES/training.md`, `RULES/skills.md`, `RULES/weapons.md` |
+| AC cells / doll, slots / spells / stats / crafting | `RULES/ac_zones.md` / `RULES/doll.md` / `RULES/spells.md` / `RULES/stats.md` / `RULES/crafting.md` |
 | quirks, courts, lenses / catalogs | `RULES/narrative.md` / `RULES/catalog.md` |
 | UI design | `Wp_claude/UI_WISHES.md` + `Wp_claude/ARCH/surfaces.md` |
 | architecture, new module | `Wp_claude/ARCH/decisions.md` + topic file in `Wp_claude/ARCH/` |
+| ARCH topic files | `app_layer.md` (Session), `view_contract.md` (views, generated), `settings.md`, `constants.md`, `i18n.md`, `panels.md`, `themes.md`, `classes.md`, `ac_variants.md`, `doll_hands.md` |
 | known code vs rules gaps | `Wp_claude/tests/BASELINE_REPORT.md` |
 | unresolved choices / closed ones | `Wp_claude/OPEN_QUESTIONS.md` / `Wp_claude/ARCH/decision_log.md` |
 | what to do next / finished packages | `Wp_claude/ROADMAP.md` / `Wp_claude/ARCH/history.md` |
@@ -60,6 +62,8 @@ Visual and UX checks are done by the owner by hand.
 - All suites of the new code: `python Wp_claude/tests/run_all.py` (one summary line, exit 1 on any failure).
 - Break check: `python Wp_claude/tests/break_check.py [id-prefix]` breaks each rule in `Wp_claude/tests/breaks/*.py`
   on a temp copy and confirms a test fails (the working tree is never touched).
+- Review scripts (`Wp_claude/tests/review*/`) are ASCII only too: `test_ascii_code.py` scans every file under
+  `Wp_claude/tests/`, so a Cyrillic comment there fails run_all.
 - The legacy baseline is run separately: `python Wp_claude/tests/test_rules_baseline.py` (known failures in BASELINE_REPORT.md).
 
 ## Standard package procedure

@@ -259,7 +259,7 @@ For every part of a hit (each damage type on its own), in this order:
 4. what is left reaches HP, and the same amount lowers the balance (floored at 0);
 5. what the balance could not take is the overflow: -> OT, and +1 pain for the hit.
 (The owner's list in package 22 named "percent modifier -> flat -> absorbers -> temp HP"; the code does a, b, c as
-above and temp HP BEFORE the absorbers: OPEN_QUESTIONS Q151.)
+above and temp HP BEFORE the absorbers; the owner confirmed this order: Q151, closed in package 24, ARCH/decision_log.md.)
 
 #### Damage order and percent modifiers [OWNER, package 17]
 - Effect target "percent:<damage type>": a SIGNED percent: -100 = immunity, -50 = half, +50 = takes 50% more. One value
@@ -1920,7 +1920,7 @@ and never refunds. Prices are the constants of wp/core/training.py (data, not sc
 - buy_maneuver(name, ...): 250, an entry in the maneuver list (edit its tags and numbers with edit_maneuver). Its
   `source` parameter is the purchase source, so the maneuver's own source label is set with edit_maneuver (Q112).
 - buy_item_qualification(iid): 50 * N (N = Item.qualification_n); refused without N or twice. What the qualification
-  unlocks is not modelled (Q109).
+  unlocks: the hidden properties (package 25 D note below; Q109 closed).
 - Tests: package 15 (test_pkg15.py), every price with the numbers above.
 - [package 25 D, closes Q109] Qualification unlocks the hidden properties of the item: each property has a
   minimum qualification level; below it the item shows "???", at or above it the text and its effects act (in the
@@ -2050,6 +2050,13 @@ This is a DRAFT of the owner's future AC-by-direction scheme. Nothing here is bu
 - Display (app settings): the primary variant (big number in the centre of the cell), the secondary (small number
   bottom right), the slash list "A / B / C" (order and visible variants).
 - The old modes are presets: cell 2 = front and parry, cell 6 = flank, cell 8 = flat-footed (touch = cell 2).
+
+#### Flank with the shield in either hand (package 27) [OWNER, review 5 F15; built]
+- Flank = the cell of the side WITHOUT a shield: cell 6 with the shield in the left hand (or no shield), its mirror
+  cell 4 when every held shield is in the right hand. The screen shows one number: the old modes front, flank and
+  flat-footed are the melee numbers of their cells, parry the parry number of cell 2 (touch keeps its own ladder).
+- Example: heavy shield 2, deflection +3 only in cell 6. Shield left: cell 6 = 13, flank 13. Shield right: cell 6 =
+  10 + 2 + 3 = 15, cell 4 = 10, flank = 10.
 
 ## Data tables with rule numbers
 

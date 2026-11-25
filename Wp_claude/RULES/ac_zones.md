@@ -65,3 +65,10 @@ This is a DRAFT of the owner's future AC-by-direction scheme. Nothing here is bu
 - Display (app settings): the primary variant (big number in the centre of the cell), the secondary (small number
   bottom right), the slash list "A / B / C" (order and visible variants).
 - The old modes are presets: cell 2 = front and parry, cell 6 = flank, cell 8 = flat-footed (touch = cell 2).
+
+## Flank with the shield in either hand (package 27) [OWNER, review 5 F15; built]
+- Flank = the cell of the side WITHOUT a shield: cell 6 with the shield in the left hand (or no shield), its mirror
+  cell 4 when every held shield is in the right hand. The screen shows one number: the old modes front, flank and
+  flat-footed are the melee numbers of their cells, parry the parry number of cell 2 (touch keeps its own ladder).
+- Example: heavy shield 2, deflection +3 only in cell 6. Shield left: cell 6 = 13, flank 13. Shield right: cell 6 =
+  10 + 2 + 3 = 15, cell 4 = 10, flank = 10.
