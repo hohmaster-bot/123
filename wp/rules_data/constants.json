@@ -250,6 +250,16 @@
     },
     "wp/ui/tube_logic.py": {
       "LARGE": "pools drawn large by default (UI_WISHES 6, not a rule)"
+    },
+    "wp/ui/screen_blocks.py": {
+      "CELL_PAD": "px inside a number cell (UI, not a rule)"
+    },
+    "wp/ui/sources_dialog.py": {
+      "COLS": "the columns of the Sources table (UI, not a rule)",
+      "VALUE_LIMIT": "the value spin box range of the Sources dialog (UI, not a rule)"
+    },
+    "wp/ui/window.py": {
+      "GAP_DIVISOR": "the small window halves the gaps (UI_WISHES 12, not a rule)"
     }
   },
   "inline": {

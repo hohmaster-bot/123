@@ -665,6 +665,18 @@
    "resources",
    "log"
   ],
+  "source_add": [
+   "all"
+  ],
+  "source_edit": [
+   "all"
+  ],
+  "source_remove": [
+   "all"
+  ],
+  "source_toggle": [
+   "all"
+  ],
   "spend_charge": [
    "attacks",
    "items",

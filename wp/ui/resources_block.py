@@ -15,7 +15,7 @@ import io
 import json
 import os
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
 
 from wp.i18n import i18n
@@ -30,6 +30,7 @@ HP = "hp"
 MANA = "mana"
 OVERLOAD = "overload"
 STEP = 1                               # the -1 / +1 buttons
+MAX_OF = {"hp": "hp_max", "balance": "balance_max", "spirit": "spirit_max", "mana": "mana_max"}   # sources (pkg 34)
 ROW_GAP = 2                            # px between the label, the tube and the buttons of one row
 
 
@@ -39,6 +40,15 @@ def load(path=DATA):
 
 
 RES = load()
+
+
+class ClickLabel(QLabel):
+    clicked = Signal()
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.clicked.emit()
+        super().mouseReleaseEvent(event)
 
 
 def _repolish(w, name):
@@ -63,8 +73,9 @@ class Row(QWidget):
         self.chip = QLabel(self)
         self.chip.setObjectName("chip")
         self.chip.setVisible(rid == MANA)
-        self.value = QLabel(self)
+        self.value = ClickLabel(self)
         self.value.setObjectName("value")
+        self.value.clicked.connect(lambda: block.open_sources(self.rid))     # the max: its sources (package 34)
         self.value.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         top.addWidget(self.label)
         top.addWidget(self.chip)
@@ -278,6 +289,11 @@ class ResourcesBlock(Block):
         if button == "heal":
             return self.run("restore", resource=HP, amount=amount)
         return self.run("damage_to_balance", amount=amount)
+
+    def open_sources(self, rid):
+        """The sources of the resource's maximum (package 34)."""
+        from wp.ui.sources_dialog import open_sources
+        return open_sources(self.win, MAX_OF.get(rid, rid)) if self.win is not None else None
 
     def open_editor(self, rid):
         row = self.rows[rid]

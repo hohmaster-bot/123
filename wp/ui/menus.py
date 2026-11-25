@@ -1,5 +1,6 @@
 """The menu bar of the Classic window shell (package 32): Character (New demo character, Open, Save, Save as, Exit),
-View (Theme: the theme list + follow the system; Language RU / EN; Scale), Help (show hints again).
+View (Theme: the theme list + follow the system; Language RU / EN; Scale; Editor mode, package 34), Help (show hints
+again).
 Every choice goes through the Session: character files through wp/app/files.py rules (window.files), app settings
 through session.settings(...). build(win) makes the actions once; retranslate(win, tr) renames them and rebuilds the
 theme list (own themes may appear)."""
@@ -43,6 +44,8 @@ def build(win):
         a = _act(win, win.menus["scale"], "scale.%s" % s, lambda _=False, sc=s: win.set_setting("ui_scale", sc), True)
         a.setText("%d %%" % round(s * PERCENT))
         group.addAction(a)
+    v.addSeparator()
+    _act(win, v, "editor", lambda on: win.session.set_editor_mode(bool(on)), True)   # package 34
     h = win.menus["help"] = bar.addMenu("")
     _act(win, h, "hints_reset", lambda: win.session_settings("hints_reset"))
 
@@ -76,7 +79,8 @@ def _theme_menu(win, tr):
 def retranslate(win, tr):
     for key in ("character", "view", "theme", "language", "scale", "help"):
         win.menus[key].setTitle(tr("menu." + key))
-    for key in ("new_demo", "open", "save", "save_as", "exit", "hints_reset"):
+    win.actions["editor"].setChecked(bool(getattr(win.session, "editor_mode", False)))
+    for key in ("new_demo", "open", "save", "save_as", "exit", "hints_reset", "editor"):
         win.actions[key].setText(tr("menu." + key))
     lang = win.session.setting("language")
     for lg in LANGS:

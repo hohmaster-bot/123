@@ -18,6 +18,7 @@ from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
 from wp.model.class_types import ClassInfo, HiddenProperty, SpellDamage
 from wp.model.experience import LevelRecord, XpEntry
+from wp.model.source_row import SourceRow
 from wp.model.notebook import Court, Drive, Lens, Quest, Quirk, Story
 from wp.model.template import Template
 from wp.rules_data import rules as rd
@@ -393,6 +394,7 @@ class Character:
     xp_log: Tuple[XpEntry, ...] = ()   # experience entries (package 26 C); the total is derived
     xp_counter: int = 0                # last experience / level history id number (never reused)
     level_history: Tuple[LevelRecord, ...] = ()   # written by level_up
+    source_rows: Tuple[SourceRow, ...] = ()   # manual source rows of sheet numbers (package 34, model/sources.py)
 
     def __post_init__(self):
         # dict fields are read-only mappings (package 16 A7): no in-place change without a command

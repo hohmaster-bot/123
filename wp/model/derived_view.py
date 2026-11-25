@@ -378,8 +378,9 @@ def effect_bonuses(ch, ctx=None):
 
 def other_sources(ch):
     """(source id, effects) of quirks that are not burned and of templates (package 16 F, G6)."""
+    from wp.model import source_row          # manual source rows of sheet numbers (package 34)
     return ([(q.kid, q.effects) for q in ch.quirks if not q.burned]
-            + [(t.tid, t.effects) for t in ch.templates])
+            + [(t.tid, t.effects) for t in ch.templates] + source_row.effects(ch.source_rows))
 
 
 @cached

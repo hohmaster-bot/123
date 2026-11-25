@@ -31,10 +31,15 @@ def build(session, name=None):
     data = load()
     name = name or free_name(session, data["name"])
     session.new(name)
-    for command, params in data["steps"]:
-        r = session.dispatch(command, **params)
-        if not r.ok:
-            raise DemoError("demo step %s refused: %s %r" % (command, r.reason, r.params))
+    editor = session.editor_mode
+    session.editor_mode = True         # the demo source rows are editor commands (package 34)
+    try:
+        for command, params in data["steps"]:
+            r = session.dispatch(command, **params)
+            if not r.ok:
+                raise DemoError("demo step %s refused: %s %r" % (command, r.reason, r.params))
+    finally:
+        session.editor_mode = editor
     session.save()
     session.open(name)                 # a fresh start: the demo steps are not undo steps of the player
     return name

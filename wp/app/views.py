@@ -5,6 +5,7 @@ rules.using(character), so the UI never has to.
 A view: fn(ch, session, **params). Params are listed in PARAMS (the view contract, ARCH/view_contract.md).
 """
 from wp.catalog import schema as cat
+from wp.commands.base import CommandError
 from wp.commands import action_cmds, edit_cmds, notebook_cmds, reaction_cmds
 from wp.core import rest as rs
 from wp.model import active_list as al
@@ -52,6 +53,16 @@ def resources(ch, session=None):
             "actions": action_cmds.actions_view(ch),
             "flasks": flask.view(ch, session.app if session is not None else None),
             "damage_types": tuple(dfv.TYPES), "buttons": _resource_buttons(session)}
+
+
+def sources_view(ch, session=None, number="hp_max"):
+    """The sources of one sheet number (package 34, model/sources.py) + editable = the Session editor mode."""
+    from wp.model import sources as src
+    if not src.known(ch, number):
+        raise CommandError("no sheet number %r" % (number,), "unknown_number", values=(number,))
+    out = dict(src.view(ch, number))
+    out["editable"] = bool(getattr(session, "editor_mode", False)) and out["editable_target"]
+    return out
 
 
 RESOURCE_GROUP = "resource:"           # a quick button with group "resource:<id>" shows under that resource (pkg 33)
@@ -203,5 +214,5 @@ def editor(ch, session=None):
 VIEWS = {"resources": resources, "combat": combat, "defense": defense, "attacks": attacks, "maneuvers": maneuvers,
          "items": items, "statuses": statuses, "skills": skills, "rest": rest, "log": log, "notebook": notebook,
          "training": training, "settings": settings, "catalogs": catalogs, "sheet": sheet, "spells": spells,
-         "injuries": injuries, "editor": editor}
-PARAMS = {"log": ("tail",), "items": ("doll_view",)}
+         "injuries": injuries, "editor": editor, "sources": sources_view}
+PARAMS = {"log": ("tail",), "items": ("doll_view",), "sources": ("number",)}

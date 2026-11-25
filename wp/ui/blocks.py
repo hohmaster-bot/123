@@ -41,6 +41,13 @@ class Block(QFrame):
     def attach(self, win):
         self.win = win
 
+    def set_compact(self, no_caption, no_details):
+        """Small window (package 34): hide the caption, then the details (small notes); the size never changes."""
+        self.title.setVisible(not no_caption)
+        for w in self.findChildren(QLabel):
+            if w.objectName() == "muted" and w is not self.title:
+                w.setVisible(not no_details)
+
     def apply_look(self, colors, scale, session):
         """Theme colours and the scale after a settings change (blocks that paint use them)."""
 
@@ -205,4 +212,7 @@ def make(pid, item, shell):
     if pid == "resources":
         from wp.ui.resources_block import ResourcesBlock      # imports Block from here
         return ResourcesBlock(pid, item, shell)
+    if pid in ("parameters", "ac_block"):
+        from wp.ui import screen_blocks as sb                 # package 34
+        return (sb.ParametersBlock if pid == "parameters" else sb.AcBlock)(pid, item, shell)
     return TYPES.get(pid, Placeholder)(pid, item, shell)

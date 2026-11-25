@@ -11,12 +11,12 @@ the Session: a command result refreshes the blocks whose views are in its topics
 "settings" re-applies the theme, the language and the scale LIVE. The window geometry is the app setting
 window_classic (saved on close, restored on open). The first-run hint shows until "Understood!" (hint_dismiss).
 """
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFontDatabase, QGuiApplication
 from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QMainWindow, QMessageBox, QPushButton, QScrollArea,
                                QVBoxLayout, QWidget)
 
-from wp.app.session import SETTINGS_TOPICS
+from wp.app.session import EDITOR_TOPICS, SETTINGS_TOPICS
 from wp.i18n import i18n
 from wp.theme import qss
 from wp.ui import blocks, menus
@@ -24,6 +24,8 @@ from wp.ui.files_ui import Files
 from wp.ui.shell_data import SHELL
 
 ALL = "all"
+ADAPT_STEPS = ("normal", "gaps", "captions", "details")   # then the scroll (UI_WISHES point 12)
+GAP_DIVISOR = 2                        # the small window halves the gaps (UI, not a rule)
 
 
 class HintBar(QFrame):
@@ -103,7 +105,7 @@ class MainWindow(QMainWindow):
             middle.addLayout(col, 1 if dock == reg["center"] else 0)
         self.outer.addLayout(middle, 1)
         self.regions[reg["bottom"]] = self._strip(by_dock.get(reg["bottom"], ()))
-        scroll = QScrollArea()
+        scroll = self.scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
         scroll.setWidget(self.central)
@@ -155,15 +157,40 @@ class MainWindow(QMainWindow):
         fonts = self.fonts(theme)
         self.qss = qss.build_qss(theme, scale, fonts=fonts)
         self.setStyleSheet(self.qss)
-        gap = int(qss.scaled(theme, scale)["spacing"])
+        self.gap = int(qss.scaled(theme, scale)["spacing"])
+        colors = qss.scaled(theme, scale, fonts=fonts)
+        for b in self.blocks.values():
+            b.apply_look(colors, scale, self.session)
+        self.retranslate()
+        self.adapt()
+
+    # ------------------------------------------------------------ small window (UI_WISHES point 12, package 34)
+    def _apply_level(self, level):
+        """0 = normal; 1 = smaller gaps; 2 = + no block captions; 3 = + no details (small notes); then scroll.
+        Never written to the layout profile (D31)."""
+        lv_gaps, lv_captions, lv_details = (ADAPT_STEPS.index(k) for k in ADAPT_STEPS[1:])
+        gap = self.gap if level < lv_gaps else max(1, self.gap // GAP_DIVISOR)
         for lay in self.layouts:
             lay.setSpacing(gap)
         self.outer.setContentsMargins(gap, gap, gap, gap)
-        colors = qss.scaled(theme, scale, fonts=fonts)
         for b in self.blocks.values():
             b.set_gap(gap)
-            b.apply_look(colors, scale, self.session)
-        self.retranslate()
+            b.set_compact(level >= lv_captions, level >= lv_details)
+        self.adapt_level = level
+
+    def adapt(self):
+        have = self.scroll.viewport().size()
+        for level in range(len(ADAPT_STEPS)):
+            self._apply_level(level)
+            need = self.central.minimumSizeHint()
+            if need.width() <= have.width() and need.height() <= have.height():
+                return level
+        return self.adapt_level            # the last step: the area scrolls
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        if hasattr(self, "gap"):
+            QTimer.singleShot(0, self.adapt)       # after the scroll area took its new size
 
     def retranslate(self):
         tr = self.tr
@@ -193,9 +220,15 @@ class MainWindow(QMainWindow):
         if tuple(topics) == SETTINGS_TOPICS:
             self.apply_settings()
             return
+        if tuple(topics) == EDITOR_TOPICS:     # the editor mode switched (package 34)
+            self.refresh_all()
+            self.retranslate()
+            return
         for b in self.blocks.values():
             if ALL in topics or set(b.reads) & set(topics):
                 b.refresh(self.session)
+        if topics and getattr(self, "sources", None) is not None:     # ANY_TOPIC_VIEWS (package 34)
+            self.sources.reload()
 
     def refresh_all(self):
         for b in self.blocks.values():

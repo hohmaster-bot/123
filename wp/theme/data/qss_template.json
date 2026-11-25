@@ -40,6 +40,10 @@
    {"selector": "QFrame#block QLabel#chip", "declarations": [["background-color", "{overload_chip}"], ["color", "{chip_text}"], ["border-radius", "{radius}px"], ["padding", "0px 4px"], ["font-size", "{font_small}px"]]},
    {"selector": "QLabel#message", "declarations": [["color", "{muted}"], ["font-size", "{font_small}px"]]},
    {"selector": "QPushButton#small", "declarations": [["padding", "1px 6px"], ["font-size", "{font_small}px"]]},
-   {"selector": "QScrollArea#compact_pools, QWidget#resources_inner", "declarations": [["background-color", "transparent"], ["border", "none"]]}
+   {"selector": "QScrollArea#compact_pools, QWidget#resources_inner", "declarations": [["background-color", "transparent"], ["border", "none"]]},
+   {"selector": "QFrame#cell, QFrame#shield_cell", "declarations": [["background-color", "transparent"], ["border", "{border_width}px solid {border}"], ["border-radius", "{radius}px"]]},
+   {"selector": "QFrame#shield_cell", "declarations": [["border", "3px solid {ac_shield}"]]},
+   {"selector": "QLabel#overload", "declarations": [["color", "{danger}"], ["font-weight", "bold"]]},
+   {"selector": "QDialog#sources, QDialog#sources QTableWidget", "declarations": [["background-color", "{surface}"], ["color", "{text}"]]}
   ]}
 }

@@ -15,6 +15,8 @@
     "comfort_max": "max comfort",
     "comfort_rate_bonus": "training per comfort point in exchange_comfort",
     "parry": "parry layer",
+    "attack_melee": "the general melee attack number of the sheet (package 34: its manual source rows)",
+    "attack_ranged": "the general ranged attack number of the sheet (package 34: its manual source rows)",
     "parry_cells": "AC cells where parry works: effect cells added (value >= 0) or removed (value < 0) (package 24 B2)",
     "shield_cells": "AC cells a held shield covers: cells added (value >= 0) or removed (value < 0) (package 24 B2)",
     "dex_loss_cells": "AC cells losing Dex and dodge: cells added (value >= 0) or removed (value < 0) (package 24 B2)",

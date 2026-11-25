@@ -6,6 +6,7 @@
  "signed": {"add_experience": ["amount"], "edit_experience_entry": ["amount"], "set_iterative_count": ["n"]},
  "commands": {
   "set_attack_source": {"kind": "str", "source": "str"},
+  "source_edit": {"name": "str?", "value": "int?"},
   "set_drive_quest": {"quest": "str?", "state": "str?", "comfort_received": "bool?"},
   "activate_item": {"kind": "str?"},
   "activate_status": {"ticks": "int?"},

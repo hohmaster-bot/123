@@ -18,6 +18,8 @@
   ["set_value", {"resource": "balance", "value": 4}],
   ["set_value", {"resource": "spirit", "value": 7}],
   ["adjust_value", {"resource": "overload", "delta": 1}],
+  ["source_add", {"number": "mana_max", "name": "Demo mage", "value": 8}],
+  ["set_value", {"resource": "mana", "value": 5}],
   ["take_damage", {"amount": 5}],
   ["set_temp_hp", {"value": 4}]
  ]

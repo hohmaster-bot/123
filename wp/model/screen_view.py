@@ -33,6 +33,12 @@ def attack_source(ch, kind):
     return ch.attack_sources.get(kind, DEFAULT_STAT[kind])
 
 
+def _general(ch, kind):
+    """Effects aimed at the general number itself (targets attack_melee / attack_ranged, package 34)."""
+    from wp.model import sheet_targets as stg
+    return stg.value(ch, "attack_" + kind)
+
+
 def attack_number(ch, kind):
     """{"total", "lines": ((label, value), ...), "source", "weapon"}."""
     src = attack_source(ch, kind)
@@ -41,12 +47,13 @@ def attack_number(ch, kind):
         if rec is not None:
             v = av.attack(ch, rec)
             item = next((it for it in ch.items if it.iid == rec.item), None)
-            return {"total": v.to_hit, "lines": tuple((x.label, x.value) for x in v.to_hit_lines), "source": src,
+            lines = tuple((x.label, x.value) for x in v.to_hit_lines) + (("bonuses", _general(ch, kind)),)
+            return {"total": v.to_hit + _general(ch, kind), "lines": lines, "source": src,
                     "weapon": item.name if item is not None else rec.item}
         src = DEFAULT_STAT[kind]                        # the record was removed: back to the default stat
     pain = pn.penalty_bonus(dv.pain_total(ch), dv.pain_profile(ch)).value
     lines = (("bab", klass.bab(ch)), ("stat:" + src, dv.ability_mod(ch, src)), ("pain", pain),
-             ("morale", dv.morale_bonus(ch)))
+             ("morale", dv.morale_bonus(ch)), ("bonuses", _general(ch, kind)))
     return {"total": sum(v for _, v in lines), "lines": lines, "source": src, "weapon": ""}
 
 

@@ -40,6 +40,9 @@ TOPICS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "
 ALL = "all"
 EVERY_COMMAND = "every_command"
 SETTINGS_TOPICS = ("settings",)        # what subscribers get after an app settings change (package 32)
+ANY_TOPIC_VIEWS = ("sources",)         # views that read every number: re-read on ANY non-empty topics (package 34)
+EDITOR_TOPICS = ("editor",)            # the editor mode switched (package 34)
+EDITOR_NEEDED = "editor_mode_needed"   # refusal of an editor-only command outside the editor mode
 
 
 def _topics():
@@ -99,6 +102,13 @@ class Session(object):
         self._catalogs = {}
         self._undo = []                # [(Character before, command)] newest last (package 25 A)
         self._redo = []
+        self.editor_mode = False       # package 34: the editor mode (UI state, not saved); gates EDITOR_ONLY
+
+    def set_editor_mode(self, on):
+        """The editor mode on / off (package 34): the subscribers get the topic "editor"."""
+        self.editor_mode = bool(on)
+        for fn in self._subscribers:
+            fn(EDITOR_TOPICS)
 
     # -------------------------------------------------------------- settings, catalogs, theme
     def setting(self, key):
@@ -209,6 +219,9 @@ class Session(object):
     def dispatch(self, command, **params):
         if self.character is None:
             return DispatchResult(False, reason="no_character", params={})
+        from wp.commands import source_cmds
+        if command in source_cmds.EDITOR_ONLY and not self.editor_mode:
+            return DispatchResult(False, reason=EDITOR_NEEDED, params={"values": (command,)})
         at = files.stamp(self.clock())
         if command in STAMPED and "at" not in params:
             params = dict(params, at=at)
