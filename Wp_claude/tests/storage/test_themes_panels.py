@@ -39,7 +39,8 @@ def reason(fn):
 
 
 # ---------------------------------------------------------------- validation
-S.case("v-shipped", "pkg 21: light and dark pass the schema and build a QSS", [None, None])(
+S.case("v-shipped", "pkg 21: the shipped themes pass the schema and build a QSS (package 31: dark, light, grey_blue)",
+       [None, None, None])(
     lambda: [themes.check(e) for e in themes.shipped().entries])
 
 
@@ -97,7 +98,7 @@ def _override():
 S.case("l-override", "pkg 21: editing a shipped theme writes a user override (accent #000000, text kept); shipped file unchanged",
        ("#000000", "#1e1e1e", "override", True))(_override)
 S.case("l-duplicate-remove", "pkg 21: duplicate Dark -> dark_1; removing the shipped dark hides it (tombstone)",
-       ("dark_1", ["dark_1", "light"]))(
+       ("dark_1", ["dark_1", "grey_blue", "light"]))(
     lambda: (lambda r: (r[1], sorted(e["id"] for e, _ in cs.merged(themes.theme_remove(r[0], "dark")))))(
         themes.theme_duplicate(layers(), "dark")))
 
@@ -109,8 +110,8 @@ def _active():
     return st.get(app, "theme"), themes.active(gone, lay)["id"], reason(lambda: themes.theme_set_active(st.AppSettings(), lay, "nope"))
 
 
-S.case("l-active", "pkg 21: set active dark; an unknown active id falls back to light; set active unknown refused",
-       ("dark", "light", "not_found"))(_active)
+S.case("l-active", "pkg 21: set active dark; an unknown active id falls back to dark (owner, package 31: the default); "
+       "set active unknown refused", ("dark", "dark", "not_found"))(_active)
 
 
 def _round_trip():

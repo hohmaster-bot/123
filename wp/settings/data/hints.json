@@ -1,0 +1,5 @@
+{
+ "format": 1,
+ "note": "One-time hints (package 31): each id has the text i18n hint.<id>; shown until the player ticks Understood (hint_dismiss).",
+ "hints": ["first_run", "tube_editor", "custom_buttons", "ac_block", "cell_block", "expand_tab", "layout_editor", "quick_access"]
+}

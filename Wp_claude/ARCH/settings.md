@@ -46,3 +46,9 @@ max, group, i18n label and description ids). Code never lists setting keys by ha
   journal_short_max 100, journal_archive_at 1000, journal_archive_keep 100. image_add checks the file content
   (png / jpg / gif / webp / svg); profile_set takes only the profile fields; settings_import refuses image records
   outside images/ and deep nesting.
+- [package 31] Hints: hints_seen (dismissed ids), hints_off; hint_dismiss(hint_id), hints_reset;
+  screen_settings.hint_visible / hints_view (ids in wp/settings/data/hints.json, texts hint.<id>). Layout:
+  screen_settings.layout_warnings(app, mode, pid, window) -> block_under_minimum / hp_controls_hidden /
+  block_outside_window (never refusals); profile_reset(mode, pid). Tubes: resource_style (glass | flat),
+  resource_size {resource: [w, h]}, resource_autoswitch, pool_order, pools_large (max_items 3). Background:
+  background_image, background_dim 0-100, background_readable. A list key may carry max_items.

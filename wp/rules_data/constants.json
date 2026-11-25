@@ -207,6 +207,18 @@
     },
     "wp/commands/progression_cmds.py": {
       "HALF": "round half up (the rounding, not a rule number)"
+    },
+    "wp/theme/themes.py": {
+      "CHANNEL_MAX": "WCAG 2 relative luminance / contrast formula (not a game rule)",
+      "LOW_LIMIT": "WCAG 2 relative luminance / contrast formula (not a game rule)",
+      "LOW_DIVISOR": "WCAG 2 relative luminance / contrast formula (not a game rule)",
+      "GAMMA_OFFSET": "WCAG 2 relative luminance / contrast formula (not a game rule)",
+      "GAMMA": "WCAG 2 relative luminance / contrast formula (not a game rule)",
+      "WEIGHT_R": "WCAG 2 relative luminance / contrast formula (not a game rule)",
+      "WEIGHT_G": "WCAG 2 relative luminance / contrast formula (not a game rule)",
+      "WEIGHT_B": "WCAG 2 relative luminance / contrast formula (not a game rule)",
+      "FLARE": "WCAG 2 relative luminance / contrast formula (not a game rule)",
+      "HEX": "WCAG 2 relative luminance / contrast formula (not a game rule)"
     }
   },
   "inline": {
@@ -258,7 +270,10 @@
       "100": "Russian plural forms (grammar, not a game rule)"
     },
     "wp/theme/themes.py": {
-      "100": "a percent token is 0..100"
+      "100": "a percent token is 0..100",
+      "2": "hex pair length / rounding places of a ratio (not a rule)",
+      "3": "offset of the green pair in #rrggbb (not a rule)",
+      "5": "offset of the blue pair in #rrggbb (not a rule)"
     },
     "wp/app/files.py": {
       "1000": "milliseconds in a second (backup time stamps)",
@@ -267,6 +282,10 @@
     },
     "wp/storage/typecheck.py": {
       "2": "a Tuple[X, ...] annotation has two arguments (not a rule)"
+    },
+    "wp/settings/screen_settings.py": {
+      "2": "index of width / height in a rect (not a rule)",
+      "3": "index of width / height in a rect (not a rule)"
     }
   }
 }

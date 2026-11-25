@@ -2,7 +2,7 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (833)
+## Нет в ru.json (861)
 
 ### catalog (107)
 - `catalog.field.ac_bonus`
@@ -711,7 +711,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (125)
+### settings (152)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -724,6 +724,12 @@
 - `settings.autosave_interval_s.desc`
 - `settings.autosave_mode`
 - `settings.autosave_mode.desc`
+- `settings.background_dim`
+- `settings.background_dim.desc`
+- `settings.background_image`
+- `settings.background_image.desc`
+- `settings.background_readable`
+- `settings.background_readable.desc`
 - `settings.backups_count`
 - `settings.backups_count.desc`
 - `settings.backups_folder`
@@ -742,6 +748,7 @@
 - `settings.group.defense_display`
 - `settings.group.display`
 - `settings.group.general`
+- `settings.group.hints`
 - `settings.group.hotkeys`
 - `settings.group.images`
 - `settings.group.log`
@@ -769,6 +776,10 @@
 - `settings.group.safety`
 - `settings.group.saving`
 - `settings.group.windows`
+- `settings.hints_off`
+- `settings.hints_off.desc`
+- `settings.hints_seen`
+- `settings.hints_seen.desc`
 - `settings.hotkeys`
 - `settings.hotkeys.desc`
 - `settings.hp_regen_per_tick`
@@ -803,16 +814,26 @@
 - `settings.notifications.desc`
 - `settings.overload_enabled`
 - `settings.overload_enabled.desc`
+- `settings.pool_order`
+- `settings.pool_order.desc`
+- `settings.pools_large`
+- `settings.pools_large.desc`
 - `settings.ranged_attack_stat`
 - `settings.ranged_attack_stat.desc`
 - `settings.ranged_damage_mult`
 - `settings.ranged_damage_mult.desc`
 - `settings.ranged_damage_stat`
 - `settings.ranged_damage_stat.desc`
+- `settings.resource_autoswitch`
+- `settings.resource_autoswitch.desc`
 - `settings.resource_display`
 - `settings.resource_display.desc`
 - `settings.resource_segments`
 - `settings.resource_segments.desc`
+- `settings.resource_size`
+- `settings.resource_size.desc`
+- `settings.resource_style`
+- `settings.resource_style.desc`
 - `settings.rest_regen_bonus`
 - `settings.rest_regen_bonus.desc`
 - `settings.rest_regen_multiplier`
@@ -821,6 +842,12 @@
 - `settings.speed_multiplier.desc`
 - `settings.theme`
 - `settings.theme.desc`
+- `settings.theme_dark`
+- `settings.theme_dark.desc`
+- `settings.theme_follow_system`
+- `settings.theme_follow_system.desc`
+- `settings.theme_light`
+- `settings.theme_light.desc`
 - `settings.thrown_attack_stat`
 - `settings.thrown_attack_stat.desc`
 - `settings.thrown_damage_mult`
@@ -846,8 +873,9 @@
 - `status.ki_aura`
 - `status.rage`
 
-### theme (2)
+### theme (3)
 - `theme.dark`
+- `theme.grey_blue`
 - `theme.light`
 
 ### ui (3)
@@ -861,7 +889,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (635)
+## Нет в en.json (663)
 
 ### catalog (107)
 - `catalog.field.ac_bonus`
@@ -1329,7 +1357,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (125)
+### settings (152)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -1342,6 +1370,12 @@
 - `settings.autosave_interval_s.desc`
 - `settings.autosave_mode`
 - `settings.autosave_mode.desc`
+- `settings.background_dim`
+- `settings.background_dim.desc`
+- `settings.background_image`
+- `settings.background_image.desc`
+- `settings.background_readable`
+- `settings.background_readable.desc`
 - `settings.backups_count`
 - `settings.backups_count.desc`
 - `settings.backups_folder`
@@ -1360,6 +1394,7 @@
 - `settings.group.defense_display`
 - `settings.group.display`
 - `settings.group.general`
+- `settings.group.hints`
 - `settings.group.hotkeys`
 - `settings.group.images`
 - `settings.group.log`
@@ -1387,6 +1422,10 @@
 - `settings.group.safety`
 - `settings.group.saving`
 - `settings.group.windows`
+- `settings.hints_off`
+- `settings.hints_off.desc`
+- `settings.hints_seen`
+- `settings.hints_seen.desc`
 - `settings.hotkeys`
 - `settings.hotkeys.desc`
 - `settings.hp_regen_per_tick`
@@ -1421,16 +1460,26 @@
 - `settings.notifications.desc`
 - `settings.overload_enabled`
 - `settings.overload_enabled.desc`
+- `settings.pool_order`
+- `settings.pool_order.desc`
+- `settings.pools_large`
+- `settings.pools_large.desc`
 - `settings.ranged_attack_stat`
 - `settings.ranged_attack_stat.desc`
 - `settings.ranged_damage_mult`
 - `settings.ranged_damage_mult.desc`
 - `settings.ranged_damage_stat`
 - `settings.ranged_damage_stat.desc`
+- `settings.resource_autoswitch`
+- `settings.resource_autoswitch.desc`
 - `settings.resource_display`
 - `settings.resource_display.desc`
 - `settings.resource_segments`
 - `settings.resource_segments.desc`
+- `settings.resource_size`
+- `settings.resource_size.desc`
+- `settings.resource_style`
+- `settings.resource_style.desc`
 - `settings.rest_regen_bonus`
 - `settings.rest_regen_bonus.desc`
 - `settings.rest_regen_multiplier`
@@ -1439,6 +1488,12 @@
 - `settings.speed_multiplier.desc`
 - `settings.theme`
 - `settings.theme.desc`
+- `settings.theme_dark`
+- `settings.theme_dark.desc`
+- `settings.theme_follow_system`
+- `settings.theme_follow_system.desc`
+- `settings.theme_light`
+- `settings.theme_light.desc`
 - `settings.thrown_attack_stat`
 - `settings.thrown_attack_stat.desc`
 - `settings.thrown_damage_mult`
@@ -1503,8 +1558,9 @@
 - `skill.survival`
 - `skill.weapon_tricks`
 
-### theme (2)
+### theme (3)
 - `theme.dark`
+- `theme.grey_blue`
 - `theme.light`
 
 ### tier (1)
@@ -1516,7 +1572,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (58)
+## Лишние ключи (нигде не нужны) (71)
 - `ac_cell.1`
 - `ac_cell.2`
 - `ac_cell.3`
@@ -1563,6 +1619,15 @@
 - `drive_type.society`
 - `drive_type.success`
 - `drive_type.triumph`
+- `hint.ac_block`
+- `hint.cell_block`
+- `hint.custom_buttons`
+- `hint.expand_tab`
+- `hint.first_run`
+- `hint.layout_editor`
+- `hint.quick_access`
+- `hint.tube_editor`
+- `hint.understood`
 - `load.heavy`
 - `load.light`
 - `load.of`
@@ -1575,3 +1640,7 @@
 - `param.initiative`
 - `param.ref`
 - `param.will`
+- `warning.block_outside_window`
+- `warning.block_under_minimum`
+- `warning.hp_controls_hidden`
+- `warning.low_contrast`

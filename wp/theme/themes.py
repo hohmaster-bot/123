@@ -22,6 +22,16 @@ DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 SHIPPED = os.path.join(DATA, "themes.json")
 KIND = "themes"
 COLOR = re.compile(r"^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$")
+DEFAULT = "dark"                       # the theme of a new profile (owner, package 31)
+CHANNEL_MAX = 255.0                    # WCAG 2 relative luminance (not a game rule)
+LOW_LIMIT = 0.03928
+LOW_DIVISOR = 12.92
+GAMMA_OFFSET = 0.055
+GAMMA = 2.4
+WEIGHT_R, WEIGHT_G, WEIGHT_B = 0.2126, 0.7152, 0.0722
+FLARE = 0.05
+HEX = 16
+CONTRAST_PAIRS = (("text", "background"), ("text", "surface"), ("chip_text", "chip_neutral"))
 
 
 def _schema():
@@ -146,12 +156,69 @@ def theme_set_active(app, layers, tid=""):
     return sc.settings_dispatch(app, "settings_set", key="theme", value=tid).state
 
 
-def active(app, layers):
-    """The active theme (the app setting); an unknown id falls back to the first theme (light)."""
+def active(app, layers, system_dark=None):
+    """The active theme: the app setting theme; with theme_follow_system on and the system mode known
+    (system_dark True / False, given by the UI) the setting theme_dark / theme_light. An unknown id falls back to
+    the default dark theme (owner, package 31)."""
     from wp.settings import store as st
     tid = st.get(app, "theme")
+    if st.get(app, "theme_follow_system") and system_dark is not None:
+        tid = st.get(app, "theme_dark" if system_dark else "theme_light")
     themes = dict((e["id"], e) for e, _ in cs.merged(layers))
-    return themes.get(tid) or themes.get("light") or next(iter(themes.values()))
+    return themes.get(tid) or themes.get(DEFAULT) or next(iter(themes.values()))
+
+
+def theme_copy(layers, tid="", name=""):
+    """"Copy theme" (owner, package 31): a new own theme with the same tokens (theme_duplicate)."""
+    return theme_duplicate(layers, tid, name)
+
+
+def theme_reset(layers, tid=""):
+    """"Reset to the shipped one": the user override of a shipped theme is dropped (its shipped colours come back).
+    An own theme has no shipped version: refused (not_shipped)."""
+    if tid not in shipped_ids():
+        raise CommandError("%s is not a shipped theme" % (tid,), "not_shipped", values=(tid,))
+    user = layers.user
+    return replace(layers, user=replace(user, entries=tuple(e for e in user.entries if e["id"] != tid)))
+
+
+# ------------------------------------------------------------------ contrast (WCAG 2)
+
+def _channel(c):
+    c = c / CHANNEL_MAX
+    return c / LOW_DIVISOR if c <= LOW_LIMIT else ((c + GAMMA_OFFSET) / (1 + GAMMA_OFFSET)) ** GAMMA
+
+
+def luminance(color):
+    """The relative luminance of #rrggbb (the alpha part, if any, is ignored)."""
+    r, g, b = (int(color[i:i + 2], HEX) for i in (1, 3, 5))
+    return WEIGHT_R * _channel(r) + WEIGHT_G * _channel(g) + WEIGHT_B * _channel(b)
+
+
+def contrast_ratio(color_a, color_b):
+    """(lighter + 0.05) / (darker + 0.05), 1 .. 21 (WCAG 2.x)."""
+    la, lb = luminance(color_a), luminance(color_b)
+    hi, lo = max(la, lb), min(la, lb)
+    return (hi + FLARE) / (lo + FLARE)
+
+
+def warnings(theme):
+    """Contrast warnings (never refusals, owner): every pair of CONTRAST_PAIRS below the schema's contrast_min:
+    (warning id low_contrast, (text token, background token, ratio rounded to 2 places))."""
+    colors = theme.get("colors") or {}
+    out = []
+    for fg, bg in CONTRAST_PAIRS:
+        if fg in colors and bg in colors:
+            r = contrast_ratio(colors[fg], colors[bg])
+            if r < SCHEMA["contrast_min"]:
+                out.append(("low_contrast", (fg, bg, round(r, 2))))
+    return tuple(out)
+
+
+def view(app, layers, system_dark=None):
+    """The themes for the settings page: (id, name, layer, warnings) and the active id."""
+    return {"themes": tuple((e["id"], e.get("name", ""), layer, warnings(e)) for e, layer in cs.merged(layers)),
+            "active": active(app, layers, system_dark)["id"]}
 
 
 def theme_export(layers, tid=""):

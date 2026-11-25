@@ -39,7 +39,7 @@ def settings_command(fn):
 
 
 def settings_dispatch(app, name, /, **params):
-    from wp.settings import images  # noqa: F401  (registers the image commands)
+    from wp.settings import images, screen_settings  # noqa: F401  (register the image / hint / profile commands)
     if name not in REGISTRY:
         raise CommandError("unknown settings command: %r" % (name,), "unknown_command", command=name)
     try:

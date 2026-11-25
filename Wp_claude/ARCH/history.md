@@ -87,3 +87,6 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   source, adjust_value, Session.run_quick (one undo step), shield side and cell lines, AC zone labels, cell sources,
   status notes, favourite abilities, reminders, numbered action / reaction squares, quick grid and strip fields.
   Report: tests/PACKAGE30_REPORT.md.
+- Done in package 31: one-time hints, three layout warnings and profile_reset, tube settings (style, size, auto-switch,
+  pool order, three large pools), three shipped themes with all Classic tokens, theme_copy / theme_reset, follow the
+  system, background settings, WCAG contrast warnings. Report: tests/PACKAGE31_REPORT.md.

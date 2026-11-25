@@ -120,6 +120,8 @@ def check_value(spec, value, t=None):
     if t == "list":
         if not isinstance(value, (list, tuple)):
             return "wrong_type", {"values": (t,), "expected": t}
+        if "max_items" in spec and len(value) > spec["max_items"]:
+            return "out_of_range", {"values": (len(value), 0, spec["max_items"]), "min": 0, "max": spec["max_items"]}
         if "item" in spec:
             for x in value:
                 bad = check_value(spec, x, spec["item"])

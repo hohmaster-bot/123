@@ -80,7 +80,8 @@ PySide6: click-through, always-on-top, global hotkey, tray, multi-monitor. The o
 Exactly two modes: Classic and Lite (D20; no split mode). Sheet (Classic), then Lite panels (the overlay), then editors
 (see `UI_WISHES.md`), incl. pain editor and morale scale editor. RU / EN switch (D4). Delete tkinter.
 Binding spec: `UI_WISHES.md` "Classic screen v2" (package 29, D31); the core gaps per block: `ARCH/ui_gaps.md`.
-Steps in order (each a package; the core additions of ui_gaps.md go into the step that needs them):
+Step 0 DONE (packages 30, 31): the core is ready for the screen (every row of ARCH/ui_gaps.md built).
+Steps in order (each a package); next = step 1, the window shell + themes in PySide6:
   1. Window shell + the three shipped themes (dark default, light, grey-blue), the Session wiring, one-time hints
      storage (hints_seen, hints_off).
   1b. Theme editor and background: every screen colour a token (the missing tokens of ARCH/ui_gaps.md "Themes"), live

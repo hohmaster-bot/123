@@ -11,3 +11,9 @@
   theme_import (a text code). Refusals: missing_token, bad_color, bad_size, not_found, wrong_kind.
 - `wp/theme/qss.py` builds the QSS text from the tokens with the template `wp/theme/data/qss_template.json`
   (selector -> declarations with `{token}`); pure Python, no PySide6 import anywhere (a test checks).
+- [package 31] Shipped: dark (the default; an unknown active id falls back to it), light (soft, never pure white),
+  grey_blue (low contrast). Tokens for the whole Classic screen v2 (pool, overload_chip, temp_hp, bp, tube_*, chip_*,
+  threshold_*, action_square / action_spent / reaction_square, strip / editor / hidden / hint / background overlay;
+  scalar tube_gloss). theme_copy, theme_reset (drops the user override of a shipped theme), active(app, layers,
+  system_dark) with theme_follow_system / theme_light / theme_dark; contrast_ratio (WCAG 2) and warnings(theme)
+  (low_contrast below theme_schema contrast_min 4.5, never a refusal); view(app, layers).
