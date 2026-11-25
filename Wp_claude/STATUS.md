@@ -2,7 +2,7 @@
 
 Branch: `Rework`. Phase: 3 DONE (rules core, model, data, settings, session layer); no UI yet.
 Last finished package: 29 (Classic screen v2 recorded as the binding UI spec, D31; core gap audit ARCH/ui_gaps.md;
-break_check rerun, perf best of 3). Last report: `Wp_claude/tests/PACKAGE29_REPORT.md`.
+break_check rerun, perf best of 3; amendment: themes, background, numbered action squares). Last report: `Wp_claude/tests/PACKAGE29_REPORT.md`.
 
 ## Tests (last run in package 29)
 - `python Wp_claude/tests/run_all.py`: suites 66, passed 66, failed 0.
@@ -12,7 +12,7 @@ break_check rerun, perf best of 3). Last report: `Wp_claude/tests/PACKAGE29_REPO
 ## Open questions (OPEN_QUESTIONS.md)
 - Waiting for the owner: Q197 (load categories), Q198 (general melee / ranged attack); the overlay spike test. Russian texts to fill: Wp_claude/TRANSLATION_TODO.md.
 - Assumptions to confirm: Q23, Q96, Q98-Q102, Q105, Q106, Q112, Q114, Q116-Q121, Q123, Q124, Q126-Q129, Q131,
-  Q132, Q134-Q144, Q146, Q148-Q150, Q152, Q153, Q160-Q187, Q189-Q196, Q199.
+  Q132, Q134-Q144, Q146, Q148-Q150, Q152, Q153, Q160-Q187, Q189-Q196, Q199-Q201.
 
 ## Next (ROADMAP.md)
 1. Phase 5 step 1: the window shell + themes (light / dark), Session wiring, one-time hints storage. Spec: UI_WISHES.md

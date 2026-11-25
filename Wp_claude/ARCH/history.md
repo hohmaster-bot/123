@@ -81,3 +81,5 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package 29: Classic screen v2 recorded as the binding UI spec (UI_WISHES.md, wireframe, D31), surfaces and
   panels updated, gap audit ARCH/ui_gaps.md with Phase 5 steps in ROADMAP.md; break_check reruns a clean-copy
   failure once, perf budgets best of 3. Report: tests/PACKAGE29_REPORT.md.
+- Package 29 amendment: themes (dark default, light, grey-blue, own themes, background picture, contrast warning)
+  and numbered action squares added to the Classic v2 spec; theme token gaps in ARCH/ui_gaps.md; ROADMAP step 1b.

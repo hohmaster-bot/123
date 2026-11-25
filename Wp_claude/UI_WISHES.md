@@ -78,7 +78,8 @@ still lacks for each block: ARCH/ui_gaps.md.
 - A full-width EXPERIENCE strip at the top: a glass bar, the current experience, the "to next level" goal, the
   button "Experience log". Left column: the avatar, then the resources. Middle: TWO blocks on one row (the AC block
   and the Parameters block), then buffs / statuses. Right column: the tabs and the combat tab. A full-width BOTTOM
-  strip. No background illustration. Light and dark themes.
+  strip. No background illustration by default (an optional own background picture: point 16). Three shipped
+  themes: dark (the default), light, grey-blue (point 16).
 
 ### 2. Avatar
 - A portrait only, its own block, resizable (small to large). A frame colour by the character state may be added
@@ -129,8 +130,11 @@ still lacks for each block: ARCH/ui_gaps.md.
 - Tab bar: Combat, Journal, Skills, Feats, Race, Class, Injuries, Drives, Inventory, Training, Rest, Catalogs,
   Settings. An "expand to full screen" button for Skills, Inventory, Doll, Training, Catalogs: expanding hides the
   other regions temporarily and NEVER rewrites the saved profile; closing returns the previous layout and state.
-- Combat tab: Start / End combat, Short rest, Long rest, End of cycle; ACTIONS as squares (colour = available, grey =
-  spent) and a REACTION square; "Zero initiative"; the attack list; the quick access grid (default 8 cells, 4-16, the
+- Combat tab: Start / End combat, Short rest, Long rest, End of cycle; ACTIONS are squares of ONE colour (a theme
+  token, the same for every action), each square NUMBERED 1, 2, 3 ... (with more than 3 actions every square keeps
+  its own number); spending takes the squares from the SMALLEST number first; a spent square is greyed out. The
+  REACTION is a square of the same style (numbered the same way if there are several). "Zero initiative"; the
+  attack list; the quick access grid (default 8 cells, 4-16, the
   number of columns is a setting): a cell = name, icon, charges in a corner, dimmed on cooldown, the hotkey digit.
 
 ### 10. Bottom strip (full width, like the experience strip)
@@ -165,6 +169,19 @@ still lacks for each block: ARCH/ui_gaps.md.
   of the same data). Layout and content are independent (the resources block gets a list and draws it by settings).
   Adaptation to a small window changes the presentation, never the saved layout. Classic never changes the character
   except through Session commands.
+
+### 16. Themes and background (owner, package 29 amendment)
+- Three shipped themes: DARK (the default for a new profile), LIGHT (a soft light with a non-pure-white background,
+  never pure white) and GREY-BLUE (a low-contrast calm theme for players with eye strain).
+- Own themes: every colour of the screen is a theme token (ARCH/themes.md, wp/theme), editable in the settings with
+  a live preview; actions "copy theme" and "reset to the shipped one".
+- An optional OWN BACKGROUND picture (from the image registry) with a dimming / opacity slider and a "keep numbers
+  readable" overlay behind the panels; default: no background picture.
+- A follow-the-system option for light / dark.
+- A theme WARNS (never forbids) when the main number colour against its background is below 4.5:1.
+- Theme tokens too: the resource colours (HP, balance, spirit, mana, class pools, overload chip), the status chip
+  colours, the cell threshold colours, the action square colours. The glass tube colours (liquid, glass, highlight)
+  must read in all three themes.
 
 ### Corrections (kept from v1; the AI reference A1-A6 is historical)
 - The training price unit is training points, not gp.

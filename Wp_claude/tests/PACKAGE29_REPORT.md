@@ -39,3 +39,20 @@
 ## Open questions (ids)
 - Q197 (load categories: two in the spec, three in RULES), Q198 (general melee / ranged attack number) - waiting
   for the owner. Q199 assumption.
+
+## Amendment (owner decisions, final)
+- Themes and background: UI_WISHES.md Classic v2 point 1 and a new point 16: three shipped themes (dark default,
+  light never pure white, grey-blue low contrast), own themes with every colour a token, live preview, copy / reset to
+  shipped, an optional own background picture with dimming and a readable overlay (default none), follow the system,
+  a 4.5:1 contrast warning (never a refusal); resource, chip, threshold and action square colours are theme tokens.
+- Actions: point 9 rewritten: one colour for every action square, squares numbered 1, 2, 3 ..., spending takes the
+  smallest numbers first, a spent square is grey; the reaction square in the same style.
+- ARCH/ui_gaps.md: the themes row rewritten (no grey-blue theme, default is light, no theme_reset, no follow-system,
+  no contrast check, no background settings) and a "Themes" section listing the missing tokens (pool, overload_chip,
+  temp_hp, bp, tube_*, chip_*, threshold_*, action_square / action_spent / reaction_square, strip / editor / hint /
+  background overlay tokens, scalar tube_gloss); the resource colours moved from an app setting to theme tokens; the
+  combat row: the numbered squares are derived from current / max (spent = 1..max - current), proposed
+  combat.actions.squares / combat.reactions.squares. ROADMAP Phase 5 step 1b "theme editor and background".
+- Checked ARCH/themes.md: the present light theme background is #f4f4f2 (not pure white).
+- Tests: run_all suites 66, passed 66, failed 0; break_check entries 301, caught 301, missed 0.
+- New assumptions: Q200 (pool colours), Q201 (contrast pairs).

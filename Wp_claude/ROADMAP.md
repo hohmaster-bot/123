@@ -81,7 +81,11 @@ Exactly two modes: Classic and Lite (D20; no split mode). Sheet (Classic), then 
 (see `UI_WISHES.md`), incl. pain editor and morale scale editor. RU / EN switch (D4). Delete tkinter.
 Binding spec: `UI_WISHES.md` "Classic screen v2" (package 29, D31); the core gaps per block: `ARCH/ui_gaps.md`.
 Steps in order (each a package; the core additions of ui_gaps.md go into the step that needs them):
-  1. Window shell + themes (light / dark), the Session wiring, one-time hints storage (hints_seen, hints_off).
+  1. Window shell + the three shipped themes (dark default, light, grey-blue), the Session wiring, one-time hints
+     storage (hints_seen, hints_off).
+  1b. Theme editor and background: every screen colour a token (the missing tokens of ARCH/ui_gaps.md "Themes"), live
+     preview, copy / reset to shipped, follow the system, the 4.5:1 contrast warning, an own background picture with
+     dimming and the readable overlay.
   2. Resources: horizontal tubes (glass / flat), the value editor, adjust_value, temp HP strip, pools (3 large),
      custom buttons through Session.run_quick, resource style / colour / size settings.
   3. Experience strip (training.experience).
