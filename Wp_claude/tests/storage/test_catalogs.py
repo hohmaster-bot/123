@@ -231,7 +231,7 @@ S.case("c-file-export", "catalog.md sharing: a whole catalog file exported and i
 S.case("w-list", "pkg 18: list filtered by text 'ring' -> ring_of_guard; sorted by name",
        (("ring_of_guard",), ("healing_potion", "ring_of_guard", "rope")))(
     lambda: (tuple(v.id for v in cvw.list_entries(items(), "ring")), tuple(v.id for v in cvw.list_entries(items()))))
-S.case("w-kinds", "pkg 18: one shipped file per kind (package 25 B: + classes)", ("armor_shields", "classes", "damage_types", "doll_slots", "feats", "items", "skills",
+S.case("w-kinds", "pkg 18: one shipped file per kind (package 25 B: + classes; 28 B: + drive_types)", ("armor_shields", "classes", "damage_types", "doll_slots", "drive_types", "feats", "items", "skills",
                                                         "spells", "statuses", "weapon_groups", "weapons"))(
     lambda: tuple(sorted(k for k in schema.KINDS if os.path.exists(cs.shipped_path(k)))))
 S.case("w-samples", "pkg 18 [OWNER]: shipped weapon (except unarmed), armor, item, spell, status rows are samples", [])(

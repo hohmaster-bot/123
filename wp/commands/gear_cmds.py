@@ -156,7 +156,14 @@ def end_cycle(ch):
     gain = dv.attention_per_cycle(ch)
     bp = min(ch.bp_current, dv.bp_max(ch))          # BP above max is dropped (package 8 C)
     return commit(replace(ch, attention=ch.attention + gain, ov=0, bp_current=bp), "end_cycle",
-                  "attention +%d, OV %d burned" % (gain, ch.ov), {"gain": gain, "burned": ch.ov})
+                  "attention +%d, OV %d burned" % (gain, ch.ov), {"gain": gain, "burned": ch.ov,
+                                                                  "reminders": _open_quests(ch)})
+
+
+def _open_quests(ch):
+    """Package 28 B7: "open quest of drive X, penalty: <text>" for every drive at the quest level with a taken quest."""
+    from wp.commands import drive_cmds
+    return drive_cmds.open_quests(ch)
 
 
 OV_MIN = rd.ref("attention.ov_min")

@@ -27,6 +27,9 @@ def _kind(kind):
 def _check(rec):
     if isinstance(rec, nb.Drive) and not 0 <= rec.level <= nb.DRIVE_MAX:
         raise CommandError("a drive level is 0..%d" % nb.DRIVE_MAX, "drive_level_range", values=(rec.level,))
+    if isinstance(rec, nb.Drive) and rec.quest_state not in nb.QUEST_STATES:
+        raise CommandError("a quest state is one of %s" % ", ".join(nb.QUEST_STATES), "not_allowed",
+                           values=(rec.quest_state,), allowed=nb.QUEST_STATES)
     if isinstance(rec, nb.Court) and (rec.level < 0 or rec.tier < 0):
         raise CommandError("court level and tier cannot be negative", "court_negative", values=(rec.level, rec.tier))
     if isinstance(rec, nb.Lens) and rec.max < 1:
@@ -82,13 +85,9 @@ def set_drive_level(ch, did="", level=0):
 
 
 def drive_view(ch, d):
-    """A drive for the panel (package 25 C): the level, the note of every level, the principle and the reminder
-    principle_missing (level >= narrative.principle_min_level and no principle; never a block)."""
-    from wp.rules_data import rules as rd
-    need = d.level >= int(rd.const("narrative.principle_min_level", ch))
-    return {"did": d.did, "name": d.name, "level": d.level, "level_notes": dict(d.level_notes),
-            "note": d.level_notes.get(str(d.level), ""), "principle": d.principle,
-            "principle_missing": need and not d.principle.strip()}
+    """A drive for the panel (packages 25 C, 28 B): see wp/commands/drive_cmds.py drive_view."""
+    from wp.commands import drive_cmds
+    return drive_cmds.drive_view(ch, d)
 
 
 def _level_key(level):
@@ -99,15 +98,18 @@ def _level_key(level):
 
 
 @command
-def add_drive(ch, name="", level=0, principle="", level_notes=None, text=""):
+def add_drive(ch, name="", level=0, principle="", level_notes=None, text="", dtype=""):
+    """A drive of a catalog type (dtype, package 28; name "" = the type id) or a custom one (dtype "", a name)."""
+    name = name or dtype
     if not name:
         raise CommandError("a note needs a name", "note_needs_name")
     notes = {_level_key(k): str(v) for k, v in dict(level_notes or {}).items()}
-    d = _check(nb.Drive(ids.make_id(name, (x.did for x in ch.drives)), name, int(level), text, notes, principle))
+    d = _check(nb.Drive(ids.make_id(name, (x.did for x in ch.drives)), name, int(level), text, notes, principle,
+                        dtype=dtype))
     return commit(replace(ch, drives=ch.drives + (d,)), "add_drive", "drive %s" % d.did, {"id": d.did})
 
 
-DRIVE_FIELDS = ("name", "level", "text", "level_notes", "principle")
+DRIVE_FIELDS = ("name", "level", "text", "level_notes", "principle", "dtype", "quest", "quest_state", "comfort_received")
 
 
 @command
@@ -204,10 +206,15 @@ def remove_template(ch, tid=""):
     return commit(new, "remove_template", "template %s removed" % tid)
 
 
+def _drive_summary(ch):
+    from wp.commands import drive_cmds
+    return drive_cmds.summary(ch)
+
+
 def notebook_view(ch):
     """Lenses with their end state (red / green), courts with their label, quirks with their state."""
     return {"lenses": tuple((x.lid, x.value, x.max, nb.lens_state(x)) for x in ch.lenses),
             "courts": tuple((x.cid, x.label()) for x in ch.courts),
             "quirks": tuple((x.kid, nb.quirk_state(x)) for x in ch.quirks),
-            "drives": tuple(drive_view(ch, x) for x in ch.drives),
+            "drives": tuple(drive_view(ch, x) for x in ch.drives), "drive_summary": _drive_summary(ch),
             "quests": tuple((x.qid, x.done) for x in ch.quests), "stories": tuple(x.stid for x in ch.stories)}

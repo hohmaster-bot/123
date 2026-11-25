@@ -16,6 +16,7 @@ from wp.core.frozen import freeze_fields
 from wp.rules_data import rules as rd
 
 DRIVE_MAX = rd.ref("narrative.drive_max")
+QUEST_STATES = ("none", "taken", "closed")   # the quest of a drive (package 28 B)
 DRIVE_ATTENTION_LEVEL = rd.ref("attention.drive_level")
 LENS_START = rd.ref("narrative.lens_start")
 RED = "red"
@@ -81,6 +82,10 @@ class Drive:
     text: str = ""
     level_notes: Dict[str, str] = field(default_factory=dict)   # level ("0".."5") -> "bonus / penalty" text (pkg 25 C)
     principle: str = ""                # the narrative principle, expected from drive level 2 (narrative.md)
+    dtype: str = ""                    # drive type id (catalog drive_types, package 28); "" = a custom type
+    quest: str = ""                    # the drive quest (text)
+    quest_state: str = "none"          # none / taken / closed (package 28)
+    comfort_received: bool = False     # the comfort of the closed quest was entered (by hand)
 
     def __post_init__(self):
         freeze_fields(self, ("level_notes",))

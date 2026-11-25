@@ -57,8 +57,8 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: Doll [OWNER] (3) | Qualification (15) | Belt (unload) [OWNER] (18) | Bag (22) | Weight [OWNER] (28) | Base (resource for strengthening) [OWNER] (44) | Armor [OWNER] (52) | Masterwork [OWNER, package 8; package 9 closes Q39, Q40] (84) | Enchantment [OWNER, package 5] (99) | Item HP [OWNER, package 6, closes Q31] (123) | Item codes / sharing [OWNER] (168) | Enabled / disabled (activation) [OWNER] (173) | Consumables [OWNER, package 13 D] (188) | Charges and cooldown [OWNER, package 14 B; closes Q94] (200) | Base contents [OWNER text above; built in package 16 G7] (213)
 - `injuries.md` (44 lines): trauma points, injuries
   sections: Trauma points (OT) [OWNER] (3) | Injury [OWNER] (17) | Healing rating (RL) [OWNER] (35)
-- `narrative.md` (53 lines): quirks, stories, courts, quests, drives, attention
-  sections: Courts (Dvory) [OWNER] (9) | Cycle end button (idea) [OWNER] (15) | Lens [OWNER] (25) | Notebook commands [OWNER, package 16 F] (33) | Not built on purpose [OWNER, package 17, closes Q122] (41) | Drives: level notes and principles (package 25) [OWNER] (49)
+- `narrative.md` (85 lines): quirks, stories, courts, quests, drives, attention
+  sections: Courts (Dvory) [OWNER] (9) | Cycle end button (idea) [OWNER] (15) | Lens [OWNER] (25) | Notebook commands [OWNER, package 16 F] (33) | Not built on purpose [OWNER, package 17, closes Q122] (41) | Drives: level notes and principles (package 25) [OWNER] (49) | Drives (package 28) [OWNER] (55)
 - `progression.md` (50 lines): level up, training, weapon mastery, spell mastery
   sections: Level up [OWNER] (3) | Weapon mastery (22) | Spell mastery [OWNER] (25) | Class system v0 (package 25) [OWNER consent, package 25 B; ASSUMPTION values marked] (38)
 - `resources.md` (204 lines): HP, temp HP, balance, pain, trauma points, spirit, mana, overload, comfort, class resources, zero initiative, buffs

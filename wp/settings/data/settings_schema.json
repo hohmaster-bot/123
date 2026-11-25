@@ -22,7 +22,6 @@
   {"id": "hotkeys", "domain": "app", "type": "map", "value": "hotkey", "default": {"toggle_mode": "Ctrl+Shift+W"}, "group": "hotkeys"},
   {"id": "notifications", "domain": "app", "type": "map", "value": "bool", "default": {}, "group": "notifications"},
   {"id": "log_kinds", "domain": "app", "type": "list", "item": "string", "default": [], "group": "log"},
-  {"id": "log_max", "domain": "app", "type": "int", "default": 0, "min": 0, "max": 100000, "group": "log"},
   {"id": "journal_mode", "domain": "app", "type": "enum", "default": "full", "allowed": ["short", "full"], "group": "log"},
   {"id": "journal_short_max", "domain": "app", "type": "int", "default": 100, "min": 1, "max": 100000, "group": "log"},
   {"id": "journal_archive_at", "domain": "app", "type": "int", "default": 1000, "min": 10, "max": 100000, "group": "log"},

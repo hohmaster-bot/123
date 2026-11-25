@@ -138,7 +138,14 @@ def catalogs(ch, session=None):
 def sheet(ch, session=None):
     return {"abilities": {a: (dv.ability_current(ch, a), dv.ability_mod(ch, a)) for a in ch.abilities},
             "stats": stats.view(ch), "level": ch.level, "bab": klass.bab(ch), "class_id": ch.class_id, "speed": dv.speed(ch),
-            "bab_override": ch.bab_override, "save_override": dict(ch.save_override)}
+            "bab_override": ch.bab_override, "save_override": dict(ch.save_override),
+            "feats": _feat_rows(ch)}
+
+
+def _feat_rows(ch):
+    """Feats with their charges and cooldown (package 28: spend_charge on a feat must be visible)."""
+    from wp.model import usage as us
+    return tuple((f.fid, f.title, us.charges("feat", f), us.cooldown("feat", f)) for f in ch.feats)
 
 
 def spells(ch, session=None):

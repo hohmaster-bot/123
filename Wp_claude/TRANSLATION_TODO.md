@@ -2,9 +2,9 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (821)
+## Нет в ru.json (833)
 
-### catalog (106)
+### catalog (107)
 - `catalog.field.ac_bonus`
 - `catalog.field.access_class`
 - `catalog.field.activation_day`
@@ -104,6 +104,7 @@
 - `catalog.kind.classes`
 - `catalog.kind.damage_types`
 - `catalog.kind.doll_slots`
+- `catalog.kind.drive_types`
 - `catalog.kind.feats`
 - `catalog.kind.items`
 - `catalog.kind.skills`
@@ -164,7 +165,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (222)
+### reason (223)
 - `reason.action_needed`
 - `reason.activates_status_which_not`
 - `reason.already_activated`
@@ -294,6 +295,7 @@
 - `reason.not_enough_bp`
 - `reason.not_enough_charges_have`
 - `reason.not_enough_charges_need`
+- `reason.not_enough_comfort`
 - `reason.not_enough_comfort_have`
 - `reason.not_enough_free_hands`
 - `reason.not_enough_have_use`
@@ -393,7 +395,7 @@
 - `resource.ov`
 - `resource.training`
 
-### rules (302)
+### rules (314)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -454,6 +456,18 @@
 - `rules.cmd.base.desc`
 - `rules.dice.d20_faces`
 - `rules.dice.d20_faces.desc`
+- `rules.drives.buy_down_cost`
+- `rules.drives.buy_down_cost.desc`
+- `rules.drives.buy_up_cost`
+- `rules.drives.buy_up_cost.desc`
+- `rules.drives.quest_allowed_level`
+- `rules.drives.quest_allowed_level.desc`
+- `rules.drives.quest_mandatory_level`
+- `rules.drives.quest_mandatory_level.desc`
+- `rules.drives.spirit_bonus`
+- `rules.drives.spirit_bonus.desc`
+- `rules.drives.start_points`
+- `rules.drives.start_points.desc`
 - `rules.dying.action_slots`
 - `rules.dying.action_slots.desc`
 - `rules.dying.clean_actions`
@@ -697,7 +711,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (127)
+### settings (125)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -785,8 +799,6 @@
 - `settings.log_kinds.desc`
 - `settings.log_limit`
 - `settings.log_limit.desc`
-- `settings.log_max`
-- `settings.log_max.desc`
 - `settings.notifications`
 - `settings.notifications.desc`
 - `settings.overload_enabled`
@@ -849,9 +861,9 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (623)
+## Нет в en.json (635)
 
-### catalog (106)
+### catalog (107)
 - `catalog.field.ac_bonus`
 - `catalog.field.access_class`
 - `catalog.field.activation_day`
@@ -951,6 +963,7 @@
 - `catalog.kind.classes`
 - `catalog.kind.damage_types`
 - `catalog.kind.doll_slots`
+- `catalog.kind.drive_types`
 - `catalog.kind.feats`
 - `catalog.kind.items`
 - `catalog.kind.skills`
@@ -997,7 +1010,10 @@
 - `panel.training`
 - `panel.training.desc`
 
-### rules (302)
+### reason (1)
+- `reason.not_enough_comfort`
+
+### rules (314)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -1058,6 +1074,18 @@
 - `rules.cmd.base.desc`
 - `rules.dice.d20_faces`
 - `rules.dice.d20_faces.desc`
+- `rules.drives.buy_down_cost`
+- `rules.drives.buy_down_cost.desc`
+- `rules.drives.buy_up_cost`
+- `rules.drives.buy_up_cost.desc`
+- `rules.drives.quest_allowed_level`
+- `rules.drives.quest_allowed_level.desc`
+- `rules.drives.quest_mandatory_level`
+- `rules.drives.quest_mandatory_level.desc`
+- `rules.drives.spirit_bonus`
+- `rules.drives.spirit_bonus.desc`
+- `rules.drives.start_points`
+- `rules.drives.start_points.desc`
 - `rules.dying.action_slots`
 - `rules.dying.action_slots.desc`
 - `rules.dying.clean_actions`
@@ -1301,7 +1329,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (127)
+### settings (125)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -1389,8 +1417,6 @@
 - `settings.log_kinds.desc`
 - `settings.log_limit`
 - `settings.log_limit.desc`
-- `settings.log_max`
-- `settings.log_max.desc`
 - `settings.notifications`
 - `settings.notifications.desc`
 - `settings.overload_enabled`
@@ -1490,4 +1516,33 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (0)
+## Лишние ключи (нигде не нужны) (29)
+- `drive.points`
+- `drive.remind.distribute`
+- `drive.remind.open_quest`
+- `drive.remind.principle`
+- `drive.remind.quest`
+- `drive_level.0.obligation`
+- `drive_level.1.obligation`
+- `drive_level.2.bonus`
+- `drive_level.2.obligation`
+- `drive_level.3.bonus`
+- `drive_level.3.obligation`
+- `drive_level.3.penalty`
+- `drive_level.4.bonus`
+- `drive_level.4.obligation`
+- `drive_level.4.penalty`
+- `drive_level.5.bonus`
+- `drive_level.5.label`
+- `drive_level.5.obligation`
+- `drive_level.5.penalty`
+- `drive_type.autonomy`
+- `drive_type.decadence`
+- `drive_type.growth`
+- `drive_type.idealism`
+- `drive_type.knowledge`
+- `drive_type.material`
+- `drive_type.pleasure`
+- `drive_type.society`
+- `drive_type.success`
+- `drive_type.triumph`

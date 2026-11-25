@@ -221,6 +221,18 @@
    "statuses",
    "log"
   ],
+  "drive_buy_down": [
+   "notebook",
+   "resources",
+   "training",
+   "log"
+  ],
+  "drive_buy_up": [
+   "notebook",
+   "resources",
+   "training",
+   "log"
+  ],
   "edit_ability": [
    "all"
   ],
@@ -443,6 +455,7 @@
    "items",
    "maneuvers",
    "statuses",
+   "sheet",
    "log"
   ],
   "restore_mana": [
@@ -478,6 +491,7 @@
    "items",
    "maneuvers",
    "statuses",
+   "sheet",
    "log"
   ],
   "set_class": [
@@ -501,6 +515,10 @@
    "notebook",
    "log"
   ],
+  "set_drive_quest": [
+   "notebook",
+   "log"
+  ],
   "set_hp_roll": [
    "resources",
    "sheet",
@@ -520,6 +538,7 @@
    "resources",
    "skills",
    "statuses",
+   "spells",
    "log"
   ],
   "set_item_masterwork": [
@@ -623,6 +642,7 @@
    "items",
    "maneuvers",
    "statuses",
+   "sheet",
    "log"
   ],
   "spend_ov": [

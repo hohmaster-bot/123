@@ -51,3 +51,35 @@
   description the player must write when the drive is 2+.
 - [package 25 C] The texts are narrative only (no calculation). From level 2 (data constant) the drive shows a
   reminder while the principle is empty; it never blocks anything. The attention income is unchanged.
+
+## Drives (package 28) [OWNER]
+- Story power is narrative and kept OUTSIDE the program: no story-power number in the app; penalties are text only.
+- Drive types (catalog drive_types, 10, each with a Russian description shown on hover, the owner may edit it):
+  Idealism, Growth, Knowledge, Autonomy, Pleasure, Material, Triumph, Success, Society, Decadence. One drive record =
+  one type + level 0-5 + principle (taboo text) + quest + per-level notes. Normally one record per type; a custom
+  type by hand is allowed. Levels of different types are NOT summed.
+- Start budget 12 points (constant drives.start_points): the view shows "distributed X of 12" as a hint only;
+  nothing is blocked or clamped (edit mode changes levels freely).
+- Levels (texts in the locale files, keys drive_level.<n>.obligation / bonus / penalty, editable):
+  - 0: no obligations; the DM may appeal to the drive to make you oppose an ally's task (reward for success:
+    comfort); no penalty.
+  - 1: nothing.
+  - 2: taboo (the principle). Bonus: may spend spirit for +1 to rolls while the drive is under threat (spirit is
+    spent by hand).
+  - 3: taboo, may take a quest. Spirit +2. Finishing the quest gives comfort (entered by hand). Penalty text: -1 story
+    power each cycle until the quest is closed.
+  - 4: taboo, the quest is mandatory. Spirit +3. The quest gives comfort. +1 extra attention per cycle. Penalty
+    text: -2 story power each cycle until the quest is closed.
+  - 5: as 4, spirit +4, penalty text -3; label "You are obsessed".
+- Quest per drive: state none / taken / closed; comfort_received is a flag set by hand.
+- Reminders (never blocking): "write the taboo" for a drive at 2+ without a principle; "take a quest" for a drive at
+  4+ without a taken or closed quest; level_up reminds "distribute new drive points" (no number, the owner decides);
+  the end of cycle lists "open quest of drive X, penalty: <text>" for a drive at 3+ whose quest is taken, not closed.
+- Buying a level with comfort: +1 level for 3 comfort (drives.buy_up_cost), -1 level for 2 comfort
+  (drives.buy_down_cost); the level stays 0-5 (out_of_range); not enough comfort -> not_enough_comfort. In edit mode
+  the level changes for free (edit_drive).
+- Attention at the end of cycle is unchanged: 1 + one per level multiple of 3 + 1 per drive at 4+.
+- Tests: level 7 and two drives at 4+ -> 5 attention; level 3 with a taken quest -> the end-of-cycle reminder, closed
+  -> none; level 1 -> no flags; level 2 without a principle -> principle missing; level 4 without a quest -> quest
+  missing; level 5 -> obsessed; buy up at comfort 3 -> +1 level, comfort 0; at comfort 2 -> refused; buy down at 0 ->
+  refused; buy down costs 2; levels 14 of 12 -> no refusal, hint only.

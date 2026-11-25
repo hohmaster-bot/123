@@ -1,0 +1,32 @@
+"""Break registry: package 28 (drives)."""
+T = ("model/test_pkg28.py",)
+
+ENTRIES = [
+    dict(id="p28-taboo", file="wp/commands/drive_cmds.py",
+         old="    taboo = d.level >= int(_c(\"narrative.principle_min_level\", ch))", new="    taboo = False", suites=T,
+         rule="pkg 28: a taboo from level 2"),
+    dict(id="p28-quest-allowed", file="wp/commands/drive_cmds.py",
+         old="    allowed = d.level >= int(_c(\"drives.quest_allowed_level\", ch))", new="    allowed = True", suites=T,
+         rule="pkg 28: a quest allowed from level 3"),
+    dict(id="p28-quest-missing", file="wp/commands/drive_cmds.py", old="\"quest_missing\": mandatory and d.quest_state == NONE,",
+         new="\"quest_missing\": mandatory,", suites=T, rule="pkg 28: a taken quest is not missing"),
+    dict(id="p28-obsessed", file="wp/commands/drive_cmds.py", old="\"obsessed\": d.level >= int(nb.DRIVE_MAX),",
+         new="\"obsessed\": d.level >= 4,", suites=T, rule="pkg 28: obsessed at level 5"),
+    dict(id="p28-spirit", file="wp/commands/drive_cmds.py", old="\"spirit_bonus\": int(dict(_c(\"drives.spirit_bonus\", ch)).get(str(d.level), 0)),",
+         new="\"spirit_bonus\": d.level,", suites=T, rule="pkg 28: spirit hint +1 at 2 .. +4 at 5"),
+    dict(id="p28-buy-cost", file="wp/commands/drive_cmds.py", old="    if ch.comfort_current < cost:", new="    if False:",
+         suites=T, rule="pkg 28: buying a level needs the comfort"),
+    dict(id="p28-buy-range", file="wp/commands/drive_cmds.py", old="    if not 0 <= level <= int(nb.DRIVE_MAX):",
+         new="    if False:", suites=T, rule="pkg 28: a bought level stays 0..5"),
+    dict(id="p28-buy-down-cost", file="wp/commands/drive_cmds.py",
+         old="    return _buy(ch, did, -1, \"drives.buy_down_cost\", \"drive_buy_down\")",
+         new="    return _buy(ch, did, -1, \"drives.buy_up_cost\", \"drive_buy_down\")", suites=T, rule="pkg 28: down costs 2"),
+    dict(id="p28-open-quests", file="wp/commands/drive_cmds.py", old="if d.level >= int(_c(\"drives.quest_allowed_level\", ch)) and d.quest_state == TAKEN)",
+         new="if d.level >= int(_c(\"drives.quest_allowed_level\", ch)))", suites=T, rule="pkg 28: only a taken quest is open"),
+    dict(id="p28-reminders", file="wp/commands/drive_cmds.py", old="        if v[\"quest_missing\"]:\n", new="        if False:\n",
+         suites=T, rule="pkg 28: the take-a-quest reminder"),
+    dict(id="p28-level-up", file="wp/commands/progression_cmds.py", old="\"reminders\": ((\"drive.remind.distribute\", ()),)})",
+         new="\"reminders\": ()})", suites=T, rule="pkg 28: level_up reminds to distribute drive points"),
+    dict(id="p28-quest-state", file="wp/commands/notebook_cmds.py", old="    if isinstance(rec, nb.Drive) and rec.quest_state not in nb.QUEST_STATES:",
+         new="    if False:", suites=T, rule="pkg 28: quest states none / taken / closed"),
+]

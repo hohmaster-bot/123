@@ -119,6 +119,9 @@
    {"name": "is_stance", "type": "bool"},
    {"name": "granted_maneuvers", "type": "list"}
   ],
+  "drive_types": [
+   {"name": "description", "type": "str"}
+  ],
   "damage_types": [
    {"name": "physical", "type": "bool"}
   ],

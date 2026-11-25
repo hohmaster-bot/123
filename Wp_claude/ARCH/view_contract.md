@@ -306,7 +306,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_attack(iid='', group='', grip='one', stat='', rid='')` reasons: attack_record_already_exists, finesse_weapon_held_one, grip_must_one_off, not_group, not_weapon, two_handed, two_handed_weapon_cannot, unarmed_attacks_use_unarmed
-  - `add_drive(name='', level=0, principle='', level_notes=None, text='')` reasons: note_needs_name
+  - `add_drive(name='', level=0, principle='', level_notes=None, text='', dtype='')` reasons: note_needs_name
   - `add_experience(amount=0, note='', at='')`
   - `add_maneuver(name='', **fields)`
   - `add_note(kind='', name='', **fields)` reasons: note_needs_name
@@ -337,6 +337,8 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
   - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
+  - `drive_buy_down(did='')`
+  - `drive_buy_up(did='')`
   - `edit_drive(did='', **fields)` reasons: unknown_field
   - `edit_experience_entry(xid='', amount=None, note=None)`
   - `edit_level_history(lid='', **fields)` reasons: unknown_field
@@ -375,6 +377,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_drive_level(did='', level=0)`
   - `set_drive_level_note(did='', level=0, text='')`
   - `set_drive_principle(did='', text='')`
+  - `set_drive_quest(did='', quest=None, state=None, comfort_received=None)`
   - `set_hp_roll(level=1, value=1)` reasons: hit_die_hp_must, no_hit_die_roll
   - `set_ignore_bag_weight(value=True)`
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
@@ -448,13 +451,18 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - refreshes on its topic `notebook` and on the commands that refresh every panel
 - returns: map
 - `courts`: tuple[]
+- `drive_summary`: map
+  - `distributed`: int
+  - `reminders`: tuple[]
+  - `start_points`: int
+  - `text`: str
 - `drives`: tuple[]
 - `lenses`: tuple[]
 - `quests`: tuple[]
 - `quirks`: tuple[]
 - `stories`: tuple[]
 - commands:
-  - `add_drive(name='', level=0, principle='', level_notes=None, text='')` reasons: note_needs_name
+  - `add_drive(name='', level=0, principle='', level_notes=None, text='', dtype='')` reasons: note_needs_name
   - `add_note(kind='', name='', **fields)` reasons: note_needs_name
   - `attention_to_base_points(n=1)`
   - `attention_to_training(n=1)`
@@ -462,12 +470,15 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_seed(name='', source='training')` reasons: seed_needs_name
   - `change_lens(lid='', delta=0)`
   - `convert_attention()` reasons: no_attention
+  - `drive_buy_down(did='')`
+  - `drive_buy_up(did='')`
   - `edit_drive(did='', **fields)` reasons: unknown_field
   - `end_cycle()`
   - `remove_drive(did='')`
   - `set_drive_level(did='', level=0)`
   - `set_drive_level_note(did='', level=0, text='')`
   - `set_drive_principle(did='', text='')`
+  - `set_drive_quest(did='', quest=None, state=None, comfort_received=None)`
   - `spend_ov(n=1)` reasons: not_enough_ov_need
   - `sprout_seed(seed_id='', source='training')` reasons: no_seed, seed_has_already_sprouted
 
@@ -526,6 +537,8 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
   - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
+  - `drive_buy_down(did='')`
+  - `drive_buy_up(did='')`
   - `edit_pool(pid='', **fields)` reasons: unknown_pool_fields
   - `end_cycle()`
   - `exchange_comfort(n=1)` reasons: exchange_least_1_comfort, not_enough_comfort_have
@@ -608,6 +621,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `bab`: int
 - `bab_override`: NoneType
 - `class_id`: str
+- `feats`: tuple[tuple[NoneType|str|tuple[int]]]
 - `level`: int
 - `save_override`: map
 - `speed`: int
@@ -631,11 +645,14 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `remove_level_history(lid='')`
   - `remove_status(sid='')` reasons: status_not_active
   - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
+  - `restore_charges(owner_kind='item', owner_id='')`
   - `set_base_speed(feet=None)` reasons: speed_cannot_negative
+  - `set_charges(owner_kind='item', owner_id='', value=0)` reasons: charges_must_0
   - `set_hp_roll(level=1, value=1)` reasons: hit_die_hp_must, no_hit_die_roll
   - `set_ignore_bag_weight(value=True)`
   - `set_next_level_at(value=None)` reasons: goal_must_positive
   - `set_value(resource='hp', value=0)` reasons: out_of_range
+  - `spend_charge(owner_kind='item', owner_id='', n=1)` reasons: cooldown_rounds_left, not_enough_charges_have, spend_least_1
   - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
 
 ## skills
@@ -693,6 +710,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `resolve_spell_failure(failed=False)`
   - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `restore_mana(amount=0)` reasons: amount_must_0, restoring_blocked
+  - `set_item_hp(iid='', value=0)` reasons: item_destroyed
   - `set_spell_damage(spid='', damage=())` reasons: not_found
   - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
@@ -782,6 +800,8 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `buy_weapon_grade(wid='', source='training')` reasons: group_basic_simple_cannot, no_weapon, weapon_already_level_12
   - `convert_attention()` reasons: no_attention
   - `damage_to_balance(amount=0)`
+  - `drive_buy_down(did='')`
+  - `drive_buy_up(did='')`
   - `edit_experience_entry(xid='', amount=None, note=None)`
   - `edit_level_history(lid='', **fields)` reasons: unknown_field
   - `end_cycle()`

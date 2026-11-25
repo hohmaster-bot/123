@@ -5,6 +5,7 @@
  "nonneg": ["n", "amount", "extra_bp", "other_heal", "damage", "projects", "class_skill_points", "metamagic", "cast_actions", "mana_cost", "penalty_balance", "remaining", "ticks", "min_qualification", "hp_roll", "feet", "target"],
  "signed": {"add_experience": ["amount"], "edit_experience_entry": ["amount"], "set_iterative_count": ["n"]},
  "commands": {
+  "set_drive_quest": {"quest": "str?", "state": "str?", "comfort_received": "bool?"},
   "activate_item": {"kind": "str?"},
   "activate_status": {"ticks": "int?"},
   "add_attack": {"stat": "id:abilities_opt"},

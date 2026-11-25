@@ -54,7 +54,8 @@ def level_up(ch, hp_roll=None, note="", at=""):
     from wp.commands import xp_cmds                    # the level history (package 26 C)
     new = xp_cmds.add_history(new, level, roll, note, at)
     return commit(new, "level_up", "level %d, training +%d" % (level, gain),
-                  {"level": level, "training": gain, "roll": roll, "warnings": warnings})
+                  {"level": level, "training": gain, "roll": roll, "warnings": warnings,
+                   "reminders": (("drive.remind.distribute", ()),)})   # package 28 B5: no number, the owner decides
 
 
 @command
