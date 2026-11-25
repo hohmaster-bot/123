@@ -127,9 +127,9 @@ def _command():
 
 
 S.case("s-command", "D25: level_up through the Session -> Level 3 (topics all: every block re-reads); "
-       "add_experience 50 (topics training, sheet, log) refreshes only the blocks reading them; 1450 - 1000 + 50 = "
+       "add_experience 50 (topics training, sheet, log) refreshes only the blocks reading them (pkg 34: the combat tab reads sheet too); 1450 - 1000 + 50 = "
        "500 of 1000 = 50 %",
-       (True, "Level 3", True, ["bottom_strip", "experience_strip", "identity", "parameters"], 50))(_command)
+       (True, "Level 3", True, ["bottom_strip", "combat", "experience_strip", "identity", "parameters"], 50))(_command)
 
 
 # ---------------------------------------------------------------- theme, language, scale (live)

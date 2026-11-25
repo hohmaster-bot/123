@@ -3,6 +3,8 @@ block and the combat tab of part 2 add their entries below)."""
 M = ("model/test_pkg34.py",)
 L = ("storage/test_ui_logic34.py",)
 UI = ("ui/test_screen34.py",)
+L2 = ("storage/test_ui_logic34b.py",)
+UI2 = ("ui/test_combat34.py",)
 
 ENTRIES = [
     dict(id="p34-manual-effects", file="wp/model/source_row.py", old="        if r.on and target:",
@@ -43,4 +45,29 @@ ENTRIES = [
     dict(id="p34-adapt-captions", file="wp/ui/window.py",
          old="            b.set_compact(level >= lv_captions, level >= lv_details)", new="            b.set_compact(False, False)",
          suites=UI, rule="UI_WISHES 12: a small window hides captions, then details"),
+    # ---------------------------------------------------------------- part 2: statuses, reminders, combat tab
+    dict(id="p34-filter-active", file="wp/ui/combat_logic.py",
+         old="        return tuple(e for e in entries if e.active and not e.hidden)",
+         new="        return tuple(entries)", suites=L2 + UI2, rule="UI_WISHES 8: the Active filter"),
+    dict(id="p34-filter-fav", file="wp/ui/combat_logic.py",
+         old="        return tuple(e for e in entries if e.favorite and not e.hidden)",
+         new="        return tuple(e for e in entries if not e.hidden)", suites=L2 + UI2,
+         rule="UI_WISHES 8: the Favorites filter"),
+    dict(id="p34-smallest", file="wp/ui/combat_logic.py", old="    return min(free) if free else None",
+         new="    return max(free) if free else None", suites=L2, rule="combat.md: the smallest free square goes first"),
+    dict(id="p34-grid-clamp", file="wp/ui/combat_logic.py", old="    n = max(lo, min(hi, int(cells or lo)))",
+         new="    n = int(cells or lo)", suites=L2, rule="UI_WISHES 9: the quick grid has 4-16 cells"),
+    dict(id="p34-notes-kept", file="wp/app/session.py", old="            self.notes = self.notes + new",
+         new="            self.notes = self.notes", suites=UI2, rule="owner: one-shot reminders stay until dismissed"),
+    dict(id="p34-status-toggle", file="wp/ui/status_blocks.py",
+         old='        return self.run("remove_status" if active else "activate_status", sid=sid)',
+         new='        return self.run("activate_status", sid=sid)', suites=UI2, rule="buffs.md: a buff is switched on / off"),
+    dict(id="p34-square-spend", file="wp/ui/combat_tab.py", old="            b.setEnabled(not spent)",
+         new="            b.setEnabled(True)", suites=UI2, rule="combat.md: spent squares are greyed (not clickable)"),
+    dict(id="p34-placeholder-tab", file="wp/ui/combat_tab.py",
+         old='        if self.tab not in SB["implemented_tabs"]:', new="        if False:", suites=UI2,
+         rule="pkg 34: a tab without content shows only its placeholder"),
+    dict(id="p34-quick-cells", file="wp/app/session.py",
+         old='        return {"cells": int(prof.get("quick_cells") or 0),', new='        return {"cells": 0,', suites=UI2,
+         rule="UI_WISHES 9: the quick grid size from the profile"),
 ]
