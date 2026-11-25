@@ -1,0 +1,46 @@
+"""Break registry: package 34 (sources of every number, the Parameters / AC blocks, the small window; the statuses
+block and the combat tab of part 2 add their entries below)."""
+M = ("model/test_pkg34.py",)
+L = ("storage/test_ui_logic34.py",)
+UI = ("ui/test_screen34.py",)
+
+ENTRIES = [
+    dict(id="p34-manual-effects", file="wp/model/source_row.py", old="        if r.on and target:",
+         new="        if False:", suites=M, rule="owner 1A: a manual source row changes the number"),
+    dict(id="p34-off-row", file="wp/model/source_row.py", old="        if r.on and target:", new="        if target:",
+         suites=M, rule="owner 1A: a switched-off source row does not count"),
+    dict(id="p34-stacking", file="wp/model/sources.py", old="    flags = [b.btype in bo.ADDING_TYPES for b in bonuses]",
+         new="    return [True] * len(bonuses)", suites=M, rule="buffs.md: bonuses of one type do not stack"),
+    dict(id="p34-editor-gate", file="wp/app/session.py",
+         old="        if command in source_cmds.EDITOR_ONLY and not self.editor_mode:",
+         new="        if False:", suites=M + UI, rule="owner 1A: outside the editor mode the sources are read-only"),
+    dict(id="p34-view-editable", file="wp/app/views.py",
+         old='    out["editable"] = bool(getattr(session, "editor_mode", False)) and out["editable_target"]',
+         new='    out["editable"] = out["editable_target"]', suites=M + UI,
+         rule="owner 1A: the view is read-only outside the editor mode"),
+    dict(id="p34-general-attack", file="wp/model/screen_view.py", old='    return stg.value(ch, "attack_" + kind)',
+         new="    return 0", suites=M, rule="pkg 34: manual rows of the general attack numbers count"),
+    dict(id="p34-ac-split", file="wp/model/sources.py",
+         old="        v = int(value) - (on_sum if layer == bo.FLAT else 0)", new="        v = int(value)", suites=M,
+         rule="owner 1A: the AC rows add up to the cell (manual rows shown apart from the flat layer)"),
+    dict(id="p34-temp-read-only", file="wp/commands/source_cmds.py", old="    if not sr.target_of(number)[0]:",
+         new="    if False:", suites=M, rule="pkg 34: temp HP sources are read-only (no effect target)"),
+    dict(id="p34-load-border", file="wp/ui/params_logic.py", old="    if carried <= light_max:",
+         new="    if carried < light_max:", suites=L, rule="gear.md: up to the light limit = light"),
+    dict(id="p34-load-max", file="wp/ui/params_logic.py", old="    if carried <= heavy_max:",
+         new="    if carried < heavy_max:", suites=L, rule="gear.md: up to the maximum = load"),
+    dict(id="p34-overload-red", file="wp/ui/params_logic.py",
+         old='        return ("load.of", (ld["carried_l"], ld["heavy_max_l"]), "load." + cat), (OVER if cat == OVER else "")',
+         new='        return ("load.of", (ld["carried_l"], ld["heavy_max_l"]), "load." + cat), ""', suites=L + UI,
+         rule="gear.md: overload is shown red"),
+    dict(id="p34-ac-shield", file="wp/ui/params_logic.py",
+         old='                          labels.get(c, "ac_cell." + c), bool(d.get("shield")))',
+         new='                          labels.get(c, "ac_cell." + c), False)', suites=L + UI,
+         rule="UI_WISHES 7: the shield cells are marked"),
+    dict(id="p34-click-sources", file="wp/ui/screen_blocks.py",
+         old="        return open_sources(self.win, nid) if self.win is not None else None", new="        return None",
+         suites=UI, rule="owner 1A: a click on a number opens its sources"),
+    dict(id="p34-adapt-captions", file="wp/ui/window.py",
+         old="            b.set_compact(level >= lv_captions, level >= lv_details)", new="            b.set_compact(False, False)",
+         suites=UI, rule="UI_WISHES 12: a small window hides captions, then details"),
+]

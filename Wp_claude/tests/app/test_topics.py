@@ -39,7 +39,7 @@ def probe(seed):
             if before_ch != s.character:
                 blind.setdefault(cmd, []).append(changed <= {"log"})
             if "all" not in topics:
-                for p in changed - set(topics):
+                for p in changed - set(topics) - set(sess.ANY_TOPIC_VIEWS):   # package 34: sources
                     missing.setdefault(cmd, set()).add(p)
             s.dispatch("tick")
         drop(s)

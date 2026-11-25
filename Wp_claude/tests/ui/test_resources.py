@@ -3,7 +3,7 @@
 Numbers by hand from wp/ui/data/demo.json and RULES/resources.md:
 demo HP max (8 + 1) + (6 + 1) = 16 (rolls 8 and 6, Con 12 +1 per die), set to 16; balance 4 (BP 4); a hit of 5
 -> HP 11, balance 0, overflow 1 -> OT 1, pain 1;
-temp HP 4; spirit 7 of 10 (5 + 5 x Cha 12 mod 1); mana 0 / 0; overload 1; pool Ki 3 / 3; xp 1450, level 2,
+temp HP 4; spirit 7 of 10 (5 + 5 x Cha 12 mod 1); mana 5 / 8 (a manual source row +8, package 34); overload 1; pool Ki 3 / 3; xp 1450, level 2,
 training 1000 + 200 = 1200.
 Run: python Wp_claude/tests/ui/test_resources.py"""
 import os
@@ -96,23 +96,23 @@ S.case("r-temp", "UI_WISHES 4: the HP popup has the temp HP field: 7 -> temp HP 
 
 def _negative():
     s, w, b = started("negative")
-    r = b.apply_edit("mana", "-3")
+    r = b.apply_edit("mana", "-9")
     bad = b.apply_edit("mana", "abc")
     return r.ok, r.reason, b.message.text() if bad is None else "?", cur(s, "mana")
 
 
-S.case("r-negative", "rules (pkg 27 F19): mana 0 - 3 = -3 refused with its text; bad text -> the editor text",
-       (False, "out_of_range", 'Cannot read "abc": type +N, -N or a number', 0))(_negative)
+S.case("r-negative", "rules (pkg 27 F19): mana 5 - 9 = -4 refused with its text; bad text -> the editor text",
+       (False, "out_of_range", 'Cannot read "abc": type +N, -N or a number', 5))(_negative)
 
 
 def _negative_text():
     s, w, b = started("negtext")
-    b.apply_edit("mana", "-3")
+    b.apply_edit("mana", "-9")
     return b.message.text()
 
 
 S.case("r-refusal-text", "pkg 33: a refusal shows its i18n text in the message line (no traceback)",
-       "-3 is out of range")(_negative_text)
+       "-4 is out of range")(_negative_text)
 
 
 # ---------------------------------------------------------------- mechanics buttons
@@ -169,8 +169,8 @@ def _plus_minus():
     return up, cur(s, "mana"), cur(s, "spirit"), res(s)["overload"], res(s)["pools"][0][2]["current"]
 
 
-S.case("r-plus-minus", "UI_WISHES 4: mana +1 -> 1 (over the max 0), -1 -> 0; spirit 7 - 1 = 6; overload 1 + 1 = 2; "
-       "Ki 3 - 1 = 2", (1, 0, 6, 2, 2))(_plus_minus)
+S.case("r-plus-minus", "UI_WISHES 4: mana 5 + 1 -> 6, -1 -> 5; spirit 7 - 1 = 6; overload 1 + 1 = 2; "
+       "Ki 3 - 1 = 2", (6, 5, 6, 2, 2))(_plus_minus)
 
 
 # ---------------------------------------------------------------- look: style, auto-switch, pools
@@ -228,7 +228,7 @@ def _custom():
 
 
 S.case("r-custom", "UI_WISHES 4: a quick button of group resource:mana shows under mana; its click runs "
-       "Session.run_quick (adjust_value +2 -> 2, one undo step); it appears live after quick_add", ("Drink", 2, True))(_custom)
+       "Session.run_quick (adjust_value +2 -> 5 + 2 = 7, one undo step); it appears live after quick_add", ("Drink", 7, True))(_custom)
 
 
 # ---------------------------------------------------------------- level-up (section A in the UI)
