@@ -23,7 +23,8 @@ from wp.model.template import Template
 from wp.rules_data import rules as rd
 
 ABILITIES = ("str", "dex", "con", "int", "wis", "cha")
-DICT_FIELDS = ("abilities", "slots", "resources", "save_base", "save_stats", "char_settings", "save_override")
+DICT_FIELDS = ("abilities", "slots", "resources", "save_base", "save_stats", "char_settings", "save_override",
+               "attack_sources")
 
 
 @dataclass(frozen=True)
@@ -387,6 +388,8 @@ class Character:
     class_info: Optional[ClassInfo] = None   # snapshot of the class catalog entry (set_class)
     bab_override: Optional[int] = None # with a class: a hand-typed BAB wins over the class value
     save_override: Dict[str, int] = field(default_factory=dict)   # with a class: hand-typed base saves win
+    attack_sources: Dict[str, str] = field(default_factory=dict)  # melee / ranged -> stat id or "record:<rid>" (pkg 30)
+    favorites: Tuple[str, ...] = ()    # favourite abilities "kind:id" (feat / item / attack / maneuver / spell, pkg 30)
     xp_log: Tuple[XpEntry, ...] = ()   # experience entries (package 26 C); the total is derived
     xp_counter: int = 0                # last experience / level history id number (never reused)
     next_level_at: Optional[int] = None    # the player's goal, shown as progress (not a rule)

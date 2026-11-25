@@ -45,3 +45,8 @@ The future Qt UI talks ONLY to `wp.app.session.Session`. It never imports wp.cor
 - [package 28] The notebook view gives every drive its flags (taboo_required, principle_missing, quest_allowed,
   quest_mandatory, quest_missing, obsessed), the spirit hint and text keys, and drive_summary (distributed / start
   points, reminders). level_up and end_cycle results carry `info["reminders"]` ((text key, values) pairs).
+- [package 30] Session.run_quick(button | id): a quick button / macro as ONE undo step through the character
+  dispatch (a refused step rolls back everything); Session.cell_sources(): the numbers a cell may show. Views gain:
+  sheet attack_melee / attack_ranged / class, items load, defense shield_side / cell_lines / cell_labels, combat
+  morale_active / action_squares / reaction_squares, statuses favorites / reminders. Command adjust_value is the
+  tube editor correction (no mechanics).

@@ -8,6 +8,9 @@ A cell / element "source" is a reference resolved by the model:
   pool:<pool id>                                -> {"current", "max"}
   skill:<skill id>                              -> {"bonus"}
   value:<Character field>                       -> {"value"}      (a plain stored number / text)
+  stat:<fort|ref|will|initiative|cmb|cmd|attack_melee|attack_ranged> -> {"value"}  (package 30)
+  counter:<ot|pain|morale|speed|attention|ov|overload|load>          -> {"value"}  (package 30)
+The list of every source of a character: wp/model/screen_view.py cell_sources.
 An unknown or broken reference gives (None, warning id) and never raises.
 Colour rules: a list [{"below": n, "color": "#..."} | {"above": n, "color": "#..."}]; the FIRST rule that matches wins
 (assumption Q140); the number compared is current / score / bonus / value.
@@ -41,6 +44,10 @@ def resolve(ch, source):
                 return {"current": pv.current(ch, p), "max": pv.max_of(ch, p)}, None
         if kind == "skill":
             return {"bonus": dv.skill_bonus(ch, oid)}, None
+        if kind in ("stat", "counter"):
+            from wp.model import screen_view as scr
+            if (kind == "stat" and oid in scr.STAT_SOURCES) or (kind == "counter" and oid in scr.COUNTERS):
+                return {"value": (scr.stat_value if kind == "stat" else scr.counter_value)(ch, oid)}, None
         if kind == "value" and oid and hasattr(ch, oid) and isinstance(getattr(ch, oid), (int, str, bool)):
             return {"value": getattr(ch, oid)}, None
     except (KeyError, ValueError):

@@ -83,3 +83,7 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   failure once, perf budgets best of 3. Report: tests/PACKAGE29_REPORT.md.
 - Package 29 amendment: themes (dark default, light, grey-blue, own themes, background picture, contrast warning)
   and numbered action squares added to the Classic v2 spec; theme token gaps in ARCH/ui_gaps.md; ROADMAP step 1b.
+- Done in package 30: core data of the Classic screen v2: load limits and names, general attack numbers with a
+  source, adjust_value, Session.run_quick (one undo step), shield side and cell lines, AC zone labels, cell sources,
+  status notes, favourite abilities, reminders, numbered action / reaction squares, quick grid and strip fields.
+  Report: tests/PACKAGE30_REPORT.md.

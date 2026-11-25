@@ -215,3 +215,9 @@
   items: spent or destroyed, 0) and gives the effects of its acting tab ("Strong": +2 Str, 10 slots). base_view =
   (used, max, over); max = base slots (+ whole attention base points + effects "base_slots"); over the max is shown red,
   never refused. Tests: Strong at the base -> Str 12, 10 of 5 red; two items + a spent potion -> 2 of 5.
+
+## Load display (package 30) [OWNER; closes Q197; the numbers do not change]
+- From 0 to the light limit: "light". Above light up to the maximum (the heavy limit): "load" (the old "heavy" state,
+  shown as "Нагрузка"). Above the maximum: overload, shown as "you are overloaded and can only drag" (red).
+- The view gives the carried weight, the category key (light / heavy / overload), both limits and the text "40 of X"
+  (X = the maximum). Example: Str 14 (+2): light up to 7.9 B = 79 L, maximum 12.9 B = 129 L.

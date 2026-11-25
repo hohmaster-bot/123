@@ -1516,7 +1516,24 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (29)
+## Лишние ключи (нигде не нужны) (58)
+- `ac_cell.1`
+- `ac_cell.2`
+- `ac_cell.3`
+- `ac_cell.4`
+- `ac_cell.5`
+- `ac_cell.6`
+- `ac_cell.7`
+- `ac_cell.8`
+- `ac_cell.9`
+- `counter.attention`
+- `counter.load`
+- `counter.morale`
+- `counter.ot`
+- `counter.ov`
+- `counter.overload`
+- `counter.pain`
+- `counter.speed`
 - `drive.points`
 - `drive.remind.distribute`
 - `drive.remind.open_quest`
@@ -1546,3 +1563,15 @@
 - `drive_type.society`
 - `drive_type.success`
 - `drive_type.triumph`
+- `load.heavy`
+- `load.light`
+- `load.of`
+- `load.overload`
+- `param.attack_melee`
+- `param.attack_ranged`
+- `param.cmb`
+- `param.cmd`
+- `param.fort`
+- `param.initiative`
+- `param.ref`
+- `param.will`

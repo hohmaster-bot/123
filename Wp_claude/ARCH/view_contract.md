@@ -44,6 +44,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `activate_status(sid='', ticks=None)`
   - `add_attack(iid='', group='', grip='one', stat='', rid='')` reasons: attack_record_already_exists, finesse_weapon_held_one, grip_must_one_off, not_group, not_weapon, two_handed, two_handed_weapon_cannot, unarmed_attacks_use_unarmed
   - `add_status(status=None, ticks=None, active=False)` reasons: bad_effect_formula, no_status_given, status_id_already_sheet, unknown_per_tick_restore
+  - `adjust_value(resource='', delta=0)`
   - `buy_combat_basics(wid='', source='training')` reasons: already_has_combat_basics, group_basic_simple_cannot, no_weapon
   - `buy_weapon_grade(wid='', source='training')` reasons: group_basic_simple_cannot, no_weapon, weapon_already_level_12
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
@@ -82,6 +83,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - modes: classic, lite; described in the docs: yes
 - refreshes on its topic `combat` and on the commands that refresh every panel
 - returns: map
+- `action_squares`: tuple[tuple[bool|int]]
 - `actions`: map
   - `current`: int
   - `max`: int
@@ -97,10 +99,12 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `percent`: tuple[]
 - `in_combat`: bool
 - `iterative_count`: int
+- `morale_active`: bool
 - `morale_bonus`: int
 - `morale_scale`: int
 - `negative_state`: NoneType
 - `next_iterative`: int
+- `reaction_squares`: tuple[tuple[bool|int]]
 - `reactions`: map
   - `current`: int
   - `max`: int
@@ -110,6 +114,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `stances`: tuple[]
   - `active`: NoneType
 - commands:
+  - `adjust_value(resource='', delta=0)`
   - `buy_reaction(source='training')`
   - `cast_spell(circle=1, cast_actions=Ref('actions.standard'=2), mana_cost=None, from_item=False, overload=None, penalty_balance=0)` reasons: casting_blocked, character_not_caster, circle_out_of_range, not_enough_mana_slots, over_mana_level, penalty_paid_balance_must
   - `damage_to_balance(amount=0)`
@@ -132,6 +137,24 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - refreshes on its topic `defense` and on the commands that refresh every panel
 - returns: map
 - `abilities`: tuple[]
+- `cell_labels`: map
+  - `1`: str
+  - `2`: str
+  - `3`: str
+  - `4`: str
+  - `6`: str
+  - `7`: str
+  - `8`: str
+  - `9`: str
+- `cell_lines`: map
+  - `1`: tuple[tuple[Ref|str]|tuple[int|str]]
+  - `2`: tuple[tuple[Ref|str]|tuple[int|str]]
+  - `3`: tuple[tuple[Ref|str]|tuple[int|str]]
+  - `4`: tuple[tuple[Ref|str]|tuple[int|str]]
+  - `6`: tuple[tuple[Ref|str]|tuple[int|str]]
+  - `7`: tuple[tuple[Ref|str]|tuple[int|str]]
+  - `8`: tuple[tuple[int|str]]
+  - `9`: tuple[tuple[Ref|str]|tuple[int|str]]
 - `cells`: map
   - `1`: map
   - `2`: map
@@ -160,9 +183,11 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `parry`: int
   - `touch`: int
 - `settings`: tuple[SettingView]
+- `shield_side`: str
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_status(status=None, ticks=None, active=False)` reasons: bad_effect_formula, no_status_given, status_id_already_sheet, unknown_per_tick_restore
+  - `adjust_value(resource='', delta=0)`
   - `buy_armor_grade(source='training')`
   - `buy_combat_basics(wid='', source='training')` reasons: already_has_combat_basics, group_basic_simple_cannot, no_weapon
   - `buy_shield_grade(source='training')`
@@ -219,6 +244,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `injuries`: tuple[Injury]
 - `trauma`: int
 - commands:
+  - `adjust_value(resource='', delta=0)`
   - `damage_to_balance(amount=0)`
   - `pay_hp_cost(amount=0)`
   - `raise_heal_rating(injury_id='')` reasons: no_attention, no_injury_id
@@ -268,6 +294,13 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `entries`: tuple[map]
   - `view`: str
   - `warnings`: tuple[]
+- `load`: map
+  - `carried_l`: int
+  - `category`: str
+  - `heavy_max_l`: int
+  - `label`: str
+  - `light_max_l`: int
+  - `text`: tuple[str|tuple[int]]
 - `weight`: WeightView
   - `carried_l`: int
   - `bag_l`: int
@@ -313,6 +346,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `add_pool(name='', max=0, current=None, restore='manual')`
   - `add_skill(catalog=None, tid='', sub='')` reasons: no_skill_catalog_given, skill_already_sheet
   - `add_status(status=None, ticks=None, active=False)` reasons: bad_effect_formula, no_status_given, status_id_already_sheet, unknown_per_tick_restore
+  - `adjust_value(resource='', delta=0)`
   - `attention_to_base_points(n=1)`
   - `attention_to_training(n=1)`
   - `burn_ov()`
@@ -370,6 +404,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `restore_mana(amount=0)` reasons: amount_must_0, restoring_blocked
   - `restore_pool(pid='')` reasons: restoring_blocked
   - `restore_reactions()`
+  - `set_attack_source(kind='', source='')` reasons: no_attack_record, not_allowed
   - `set_base_speed(feet=None)` reasons: speed_cannot_negative
   - `set_char_setting(key='', value=None)`
   - `set_charges(owner_kind='item', owner_id='', value=0)` reasons: charges_must_0
@@ -378,6 +413,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_drive_level_note(did='', level=0, text='')`
   - `set_drive_principle(did='', text='')`
   - `set_drive_quest(did='', quest=None, state=None, comfort_received=None)`
+  - `set_favorite(kind='', oid='', on=True)` reasons: not_allowed
   - `set_hp_roll(level=1, value=1)` reasons: hit_die_hp_must, no_hit_die_roll
   - `set_ignore_bag_weight(value=True)`
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
@@ -425,6 +461,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `activate_status(sid='', ticks=None)`
   - `add_attack(iid='', group='', grip='one', stat='', rid='')` reasons: attack_record_already_exists, finesse_weapon_held_one, grip_must_one_off, not_group, not_weapon, two_handed, two_handed_weapon_cannot, unarmed_attacks_use_unarmed
   - `add_maneuver(name='', **fields)`
+  - `adjust_value(resource='', delta=0)`
   - `buy_maneuver(name='', source='training', **fields)`
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
   - `damage_to_balance(amount=0)`
@@ -530,6 +567,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `activate_status(sid='', ticks=None)`
   - `add_pool(name='', max=0, current=None, restore='manual')`
   - `add_status(status=None, ticks=None, active=False)` reasons: bad_effect_formula, no_status_given, status_id_already_sheet, unknown_per_tick_restore
+  - `adjust_value(resource='', delta=0)`
   - `buy_hp(source='training')` reasons: hit_die_hp_already
   - `buy_reaction(source='training')`
   - `buy_shield_grade(source='training')`
@@ -578,7 +616,9 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `options`: tuple[tuple[int|str]]
 - commands:
   - `activate_status(sid='', ticks=None)`
+  - `adjust_value(resource='', delta=0)`
   - `buy_hp(source='training')` reasons: hit_die_hp_already
+  - `cast_spell(circle=1, cast_actions=Ref('actions.standard'=2), mana_cost=None, from_item=False, overload=None, penalty_balance=0)` reasons: casting_blocked, character_not_caster, circle_out_of_range, not_enough_mana_slots, over_mana_level, penalty_paid_balance_must
   - `damage_to_balance(amount=0)`
   - `pay_hp_cost(amount=0)`
   - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
@@ -618,8 +658,19 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `int`: tuple[int]
   - `str`: tuple[int]
   - `wis`: tuple[int]
+- `attack_melee`: map
+  - `lines`: tuple[tuple[int|str]]
+  - `source`: str
+  - `total`: int
+  - `weapon`: str
+- `attack_ranged`: map
+  - `lines`: tuple[tuple[int|str]]
+  - `source`: str
+  - `total`: int
+  - `weapon`: str
 - `bab`: int
 - `bab_override`: NoneType
+- `class`: NoneType
 - `class_id`: str
 - `feats`: tuple[tuple[NoneType|str|tuple[int]]]
 - `level`: int
@@ -636,6 +687,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `activate_status(sid='', ticks=None)`
   - `add_experience(amount=0, note='', at='')`
   - `add_status(status=None, ticks=None, active=False)` reasons: bad_effect_formula, no_status_given, status_id_already_sheet, unknown_per_tick_restore
+  - `adjust_value(resource='', delta=0)`
   - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
   - `edit_experience_entry(xid='', amount=None, note=None)`
@@ -646,6 +698,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `remove_status(sid='')` reasons: status_not_active
   - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `restore_charges(owner_kind='item', owner_id='')`
+  - `set_attack_source(kind='', source='')` reasons: no_attack_record, not_allowed
   - `set_base_speed(feet=None)` reasons: speed_cannot_negative
   - `set_charges(owner_kind='item', owner_id='', value=0)` reasons: charges_must_0
   - `set_hp_roll(level=1, value=1)` reasons: hit_die_hp_must, no_hit_die_roll
@@ -665,6 +718,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_skill(catalog=None, tid='', sub='')` reasons: no_skill_catalog_given, skill_already_sheet
+  - `adjust_value(resource='', delta=0)`
   - `buy_professionalism(skills=(), class_skill_points=0, source='training')` reasons: already_specialized, choose_exactly_different_skills, class_own_professionalism, no_skill, not_class_skill, professionalism_already_bought, professionalism_needs_class_least
   - `buy_skill_rank(name='', target=None, source='training')` reasons: already_has_rank, no_skill
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
@@ -701,6 +755,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `failure_mode`: str
   - `sources`: tuple[]
 - commands:
+  - `adjust_value(resource='', delta=0)`
   - `buy_spell_upgrade(spid='', name='', metamagic=0, source='training')` reasons: metamagic_circles_cannot_negative, no_spell, not_enough_slots_uses, upgrade_needs_name
   - `cast_spell(circle=1, cast_actions=Ref('actions.standard'=2), mana_cost=None, from_item=False, overload=None, penalty_balance=0)` reasons: casting_blocked, character_not_caster, circle_out_of_range, not_enough_mana_slots, over_mana_level, penalty_paid_balance_must
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
@@ -730,20 +785,35 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `container`: ContainerView
   - `entries`: tuple[Entry]
   - `favorites`: tuple[]
+- `favorites`: map
+  - `abilities`: tuple[]
+  - `statuses`: tuple[]
+- `reminders`: tuple[]
 - commands:
   - `activate_status(sid='', ticks=None)`
+  - `add_drive(name='', level=0, principle='', level_notes=None, text='', dtype='')` reasons: note_needs_name
   - `add_status(status=None, ticks=None, active=False)` reasons: bad_effect_formula, no_status_given, status_id_already_sheet, unknown_per_tick_restore
+  - `adjust_value(resource='', delta=0)`
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
   - `damage_to_balance(amount=0)`
   - `delete_status(sid='')`
+  - `drive_buy_down(did='')`
+  - `drive_buy_up(did='')`
+  - `edit_drive(did='', **fields)` reasons: unknown_field
   - `pay_hp_cost(amount=0)`
   - `remove_attack(rid='')` reasons: no_attack_record
+  - `remove_drive(did='')`
   - `remove_pool(pid='')`
   - `remove_status(sid='')` reasons: status_not_active
   - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `restore_charges(owner_kind='item', owner_id='')`
   - `set_charges(owner_kind='item', owner_id='', value=0)` reasons: charges_must_0
   - `set_condition_tag(target='item', oid='', tag='none')` reasons: not_found, tag_must_one, target_must_item_status
+  - `set_drive_level(did='', level=0)`
+  - `set_drive_level_note(did='', level=0, text='')`
+  - `set_drive_principle(did='', text='')`
+  - `set_drive_quest(did='', quest=None, state=None, comfort_received=None)`
+  - `set_favorite(kind='', oid='', on=True)` reasons: not_allowed
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
   - `set_item_masterwork(iid='', value=True)`
   - `set_iterative_count(n=0)` reasons: iterative_count_negative
@@ -781,6 +851,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `weapons`: tuple[tuple[bool|int|str]]
 - commands:
   - `add_experience(amount=0, note='', at='')`
+  - `adjust_value(resource='', delta=0)`
   - `attention_to_base_points(n=1)`
   - `attention_to_training(n=1)`
   - `buy_armor_grade(source='training')`

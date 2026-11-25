@@ -32,6 +32,7 @@ class Entry:
     charges: Optional[Tuple[int, int]] = None    # (current, max)
     hidden: bool = False
     favorite: bool = False
+    note: str = ""                     # the status note (package 30)
     condition_tag: str = "none"
     manageable: bool = False           # True only for kind "status" (the status commands act on it)
     effects: Tuple[Effect, ...] = ()   # the entry's effects (statuses, injuries: package 14 D)
@@ -48,7 +49,7 @@ def _status_entry(s):
                  remaining=s.remaining, full_ticks=s.full_ticks,
                  charges=(s.charges.current, s.charges.max) if s.charges is not None else None,
                  hidden=s.hidden, favorite=s.favorite, condition_tag=s.condition_tag, manageable=True,
-                 effects=s.effects)
+                 effects=s.effects, note=s.note)
 
 
 def _injury_entries(ch):

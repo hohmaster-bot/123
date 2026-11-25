@@ -23,6 +23,7 @@
   ],
   "add_drive": [
    "notebook",
+   "statuses",
    "log"
   ],
   "add_entry": [
@@ -68,6 +69,21 @@
   ],
   "add_template": [
    "all"
+  ],
+  "adjust_value": [
+   "resources",
+   "sheet",
+   "attacks",
+   "combat",
+   "defense",
+   "injuries",
+   "maneuvers",
+   "rest",
+   "skills",
+   "spells",
+   "statuses",
+   "training",
+   "log"
   ],
   "attention_to_base_points": [
    "items",
@@ -172,6 +188,7 @@
    "combat",
    "resources",
    "spells",
+   "rest",
    "log"
   ],
   "change_lens": [
@@ -225,12 +242,14 @@
    "notebook",
    "resources",
    "training",
+   "statuses",
    "log"
   ],
   "drive_buy_up": [
    "notebook",
    "resources",
    "training",
+   "statuses",
    "log"
   ],
   "edit_ability": [
@@ -238,6 +257,7 @@
   ],
   "edit_drive": [
    "notebook",
+   "statuses",
    "log"
   ],
   "edit_entry": [
@@ -350,6 +370,7 @@
   ],
   "remove_drive": [
    "notebook",
+   "statuses",
    "log"
   ],
   "remove_entry": [
@@ -475,6 +496,10 @@
   "set_active_stance": [
    "all"
   ],
+  "set_attack_source": [
+   "sheet",
+   "log"
+  ],
   "set_bab_override": [
    "all"
   ],
@@ -505,18 +530,26 @@
   "set_drive_level": [
    "notebook",
    "training",
+   "statuses",
    "log"
   ],
   "set_drive_level_note": [
    "notebook",
+   "statuses",
    "log"
   ],
   "set_drive_principle": [
    "notebook",
+   "statuses",
    "log"
   ],
   "set_drive_quest": [
    "notebook",
+   "statuses",
+   "log"
+  ],
+  "set_favorite": [
+   "statuses",
    "log"
   ],
   "set_hp_roll": [

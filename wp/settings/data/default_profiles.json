@@ -5,6 +5,9 @@
   {
    "id": "default",
    "name": "Default",
+   "quick_cells": 8,
+   "quick_columns": 4,
+   "strips": [],
    "panels": [
     {
      "id": "resources",

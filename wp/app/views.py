@@ -57,14 +57,24 @@ def combat(ch, session=None):
     return {"in_combat": ch.in_combat, "round": ch.combat_round, "iterative_count": ch.iterative_count,
             "next_iterative": itv.penalty(ch), "morale_scale": ch.morale_scale, "morale_bonus": dv.morale_bonus(ch),
             "negative_state": ch.negative_state, "dead": dv.is_dead(ch), "reactions": _pool(reaction_cmds.reactions_pool(ch)),
-            "stance": stv.stance_view(ch), "defense": dfv.defense_view(ch), "actions": action_cmds.actions_view(ch)}
+            "stance": stv.stance_view(ch), "defense": dfv.defense_view(ch), "actions": action_cmds.actions_view(ch),
+            "morale_active": ch.in_combat, "action_squares": _squares(action_cmds.actions_pool(ch)),
+            "reaction_squares": _squares(reaction_cmds.reactions_pool(ch))}
+
+
+def _squares(pool):
+    """Numbered squares ((n, spent), ...): spending takes the smallest numbers first (owner, package 30)."""
+    from wp.model import screen_view as scr
+    return scr.squares(pool.current, pool.max)
 
 
 def defense(ch, session=None):
     from wp.model import ac_zones_view
     app = session.app if session is not None else st.AppSettings()
+    from wp.model import screen_view as scr
     the_cells = ac_zones_view.cells(ch)
-    return {"modes": ac_zones_view.modes(ch, the_cells), "cells": the_cells,
+    return {"modes": ac_zones_view.modes(ch, the_cells), "cells": the_cells, "shield_side": scr.shield_side(ch),
+            "cell_lines": scr.cell_lines(ch), "cell_labels": {c: "ac_cell." + c for c in the_cells},
             "display": ac_zones_view.display(app), "defense": dfv.defense_view(ch),
             "abilities": pick_flags.abilities(ch),
             "settings": settings_view.list_settings(app, ch, group=DEFENSE_SETTINGS)}
@@ -89,11 +99,18 @@ def items(ch, session=None, doll_view="body"):
         background = images.resolve(session.app, dl.layout_of(profile).get("background", ""), session.user_dir)
     return {"doll": doll.doll_view(ch), "hands": hd.view(ch), "layout": dl.view(ch, profile, doll_view, background),
             "items": tuple(dv.item_view(ch, it.iid) for it in ch.items),
-            "weight": lv.weight_view(ch), "base": dv.base_view(ch)}
+            "weight": lv.weight_view(ch), "load": _load(ch), "base": dv.base_view(ch)}
+
+
+def _load(ch):
+    from wp.model import screen_view as scr
+    return scr.load(ch)
 
 
 def statuses(ch, session=None):
-    return {"container": cv.container_view(ch), "active": al.active_list(ch)}
+    from wp.model import screen_view as scr
+    return {"container": cv.container_view(ch), "active": al.active_list(ch), "favorites": scr.favorites(ch),
+            "reminders": scr.reminders(ch)}
 
 
 def skills(ch, session=None):
@@ -139,7 +156,14 @@ def sheet(ch, session=None):
     return {"abilities": {a: (dv.ability_current(ch, a), dv.ability_mod(ch, a)) for a in ch.abilities},
             "stats": stats.view(ch), "level": ch.level, "bab": klass.bab(ch), "class_id": ch.class_id, "speed": dv.speed(ch),
             "bab_override": ch.bab_override, "save_override": dict(ch.save_override),
-            "feats": _feat_rows(ch)}
+            "feats": _feat_rows(ch), "attack_melee": _attack(ch, "melee"), "attack_ranged": _attack(ch, "ranged"),
+            "class": ch.class_info}
+
+
+def _attack(ch, kind):
+    from wp.model import screen_view as scr
+    return scr.attack_number(ch, kind)
+
 
 
 def _feat_rows(ch):

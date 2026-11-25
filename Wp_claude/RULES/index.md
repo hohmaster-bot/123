@@ -43,8 +43,8 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: Two names [OWNER] (31) | Catalog files [OWNER, package 18, D21] (35)
 - `classes_magic.md` (59 lines): class editor tabs, mana/slots restore
   sections: Class editor, 3 tabs [OWNER] (3) | Restore [OWNER] (10) | Where abilities live [OWNER] (21) | Mana source [OWNER] (26) | Spell cost [OWNER, confirmed] (30) | Racial damage absorbers [OWNER] (53)
-- `combat.md` (212 lines): actions, iterative attacks, crit, lucky attack, maneuvers, size, spells dmg
-  sections: Actions [OWNER] (3) | Attack tag and iteration [OWNER] (10) | Crit [OWNER] (25) | Lucky attack [OWNER] (37) | Attack records [OWNER] (46) | Two-weapon fighting [OWNER, verbatim] (59) | Empty-hand parry [OWNER] (123) | Unarmed [OWNER] (131) | Maneuvers (134) | Size and speed [OWNER, package 11 C; closes Q57, Q66] (142) | Spells damage (163) | Stances (167) | Attack kinds [OWNER, package 17, part of Q122] (186) | Reactions [OWNER, package 22 A2] (196) | Damage roll and pain [package 22 B5] (206)
+- `combat.md` (221 lines): actions, iterative attacks, crit, lucky attack, maneuvers, size, spells dmg
+  sections: Actions [OWNER] (3) | Attack tag and iteration [OWNER] (10) | Crit [OWNER] (25) | Lucky attack [OWNER] (37) | Attack records [OWNER] (46) | Two-weapon fighting [OWNER, verbatim] (59) | Empty-hand parry [OWNER] (123) | Unarmed [OWNER] (131) | Maneuvers (134) | Size and speed [OWNER, package 11 C; closes Q57, Q66] (142) | Spells damage (163) | Stances (167) | Attack kinds [OWNER, package 17, part of Q122] (186) | Reactions [OWNER, package 22 A2] (196) | Damage roll and pain [package 22 B5] (206) | General attack numbers (package 30) [OWNER; closes Q198] (214)
 - `crafting.md` (17 lines): recipes, OV, craft DC, unusual items, ILVL
   sections: Recipe (new entity, tab "Recipes/Crafting") (3) | Unusual items (first six categories only) (10) | Item level (16)
 - `defense.md` (82 lines): AC types, positioning, touch, typed bonuses, morale
@@ -53,8 +53,8 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: Penalties, dodge, flat [OWNER, packages 4-5] (17) | Owner texts (bound to the layer TYPE, stored as data: wp/catalog/data/defense_layers.json) (36)
 - `doll.md` (32 lines): 22 doll slots
   sections: (no ## headings)
-- `gear.md` (217 lines): doll, hands, belt, bag, weight/load, base, armor, qualification, item codes
-  sections: Doll [OWNER] (3) | Qualification (15) | Belt (unload) [OWNER] (18) | Bag (22) | Weight [OWNER] (28) | Base (resource for strengthening) [OWNER] (44) | Armor [OWNER] (52) | Masterwork [OWNER, package 8; package 9 closes Q39, Q40] (84) | Enchantment [OWNER, package 5] (99) | Item HP [OWNER, package 6, closes Q31] (123) | Item codes / sharing [OWNER] (168) | Enabled / disabled (activation) [OWNER] (173) | Consumables [OWNER, package 13 D] (188) | Charges and cooldown [OWNER, package 14 B; closes Q94] (200) | Base contents [OWNER text above; built in package 16 G7] (213)
+- `gear.md` (223 lines): doll, hands, belt, bag, weight/load, base, armor, qualification, item codes
+  sections: Doll [OWNER] (3) | Qualification (15) | Belt (unload) [OWNER] (18) | Bag (22) | Weight [OWNER] (28) | Base (resource for strengthening) [OWNER] (44) | Armor [OWNER] (52) | Masterwork [OWNER, package 8; package 9 closes Q39, Q40] (84) | Enchantment [OWNER, package 5] (99) | Item HP [OWNER, package 6, closes Q31] (123) | Item codes / sharing [OWNER] (168) | Enabled / disabled (activation) [OWNER] (173) | Consumables [OWNER, package 13 D] (188) | Charges and cooldown [OWNER, package 14 B; closes Q94] (200) | Base contents [OWNER text above; built in package 16 G7] (213) | Load display (package 30) [OWNER; closes Q197; the numbers do not change] (219)
 - `injuries.md` (44 lines): trauma points, injuries
   sections: Trauma points (OT) [OWNER] (3) | Injury [OWNER] (17) | Healing rating (RL) [OWNER] (35)
 - `narrative.md` (85 lines): quirks, stories, courts, quests, drives, attention

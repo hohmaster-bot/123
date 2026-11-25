@@ -210,3 +210,12 @@
   (formula), damage type (one of the 12), area (single / cone / line / burst / other), range, save, save effect}.
   The spell view gives them for the caster level with the pain penalty and morale of the damage roll; the app
   never rolls dice.
+
+## General attack numbers (package 30) [OWNER; closes Q198]
+- MELEE = Str modifier + BAB by default; RANGED = Dex modifier + BAB. Each is editable per character: the source may
+  be another stat + BAB (e.g. Dex + BAB for melee) or a SPECIFIC WEAPON (an attack record: its to-hit, and the view
+  names the weapon). Command set_attack_source(kind, source).
+- PAIN is always counted in these numbers (not only in combat). MORALE applies only DURING combat (the combat view
+  has the flag morale_active = in combat).
+- Tests: Str 14 (+2), BAB +2 -> melee +4; Dex 20 (+5), BAB +2 -> ranged +7; with pain 1 (penalty -1) -> +3 / +6;
+  morale scale 4 out of combat -> no change, in combat +2.

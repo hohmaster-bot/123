@@ -55,6 +55,7 @@ def _undo_table():
 NON_UNDOABLE = frozenset(_undo_table()["non_undoable"])
 KEEP_CURRENT = tuple(_undo_table()["keep_current"])   # fields an undo / redo takes from the current state (F3 F17)
 SHORT = "short"
+QUICK = "run_quick"                   # the undo entry of a quick button (package 30)
 STAMPS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "stamps.json")
 
 
@@ -205,6 +206,35 @@ class Session(object):
             fn(topics)
         return DispatchResult(True, topics=topics, info=info)
 
+    def run_quick(self, button):
+        """A quick button (its dict or its id among the app quick buttons) through the Session (package 30): its
+        action or macro steps {"command", "params"} run in order as ONE undo step; "set / add / subtract X" on any
+        resource = the steps set_value / adjust_value. A refused step rolls the whole macro back (nothing changes)."""
+        if self.character is None:
+            return DispatchResult(False, reason="no_character", params={})
+        if isinstance(button, str):
+            button = next((b for b in self.app.quick_buttons if b.get("id") == button), None)
+            if button is None:
+                return DispatchResult(False, reason="not_found", params={"values": ("quick_buttons", button)})
+        steps = list(button.get("macro") or ()) or ([button["action"]] if button.get("action") else [])
+        state, topics = self.character, []
+        with journal.stamped(files.stamp(self.clock())):
+            for i, step in enumerate(steps):
+                try:
+                    state = character_dispatch(state, step["command"], **dict(step.get("params", {}))).state
+                except (CommandError, KeyError, TypeError) as e:
+                    reason = getattr(e, "reason", "invalid_value")
+                    return DispatchResult(False, reason=reason, params=dict(getattr(e, "params", {}), step=i + 1),
+                                          info={"text": str(e)})
+                topics += [t for t in topics_of(step["command"]) if t not in topics]
+        if state == self.character:
+            return DispatchResult(True, topics=(), info={"steps": len(steps)})
+        if int(self.setting("undo_depth")) > 0:
+            self._undo = (self._undo + [(self.character, QUICK)])[-int(self.setting("undo_depth")):]
+            self._redo = []
+        self.character = state
+        return self._changed(tuple(topics), {"steps": len(steps)})
+
     def can_undo(self):
         return bool(self._undo)
 
@@ -272,6 +302,13 @@ class Session(object):
         size = int(size or limits.get("history_page"))
         start = int(page) * size
         return {"lines": lines[start:start + int(size)], "total": len(lines), "page": int(page), "size": int(size)}
+
+    def cell_sources(self):
+        """Every number a cell may show for the open character (source id, label key): the layout editor's list
+        (package 30; wp/model/screen_view.py cell_sources)."""
+        from wp.model import screen_view as scr
+        with rd.using(self.character):
+            return scr.cell_sources(self.character)
 
     def full_log(self):
         return history.full_log(self.characters_dir, self.name, self.character.log if self.character else ())

@@ -121,6 +121,7 @@ class Status:
     cooldown_current: int = 0          # rounds left; the tick lowers it by 1
     hidden: bool = False               # DISPLAY ONLY: hidden on the panel, still active / ticking
     favorite: bool = False             # pinned for the panel / screen
+    note: str = ""                     # the player's note shown on the chip (package 30)
 
     def __post_init__(self):
         freeze_fields(self, ("per_tick_restore",))     # read-only (package 16 A7)

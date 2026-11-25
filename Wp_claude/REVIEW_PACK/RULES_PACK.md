@@ -488,6 +488,15 @@ above and temp HP BEFORE the absorbers; the owner confirmed this order: Q151, cl
   The spell view gives them for the caster level with the pain penalty and morale of the damage roll; the app
   never rolls dice.
 
+#### General attack numbers (package 30) [OWNER; closes Q198]
+- MELEE = Str modifier + BAB by default; RANGED = Dex modifier + BAB. Each is editable per character: the source may
+  be another stat + BAB (e.g. Dex + BAB for melee) or a SPECIFIC WEAPON (an attack record: its to-hit, and the view
+  names the weapon). Command set_attack_source(kind, source).
+- PAIN is always counted in these numbers (not only in combat). MORALE applies only DURING combat (the combat view
+  has the flag morale_active = in combat).
+- Tests: Str 14 (+2), BAB +2 -> melee +4; Dex 20 (+5), BAB +2 -> ranged +7; with pain 1 (penalty -1) -> +3 / +6;
+  morale scale 4 out of combat -> no change, in combat +2.
+
 ## File: buffs.md
 
 ### Buffs / effects [OWNER]
@@ -1308,6 +1317,12 @@ After everyone acted, in this order [OWNER]:
   items: spent or destroyed, 0) and gives the effects of its acting tab ("Strong": +2 Str, 10 slots). base_view =
   (used, max, over); max = base slots (+ whole attention base points + effects "base_slots"); over the max is shown red,
   never refused. Tests: Strong at the base -> Str 12, 10 of 5 red; two items + a spent potion -> 2 of 5.
+
+#### Load display (package 30) [OWNER; closes Q197; the numbers do not change]
+- From 0 to the light limit: "light". Above light up to the maximum (the heavy limit): "load" (the old "heavy" state,
+  shown as "Нагрузка"). Above the maximum: overload, shown as "you are overloaded and can only drag" (red).
+- The view gives the carried weight, the category key (light / heavy / overload), both limits and the text "40 of X"
+  (X = the maximum). Example: Str 14 (+2): light up to 7.9 B = 79 L, maximum 12.9 B = 129 L.
 
 ## File: progression.md
 
