@@ -98,5 +98,29 @@ def display(app=None):
     return out
 
 
+def mode_cells(ch):
+    """The cell of each old AC mode (presets of ac_zones.json). Owner (package 27, review 5 F15): flank = the cell of
+    the side WITHOUT a shield: cell 6, or its mirror 4 when every held shield is in the right hand."""
+    out = {m: str(c) for m, c in acm.MODE_CELL.items()}
+    held = shields(ch)
+    if held and all(side == hd.RIGHT for _, side, _ in held):
+        out[acm.FLANK] = str(acz.TABLE["mirror"][out[acm.FLANK]])
+    return out
+
+
+def modes(ch, the_cells=None):
+    """The old modes as their cells show them (owner F15: one number on screen): front, flank and flat_footed = the
+    melee number of their cell, parry = the parry number of its cell; touch keeps its own ladder (no cell)."""
+    out = dict(acm.all_modes(dv.ac_input(ch)))
+    the_cells = the_cells or cells(ch)
+    mc = mode_cells(ch)
+    for mode in (acm.FRONT, acm.FLANK, acm.FLAT_FOOTED):
+        out[mode] = the_cells[mc[mode]]["full"]
+    if the_cells[mc[acm.PARRY]]["parry"] is not None:
+        out[acm.PARRY] = the_cells[mc[acm.PARRY]]["parry"]
+    return out
+
+
 def view(ch, app=None):
-    return {"cells": cells(ch), "display": display(app), "rules": rules(ch), "modes": acm.all_modes(dv.ac_input(ch))}
+    c = cells(ch)
+    return {"cells": c, "display": display(app), "rules": rules(ch), "modes": modes(ch, c)}

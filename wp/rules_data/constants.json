@@ -198,14 +198,14 @@
     },
     "wp/app/history.py": {
       "DATE_LEN": "YYYYMMDD: the date part of a time stamp (not a rule)"
+    },
+    "wp/commands/progression_cmds.py": {
+      "HALF": "round half up (the rounding, not a rule number)"
     }
   },
   "inline": {
     "wp/commands/journal.py": {
       "2": "depth of the short journal parameters"
-    },
-    "wp/commands/progression_cmds.py": {
-      "10": "tenths arithmetic of the comfort equivalent"
     },
     "wp/core/damage.py": {
       "100": "percent arithmetic"

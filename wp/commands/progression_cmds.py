@@ -2,6 +2,7 @@
 level_up, exchange_comfort, remove_ot_comfort, remove_ot_attention, raise_heal_rating, buy_attention_course,
 buy_reaction, buy_seed, sprout_seed, make_language_native, promote_skill, buy_professionalism.
 Only source "training" spends training points; no refunds anywhere."""
+import math
 from dataclasses import replace
 
 from wp.commands.base import CommandError, command, commit
@@ -13,6 +14,8 @@ from wp.model import derived_view as dv
 from wp.model import ids
 from wp.model.character import Seed
 from wp.rules_data import rules as rd
+
+HALF = 0.5                             # round half up (not a rule number: the rounding itself)
 
 
 def _pay(ch, cost, source):
@@ -236,7 +239,9 @@ def attention_to_training(ch, n=1):
     n = _spend_attention(ch, n)
     comfort = tr.attention_comfort_equivalent(dv.ability_mod(ch, "dex") + ch.attention_course)
     rate = tr.comfort_rate(ch.level, dv.comfort_rate_bonus(ch))
-    gain = int(round(comfort * 10)) * rate * n // 10
+    tenths = int(rd.const("training.tenths_per_point", ch))     # review 5 F22: the constant, not a literal 10
+    comfort_tenths = int(math.floor(comfort * tenths + HALF))   # "rounded to tenths" (training.md), half up
+    gain = comfort_tenths * rate * n // tenths
     return commit(replace(ch, attention=ch.attention - n, training=ch.training + gain), "attention_to_training",
                   "attention -%d, training +%d" % (n, gain), {"training": gain, "comfort": comfort})
 

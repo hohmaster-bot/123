@@ -61,10 +61,10 @@ def combat(ch, session=None):
 
 
 def defense(ch, session=None):
-    from wp.core import ac as acm
     from wp.model import ac_zones_view
     app = session.app if session is not None else st.AppSettings()
-    return {"modes": acm.all_modes(dv.ac_input(ch)), "cells": ac_zones_view.cells(ch),
+    the_cells = ac_zones_view.cells(ch)
+    return {"modes": ac_zones_view.modes(ch, the_cells), "cells": the_cells,
             "display": ac_zones_view.display(app), "defense": dfv.defense_view(ch),
             "abilities": pick_flags.abilities(ch),
             "settings": settings_view.list_settings(app, ch, group=DEFENSE_SETTINGS)}
