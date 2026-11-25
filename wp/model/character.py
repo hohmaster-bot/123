@@ -392,7 +392,6 @@ class Character:
     favorites: Tuple[str, ...] = ()    # favourite abilities "kind:id" (feat / item / attack / maneuver / spell, pkg 30)
     xp_log: Tuple[XpEntry, ...] = ()   # experience entries (package 26 C); the total is derived
     xp_counter: int = 0                # last experience / level history id number (never reused)
-    next_level_at: Optional[int] = None    # the player's goal, shown as progress (not a rule)
     level_history: Tuple[LevelRecord, ...] = ()   # written by level_up
 
     def __post_init__(self):

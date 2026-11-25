@@ -65,6 +65,9 @@
   "small": "positive",
   "large": "positive"
  },
+ "fonts_optional": {
+  "numbers": "string"
+ },
  "scalars": {
   "radius": "size",
   "spacing": "size",

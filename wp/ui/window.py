@@ -12,7 +12,7 @@ the Session: a command result refreshes the blocks whose views are in its topics
 window_classic (saved on close, restored on open). The first-run hint shows until "Understood!" (hint_dismiss).
 """
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtGui import QFontDatabase, QGuiApplication
 from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QMainWindow, QMessageBox, QPushButton, QScrollArea,
                                QVBoxLayout, QWidget)
 
@@ -119,6 +119,7 @@ class MainWindow(QMainWindow):
 
     def _block(self, item):
         b = blocks.make(item.get("panel", ""), item, SHELL)
+        b.attach(self)
         self.blocks[item.get("id", item.get("panel"))] = b
         self.region_of[item.get("id", item.get("panel"))] = item.get("dock", SHELL["regions"]["center"])
         return b
@@ -142,17 +143,26 @@ class MainWindow(QMainWindow):
             return False
         return None
 
+    def fonts(self, theme):
+        """The app font settings (package 33): family, numbers family, base size; not installed -> fallback."""
+        s = self.session
+        return qss.fonts(theme, s.setting("font_family"), s.setting("font_family_numbers"), s.setting("font_size"),
+                         QFontDatabase.families(), QFontDatabase.systemFont(QFontDatabase.GeneralFont).family())
+
     def apply_settings(self):
         theme = self.session.theme(self.system_dark())
         scale = float(self.session.setting("ui_scale"))
-        self.qss = qss.build_qss(theme, scale)
+        fonts = self.fonts(theme)
+        self.qss = qss.build_qss(theme, scale, fonts=fonts)
         self.setStyleSheet(self.qss)
         gap = int(qss.scaled(theme, scale)["spacing"])
         for lay in self.layouts:
             lay.setSpacing(gap)
         self.outer.setContentsMargins(gap, gap, gap, gap)
+        colors = qss.scaled(theme, scale, fonts=fonts)
         for b in self.blocks.values():
             b.set_gap(gap)
+            b.apply_look(colors, scale, self.session)
         self.retranslate()
 
     def retranslate(self):
@@ -209,6 +219,12 @@ class MainWindow(QMainWindow):
         if self.quiet:
             return self.answer
         return QMessageBox.question(self, self.tr("shell.error"), text) == QMessageBox.Yes
+
+    def info(self, title, text):
+        """A message box (level-up reminders); tests record the text."""
+        self.messages.append(text)
+        if not self.quiet:
+            QMessageBox.information(self, title, text)
 
     def status(self, text):
         self.statusBar().showMessage(text)

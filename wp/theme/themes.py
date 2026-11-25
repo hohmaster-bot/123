@@ -72,6 +72,9 @@ def check(theme):
         v = fonts[name]
         if (kind == "string" and not isinstance(v, str)) or (kind == "positive" and not (_num(v) and v > 0)):
             return "bad_size", {"values": ("fonts." + name, v), "token": "fonts." + name}
+    for name in SCHEMA.get("fonts_optional", {}):        # package 33: e.g. fonts.numbers (a family name)
+        if name in fonts and not isinstance(fonts[name], str):
+            return "bad_size", {"values": ("fonts." + name, fonts[name]), "token": "fonts." + name}
     for name, kind in SCHEMA["scalars"].items():
         if name not in theme:
             return "missing_token", {"values": (name,), "token": name}

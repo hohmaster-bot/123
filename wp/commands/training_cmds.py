@@ -93,6 +93,9 @@ def buy_weapon_grade(ch, wid="", source=tr.TRAINING):
 
 @command
 def buy_base_slot(ch, source=tr.TRAINING):
+    if ch.base_slots >= tr.base_max(ch.level):          # package 33: its own refusal (was a bare ValueError)
+        raise CommandError("base is at max (%d)" % tr.base_max(ch.level), "base_at_max",
+                           values=(tr.base_max(ch.level),))
     cost = tr.base_slot_cost(ch.base_slots, ch.level)
     new = replace(ch, base_slots=ch.base_slots + 1, training=_pay(ch, cost, source))
     return commit(new, "buy_base_slot", "base slot %d for %d" % (ch.base_slots + 1, cost), {"cost": cost})

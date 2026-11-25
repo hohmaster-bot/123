@@ -34,6 +34,12 @@
    {"selector": "QLabel#portrait", "declarations": [["background-color", "{background}"], ["color", "{muted}"], ["border", "{border_width}px dashed {border}"], ["border-radius", "{radius}px"]]},
    {"selector": "QFrame#hint", "declarations": [["background-color", "{hint_background}"], ["border", "{border_width}px solid {accent}"], ["border-radius", "{radius}px"]]},
    {"selector": "QProgressBar#xp", "declarations": [["background-color", "{tube_empty}"], ["border", "{border_width}px solid {tube_glass}"], ["border-radius", "{radius}px"], ["color", "{text}"], ["text-align", "center"], ["font-size", "{font_small}px"]]},
-   {"selector": "QProgressBar#xp::chunk", "declarations": [["background-color", "qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 {tube_highlight}, stop: 0.45 {accent}, stop: 1 {accent})"], ["border-radius", "{radius}px"]]}
+   {"selector": "QProgressBar#xp::chunk", "declarations": [["background-color", "qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 {tube_highlight}, stop: 0.45 {accent}, stop: 1 {accent})"], ["border-radius", "{radius}px"]]},
+   {"selector": "QLabel#value, QLabel#big, QLabel#over_max", "declarations": [["font-family", "\"{font_numbers}\""]]},
+   {"selector": "QLabel#over_max", "declarations": [["color", "{warning}"], ["font-weight", "bold"]]},
+   {"selector": "QFrame#block QLabel#chip", "declarations": [["background-color", "{overload_chip}"], ["color", "{chip_text}"], ["border-radius", "{radius}px"], ["padding", "0px 4px"], ["font-size", "{font_small}px"]]},
+   {"selector": "QLabel#message", "declarations": [["color", "{muted}"], ["font-size", "{font_small}px"]]},
+   {"selector": "QPushButton#small", "declarations": [["padding", "1px 6px"], ["font-size", "{font_small}px"]]},
+   {"selector": "QScrollArea#compact_pools, QWidget#resources_inner", "declarations": [["background-color", "transparent"], ["border", "none"]]}
   ]}
 }

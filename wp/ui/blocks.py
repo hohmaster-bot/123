@@ -1,7 +1,8 @@
 """Blocks of the Classic window shell (package 32, UI_WISHES "Classic screen v2"). A block is a frame with its
-translated title; it reads only session.view(...) and never changes the character. Two blocks show real data:
-the experience strip (training.experience) and the identity block (sheet: name, class, level); every other block is
-a placeholder naming the views it will read (wp/panels registry.reads).
+translated title; it reads only session.view(...) and changes the character only through the Session. Real data:
+the experience strip (training.experience; the level-up button, package 33), the identity block (sheet: name, class,
+level) and the resources block (wp/ui/resources_block.py, package 33); every other block is a placeholder naming the
+views it will read (wp/panels registry.reads).
 
 make(pid, item, shell) -> the block of a layout item; block.reads = the views it shows (refresh on their topics);
 block.retranslate(tr), block.refresh(session); block.sizeHint() = the saved size of the layout item.
@@ -12,6 +13,8 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QProgressBar, QPushBu
 from wp.panels import registry
 
 PCT_MAX = 100                          # the progress bar runs 0..100 (progress_pct of the experience view)
+NEWLINE = chr(10)                      # one reminder per line in the message box
+SHELL_ROLL_MAX = 1000                  # the roll spin box upper end (the core refuses a roll above the die)
 
 
 class Block(QFrame):
@@ -33,6 +36,13 @@ class Block(QFrame):
         self.box = QHBoxLayout(self) if self.strip else QVBoxLayout(self)
         self.box.addWidget(self.title)
         self.refreshed = 0             # how many times the block re-read its views (tests)
+        self.win = None
+
+    def attach(self, win):
+        self.win = win
+
+    def apply_look(self, colors, scale, session):
+        """Theme colours and the scale after a settings change (blocks that paint use them)."""
 
     def sizeHint(self):
         return self.saved
@@ -64,7 +74,9 @@ class Placeholder(Block):
 
 
 class ExperienceStrip(Block):
-    """The glass bar (progress_pct), the total, the goal and the "Experience log" button (opens in a later step)."""
+    """The glass bar (progress_pct), the total, the goal (always exp.level_cost, package 33), the "Level up" button
+    (enabled at can_level_up: asks "Raise the level?", then the hit-die roll, runs level_up and shows the reminders)
+    and the "Experience log" button (opens in a later step)."""
 
     def __init__(self, pid, item, shell):
         super().__init__(pid, item, shell)
@@ -77,10 +89,16 @@ class ExperienceStrip(Block):
         self.goal = QLabel()
         self.log_button = QPushButton()
         self.log_button.setEnabled(False)
+        self.level_button = QPushButton()
+        self.level_button.setEnabled(False)
+        self.level_button.clicked.connect(self.level_up)
         self.box.addWidget(self.bar, 1)
         self.box.addWidget(self.total)
         self.box.addWidget(self.goal)
+        self.box.addWidget(self.level_button)
         self.box.addWidget(self.log_button)
+        self.dialog = None
+        self.session = None
         self._tr = None
         self._xp = None
 
@@ -88,10 +106,12 @@ class ExperienceStrip(Block):
         super().retranslate(tr)
         self._tr = tr
         self.log_button.setText(tr("xp.log"))
+        self.level_button.setText(tr("levelup.button"))
         self._show()
 
     def refresh(self, session):
         super().refresh(session)
+        self.session = session
         self._xp = dict(session.view("training")["experience"]) if session.character is not None else None
         self._show()
 
@@ -105,6 +125,31 @@ class ExperienceStrip(Block):
         self.total.setText(tr("xp.total", total=xp["total"]))
         goal = xp.get("next_level_at")
         self.goal.setText(tr("xp.goal", goal=goal) if goal else tr("xp.no_goal"))
+        self.level_button.setEnabled(bool(xp.get("can_level_up")))
+
+    def level_up(self):
+        """Ask, then the roll dialog; the command runs on OK (window.ask / window.info; tests answer for the user)."""
+        from wp.ui import dialogs
+        win, tr = self.win, self._tr
+        if win is None or self.session is None or not win.ask(tr("levelup.ask")):
+            return None
+        dlg = dialogs.RollDialog(win, tr, SHELL_ROLL_MAX)
+        dlg.accepted.connect(lambda: self.apply_level_up(dlg.value()))
+        self.dialog = dlg
+        if not win.quiet:
+            dlg.open()
+        return dlg
+
+    def apply_level_up(self, roll):
+        win, tr = self.win, self._tr
+        r = self.session.dispatch("level_up", hp_roll=int(roll))
+        if not r.ok:
+            win.refusal(r)
+            return r
+        lines = [tr(k, values=tuple(v)) for k, v in dict(r.info).get("reminders", ())]
+        lines += [tr("warning." + w) for w in dict(r.info).get("warnings", ())]
+        win.info(tr("levelup.done", level=dict(r.info).get("level")), NEWLINE.join(lines))
+        return r
 
 
 class IdentityBlock(Block):
@@ -157,4 +202,7 @@ TYPES = {"experience_strip": ExperienceStrip, "identity": IdentityBlock}
 
 
 def make(pid, item, shell):
+    if pid == "resources":
+        from wp.ui.resources_block import ResourcesBlock      # imports Block from here
+        return ResourcesBlock(pid, item, shell)
     return TYPES.get(pid, Placeholder)(pid, item, shell)

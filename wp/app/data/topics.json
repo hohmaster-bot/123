@@ -594,11 +594,6 @@
    "attacks",
    "log"
   ],
-  "set_next_level_at": [
-   "training",
-   "sheet",
-   "log"
-  ],
   "set_primary_attack": [
    "attacks",
    "defense",
@@ -674,6 +669,7 @@
    "attacks",
    "items",
    "maneuvers",
+   "rest",
    "statuses",
    "sheet",
    "log"

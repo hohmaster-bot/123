@@ -27,7 +27,6 @@
   "set_active_stance": {"fid": "str?"},
   "set_bab_override": {"value": "int?"},
   "set_base_speed": {"feet": "int?"},
-  "set_next_level_at": {"value": "int?"},
   "set_save_override": {"save": "id:saves", "value": "int?"},
   "set_spell_damage": {"damage": "list"},
   "short_rest": {"spends": "list"},

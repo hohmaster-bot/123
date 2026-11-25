@@ -1,0 +1,16 @@
+{
+ "format": 1,
+ "note": "The resources block (package 33): numbers of the UI, not game rules. order = the main resources top to bottom (then the class pools); tokens = the theme colour of each; buttons = the mechanics buttons under each (take_damage / heal / damage_to_balance open their dialog, minus / plus = adjust_value -1 / +1, overload_minus / overload_plus = adjust_value overload); modes = the auto-switch minimum heights (px at 100 %); thin_min = the smallest thin bar; row_overhead / block_overhead = the space of a label and a button row / of the title and the message line (px at 100 %); large_pools = how many pools are drawn large; compact_visible = compact pool rows shown before the list scrolls; temp_step = the temp HP strip segment (points); damage_max = the largest number of the damage and editor fields.",
+ "order": ["hp", "balance", "spirit", "mana"],
+ "tokens": {"hp": "hp", "balance": "balance", "spirit": "spirit", "mana": "mana", "pool": "pool"},
+ "buttons": {"hp": ["take_damage", "heal"], "balance": ["damage_to_balance"], "spirit": ["minus", "plus"],
+             "mana": ["minus", "plus", "overload_minus", "overload_plus"], "pool": ["minus", "plus"]},
+ "modes": {"big": 18, "medium": 10},
+ "thin_min": 12,
+ "row_overhead": 44,
+ "block_overhead": 52,
+ "large_pools": 3,
+ "compact_visible": 3,
+ "temp_step": 5,
+ "damage_max": 100000
+}

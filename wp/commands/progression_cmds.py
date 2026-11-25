@@ -32,30 +32,44 @@ def attention_value(ch, stat):
 
 
 HIT_DIE_DEFAULT = rd.ref("progression.hit_die_default")
+HIT_DIE_MIN = rd.ref("progression.hit_die_min")
 HIT_DIE_DEFAULT_USED = "hit_die_default_used"
+HIT_DIE_MIN_USED = "hit_die_min_used"
+NOT_ENOUGH_EXPERIENCE = "not_enough_experience"
+REMIND_TRAINING = "exp.remind.training"
+REMIND_DRIVES = "drive.remind.distribute"
 
 
 @command
 def level_up(ch, hp_roll=None, note="", at=""):
-    """Level +1, +100 * NEW level training (progression.md), and the player's hit-die roll for the new level
-    (1..die; edit later with set_hp_roll or edit mode). No level cap (owner, Q103). Without a roll the die counts 1
-    and the result carries the warning "hit_die_default_used" ("die not entered, 1 taken", package 17, Q111).
-    Max HP grows; the current HP is not healed (Q111)."""
+    """Level +1 (progression.md "Level up", package 33): needs exp.level_cost experience and SPENDS it (a log entry of
+    kind "level_up"; the rest stays), +100 * NEW level training, and the player's hit-die roll for the new level
+    (at least progression.hit_die_min, at most the die; edit later with set_hp_roll or edit mode). No level cap
+    (owner, Q103). Without a roll the die counts 1 and the result carries the warning "hit_die_default_used"
+    (package 17, Q111); a roll below the minimum counts the minimum (warning "hit_die_min_used"). Max HP grows; the
+    current HP is not healed (Q111). Reminders: distribute the drive points, "you got X training"."""
+    from wp.commands import xp_cmds                    # the level history and the cost (packages 26 C, 33)
+    from wp.model import experience as xp
+    if not xp.can_level_up(ch):
+        raise CommandError("not enough experience: have %d, need %d" % (xp.total(ch), int(xp.LEVEL_COST)),
+                           NOT_ENOUGH_EXPERIENCE, values=(xp.total(ch), int(xp.LEVEL_COST)))
     warnings = ()
     if hp_roll is None:
         hp_roll, warnings = HIT_DIE_DEFAULT, (HIT_DIE_DEFAULT_USED,)
     roll = int(hp_roll)
+    if roll < int(HIT_DIE_MIN):
+        roll, warnings = int(HIT_DIE_MIN), warnings + (HIT_DIE_MIN_USED,)
     die = klass.hit_die(ch)            # the class die when a class is set (package 25 B)
-    if not 1 <= roll <= die:
+    if roll > die:
         raise CommandError("hit-die roll must be 1..%d" % die, "hit_die_roll_must", values=(die,))
     level = ch.level + 1
     gain = tr.level_up_training(level)
     new = replace(ch, level=level, hp_rolls=ch.hp_rolls + (roll,), training=ch.training + gain)
-    from wp.commands import xp_cmds                    # the level history (package 26 C)
-    new = xp_cmds.add_history(new, level, roll, note, at)
+    new = xp_cmds.add_history(new, level, roll, note, at)      # the XP at that moment, before the cost
+    new = xp_cmds.spend_for_level(new, note, at)
     return commit(new, "level_up", "level %d, training +%d" % (level, gain),
                   {"level": level, "training": gain, "roll": roll, "warnings": warnings,
-                   "reminders": (("drive.remind.distribute", ()),)})   # package 28 B5: no number, the owner decides
+                   "reminders": ((REMIND_DRIVES, ()), (REMIND_TRAINING, (gain,)))})
 
 
 @command

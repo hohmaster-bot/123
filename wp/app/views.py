@@ -50,7 +50,21 @@ def resources(ch, session=None):
             "overload": ch.overload, "reactions": _pool(reaction_cmds.reactions_pool(ch)),
             "pools": tuple((p.pid, p.name, _pool_row(ch, p)) for p in ch.pools),
             "actions": action_cmds.actions_view(ch),
-            "flasks": flask.view(ch, session.app if session is not None else None)}
+            "flasks": flask.view(ch, session.app if session is not None else None),
+            "damage_types": tuple(dfv.TYPES), "buttons": _resource_buttons(session)}
+
+
+RESOURCE_GROUP = "resource:"           # a quick button with group "resource:<id>" shows under that resource (pkg 33)
+
+
+def _resource_buttons(session):
+    """{resource id: ((button id, label), ...)} from the app quick buttons (Session.run_quick runs them)."""
+    out = {}
+    for b in (session.app.quick_buttons if session is not None else ()):
+        g = str(b.get("group") or "")
+        if g.startswith(RESOURCE_GROUP):
+            out.setdefault(g[len(RESOURCE_GROUP):], []).append((b["id"], b.get("label") or b["id"]))
+    return {k: tuple(v) for k, v in out.items()}
 
 
 def combat(ch, session=None):

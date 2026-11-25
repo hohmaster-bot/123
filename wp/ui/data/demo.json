@@ -1,18 +1,24 @@
 {
  "format": 1,
- "note": "The demo character of the window shell (package 32): built only by plain Session commands, in this order. NOT the owner's sheet.",
+ "note": "The demo character of the window shell (package 32; resources and the level-up cost: package 33): built only by plain Session commands, in this order. NOT the owner's sheet.",
  "name": "Demo",
  "steps": [
   ["edit_ability", {"name": "str", "base": 14}],
   ["edit_ability", {"name": "dex", "base": 16}],
   ["edit_ability", {"name": "con", "base": 12}],
   ["edit_ability", {"name": "wis", "base": 13}],
-  ["edit_ability", {"name": "cha", "base": 8}],
+  ["edit_ability", {"name": "cha", "base": 12}],
   ["set_class", {"class_id": "sample_fighter"}],
+  ["add_experience", {"amount": 1000, "note": "demo"}],
   ["level_up", {"hp_roll": 6}],
   ["add_pool", {"name": "Ki", "max": 3}],
   ["add_experience", {"amount": 1450, "note": "demo"}],
-  ["set_next_level_at", {"value": 2000}],
-  ["take_damage", {"amount": 5}]
+  ["set_value", {"resource": "hp", "value": 16}],
+  ["set_value", {"resource": "bp", "value": 4}],
+  ["set_value", {"resource": "balance", "value": 4}],
+  ["set_value", {"resource": "spirit", "value": 7}],
+  ["adjust_value", {"resource": "overload", "delta": 1}],
+  ["take_damage", {"amount": 5}],
+  ["set_temp_hp", {"value": 4}]
  ]
 }

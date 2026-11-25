@@ -53,7 +53,7 @@ def reason_ids():
 def warning_ids():
     from wp.commands import progression_cmds
     from wp.settings import images, layout
-    return {progression_cmds.HIT_DIE_DEFAULT_USED, images.MISSING_FILE, images.NO_IMAGE, layout.UNKNOWN_SOURCE}
+    return {progression_cmds.HIT_DIE_DEFAULT_USED, progression_cmds.HIT_DIE_MIN_USED, images.MISSING_FILE, images.NO_IMAGE, layout.UNKNOWN_SOURCE}
 
 
 def required():
