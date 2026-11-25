@@ -72,7 +72,7 @@ ENTRIES = [
          new="    return BASE_POINT_TENTHS_PER_INT * int(int_mod) * int(attention)",
          suites=B, rule="training.md option 4: minimum 0.4 per attention"),
     dict(id="p16-spell-min-1", file="wp/core/training.py",
-         old="    return max(SPELL_MIN_PRICE, cost - max(0, int(minus)))", new="    return cost - max(0, int(minus))",
+         old="    return max(int(SPELL_MIN_PRICE), cost - max(0, int(minus)))", new="    return cost - max(0, int(minus))",
          suites=B, rule="pkg 16 G5: spell price at least 1"),
     dict(id="p16-base-grey-counts", file="wp/model/sheet_numbers.py",
          old="if not it.carried and not it.equipped and not it.in_hands and not itm.spent(it) and not it.destroyed)",

@@ -5,8 +5,8 @@ CMD = "wp/settings/settings_cmds.py"
 
 ENTRIES = [
     dict(id="p19-range-ignored", file=SC,
-         old="        if (\"min\" in spec and value < spec[\"min\"]) or (\"max\" in spec and value > spec[\"max\"]):",
-         new="        if False:", suites=T, rule="pkg 19: values inside min / max"),
+         old="    if (\"min\" in spec and value < spec[\"min\"]) or (\"max\" in spec and value > spec[\"max\"]):",
+         new="    if False:", suites=T, rule="pkg 19: values inside min / max"),
     dict(id="p19-enum-ignored", file=SC,
          old="    if t == \"enum\" and value not in spec.get(\"allowed\", ()):", new="    if False:",
          suites=T, rule="pkg 19: enum values from the allowed list"),

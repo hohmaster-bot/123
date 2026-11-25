@@ -3,7 +3,7 @@ I = ("storage/test_i18n.py",)
 T = ("storage/test_themes_panels.py",)
 
 ENTRIES = [
-    dict(id="p21-no-ru-fallback", file="wp/i18n/i18n.py", old="    for lg in (lang, BASE):", new="    for lg in (lang,):",
+    dict(id="p21-no-ru-fallback", file="wp/i18n/i18n.py", old="    return (lang, EN, BASE) if key.startswith(REASON) else (lang, BASE)", new="    return (lang,)",
          suites=I, rule="pkg 21: a missing key falls back to Russian"),
     dict(id="p21-key-fallback", file="wp/i18n/i18n.py", old="    return key if text is None else _format(text, params)\n",
          new="    return \"\" if text is None else _format(text, params)\n", suites=I,

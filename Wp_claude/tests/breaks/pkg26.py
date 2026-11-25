@@ -24,6 +24,6 @@ ENTRIES = [
          new="    new = new", suites=T, rule="pkg 26 C: level_up writes the level history"),
     dict(id="p26-progress", file="wp/model/experience.py", old="    return max(0, min(PCT, total(ch) * PCT // int(ch.next_level_at)))",
          new="    return total(ch)", suites=T, rule="pkg 26 C: progress percent of the goal"),
-    dict(id="p26-stamp", file="wp/app/session.py", old="            params = dict(params, at=files.stamp(self.clock()))",
+    dict(id="p26-stamp", file="wp/app/session.py", old="            params = dict(params, at=at)",
          new="            params = params", suites=T, rule="pkg 26 C: entries carry the Session time stamp"),
 ]
