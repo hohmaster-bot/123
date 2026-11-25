@@ -53,5 +53,18 @@ for _seed in (5, 6):
     S.case("t-visible-%d" % _seed, "F16: no command changes the character with only the log showing it (seed %d)" % _seed,
            [])(lambda sd=_seed: probe(sd)[1])
 
+def _damage():
+    """A deterministic case (package 30): take_damage 12 on the rich character (pain changes the rolls)."""
+    s = temp_session()
+    before = all_views(s)
+    s.dispatch("take_damage", amount=12)
+    after = all_views(s)
+    changed = {k for k in after if after[k] != before[k]}
+    drop(s)
+    return sorted(changed - set(sess.topics_of("take_damage")))
+
+
+S.case("t-damage", "F2: take_damage 12: every changed panel is in its topics", [])(_damage)
+
 if __name__ == "__main__":
     sys.exit(S.run())
