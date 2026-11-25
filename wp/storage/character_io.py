@@ -128,7 +128,7 @@ def dumps(ch):
 def loads(text):
     try:
         data = json.loads(text)
-    except ValueError as e:
+    except (ValueError, RecursionError) as e:
         raise StorageError("file is not valid JSON: %s" % e)
     if not isinstance(data, dict) or data.get("format") != FORMAT:
         raise StorageError("not a WipeFinder character file")
@@ -137,10 +137,19 @@ def loads(text):
                            "(old files are not converted)" % (data.get("version"), VERSION))
     try:
         ch = _decode(data.get("character"))
-    except (TypeError, ValueError, KeyError) as e:
+    except (TypeError, ValueError, KeyError, AttributeError, RecursionError) as e:
         raise StorageError("broken character data: %s" % e)
     if not isinstance(ch, Character):
         raise StorageError("file does not contain a character")
+    from wp.storage import typecheck
+    bad = typecheck.character_problem(ch)
+    if bad:                            # review 5 F9: every value fits its field type, ids are unique
+        raise StorageError("broken character data: %s" % bad)
+    from wp.settings import schema as sch
+    for key, value in ch.rules_settings.constants.items():
+        wrong = sch.check_key(key, value) if key in sch.KEYS else None
+        if wrong:                      # review 5 F6: a rule constant in the file keeps its limits
+            raise StorageError("broken rule constant %s: %s" % (key, wrong[0]))
     # injuries saved before package 12 have no id: the program gives them one (owner, Q70)
     injuries, counter = ids.with_injury_ids(ch.injuries, ch.injury_counter)
     return replace(ch, injuries=injuries, injury_counter=counter)

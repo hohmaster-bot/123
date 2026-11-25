@@ -127,7 +127,7 @@ def from_data(data, path=""):
 def loads(text, path=""):
     try:
         data = json.loads(text)
-    except ValueError as e:
+    except (ValueError, RecursionError) as e:
         raise SettingsError("settings file is not valid JSON: %s" % e)
     return from_data(data, path)
 

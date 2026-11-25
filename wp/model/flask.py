@@ -5,6 +5,7 @@ App settings: resource_display[resource] (number | bar | both | percent | flask)
 [5, 2, 0] (a value over the max fills every segment). Balance also gets the cap marker (the current cap), the max
 before cap hits and the restore amount per tick.
 """
+from wp.app import limits
 from wp.commands import reaction_cmds
 from wp.model import derived_view as dv
 from wp.model import pool_view as pv
@@ -14,8 +15,8 @@ POOL = "pool"
 
 def segments(maximum, size):
     maximum, size = max(0, int(maximum)), int(size)
-    if size <= 0 or maximum == 0:
-        return [maximum] if maximum else []
+    if size <= 0 or maximum == 0 or maximum // max(1, size) > limits.get("flask_segments_max"):
+        return [maximum] if maximum else []    # more ticks than the limit (package 27): one segment, no ticks
     out = [size] * (maximum // size)
     if maximum % size:
         out.append(maximum % size)

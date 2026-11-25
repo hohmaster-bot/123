@@ -72,3 +72,25 @@ ENTRIES += [
          old="    unknown = sorted(set(fields) - set(sch.FIELDS[_mode(mode)]))", new="    unknown = []", suites=A,
          rule="F25: profile_set takes only profile fields"),
 ]
+C = ("storage/test_pkg27_load.py",)
+ENTRIES += [
+    dict(id="p27-load-types", file="wp/storage/character_io.py", old="    bad = typecheck.character_problem(ch)\n",
+         new="    bad = None\n", suites=C, rule="F9: the loader checks value types"),
+    dict(id="p27-load-unique", file="wp/storage/typecheck.py", old="        if i and i in seen:", new="        if False:",
+         suites=C, rule="F9: ids in a collection are unique"),
+    dict(id="p27-load-recursion", file="wp/storage/character_io.py", old="    except (ValueError, RecursionError) as e:\n        raise StorageError(\"file is not valid JSON",
+         new="    except ValueError as e:\n        raise StorageError(\"file is not valid JSON", suites=C,
+         rule="F9: deep nesting is a damaged file"),
+    dict(id="p27-load-constants", file="wp/storage/character_io.py", old="        if wrong:                      # review 5 F6",
+         new="        if False:                      # review 5 F6", suites=C, rule="F6: constants in a file keep their limits"),
+    dict(id="p27-const-limits", file="wp/settings/schema.py", old="            if src in c:               # limits",
+         new="            if False:               # limits", suites=C, rule="F6: every constant has min / max"),
+    dict(id="p27-const-keys", file="wp/settings/schema.py", old="        if \"keys\" in spec and sorted(value) != sorted(spec[\"keys\"]):",
+         new="        if False:", suites=C, rule="F6: a map constant keeps its key set"),
+    dict(id="p27-const-intlist", file="wp/settings/schema.py", old="        for x in value:\n            bad = _range(spec, x)",
+         new="        for x in ():\n            bad = _range(spec, x)", suites=C, rule="F6: numbers inside list values obey the limits"),
+    dict(id="p27-settings-deep", file="wp/settings/settings_cmds.py",
+         old="    except (ValueError, RecursionError) as e:\n        raise CommandError(\"not a settings file",
+         new="    except ValueError as e:\n        raise CommandError(\"not a settings file", suites=C,
+         rule="F9: settings_import of deep nesting is refused"),
+]

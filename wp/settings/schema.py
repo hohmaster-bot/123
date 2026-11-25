@@ -8,6 +8,7 @@ check_fields(kind, fields) checks the fields of a profile / panel / cell / eleme
 """
 import io
 import json
+import math
 import os
 import re
 
@@ -33,6 +34,9 @@ def _load(path=PATH):
     for cid, c in rd.TABLE.items():    # every rule constant is a rules-domain key (package 20, D23)
         keys[cid] = {"id": cid, "domain": "rules", "type": c["type"], "default": c["value"], "group": "rules." + c["group"],
                      "label": c.get("label", "rules." + cid), "description": "rules.%s.desc" % cid, "constant": True}
+        for src, dst in (("min", "min"), ("max", "max"), ("keys", "keys"), ("value_type", "value"), ("item_type", "item")):
+            if src in c:               # limits of the constant (package 27 C, review 5 F6): every number inside obeys them
+                keys[cid][dst] = c[src]
     return keys, {name: {f["id"]: f for f in fs} for name, fs in d["profile_fields"].items()}, tuple(d["image_targets"])
 
 
@@ -69,6 +73,13 @@ def _num(v, ints):
     return isinstance(v, int) if ints else isinstance(v, (int, float))
 
 
+def _range(spec, value):
+    if ("min" in spec and value < spec["min"]) or ("max" in spec and value > spec["max"]):
+        return "out_of_range", {"values": (value, spec.get("min"), spec.get("max")), "min": spec.get("min"),
+                                "max": spec.get("max")}
+    return None
+
+
 def check_value(spec, value, t=None):
     t = t or spec.get("type", "any")
     if t == "any":
@@ -78,9 +89,18 @@ def check_value(spec, value, t=None):
     if t in ("int", "float"):
         if not _num(value, t == "int"):
             return "wrong_type", {"values": (t,), "expected": t}
-        if ("min" in spec and value < spec["min"]) or ("max" in spec and value > spec["max"]):
-            return "out_of_range", {"values": (value, spec.get("min"), spec.get("max")), "min": spec.get("min"),
-                                    "max": spec.get("max")}
+        if isinstance(value, float) and not math.isfinite(value):
+            return "invalid_value", {"values": (value,)}
+        bad = _range(spec, value)
+        if bad:
+            return bad
+    if t == "intlist":                 # a list of whole numbers inside a constant (package 27 C)
+        if not isinstance(value, (list, tuple)) or not all(_num(x, True) for x in value):
+            return "wrong_type", {"values": (t,), "expected": t}
+        for x in value:
+            bad = _range(spec, x)
+            if bad:
+                return bad
     if t in ("string", "enum", "color", "hotkey", "folder_name") and not isinstance(value, str):
         return "wrong_type", {"values": (t,), "expected": t}
     if t == "folder_name" and not valid_folder_name(value):
@@ -108,6 +128,8 @@ def check_value(spec, value, t=None):
     if t == "map":
         if not isinstance(value, dict) or not all(isinstance(k, str) for k in value):
             return "wrong_type", {"values": (t,), "expected": t}
+        if "keys" in spec and sorted(value) != sorted(spec["keys"]):
+            return "wrong_keys", {"values": (", ".join(sorted(spec["keys"])),), "allowed": tuple(spec["keys"])}
         if "value" in spec:
             for x in value.values():
                 bad = check_value(spec, x, spec["value"])
