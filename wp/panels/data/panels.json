@@ -36,5 +36,16 @@
   {"id": "spells", "described": false, "requires": ["caster"]},
   {"id": "injuries", "described": false},
   {"id": "editor", "described": false}
+ ],
+ "blocks_note": "Layout blocks of the Classic screen v2 (package 32, ARCH/panels.md): screen blocks that read one or more registry views (reads); they live in classic layout profiles like panels and have no view of their own.",
+ "blocks": [
+  {"id": "experience_strip", "reads": ["training"], "min_size": [300, 40], "defaults": {"classic": {"dock": "top", "position": [0, 0], "size": [1240, 56]}}},
+  {"id": "identity", "reads": ["sheet"], "min_size": [160, 120], "defaults": {"classic": {"dock": "left", "position": [0, 0], "size": [260, 170]}}},
+  {"id": "ac_block", "reads": ["defense"], "min_size": [200, 200], "defaults": {"classic": {"dock": "center", "position": [0, 0], "size": [330, 300]}}},
+  {"id": "parameters", "reads": ["sheet", "items"], "min_size": [200, 200], "defaults": {"classic": {"dock": "center", "position": [340, 0], "size": [330, 300]}}},
+  {"id": "favorites", "reads": ["statuses"], "defaults": {"classic": {"dock": "center", "position": [0, 430], "size": [670, 60]}}},
+  {"id": "reminders", "reads": ["statuses"], "defaults": {"classic": {"dock": "center", "position": [0, 500], "size": [670, 60]}}},
+  {"id": "tabs", "reads": [], "defaults": {"classic": {"dock": "right", "position": [0, 0], "size": [300, 90]}}},
+  {"id": "bottom_strip", "reads": ["resources", "combat", "sheet", "items"], "min_size": [300, 40], "defaults": {"classic": {"dock": "bottom", "position": [0, 0], "size": [1240, 56]}}}
  ]
 }

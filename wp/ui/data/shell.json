@@ -1,0 +1,13 @@
+{
+ "format": 1,
+ "note": "The Classic window shell (package 32): numbers of the UI, not game rules. scales = the View > Scale menu (the app setting ui_scale); hint = the first-run hint id (wp/settings/data/hints.json); data_folder = the folder under the home folder for characters and settings (run_wp.py --data DIR overrides it); shot_width = the width of the test screenshots.",
+ "scales": [0.8, 0.9, 1.0, 1.1, 1.25, 1.5],
+ "hint": "first_run",
+ "data_folder": "WipeFinder",
+ "characters_folder": "characters",
+ "settings_folder": "settings",
+ "regions": {"top": "top", "left": "left", "center": "center", "right": "right", "bottom": "bottom"},
+ "strips": ["top", "bottom"],
+ "portrait": [96, 96],
+ "shot_width": 960
+}

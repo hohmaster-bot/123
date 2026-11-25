@@ -1,6 +1,6 @@
 {
  "format": 1,
- "note": "Shipped layout profiles (packages 19, 21): one default profile per mode; panels and elements name registry panels (wp/panels/data/panels.json); package 24 C: the classic profile carries the doll layout (SAMPLE coordinates, relative 0..1 on the body picture).",
+ "note": "Shipped layout profiles (packages 19, 21): one default profile per mode; panels and elements name registry panels (wp/panels/data/panels.json); package 24 C: the classic profile carries the doll layout (SAMPLE coordinates, relative 0..1 on the body picture). Package 32: the classic default profile is the Classic screen v2 (dock = region: top = the experience strip, left / center / right = the columns, bottom = the bottom strip; blocks of one region with the same position y share a row).",
  "classic": [
   {
    "id": "default",
@@ -10,8 +10,23 @@
    "strips": [],
    "panels": [
     {
-     "id": "resources",
-     "panel": "resources",
+     "id": "experience_strip",
+     "panel": "experience_strip",
+     "visible": true,
+     "dock": "top",
+     "position": [
+      0,
+      0
+     ],
+     "size": [
+      1240,
+      56
+     ],
+     "tab_order": 0
+    },
+    {
+     "id": "identity",
+     "panel": "identity",
      "visible": true,
      "dock": "left",
      "position": [
@@ -19,29 +34,29 @@
       0
      ],
      "size": [
-      280,
-      220
-     ],
-     "tab_order": 0
-    },
-    {
-     "id": "defense",
-     "panel": "defense",
-     "visible": true,
-     "dock": "left",
-     "position": [
-      0,
-      230
-     ],
-     "size": [
-      280,
-      200
+      260,
+      170
      ],
      "tab_order": 1
     },
     {
-     "id": "attacks",
-     "panel": "attacks",
+     "id": "resources",
+     "panel": "resources",
+     "visible": true,
+     "dock": "left",
+     "position": [
+      0,
+      180
+     ],
+     "size": [
+      260,
+      380
+     ],
+     "tab_order": 2
+    },
+    {
+     "id": "ac_block",
+     "panel": "ac_block",
      "visible": true,
      "dock": "center",
      "position": [
@@ -49,44 +64,104 @@
       0
      ],
      "size": [
-      480,
-      260
-     ],
-     "tab_order": 2
-    },
-    {
-     "id": "statuses",
-     "panel": "statuses",
-     "visible": true,
-     "dock": "right",
-     "position": [
-      0,
-      370
-     ],
-     "size": [
-      320,
-      220
+      330,
+      300
      ],
      "tab_order": 3
     },
     {
-     "id": "skills",
-     "panel": "skills",
+     "id": "parameters",
+     "panel": "parameters",
      "visible": true,
-     "dock": "left",
+     "dock": "center",
      "position": [
-      0,
-      440
+      340,
+      0
      ],
      "size": [
-      280,
+      330,
       300
      ],
      "tab_order": 4
     },
     {
-     "id": "log",
-     "panel": "log",
+     "id": "statuses",
+     "panel": "statuses",
+     "visible": true,
+     "dock": "center",
+     "position": [
+      0,
+      310
+     ],
+     "size": [
+      670,
+      110
+     ],
+     "tab_order": 5
+    },
+    {
+     "id": "favorites",
+     "panel": "favorites",
+     "visible": true,
+     "dock": "center",
+     "position": [
+      0,
+      430
+     ],
+     "size": [
+      670,
+      60
+     ],
+     "tab_order": 6
+    },
+    {
+     "id": "reminders",
+     "panel": "reminders",
+     "visible": true,
+     "dock": "center",
+     "position": [
+      0,
+      500
+     ],
+     "size": [
+      670,
+      60
+     ],
+     "tab_order": 7
+    },
+    {
+     "id": "tabs",
+     "panel": "tabs",
+     "visible": true,
+     "dock": "right",
+     "position": [
+      0,
+      0
+     ],
+     "size": [
+      300,
+      90
+     ],
+     "tab_order": 8
+    },
+    {
+     "id": "combat",
+     "panel": "combat",
+     "visible": true,
+     "dock": "right",
+     "position": [
+      0,
+      100
+     ],
+     "size": [
+      300,
+      460
+     ],
+     "tab_order": 9
+    },
+    {
+     "id": "bottom_strip",
+     "panel": "bottom_strip",
      "visible": true,
      "dock": "bottom",
      "position": [
@@ -94,10 +169,10 @@
       0
      ],
      "size": [
-      640,
-      160
+      1240,
+      56
      ],
-     "tab_order": 5
+     "tab_order": 10
     }
    ],
    "cells": [],

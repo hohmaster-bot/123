@@ -1,0 +1,228 @@
+"""The Classic main window shell (package 32, D32; UI_WISHES "Classic screen v2").
+
+Regions from the classic layout profile (session.profile("classic")): each visible panel item goes to the region of
+its dock (top = the experience strip, left / center / right = the three columns, bottom = the bottom strip); inside
+a region the items are ordered by position y, then x; items of the center with the same y share a row. Blocks keep
+their saved sizes (sizeHint) and their registry minimum. The whole area scrolls when the window is too small.
+
+Rules (D25): the window reads only session.view(...) / settings / theme and changes the character only through
+session.dispatch (here: nothing yet besides the files); app settings through session.settings(...). It subscribes to
+the Session: a command result refreshes the blocks whose views are in its topics ("all" = every block); the topic
+"settings" re-applies the theme, the language and the scale LIVE. The window geometry is the app setting
+window_classic (saved on close, restored on open). The first-run hint shows until "Understood!" (hint_dismiss).
+"""
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QGuiApplication
+from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QMainWindow, QMessageBox, QPushButton, QScrollArea,
+                               QVBoxLayout, QWidget)
+
+from wp.app.session import SETTINGS_TOPICS
+from wp.i18n import i18n
+from wp.theme import qss
+from wp.ui import blocks, menus
+from wp.ui.files_ui import Files
+from wp.ui.shell_data import SHELL
+
+ALL = "all"
+
+
+class HintBar(QFrame):
+    def __init__(self, win, hint_id):
+        super().__init__()
+        self.setObjectName("hint")
+        self.hint_id = hint_id
+        row = QHBoxLayout(self)
+        self.text = QLabel()
+        self.text.setWordWrap(True)
+        self.button = QPushButton()
+        self.button.clicked.connect(lambda: win.session_settings("hint_dismiss", hint_id=hint_id))
+        row.addWidget(self.text, 1)
+        row.addWidget(self.button)
+
+    def retranslate(self, tr):
+        self.text.setText(tr("hint." + self.hint_id))
+        self.button.setText(tr("hint.understood"))
+
+
+class MainWindow(QMainWindow):
+    def __init__(self, session, quiet=False, system_dark=None):
+        super().__init__()
+        self.session, self.shell = session, SHELL
+        self.quiet = quiet                 # tests: messages are recorded, questions get self.answer
+        self.answer = False
+        self.messages = []
+        self.qss = ""
+        self._system_dark = system_dark    # tests set it; None = ask Qt
+        self.files = Files(self)
+        self.blocks = {}
+        self.hint = HintBar(self, SHELL["hint"])
+        self._build_regions()
+        menus.build(self)
+        self.statusBar()
+        session.subscribe(self.on_topics)
+        hints = QGuiApplication.styleHints()
+        if hasattr(hints, "colorSchemeChanged"):
+            hints.colorSchemeChanged.connect(lambda *_: self.apply_settings())
+        self.restore_geometry()
+        self.apply_settings()
+        self.refresh_all()
+
+    # ------------------------------------------------------------ layout from the profile
+    def _build_regions(self):
+        reg = SHELL["regions"]
+        items = [i for i in self.session.profile("classic").get("panels", ()) if i.get("visible", True)]
+        by_dock = {}
+        for it in sorted(items, key=lambda i: (tuple(i.get("position") or (0, 0))[::-1], i.get("tab_order", 0))):
+            by_dock.setdefault(it.get("dock", reg["center"]), []).append(it)
+        self.central = QWidget()
+        self.central.setObjectName("central")
+        self.outer = QVBoxLayout(self.central)
+        self.outer.addWidget(self.hint)
+        self.layouts = [self.outer]
+        self.regions, self.region_of, self.rows = {}, {}, {}
+        self.regions[reg["top"]] = self._strip(by_dock.get(reg["top"], ()))
+        middle = QHBoxLayout()
+        self.layouts.append(middle)
+        for dock in (reg["left"], reg["center"], reg["right"]):
+            col = QVBoxLayout()
+            self.layouts.append(col)
+            self.regions[dock] = col
+            rows = {}
+            for it in by_dock.get(dock, ()):
+                y = (tuple(it.get("position") or (0, 0)) + (0, 0))[1] if dock == reg["center"] else len(rows)
+                rows.setdefault(y, []).append(it)
+            self.rows[dock] = [[i.get("id", i.get("panel")) for i in rows[y]] for y in sorted(rows)]
+            for y in sorted(rows):
+                row = QHBoxLayout()
+                self.layouts.append(row)
+                for it in rows[y]:
+                    row.addWidget(self._block(it))
+                row.addStretch(1)
+                col.addLayout(row)
+            col.addStretch(1)
+            middle.addLayout(col, 1 if dock == reg["center"] else 0)
+        self.outer.addLayout(middle, 1)
+        self.regions[reg["bottom"]] = self._strip(by_dock.get(reg["bottom"], ()))
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setWidget(self.central)
+        self.setCentralWidget(scroll)
+
+    def _strip(self, items):
+        row = QHBoxLayout()
+        self.layouts.append(row)
+        for it in items:
+            row.addWidget(self._block(it))
+        self.outer.addLayout(row)
+        return row
+
+    def _block(self, item):
+        b = blocks.make(item.get("panel", ""), item, SHELL)
+        self.blocks[item.get("id", item.get("panel"))] = b
+        self.region_of[item.get("id", item.get("panel"))] = item.get("dock", SHELL["regions"]["center"])
+        return b
+
+    # ------------------------------------------------------------ settings: theme, language, scale (live)
+    def tr(self, key, **params):
+        return i18n.t(key, self.lang(), **params)
+
+    def lang(self):
+        lg = self.session.setting("language")
+        return lg if lg in i18n.LANGS else i18n.BASE
+
+    def system_dark(self):
+        if self._system_dark is not None:
+            return self._system_dark
+        scheme = QGuiApplication.styleHints().colorScheme() if hasattr(QGuiApplication.styleHints(),
+                                                                         "colorScheme") else None
+        if scheme == Qt.ColorScheme.Dark:
+            return True
+        if scheme == Qt.ColorScheme.Light:
+            return False
+        return None
+
+    def apply_settings(self):
+        theme = self.session.theme(self.system_dark())
+        scale = float(self.session.setting("ui_scale"))
+        self.qss = qss.build_qss(theme, scale)
+        self.setStyleSheet(self.qss)
+        gap = int(qss.scaled(theme, scale)["spacing"])
+        for lay in self.layouts:
+            lay.setSpacing(gap)
+        self.outer.setContentsMargins(gap, gap, gap, gap)
+        for b in self.blocks.values():
+            b.set_gap(gap)
+        self.retranslate()
+
+    def retranslate(self):
+        tr = self.tr
+        self.setWindowTitle(tr("shell.title", name=self.session.name or "-"))
+        menus.retranslate(self, tr)
+        self.hint.retranslate(tr)
+        self.hint.setVisible(self.session.hint_visible(self.hint.hint_id))
+        for b in self.blocks.values():
+            b.retranslate(tr)
+
+    def session_settings(self, command, **params):
+        r = self.session.settings(command, **params)
+        if not r.ok:
+            self.refusal(r)
+        return r
+
+    def set_setting(self, key, value):
+        return self.session_settings("settings_set", key=key, value=value)
+
+    def choose_theme(self, tid):
+        if self.session.setting("theme_follow_system"):
+            self.set_setting("theme_follow_system", False)
+        return self.set_setting("theme", tid)
+
+    # ------------------------------------------------------------ the Session subscription (D25)
+    def on_topics(self, topics):
+        if tuple(topics) == SETTINGS_TOPICS:
+            self.apply_settings()
+            return
+        for b in self.blocks.values():
+            if ALL in topics or set(b.reads) & set(topics):
+                b.refresh(self.session)
+
+    def refresh_all(self):
+        for b in self.blocks.values():
+            b.refresh(self.session)
+
+    def character_changed(self):
+        self.refresh_all()
+        self.retranslate()
+
+    # ------------------------------------------------------------ messages (never a traceback)
+    def message(self, text):
+        self.messages.append(text)
+        if not self.quiet:
+            QMessageBox.warning(self, self.tr("shell.error"), text)
+
+    def refusal(self, err):
+        self.message(i18n.text_for(err, self.lang()))
+
+    def ask(self, text):
+        self.messages.append(text)
+        if self.quiet:
+            return self.answer
+        return QMessageBox.question(self, self.tr("shell.error"), text) == QMessageBox.Yes
+
+    def status(self, text):
+        self.statusBar().showMessage(text)
+
+    # ------------------------------------------------------------ geometry
+    def restore_geometry(self):
+        x, y, w, h = [int(v) for v in self.session.setting("window_classic")]
+        self.setGeometry(x, y, w, h)
+
+    def closeEvent(self, event):
+        g = self.geometry()
+        self.set_setting("window_classic", [g.x(), g.y(), g.width(), g.height()])
+        try:
+            self.session.close()           # saves unsaved changes (backups first)
+        except Exception as e:             # noqa: BLE001 - a failed save is shown, the window still closes
+            self.refusal(e)
+        super().closeEvent(event)

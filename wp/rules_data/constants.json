@@ -219,6 +219,12 @@
       "WEIGHT_B": "WCAG 2 relative luminance / contrast formula (not a game rule)",
       "FLARE": "WCAG 2 relative luminance / contrast formula (not a game rule)",
       "HEX": "WCAG 2 relative luminance / contrast formula (not a game rule)"
+    },
+    "wp/ui/blocks.py": {
+      "PCT_MAX": "the progress bar range 0..100 (UI, not a rule)"
+    },
+    "wp/ui/menus.py": {
+      "PERCENT": "percent arithmetic of the scale label (UI, not a rule)"
     }
   },
   "inline": {
@@ -286,6 +292,9 @@
     "wp/settings/screen_settings.py": {
       "2": "index of width / height in a rect (not a rule)",
       "3": "index of width / height in a rect (not a rule)"
+    },
+    "wp/theme/qss.py": {
+      "16": "hexadecimal colour digits (#rrggbbaa)"
     }
   }
 }

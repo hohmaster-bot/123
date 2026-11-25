@@ -71,7 +71,7 @@ def layout_warnings(app, mode="classic", pid=None, window=None):
     items = [i for coll in ("panels", "cells", "elements") for i in prof.get(coll, ())]
     for item in prof.get("panels", ()):
         r, pnl = _rect(item), item.get("panel", "")
-        if r and pnl in registry.PANELS:
+        if r and registry.known(pnl):
             mw, mh = registry.get(pnl).get("min_size", (0, 0))
             if r[2] < mw or r[3] < mh:
                 out.append((UNDER_MINIMUM, item.get("id", ""), pnl))

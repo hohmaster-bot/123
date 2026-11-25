@@ -17,5 +17,23 @@
   {"selector": "QLabel#danger", "declarations": [["color", "{danger}"]]},
   {"selector": "QLabel#warning", "declarations": [["color", "{warning}"]]},
   {"selector": "QLabel#success", "declarations": [["color", "{success}"]]}
- ]
+ ],
+ "shell": {"note": "Package 32: the window shell. min_font_px = the smallest font at 100% (UI_WISHES Classic v2 point 11); scaled = the flat tokens multiplied by the scale; rules = added after the rules above by build_qss.",
+  "min_font_px": 11, "scaled": ["font_base", "font_small", "font_large", "spacing"],
+  "rules": [
+  {"selector": "QMainWindow, QWidget#central", "declarations": [["background-color", "{background}"]]},
+   {"selector": "QMenuBar", "declarations": [["background-color", "{surface}"], ["color", "{text}"]]},
+   {"selector": "QMenuBar::item:selected", "declarations": [["background-color", "{accent}"], ["color", "{accent_text}"]]},
+   {"selector": "QMenu", "declarations": [["background-color", "{surface}"], ["color", "{text}"], ["border", "{border_width}px solid {border}"]]},
+   {"selector": "QMenu::item:selected", "declarations": [["background-color", "{accent}"], ["color", "{accent_text}"]]},
+   {"selector": "QFrame#block", "declarations": [["background-color", "{surface}"], ["border", "{border_width}px solid {border}"], ["border-radius", "{radius}px"]]},
+   {"selector": "QFrame#strip", "declarations": [["background-color", "{strip_background}"], ["border", "{border_width}px solid {border}"], ["border-radius", "{radius}px"]]},
+   {"selector": "QFrame#block QLabel, QFrame#strip QLabel, QFrame#hint QLabel", "declarations": [["background-color", "transparent"]]},
+   {"selector": "QLabel#block_title", "declarations": [["font-size", "{font_large}px"], ["font-weight", "bold"]]},
+   {"selector": "QLabel#big", "declarations": [["font-size", "{font_large}px"], ["font-weight", "bold"]]},
+   {"selector": "QLabel#portrait", "declarations": [["background-color", "{background}"], ["color", "{muted}"], ["border", "{border_width}px dashed {border}"], ["border-radius", "{radius}px"]]},
+   {"selector": "QFrame#hint", "declarations": [["background-color", "{hint_background}"], ["border", "{border_width}px solid {accent}"], ["border-radius", "{radius}px"]]},
+   {"selector": "QProgressBar#xp", "declarations": [["background-color", "{tube_empty}"], ["border", "{border_width}px solid {tube_glass}"], ["border-radius", "{radius}px"], ["color", "{text}"], ["text-align", "center"], ["font-size", "{font_small}px"]]},
+   {"selector": "QProgressBar#xp::chunk", "declarations": [["background-color", "qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 {tube_highlight}, stop: 0.45 {accent}, stop: 1 {accent})"], ["border-radius", "{radius}px"]]}
+  ]}
 }

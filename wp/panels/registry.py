@@ -5,6 +5,10 @@ id, title (i18n key panel.<id>), description (panel.<id>.desc), modes (classic /
 position, size), min_size, resizable, cell_capable, requires, icon (icon id), source (the model view it shows),
 described (False: the docs only name it).
 Views: list_panels(mode), get(pid), check_profile(profile, mode) -> warnings, warnings(app) for every stored profile.
+BLOCKS (package 32): {id: block} = the layout blocks of the Classic screen v2 (the "blocks" list of the file): title,
+description, min_size, defaults like a panel, modes classic only, and reads (the registry views the block shows).
+A classic layout item may name a panel or a block; get(pid) and known(pid) know both; reads(pid) = a block's views or
+[pid] for a panel.
 check_item(collection, item, mode) -> None or (reason, params): the layout commands refuse unknown panels at set time.
 """
 import copy
@@ -42,7 +46,41 @@ def _load(path=PATH):
 PANELS = _load()
 
 
+def _load_blocks(path=PATH):
+    with io.open(path, encoding="utf-8") as f:
+        d = json.load(f)
+    base = d["defaults"]
+    out = {}
+    for b in d.get("blocks", ()):
+        if b["id"] in out or b["id"] in PANELS:
+            raise ValueError("duplicate block id %r" % b["id"])
+        full = copy.deepcopy(base)
+        full.update(copy.deepcopy(b))
+        full["modes"] = ["classic"]
+        full.setdefault("title", "panel." + b["id"])
+        full.setdefault("description", "panel.%s.desc" % b["id"])
+        full.setdefault("icon", "panel." + b["id"])
+        full.setdefault("reads", [])
+        full["block"] = True
+        out[b["id"]] = full
+    return out
+
+
+BLOCKS = _load_blocks()
+
+
+def known(pid):
+    return pid in PANELS or pid in BLOCKS
+
+
+def reads(pid):
+    """The registry views a layout item shows (package 32): a block's reads, or the panel's own view."""
+    return tuple(BLOCKS[pid]["reads"]) if pid in BLOCKS else (pid,)
+
+
 def get(pid):
+    if pid in BLOCKS:
+        return BLOCKS[pid]
     if pid not in PANELS:
         raise KeyError("no panel %r" % (pid,))
     return PANELS[pid]
@@ -53,6 +91,9 @@ def list_panels(mode):
 
 
 def _ref(pid, mode):
+    if pid in BLOCKS:
+        return None if mode in BLOCKS[pid]["modes"] else (PANEL_NOT_IN_MODE, {"values": (pid, mode), "panel": pid,
+                                                                               "mode": mode})
     if pid not in PANELS:
         return UNKNOWN_PANEL, {"values": (pid,), "panel": pid}
     if mode not in PANELS[pid]["modes"]:

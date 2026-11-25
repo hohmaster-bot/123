@@ -157,7 +157,7 @@ def sheet(ch, session=None):
             "stats": stats.view(ch), "level": ch.level, "bab": klass.bab(ch), "class_id": ch.class_id, "speed": dv.speed(ch),
             "bab_override": ch.bab_override, "save_override": dict(ch.save_override),
             "feats": _feat_rows(ch), "attack_melee": _attack(ch, "melee"), "attack_ranged": _attack(ch, "ranged"),
-            "class": ch.class_info}
+            "class": ch.class_info, "name": session.name if session is not None else ""}
 
 
 def _attack(ch, kind):

@@ -89,6 +89,8 @@ def required():
         from wp.panels import registry
         for p in registry.PANELS.values():
             add("panel", p["title"], p["description"])
+        for p in registry.BLOCKS.values():
+            add("panel", p["title"], p["description"])
     except ImportError:
         pass
     try:

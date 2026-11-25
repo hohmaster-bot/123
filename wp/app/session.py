@@ -10,7 +10,10 @@ Session(characters_dir, user_dir, clock=time.time)
 - view(panel id, **params): the panel's view, computed inside rules.using(character);
 - autosave (app settings autosave, autosave_mode every_command | interval, autosave_interval_s) with the injected
   clock: maybe_autosave() is called by the UI timer; backups rotated (backups_count, backups_folder);
-- character files: list / duplicate / rename / delete (to trash) / export / import (wp/app/files.py).
+- character files: list / duplicate / rename / delete (to trash) / export / import (wp/app/files.py);
+- [package 32] settings(command, **params): the app settings commands for the UI (theme, language, scale, hints,
+  window geometry): saved to the user folder at once, subscribers get the topic "settings"; theme(system_dark),
+  themes_view(system_dark), hint_visible(hint id).
 """
 import io
 import json
@@ -36,6 +39,7 @@ from wp.theme import themes
 TOPICS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "topics.json")
 ALL = "all"
 EVERY_COMMAND = "every_command"
+SETTINGS_TOPICS = ("settings",)        # what subscribers get after an app settings change (package 32)
 
 
 def _topics():
@@ -105,8 +109,33 @@ class Session(object):
             self._catalogs[kind] = cs.load_layers(kind, os.path.join(self.user_dir, "catalogs"))
         return self._catalogs[kind]
 
-    def theme(self):
-        return themes.active(self.app, self.themes)
+    def theme(self, system_dark=None):
+        return themes.active(self.app, self.themes, system_dark)
+
+    def themes_view(self, system_dark=None):
+        return themes.view(self.app, self.themes, system_dark)
+
+    def hint_visible(self, hint_id):
+        from wp.settings import screen_settings as ss
+        return ss.hint_visible(self.app, hint_id)
+
+    def settings(self, command, **params):
+        """An app settings command (wp/settings/settings_cmds.py) for the UI (package 32): the new settings are saved
+        to the user folder at once; a refusal is a result like dispatch; subscribers get the topic "settings"."""
+        from wp.settings.settings_cmds import settings_dispatch
+        try:
+            result = settings_dispatch(self.app, command, **params)
+        except CommandError as e:
+            return DispatchResult(False, reason=e.reason, params=dict(e.params), info={"text": str(e)})
+        if result.state == self.app:
+            return DispatchResult(True, topics=(), info=dict(result.info))
+        try:
+            self.app = st.save(result.state) if result.state.path else result.state
+        except st.SettingsError as e:
+            return DispatchResult(False, reason="settings_error", params={}, info={"text": str(e)})
+        for fn in self._subscribers:
+            fn(SETTINGS_TOPICS)
+        return DispatchResult(True, topics=SETTINGS_TOPICS, info=dict(result.info))
 
     def profile(self, mode):
         return st.profile(self.app, mode)

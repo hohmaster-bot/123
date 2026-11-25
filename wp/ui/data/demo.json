@@ -1,0 +1,18 @@
+{
+ "format": 1,
+ "note": "The demo character of the window shell (package 32): built only by plain Session commands, in this order. NOT the owner's sheet.",
+ "name": "Demo",
+ "steps": [
+  ["edit_ability", {"name": "str", "base": 14}],
+  ["edit_ability", {"name": "dex", "base": 16}],
+  ["edit_ability", {"name": "con", "base": 12}],
+  ["edit_ability", {"name": "wis", "base": 13}],
+  ["edit_ability", {"name": "cha", "base": 8}],
+  ["set_class", {"class_id": "sample_fighter"}],
+  ["level_up", {"hp_roll": 6}],
+  ["add_pool", {"name": "Ki", "max": 3}],
+  ["add_experience", {"amount": 1450, "note": "demo"}],
+  ["set_next_level_at", {"value": 2000}],
+  ["take_damage", {"amount": 5}]
+ ]
+}
