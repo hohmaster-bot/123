@@ -83,16 +83,17 @@ Binding spec: `UI_WISHES.md` "Classic screen v2" (package 29, D31); the core gap
 Step 0 DONE (packages 30, 31): the core is ready for the screen (every row of ARCH/ui_gaps.md built).
 Step 1 DONE (package 32): the window shell (python run_wp.py), regions from the profile, the three themes live,
 RU / EN, scale, the first-run hint, the experience strip and the identity block with real data (D32).
-Steps in order (each a package); next = step 2, the resources block:
+Step 2 DONE (package 33): the resources block (tubes, value editor, temp HP strip, pools, own buttons), the level-up
+button with the 1000 xp cost (owner), the font settings (D33).
+Steps in order (each a package); next = step 3, the parameters block and the AC block:
   1. [DONE, package 32] Window shell + the three shipped themes (dark default, light, grey-blue), the Session wiring, one-time hints
      storage (hints_seen, hints_off).
   1b. Theme editor and background: every screen colour a token (the missing tokens of ARCH/ui_gaps.md "Themes"), live
      preview, copy / reset to shipped, follow the system, the 4.5:1 contrast warning, an own background picture with
      dimming and the readable overlay.
-  2. Resources: horizontal tubes (glass / flat), the value editor, adjust_value, temp HP strip, pools (3 large),
+  2. [DONE, package 33] Resources: horizontal tubes (glass / flat), the value editor, adjust_value, temp HP strip, pools (3 large),
      custom buttons through Session.run_quick, resource style / colour / size settings.
-  3. Experience strip (training.experience).
-  4. Parameters block and AC block: cell sources view, attack_melee / attack_ranged (Q198), load limits in
+  3. Parameters block and AC block (the experience strip is done: packages 32, 33): cell sources view, attack_melee / attack_ranged (Q198), load limits in
      items.weight, shield_side and cell lines in defense, ac_cell labels.
   5. Statuses, favourites (char setting favorites), reminders view; the combat tab (actions / reaction squares,
      quick access grid with quick_view, quick_cells / quick_columns).

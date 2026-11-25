@@ -2,7 +2,7 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (858)
+## Нет в ru.json (866)
 
 ### catalog (107)
 - `catalog.field.ac_bonus`
@@ -162,7 +162,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (223)
+### reason (222)
 - `reason.action_needed`
 - `reason.activates_status_which_not`
 - `reason.already_activated`
@@ -226,7 +226,6 @@
 - `reason.file_corrupt`
 - `reason.file_not_found`
 - `reason.finesse_weapon_held_one`
-- `reason.goal_must_positive`
 - `reason.grip_must_one_off`
 - `reason.group_basic_simple_cannot`
 - `reason.hand_occupied`
@@ -392,7 +391,7 @@
 - `resource.ov`
 - `resource.training`
 
-### rules (314)
+### rules (320)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -477,6 +476,10 @@
 - `rules.dying.hp_loss.desc`
 - `rules.dying.pain_per_painful_action`
 - `rules.dying.pain_per_painful_action.desc`
+- `rules.exp.level_cost`
+- `rules.exp.level_cost.desc`
+- `rules.exp.max_banked`
+- `rules.exp.max_banked.desc`
 - `rules.hands.default_shield_side`
 - `rules.hands.default_shield_side.desc`
 - `rules.hands.default_weapon_sides`
@@ -551,6 +554,8 @@
 - `rules.proficiency.shield_rank.desc`
 - `rules.progression.hit_die_default`
 - `rules.progression.hit_die_default.desc`
+- `rules.progression.hit_die_min`
+- `rules.progression.hit_die_min.desc`
 - `rules.rest.free_heal_base`
 - `rules.rest.free_heal_base.desc`
 - `rules.rest.short_rest_costs`
@@ -708,7 +713,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (152)
+### settings (156)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -739,6 +744,10 @@
 - `settings.damage_order.desc`
 - `settings.default_mode`
 - `settings.default_mode.desc`
+- `settings.font_family`
+- `settings.font_family.desc`
+- `settings.font_family_numbers`
+- `settings.font_family_numbers.desc`
 - `settings.font_size`
 - `settings.font_size.desc`
 - `settings.group.character`
@@ -880,13 +889,12 @@
 - `ui.end_of_cycle`
 - `ui.start_combat`
 
-### warning (4)
-- `warning.hit_die_default_used`
+### warning (3)
 - `warning.image_missing`
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (660)
+## Нет в en.json (669)
 
 ### catalog (107)
 - `catalog.field.ac_bonus`
@@ -1035,7 +1043,7 @@
 ### reason (1)
 - `reason.not_enough_comfort`
 
-### rules (314)
+### rules (320)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -1120,6 +1128,10 @@
 - `rules.dying.hp_loss.desc`
 - `rules.dying.pain_per_painful_action`
 - `rules.dying.pain_per_painful_action.desc`
+- `rules.exp.level_cost`
+- `rules.exp.level_cost.desc`
+- `rules.exp.max_banked`
+- `rules.exp.max_banked.desc`
 - `rules.hands.default_shield_side`
 - `rules.hands.default_shield_side.desc`
 - `rules.hands.default_weapon_sides`
@@ -1194,6 +1206,8 @@
 - `rules.proficiency.shield_rank.desc`
 - `rules.progression.hit_die_default`
 - `rules.progression.hit_die_default.desc`
+- `rules.progression.hit_die_min`
+- `rules.progression.hit_die_min.desc`
 - `rules.rest.free_heal_base`
 - `rules.rest.free_heal_base.desc`
 - `rules.rest.short_rest_costs`
@@ -1351,7 +1365,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (152)
+### settings (156)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -1382,6 +1396,10 @@
 - `settings.damage_order.desc`
 - `settings.default_mode`
 - `settings.default_mode.desc`
+- `settings.font_family`
+- `settings.font_family.desc`
+- `settings.font_family_numbers`
+- `settings.font_family_numbers.desc`
 - `settings.font_size`
 - `settings.font_size.desc`
 - `settings.group.character`
@@ -1560,13 +1578,12 @@
 ### tier (1)
 - `tier.specialized.full`
 
-### warning (4)
-- `warning.hit_die_default_used`
+### warning (3)
 - `warning.image_missing`
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (102)
+## Лишние ключи (нигде не нужны) (126)
 - `ac_cell.1`
 - `ac_cell.2`
 - `ac_cell.3`
@@ -1584,6 +1601,8 @@
 - `counter.overload`
 - `counter.pain`
 - `counter.speed`
+- `dialog.cancel`
+- `dialog.ok`
 - `drive.points`
 - `drive.remind.distribute`
 - `drive.remind.open_quest`
@@ -1613,6 +1632,9 @@
 - `drive_type.society`
 - `drive_type.success`
 - `drive_type.triumph`
+- `exp.kind.level_up`
+- `exp.remind.excess`
+- `exp.remind.training`
 - `hint.ac_block`
 - `hint.cell_block`
 - `hint.custom_buttons`
@@ -1627,6 +1649,11 @@
 - `identity.portrait`
 - `lang.en`
 - `lang.ru`
+- `levelup.ask`
+- `levelup.button`
+- `levelup.done`
+- `levelup.roll`
+- `levelup.title`
 - `load.heavy`
 - `load.light`
 - `load.of`
@@ -1652,6 +1679,20 @@
 - `param.initiative`
 - `param.ref`
 - `param.will`
+- `resources.amount`
+- `resources.bad_edit`
+- `resources.button.damage_to_balance`
+- `resources.button.heal`
+- `resources.button.minus`
+- `resources.button.overload_minus`
+- `resources.button.overload_plus`
+- `resources.button.plus`
+- `resources.button.take_damage`
+- `resources.damage_type`
+- `resources.edit_hint`
+- `resources.edit_temp`
+- `resources.edit_value`
+- `resources.overload`
 - `shell.error`
 - `shell.file_filter`
 - `shell.no_backup`

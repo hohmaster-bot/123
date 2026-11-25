@@ -308,7 +308,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `load`: str
 - commands:
   - `attention_to_base_points(n=1)`
-  - `buy_base_slot(source='training')`
+  - `buy_base_slot(source='training')` reasons: base_at_max
   - `buy_item_qualification(iid='', source='training')` reasons: already_qualified, needs_no_qualification
   - `damage_item(iid='', amount=0)` reasons: damage_cannot_negative, item_destroyed
   - `hit_item(iid='', damage=0)` reasons: damage_cannot_negative, item_destroyed
@@ -352,7 +352,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `burn_ov()`
   - `buy_armor_grade(source='training')`
   - `buy_attention_course(source='training')`
-  - `buy_base_slot(source='training')`
+  - `buy_base_slot(source='training')` reasons: base_at_max
   - `buy_combat_basics(wid='', source='training')` reasons: already_has_combat_basics, group_basic_simple_cannot, no_weapon
   - `buy_hp(source='training')` reasons: hit_die_hp_already
   - `buy_item_qualification(iid='', source='training')` reasons: already_qualified, needs_no_qualification
@@ -420,7 +420,6 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_item_masterwork(iid='', value=True)`
   - `set_iterative_count(n=0)` reasons: iterative_count_negative
   - `set_main_hand(rid='', side='')` reasons: no_attack_record
-  - `set_next_level_at(value=None)` reasons: goal_must_positive
   - `set_primary_attack(rid='', on=True)` reasons: most_primary_attack_records, no_attack_record
   - `set_spell_damage(spid='', damage=())` reasons: not_found
   - `set_status_duration(sid='', remaining=0)` reasons: status_has_no_tick
@@ -537,10 +536,12 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `current`: int
   - `max`: int
   - `over_max`: bool
+- `buttons`: map
 - `comfort`: map
   - `current`: int
   - `max`: int
   - `over_max`: bool
+- `damage_types`: tuple[str]
 - `flasks`: map
 - `hp`: map
   - `current`: int
@@ -623,6 +624,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `pay_hp_cost(amount=0)`
   - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `set_value(resource='hp', value=0)` reasons: out_of_range
+  - `spend_charge(owner_kind='item', owner_id='', n=1)` reasons: cooldown_rounds_left, not_enough_charges_have, spend_least_1
   - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
 
 ## settings
@@ -704,7 +706,6 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_charges(owner_kind='item', owner_id='', value=0)` reasons: charges_must_0
   - `set_hp_roll(level=1, value=1)` reasons: hit_die_hp_must, no_hit_die_roll
   - `set_ignore_bag_weight(value=True)`
-  - `set_next_level_at(value=None)` reasons: goal_must_positive
   - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_charge(owner_kind='item', owner_id='', n=1)` reasons: cooldown_rounds_left, not_enough_charges_have, spend_least_1
   - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
@@ -840,10 +841,12 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `max`: int
   - `over_max`: bool
 - `experience`: map
+  - `can_level_up`: bool
   - `level_history`: tuple[]
   - `log`: tuple[]
-  - `next_level_at`: NoneType
-  - `progress_pct`: NoneType
+  - `max_banked`: int
+  - `next_level_at`: int
+  - `progress_pct`: int
   - `total`: int
 - `languages`: tuple[]
 - `level`: int
@@ -857,7 +860,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `attention_to_training(n=1)`
   - `buy_armor_grade(source='training')`
   - `buy_attention_course(source='training')`
-  - `buy_base_slot(source='training')`
+  - `buy_base_slot(source='training')` reasons: base_at_max
   - `buy_combat_basics(wid='', source='training')` reasons: already_has_combat_basics, group_basic_simple_cannot, no_weapon
   - `buy_hp(source='training')` reasons: hit_die_hp_already
   - `buy_item_qualification(iid='', source='training')` reasons: already_qualified, needs_no_qualification
@@ -888,7 +891,6 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `remove_ot_comfort(n=1)` reasons: no_ot_remove, not_enough_comfort_have, spend_least_1_comfort
   - `restore(resource='hp', amount=0)` reasons: amount_must_0, healing_blocked, restoring_blocked
   - `set_drive_level(did='', level=0)`
-  - `set_next_level_at(value=None)` reasons: goal_must_positive
   - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `sprout_seed(seed_id='', source='training')` reasons: no_seed, seed_has_already_sprouted
   - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0

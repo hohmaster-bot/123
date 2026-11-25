@@ -148,8 +148,9 @@ Narrative options (entered by hand when relevant):
 ## Purchase and progression commands [package 15]
 Every command validates, spends training (a non-training source spends nothing), refuses with a reason, is journaled,
 and never refunds. Prices are the constants of wp/core/training.py (data, not scattered literals).
-- level_up(hp_roll): level +1, training +100 * the NEW level (progression.md), the hit-die roll of the new level
-  (1..die; set_hp_roll edits it later). Refused without a roll or outside 1..die. RULES give no level cap (Q103). The
+- level_up(hp_roll): needs and spends 1000 experience (progression.md "Level up", package 33), level +1, training
+  +100 * the NEW level, the hit-die roll of the new level (at most the die, a roll below 1 counts 1; set_hp_roll edits
+  it later). Refused above the die and below 1000 experience. RULES give no level cap (Q103). The
   current HP are not raised (Q111).
 - exchange_comfort(n): n comfort -> n * (level + 1) * 5 training. Refused above the comfort the character has. An
   item / class bonus to the rate has no field yet (Q107).

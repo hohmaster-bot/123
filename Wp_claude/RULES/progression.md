@@ -1,6 +1,15 @@
 # Progression
 
 ## Level up [OWNER]
+- [OWNER, package 33] A level-up needs exp.level_cost = 1000 experience and SPENDS it; the rest stays (1500 -> 500;
+  999 -> refused "not_enough_experience"). The goal shown is always 1000 (the hand-typed goal is retired). Experience
+  never goes above exp.max_banked = 1999 (no two banked level-ups): an entry that would pass it counts only up to 1999,
+  the result reminds "the excess is not counted" (not a refusal), the log entry keeps what was entered and what was
+  counted. The cost is a log entry of kind "level_up" (-1000); the level history keeps the XP before the cost.
+  The hit-die roll counts at least 1 (a roll of 0 counts 1). Reminders of the level-up: "distribute the new drive
+  points" and "you got X training" (X = 100 * new level).
+  Tests: 1000 -> 0; 1500 -> 500; 999 refused; 1700 + 500 -> 1999 (counted 299); level 2 -> 3 gives 300 training;
+  roll 0 -> 1.
 - Hit die rolled OUTSIDE app, result entered; HP recorded. [OWNER, package 17, Q111] level_up without a roll takes
   1 and its result carries the warning "hit_die_default_used" (the UI shows "die not entered, 1 taken"); the value
   is editable by hand in edit mode. Max HP grows, the current HP is NOT healed. No level cap [OWNER, Q103].

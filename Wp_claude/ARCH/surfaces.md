@@ -63,3 +63,17 @@ language (RU / EN, D4) and theme.
 - Errors: a refusal is shown as its i18n text (a damaged file offers the newest valid backup); an unexpected error
   prints the traceback to the console and shows the short text shell.unexpected.
 - Tests: tests/ui/test_shell.py (offscreen; screenshots of each shipped theme in tests/ui_shots/).
+- Package 33 (D33): the RESOURCES block (wp/ui/resources_block.py, tube.py, tube_logic.py without Qt, dialogs.py,
+  data/resources.json): HP, balance, spirit, mana, then the class pools (first three large, the rest compact in their
+  own scroll area). A row: label (mana: the overload chip), "cur / max" (over the max in the warning colour, never
+  clamped), the horizontal tube (glass / flat; segment ticks by resource_segments; HP: the temp HP strip along the
+  bottom third, segments of 5), buttons. Tube size = resource_size (w, h px at 100 %) times ui_scale; the auto-switch
+  shrinks the height to fit the block and picks big / medium / thin (thin = the number inside). A click on a tube =
+  the value editor ("+N" / "-N" -> adjust_value, a number -> set_value; a pool number -> adjust_value by the
+  difference; HP: a second field -> set_temp_hp). Buttons: HP Take damage (amount + one of the 12 damage types) and
+  Heal (restore), balance Damage to balance, spirit / mana / pools -1 / +1, mana overload - / +; own buttons = app
+  quick buttons with group "resource:<id>" (Session.run_quick). Refusals, warnings and reminders show as i18n text
+  in the message line of the block. The experience strip got the Level up button (enabled at 1000 xp: ask, roll
+  dialog with minimum 1, level_up, the reminders in a message box). Fonts: app settings font_family,
+  font_family_numbers, font_size (qss.fonts; ui_scale on top). Tests: tests/ui/test_resources.py (shots
+  tests/ui_shots/resources_<theme>.png), storage/test_ui_logic33.py (no Qt).

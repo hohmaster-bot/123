@@ -42,8 +42,9 @@
 - Money is NARRATIVE: no mechanics, no counters, no prices in the app. There is no "start session" and no "end of
   session" button: only the end of cycle (above).
 - [OWNER, package 26 C; replaces "XP is narrative"] Experience (XP) is a tracked counter with a log and notes: every
-  entry has an amount (may be negative), an optional note and a time stamp; the total is the sum of the log. The player
-  may type a goal "next level at" shown as progress; it is NOT a rule: no threshold table, no automatic level-up.
+  entry has an amount (may be negative), an optional note and a time stamp; the total is the sum of the log. No
+  automatic level-up. [OWNER, package 33; replaces the hand-typed goal] The goal is always 1000 (the level-up cost),
+  the total is at most 1999, a level-up spends 1000 as a log entry (progression.md "Level up").
   Every level-up writes the level history (level, XP at that moment, hit-die roll, note, time).
 
 ## Drives: level notes and principles (package 25) [OWNER]

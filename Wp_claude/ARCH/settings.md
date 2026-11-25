@@ -52,3 +52,7 @@ max, group, i18n label and description ids). Code never lists setting keys by ha
   block_outside_window (never refusals); profile_reset(mode, pid). Tubes: resource_style (glass | flat),
   resource_size {resource: [w, h]}, resource_autoswitch, pool_order, pools_large (max_items 3). Background:
   background_image, background_dim 0-100, background_readable. A list key may carry max_items.
+- [package 33] resource_size defaults are horizontal tubes (w, h px at 100 %): HP [240, 26], balance / spirit / mana
+  [240, 20], pools [240, 18] (Q222). Fonts: font_family ("" = the theme family, then the system UI font),
+  font_family_numbers ("" = the family), font_size (the base size, USED since package 33: closes Q216); ui_scale
+  multiplies on top. Own buttons under a resource: a quick button with group "resource:<id>" (Q223).

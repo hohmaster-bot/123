@@ -9,6 +9,10 @@ resource_style / resource_size / resource_autoswitch / pool_order / pools_large,
 theme_dark / background_image / background_dim / background_readable; themes theme_copy / theme_reset /
 contrast_ratio / warnings / view, shipped dark (default) / light / grey_blue with every token below. Not built (no
 core data): a race view (Q206); quick_view of button charges is read from the target records by the UI.
+Package 33 (Phase 5 step 2 built): the resources view also gives damage_types (the 12 types) and buttons (own quick
+buttons of group "resource:<id>"); the experience view gives can_level_up and the goal is always exp.level_cost
+(set_next_level_at retired); resource_size defaults are now horizontal tubes (w, h). Mana max still has no plain
+number command (edit_sheet needs a Pool; Q224).
 
 Spec: `UI_WISHES.md` "Classic screen v2". Names are the exact views (`session.view(...)`, ARCH/view_contract.md)
 and commands of the registry. "Gap" = what the block needs and the core does not give yet; "Proposed" = the
@@ -23,7 +27,7 @@ of the HP popup): `set_temp_hp(value)`. The mechanics stay buttons: `take_damage
 
 | block | views / commands it uses | gap | proposed minimal addition |
 |---|---|---|---|
-| experience_strip | `training.experience` (total, next_level_at, progress_pct, log, level_history); `add_experience`, `set_next_level_at`, `edit_experience_entry`, `remove_experience_entry` | "to next level" = next_level_at - total is derived by the UI; fine | none [3] no core change needed |
+| experience_strip | `training.experience` (total, next_level_at = exp.level_cost, progress_pct, can_level_up, log, level_history); `add_experience`, `level_up`, `edit_experience_entry`, `remove_experience_entry` (package 33: set_next_level_at retired) | "to next level" = next_level_at - total is derived by the UI; fine | none [3] no core change needed |
 | identity (avatar) | image registry target `character` (`images.image_of`), app setting char_portrait | the avatar size is a layout value | profile block size only (layout editor) [8] no core change needed |
 | resources: HP, balance, spirit, mana | `resources` (hp, balance, spirit, mana, temp_hp, overload, flasks); `set_value`, `set_temp_hp`, `take_damage`, `restore`, `damage_to_balance` | -1 / +1 on spirit and mana: no dedicated commands (set_value works as a correction); mana overload - / +: no command (only `edit_sheet(overload=)` or `cast_spell`) | an `adjust_value(resource, delta)` correction command (same checks as set_value) covering hp / balance / bp / comfort / spirit / mana / overload / pool:<id> [2] DONE (30) |
 | resources: style and sizes | app settings `resource_display` (number / bar / both / percent / flask), `resource_segments` | no glass / flat style, no colours, no width / height, no auto-switch flag | app settings `resource_style` (glass / flat), the colours as THEME tokens (amendment, see "Themes" below; not an app setting), `resource_size` (w, h per resource), `resource_autoswitch` (bool) [2] DONE (31) |

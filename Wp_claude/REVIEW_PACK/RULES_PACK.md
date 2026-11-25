@@ -1329,6 +1329,15 @@ After everyone acted, in this order [OWNER]:
 ### Progression
 
 #### Level up [OWNER]
+- [OWNER, package 33] A level-up needs exp.level_cost = 1000 experience and SPENDS it; the rest stays (1500 -> 500;
+  999 -> refused "not_enough_experience"). The goal shown is always 1000 (the hand-typed goal is retired). Experience
+  never goes above exp.max_banked = 1999 (no two banked level-ups): an entry that would pass it counts only up to 1999,
+  the result reminds "the excess is not counted" (not a refusal), the log entry keeps what was entered and what was
+  counted. The cost is a log entry of kind "level_up" (-1000); the level history keeps the XP before the cost.
+  The hit-die roll counts at least 1 (a roll of 0 counts 1). Reminders of the level-up: "distribute the new drive
+  points" and "you got X training" (X = 100 * new level).
+  Tests: 1000 -> 0; 1500 -> 500; 999 refused; 1700 + 500 -> 1999 (counted 299); level 2 -> 3 gives 300 training;
+  roll 0 -> 1.
 - Hit die rolled OUTSIDE app, result entered; HP recorded. [OWNER, package 17, Q111] level_up without a roll takes
   1 and its result carries the warning "hit_die_default_used" (the UI shows "die not entered, 1 taken"); the value
   is editable by hand in edit mode. Max HP grows, the current HP is NOT healed. No level cap [OWNER, Q103].
@@ -1577,8 +1586,9 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
 - Money is NARRATIVE: no mechanics, no counters, no prices in the app. There is no "start session" and no "end of
   session" button: only the end of cycle (above).
 - [OWNER, package 26 C; replaces "XP is narrative"] Experience (XP) is a tracked counter with a log and notes: every
-  entry has an amount (may be negative), an optional note and a time stamp; the total is the sum of the log. The player
-  may type a goal "next level at" shown as progress; it is NOT a rule: no threshold table, no automatic level-up.
+  entry has an amount (may be negative), an optional note and a time stamp; the total is the sum of the log. No
+  automatic level-up. [OWNER, package 33; replaces the hand-typed goal] The goal is always 1000 (the level-up cost),
+  the total is at most 1999, a level-up spends 1000 as a log entry (progression.md "Level up").
   Every level-up writes the level history (level, XP at that moment, hit-die roll, note, time).
 
 #### Drives: level notes and principles (package 25) [OWNER]
@@ -1941,8 +1951,9 @@ Narrative options (entered by hand when relevant):
 #### Purchase and progression commands [package 15]
 Every command validates, spends training (a non-training source spends nothing), refuses with a reason, is journaled,
 and never refunds. Prices are the constants of wp/core/training.py (data, not scattered literals).
-- level_up(hp_roll): level +1, training +100 * the NEW level (progression.md), the hit-die roll of the new level
-  (1..die; set_hp_roll edits it later). Refused without a roll or outside 1..die. RULES give no level cap (Q103). The
+- level_up(hp_roll): needs and spends 1000 experience (progression.md "Level up", package 33), level +1, training
+  +100 * the NEW level, the hit-die roll of the new level (at most the die, a roll below 1 counts 1; set_hp_roll edits
+  it later). Refused above the die and below 1000 experience. RULES give no level cap (Q103). The
   current HP are not raised (Q111).
 - exchange_comfort(n): n comfort -> n * (level + 1) * 5 training. Refused above the comfort the character has. An
   item / class bonus to the rate has no field yet (Q107).
@@ -2122,6 +2133,8 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | training.language_non_native | 30 | training | non-native language, per project step |
 | training.language_native_cheap | 50 | training | native language while natives < Int mod |
 | training.language_native_expensive | 100 | training | native language above that |
+| exp.level_cost | 1000 | xp | level_up needs and spends this much experience (package 33) |
+| exp.max_banked | 1999 | xp | experience never above this: no two banked level-ups (package 33) |
 | training.level_up_per_level | 100 | training | training at level-up = this * new level |
 | training.reaction_step | 200 | training | +1 reaction = this * the new number |
 | training.seed_cost | 200 | training | new seed |
@@ -2241,6 +2254,7 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | hands.max | 2 | hands | hands of all held items add up to at most this |
 | hands.two_handed | 2 | hands | an item needing this many hands is two-handed |
 | attention.ov_min | 2 | OV | 1 attention gives max(this, Con mod) OV |
+| progression.hit_die_min | 1 | HP | a level_up roll below this counts this (package 33) |
 | progression.hit_die_default | 1 | HP | level_up without a roll takes this die value (Q111) |
 | training.feat_default_cost | 200 | training | feat price when the author gives none |
 | new.hit_die | 8 | HP | hit die of a new character (and its level-1 HP) |

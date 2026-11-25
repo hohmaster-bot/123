@@ -21,3 +21,9 @@
   "shell" rules of qss_template.json; a token the theme lacks comes from the dark theme; fonts at least min_font_px 11
   (before the scale), fonts and spacing times the scale (Python round); #rrggbbaa -> rgba(r, g, b, a) because Qt reads
   8-digit hex as #aarrggbb. qss.scaled(theme, scale) gives the same tokens to the UI (layout gaps).
+- [package 33] qss.fonts(theme, family, numbers, size, installed, system) -> font_family / font_numbers / font_base /
+  font_small / font_large: the app setting family (if installed) over the theme fonts.family over the system UI font;
+  the numbers family (app setting font_family_numbers) over the OPTIONAL theme token fonts.numbers (theme_schema
+  fonts_optional) over the family; the base = the app setting font_size, small / large keep the theme ratio; the
+  scale and the 11 px minimum apply after. build_qss / scaled take fonts=; the token font_numbers styles the numbers
+  (QLabel#value, #big, #over_max). tube_gloss is a flat token too (the tube highlight).

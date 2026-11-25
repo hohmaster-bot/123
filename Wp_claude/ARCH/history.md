@@ -95,3 +95,7 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   scale, follow the system, the first-run hint, window geometry, the experience strip and the identity block with real
   data, the demo character; headless UI tests with screenshots; the overlay spike tray icon. Report:
   tests/PACKAGE32_REPORT.md.
+- Done in package 33: experience and level-up rules (1000 xp cost, 1999 cap, roll minimum 1, two reminders), the
+  resources block (glass / flat tubes, value editor, temp HP strip, mechanics buttons, pools, own buttons), the Level
+  up button, font settings, the "what changes with the level" suite (base_at_max refusal fixed, spend_charge topic
+  rest added). Report: tests/PACKAGE33_REPORT.md.
