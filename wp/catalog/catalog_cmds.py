@@ -41,9 +41,18 @@ def catalog_dispatch(layers, name, /, **params):
         raise
     except cs.CatalogError as e:
         raise CommandError(str(e), "catalog_error")
+    except (TypeError, AttributeError, OverflowError, RecursionError) as e:
+        raise CommandError("invalid value: %s" % (e,), "invalid_value", command=name)
 
 
 def _valid(kind, entry):
+    from wp.app import limits
+    name = entry.get("name", "")
+    if not isinstance(name, str):
+        raise CommandError("an entry name is a text", "wrong_type", values=("name",), field="name", expected="string")
+    if len(name) > limits.get("name_max"):
+        raise CommandError("the entry name is longer than %d" % limits.get("name_max"), "name_too_long",
+                           values=(limits.get("name_max"),))
     bad = schema.check(kind, entry)
     if bad:
         reason, params = bad

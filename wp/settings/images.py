@@ -28,6 +28,32 @@ def file_path(user_folder, rec):
     return os.path.join(user_folder, *rec["file"].split("/"))
 
 
+def inside_images(user_folder, path):
+    """True when path is a file directly inside <user folder>/images (review 5 F8: checked before a delete)."""
+    root = os.path.normcase(os.path.realpath(os.path.join(user_folder, FOLDER)))
+    return os.path.dirname(os.path.normcase(os.path.realpath(path))) == root
+
+
+SIGNATURES = {"png": (b"\x89PNG\r\n\x1a\n",), "jpg": (b"\xff\xd8\xff",), "jpeg": (b"\xff\xd8\xff",),
+              "gif": (b"GIF87a", b"GIF89a")}
+HEAD = 4096                            # bytes read to recognise a file
+
+
+def content_matches(path, ext):
+    """The file content is of its type (review 5 F25): png / jpg / gif by their magic bytes, webp = RIFF....WEBP,
+    svg = an XML text with an <svg element. Other extensions (allowed by the user) are not checked."""
+    with open(path, "rb") as f:
+        head = f.read(HEAD)
+    if ext in SIGNATURES:
+        return any(head.startswith(sig) for sig in SIGNATURES[ext])
+    if ext == "webp":
+        return head[:4] == b"RIFF" and head[8:12] == b"WEBP"
+    if ext == "svg":
+        text = head.lstrip(b"\xef\xbb\xbf \t\r\n").lower()
+        return text.startswith((b"<?xml", b"<svg", b"<!--")) and b"<svg" in text
+    return True
+
+
 def find(app, image_id):
     return next((i for i in app.images if i["id"] == image_id), None)
 
@@ -35,7 +61,7 @@ def find(app, image_id):
 def resolve(app, image_id, user_folder):
     """(absolute path, None) or (PLACEHOLDER, warning id)."""
     rec = find(app, image_id)
-    if rec is None:
+    if rec is None or not st.image_record_ok(rec):
         return PLACEHOLDER, NO_IMAGE
     path = file_path(user_folder, rec)
     if not os.path.isfile(path):
@@ -55,6 +81,8 @@ def image_add(app, source="", name="", kind="icon", tags=(), user_folder=""):
     if ext not in st.get(app, "image_extensions"):
         raise CommandError("file type .%s is not allowed" % ext, "bad_image_type", values=(ext,),
                            allowed=tuple(st.get(app, "image_extensions")))
+    if not content_matches(source, ext):
+        raise CommandError("the file is not a .%s image" % ext, "bad_image_content", values=(ext,))
     kb = (os.path.getsize(source) + 1023) // 1024
     if kb > st.get(app, "image_max_kb"):
         raise CommandError("the image is %d KB, the limit is %d KB" % (kb, st.get(app, "image_max_kb")), "image_too_big",
@@ -78,7 +106,7 @@ def image_remove(app, image_id="", user_folder=""):
     if rec is None:
         raise CommandError("no image %r" % (image_id,), "not_found", values=("images", image_id))
     path = file_path(user_folder, rec)
-    if user_folder and os.path.isfile(path):
+    if user_folder and st.image_record_ok(rec) and inside_images(user_folder, path) and os.path.isfile(path):
         os.remove(path)
     refs = FrozenDict({k: v for k, v in app.image_for.items() if v != image_id})
     return sc.SettingsResult(replace(app, images=tuple(i for i in app.images if i["id"] != image_id), image_for=refs,

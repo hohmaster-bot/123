@@ -7,9 +7,11 @@ only the newest N are kept (app settings backups_count / backups_folder). Delete
 (never a hard delete). Refusals are CommandError with a reason id.
 """
 import os
+import re
 import shutil
 import time
 
+from wp.app import limits
 from wp.commands.base import CommandError
 from wp.storage import character_io as cio
 
@@ -18,9 +20,34 @@ TRASH = "trash"
 BAD_CHARS = '/\\:*?"<>|'
 
 
+STAMP_TAIL = re.compile(r"^[0-9]{8}-[0-9]{6}-[0-9]{3}\.json$")     # what follows "<name>." in a backup file name
+RESERVED = frozenset(["CON", "PRN", "AUX", "NUL"] + ["COM%d" % i for i in range(1, 10)] +
+                     ["LPT%d" % i for i in range(1, 10)])
+
+
+def name_problem(name):
+    """None, or why a name cannot be a file name (review 5 F10): not a string, empty, spaces around it, a bad or
+    control character, longer than the limit name_max, "." / "..", a reserved Windows name (CON, NUL, COM1, aux.txt),
+    a trailing dot or space, or a name ending in .json."""
+    if not isinstance(name, str) or not name:
+        return "empty"
+    if name.strip() != name or name.endswith("."):
+        return "edge"
+    if any(c in BAD_CHARS or ord(c) < 32 or ord(c) == 127 for c in name):
+        return "char"
+    if len(name) > limits.get("name_max"):
+        return "long"
+    if name.split(".")[0].strip().upper() in RESERVED:
+        return "reserved"
+    if name.lower().endswith(EXT):
+        return "ext"
+    return None
+
+
 def check_name(name):
-    if not name or name.strip() != name or any(c in BAD_CHARS for c in name) or name in (".", ".."):
-        raise CommandError("bad character name %r" % (name,), "bad_name", values=(name,))
+    why = name_problem(name)
+    if why:
+        raise CommandError("bad character name %r (%s)" % (name, why), "bad_name", values=(name,), why=why)
     return name
 
 
@@ -48,8 +75,9 @@ def backups_of(folder, name, sub):
     d = backup_dir(folder, sub)
     if not os.path.isdir(d):
         return ()
-    pre = name + "."
-    return tuple(sorted((os.path.join(d, f) for f in os.listdir(d) if f.startswith(pre) and f.endswith(EXT)), reverse=True))
+    pre = name + "."                   # "a" must not take the backups of "a.b" (review 5 F1): the rest is a stamp
+    return tuple(sorted((os.path.join(d, f) for f in os.listdir(d)
+                         if f.startswith(pre) and STAMP_TAIL.match(f[len(pre):])), reverse=True))
 
 
 def make_backup(folder, name, sub, keep, now):

@@ -234,11 +234,23 @@ def export_entry(kind, entry):
 
 
 def import_code(code):
-    """(kind, entry dict) from a code made by export_entry."""
+    """(kind, entry dict) from a code made by export_entry. Review 5 F11: the code length and the unpacked size are
+    limited (wp/app/data/limits.json code_max_chars / code_max_unpacked, a bounded decompress); the data must be
+    {"kind": text, "entry": {...}}; every problem is a CatalogError (the command gives catalog_error)."""
+    from wp.app import limits
     if not isinstance(code, str) or not code.startswith(CODE_PREFIX):
         raise CatalogError("not a WipeFinder entry code")
+    if len(code) > limits.get("code_max_chars"):
+        raise CatalogError("the entry code is too long")
+    cap = limits.get("code_max_unpacked")
     try:
-        data = json.loads(zlib.decompress(base64.urlsafe_b64decode(code[len(CODE_PREFIX):].encode("ascii"))).decode("utf-8"))
-    except (ValueError, zlib.error) as e:
+        z = zlib.decompressobj()
+        raw = z.decompress(base64.urlsafe_b64decode(code[len(CODE_PREFIX):].encode("ascii")), cap + 1)
+        if len(raw) > cap or z.unconsumed_tail:
+            raise CatalogError("the entry code unpacks to more than %d bytes" % cap)
+        data = json.loads(raw.decode("utf-8"))
+    except (ValueError, zlib.error, RecursionError, UnicodeError) as e:
         raise CatalogError("broken entry code: %s" % e)
+    if not isinstance(data, dict) or not isinstance(data.get("kind"), str) or not isinstance(data.get("entry"), dict):
+        raise CatalogError("broken entry code: not {kind, entry}")
     return data["kind"], dict(data["entry"])

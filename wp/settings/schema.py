@@ -1,6 +1,7 @@
 """Settings schema (data: wp/settings/data/settings_schema.json, package 19, D22).
 
-check_value(spec, value) -> None or (reason id, params): wrong_type, out_of_range, not_allowed, bad_color, bad_hotkey.
+check_value(spec, value) -> None or (reason id, params): wrong_type, out_of_range, not_allowed, bad_color, bad_hotkey,
+bad_folder_name, invalid_value (NaN / inf).
 check_key(key, value) -> the same for a known key; unknown_setting for a key not in the schema.
 check_fields(kind, fields) checks the fields of a profile / panel / cell / element / quick button / image record
 (fields that are not in the table are kept, not checked).
@@ -13,7 +14,8 @@ import re
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "settings_schema.json")
 DOMAINS = ("rules", "character", "app")
 COLOR = re.compile(r"^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$")
-MODIFIERS = ("Ctrl", "Shift", "Alt", "Win")
+BAD_NAME_CHARS = '/\\:*?"<>|'
+MODIFIERS =("Ctrl", "Shift", "Alt", "Win")
 NAMED_KEYS = ("Space", "Tab", "Esc", "Enter", "Home", "End", "PageUp", "PageDown", "Insert", "Delete", "Up", "Down",
               "Left", "Right", "Backspace")
 
@@ -54,6 +56,13 @@ def valid_hotkey(text):
         key in NAMED_KEYS or (key[:1] == "F" and key[1:].isdigit() and 1 <= int(key[1:]) <= 24)
 
 
+def valid_folder_name(text):
+    """One folder name inside the characters folder (review 5 F7): not empty, not "." / "..", no separator, no drive
+    colon, no control character."""
+    return bool(text) and text not in (".", "..") and text.strip() == text and \
+        not any(c in BAD_NAME_CHARS or ord(c) < 32 for c in text)
+
+
 def _num(v, ints):
     if isinstance(v, bool):
         return False
@@ -72,8 +81,10 @@ def check_value(spec, value, t=None):
         if ("min" in spec and value < spec["min"]) or ("max" in spec and value > spec["max"]):
             return "out_of_range", {"values": (value, spec.get("min"), spec.get("max")), "min": spec.get("min"),
                                     "max": spec.get("max")}
-    if t in ("string", "enum", "color", "hotkey") and not isinstance(value, str):
+    if t in ("string", "enum", "color", "hotkey", "folder_name") and not isinstance(value, str):
         return "wrong_type", {"values": (t,), "expected": t}
+    if t == "folder_name" and not valid_folder_name(value):
+        return "bad_folder_name", {"values": (value,)}
     if t == "enum" and value not in spec.get("allowed", ()):
         return "not_allowed", {"values": (value,), "allowed": tuple(spec.get("allowed", ()))}
     if t == "color" and not COLOR.match(value):

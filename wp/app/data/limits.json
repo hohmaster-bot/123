@@ -1,0 +1,7 @@
+{
+ "format": 1,
+ "note": "Input limits of the app layer (package 27 A, review 5 F10 F11): not game rules, so not in the constants table (a player cannot change them). name_max: characters in a character / catalog entry name; code_max_chars: length of a catalog entry code; code_max_unpacked: bytes after unpacking a code (a bounded decompress).",
+ "name_max": 100,
+ "code_max_chars": 200000,
+ "code_max_unpacked": 1000000
+}

@@ -21,7 +21,8 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 COPY = ("wp", os.path.join("Wp_claude", "tests"), os.path.join("Wp_claude", "RULES"), os.path.join("Wp_claude", "tools"),
-        os.path.join("Wp_claude", "TRANSLATION_TODO.md"), os.path.join("Wp_claude", "REVIEW_PACK"))
+        os.path.join("Wp_claude", "TRANSLATION_TODO.md"), os.path.join("Wp_claude", "REVIEW_PACK"),
+        os.path.join("Wp_claude", "ARCH"))                # view_contract.md (review 5 F30)
 
 
 def registry():

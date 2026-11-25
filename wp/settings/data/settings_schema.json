@@ -17,7 +17,7 @@
   {"id": "autosave_mode", "domain": "app", "type": "enum", "default": "interval", "allowed": ["interval", "every_command"], "group": "saving"},
   {"id": "autosave_interval_s", "domain": "app", "type": "int", "default": 120, "min": 10, "max": 3600, "group": "saving"},
   {"id": "backups_count", "domain": "app", "type": "int", "default": 5, "min": 0, "max": 100, "group": "saving"},
-  {"id": "backups_folder", "domain": "app", "type": "string", "default": "backups", "group": "saving"},
+  {"id": "backups_folder", "domain": "app", "type": "folder_name", "default": "backups", "group": "saving"},
   {"id": "confirmations", "domain": "app", "type": "map", "value": "bool", "default": {"remove_item": true, "long_rest_end_combat": true, "catalog_remove_entry": true, "image_remove": true, "profile_delete": true}, "group": "safety"},
   {"id": "hotkeys", "domain": "app", "type": "map", "value": "hotkey", "default": {"toggle_mode": "Ctrl+Shift+W"}, "group": "hotkeys"},
   {"id": "notifications", "domain": "app", "type": "map", "value": "bool", "default": {}, "group": "notifications"},

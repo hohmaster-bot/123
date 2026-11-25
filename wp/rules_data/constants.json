@@ -189,6 +189,12 @@
     },
     "wp/model/experience.py": {
       "PCT": "a percent is at most 100 (not a rule)"
+    },
+    "wp/app/files.py": {
+      "RESERVED": "reserved Windows device names COM1-9 / LPT1-9 (not a rule)"
+    },
+    "wp/settings/images.py": {
+      "HEAD": "bytes read to recognise an image file (not a rule)"
     }
   },
   "inline": {
@@ -221,13 +227,17 @@
     },
     "wp/settings/images.py": {
       "1024": "bytes in a KB",
-      "1023": "rounding bytes up to KB"
+      "1023": "rounding bytes up to KB",
+      "4": "RIFF header offsets of a webp file (not a rule)",
+      "8": "RIFF header offsets of a webp file (not a rule)",
+      "12": "RIFF header offsets of a webp file (not a rule)"
     },
     "wp/settings/schema.py": {
       "24": "F1..F24 keys",
       "2": "a point has 2 numbers / rect index",
       "4": "a rect has 4 numbers",
-      "3": "rect index (height)"
+      "3": "rect index (height)",
+      "32": "first printable character code (not a rule)"
     },
     "wp/i18n/i18n.py": {
       "2": "Russian plural forms (grammar, not a game rule)",
@@ -242,7 +252,9 @@
       "100": "a percent token is 0..100"
     },
     "wp/app/files.py": {
-      "1000": "milliseconds in a second (backup time stamps)"
+      "1000": "milliseconds in a second (backup time stamps)",
+      "32": "first printable character code (not a rule)",
+      "127": "DEL character code (not a rule)"
     }
   }
 }

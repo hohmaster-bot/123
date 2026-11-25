@@ -281,7 +281,7 @@ S.case("q-needs-action", "pkg 19: a quick button needs an action or a macro", "a
 def png(name="icon.png", size=10):
     p = os.path.join(folder(), name)
     with open(p, "wb") as f:
-        f.write(b"\x89PNG" + b"0" * (size - 4))
+        f.write(b"\x89PNG\r\n\x1a\n" + b"0" * (size - 8))
     return p
 
 

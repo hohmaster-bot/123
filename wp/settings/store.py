@@ -12,6 +12,7 @@ Character.rules_settings.
 import io
 import json
 import os
+import re
 from dataclasses import dataclass, replace
 from typing import Any, Tuple
 
@@ -25,6 +26,17 @@ FILE = "app_settings.json"
 MODES = ("classic", "lite")
 DEFAULT_PROFILES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "default_profiles.json")
 freeze = cs.freeze
+
+
+IMAGE_FILE = re.compile(r"^images/([A-Za-z0-9_\-]+)\.([a-z0-9]{1,8})$")
+
+
+def image_record_ok(rec):
+    """An image record is {id, file = images/<id>.<ext>, ...} (review 5 F8): a file elsewhere is never used."""
+    if not isinstance(rec, dict) or not isinstance(rec.get("id"), str) or not isinstance(rec.get("file"), str):
+        return False
+    m = IMAGE_FILE.match(rec["file"])
+    return bool(m) and m.group(1) == rec["id"]
 
 
 class SettingsError(ValueError):
@@ -104,7 +116,7 @@ def from_data(data, path=""):
     active = data.get("active")
     app = AppSettings(values=freeze(data.get("values", {})), profiles=profiles,
                       active=freeze(active) if active else None, quick_buttons=freeze(data.get("quick_buttons", [])),
-                      images=freeze(data.get("images", [])), image_for=freeze(data.get("image_for", {})),
+                      images=freeze([i for i in data.get("images", []) or () if image_record_ok(i)]), image_for=freeze(data.get("image_for", {})),
                       counter=int(data.get("counter", 0)), retired=tuple(data.get("retired", ())), path=path)
     for m in MODES:                    # an active id that no longer exists falls back to the first profile
         if profile(app, m) is None:

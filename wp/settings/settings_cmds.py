@@ -132,7 +132,16 @@ def settings_export(app):
 @settings_command
 def settings_import(app, text=""):
     """A whole settings file from text (another PC, a backup); every known value is checked."""
-    new = st.loads(text)
+    try:
+        data = json.loads(text)
+    except (ValueError, RecursionError) as e:
+        raise CommandError("not a settings file: %s" % (e,), "bad_settings_file")
+    if isinstance(data, dict) and any(not st.image_record_ok(i) for i in data.get("images", []) or ()):
+        raise CommandError("an image record points outside images/<id>.<ext>", "bad_image_record")
+    try:
+        new = st.from_data(data)
+    except (st.SettingsError, TypeError, AttributeError, KeyError, ValueError) as e:
+        raise CommandError("not a settings file: %s" % (e,), "bad_settings_file")
     for k, v in new.values.items():
         if k in sch.KEYS:
             bad = sch.check_key(k, v)
@@ -253,13 +262,15 @@ def profile_export(app, mode="", pid=""):
 def profile_import(app, mode="", text=""):
     try:
         data = json.loads(text)
-    except ValueError as e:
+    except (ValueError, RecursionError) as e:
         raise CommandError("not a profile: %s" % e, "bad_profile")
     if not isinstance(data, dict) or data.get("kind") != "layout_profile":
         raise CommandError("not a layout profile", "bad_profile")
     if data.get("mode") != _mode(mode):
         raise CommandError("a %s profile cannot go into %s" % (data.get("mode"), mode), "wrong_mode",
                            values=(data.get("mode"), mode))
+    if not isinstance(data.get("profile"), dict):
+        raise CommandError("not a layout profile", "bad_profile")
     prof = dict(data["profile"])
     return _add_profile(app, mode, {k: v for k, v in prof.items() if k != "id"}, prof.get("name") or "imported")
 
