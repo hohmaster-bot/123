@@ -152,6 +152,8 @@ class ItemView:
     spent: bool = False                # consumable at quantity 0: grey, weight 0 (package 13 D)
     hidden: tuple = ()                 # hidden properties: (id, text or "???", locked, tab, min level) (package 25 D)
     qualification_level: int = 0
+    equipped: bool = False             # worn (review 5 F16: equip_item must be visible in a view)
+    in_hands: bool = False
 
 
 def item_view(ch, iid):
@@ -167,7 +169,8 @@ def item_view(ch, iid):
                     masterwork_active=mw[0], masterwork_reason=mw[1], touch_bonus=touch_value(it, p),
                     durable=itm.is_durable(it), spell_penalty_mana=it.spell_penalty_mana,
                     spell_failure_pct=it.spell_failure_pct, condition_tag=it.condition_tag, quantity=it.quantity, spent=itm.spent(it),
-                    hidden=itm.hidden_view(it), qualification_level=itm.qualification_level(it))
+                    hidden=itm.hidden_view(it), qualification_level=itm.qualification_level(it),
+                    equipped=it.equipped, in_hands=it.in_hands)
 
 
 def _defense_value(it, base, p=()):

@@ -195,6 +195,9 @@
     },
     "wp/settings/images.py": {
       "HEAD": "bytes read to recognise an image file (not a rule)"
+    },
+    "wp/app/history.py": {
+      "DATE_LEN": "YYYYMMDD: the date part of a time stamp (not a rule)"
     }
   },
   "inline": {

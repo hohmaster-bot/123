@@ -12,6 +12,8 @@
    "sheet",
    "skills",
    "statuses",
+   "maneuvers",
+   "rest",
    "log"
   ],
   "add_attack": [
@@ -111,6 +113,7 @@
   "buy_hp": [
    "resources",
    "training",
+   "rest",
    "log"
   ],
   "buy_item_qualification": [
@@ -184,11 +187,26 @@
    "attacks",
    "defense",
    "items",
+   "maneuvers",
+   "resources",
+   "skills",
+   "spells",
+   "statuses",
    "log"
   ],
   "damage_to_balance": [
    "combat",
    "resources",
+   "attacks",
+   "defense",
+   "injuries",
+   "maneuvers",
+   "rest",
+   "sheet",
+   "skills",
+   "spells",
+   "statuses",
+   "training",
    "log"
   ],
   "deactivate_item": [
@@ -289,6 +307,17 @@
   ],
   "pay_hp_cost": [
    "resources",
+   "attacks",
+   "combat",
+   "defense",
+   "injuries",
+   "maneuvers",
+   "rest",
+   "sheet",
+   "skills",
+   "spells",
+   "statuses",
+   "training",
    "log"
   ],
   "promote_skill": [
@@ -303,6 +332,8 @@
   "remove_attack": [
    "attacks",
    "maneuvers",
+   "items",
+   "statuses",
    "log"
   ],
   "remove_drive": [
@@ -341,11 +372,13 @@
   "remove_ot_attention": [
    "injuries",
    "resources",
+   "training",
    "log"
   ],
   "remove_ot_comfort": [
    "injuries",
    "resources",
+   "training",
    "log"
   ],
   "remove_pool": [
@@ -382,6 +415,17 @@
   ],
   "restore": [
    "resources",
+   "attacks",
+   "combat",
+   "defense",
+   "injuries",
+   "maneuvers",
+   "rest",
+   "sheet",
+   "skills",
+   "spells",
+   "statuses",
+   "training",
    "log"
   ],
   "restore_actions": [
@@ -472,17 +516,26 @@
    "attacks",
    "defense",
    "items",
+   "maneuvers",
+   "resources",
+   "skills",
+   "statuses",
    "log"
   ],
   "set_item_masterwork": [
    "attacks",
    "defense",
    "items",
+   "maneuvers",
+   "skills",
+   "statuses",
    "log"
   ],
   "set_iterative_count": [
    "attacks",
    "combat",
+   "maneuvers",
+   "statuses",
    "log"
   ],
   "set_main_hand": [
@@ -537,6 +590,16 @@
   "set_value": [
    "resources",
    "sheet",
+   "attacks",
+   "combat",
+   "defense",
+   "injuries",
+   "maneuvers",
+   "rest",
+   "skills",
+   "spells",
+   "statuses",
+   "training",
    "log"
   ],
   "short_rest": [
@@ -589,6 +652,16 @@
   "take_damage": [
    "combat",
    "resources",
+   "attacks",
+   "defense",
+   "injuries",
+   "maneuvers",
+   "rest",
+   "sheet",
+   "skills",
+   "spells",
+   "statuses",
+   "training",
    "log"
   ],
   "tick": [
@@ -607,6 +680,8 @@
    "attacks",
    "combat",
    "resources",
+   "maneuvers",
+   "statuses",
    "log"
   ],
   "use_consumable": [

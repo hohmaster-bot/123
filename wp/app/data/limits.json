@@ -1,8 +1,9 @@
 {
  "format": 1,
- "note": "Input limits of the app layer (package 27 A, review 5 F10 F11): not game rules, so not in the constants table (a player cannot change them). name_max: characters in a character / catalog entry name; code_max_chars: length of a catalog entry code; code_max_unpacked: bytes after unpacking a code (a bounded decompress); flask_segments_max: a flask bar with more ticks than this is drawn as one segment (a huge maximum never builds a huge list).",
+ "note": "Input limits of the app layer (package 27 A, review 5 F10 F11): not game rules, so not in the constants table (a player cannot change them). name_max: characters in a character / catalog entry name; code_max_chars: length of a catalog entry code; code_max_unpacked: bytes after unpacking a code (a bounded decompress); flask_segments_max: a flask bar with more ticks than this is drawn as one segment (a huge maximum never builds a huge list); history_page: journal lines per page of the history view.",
  "name_max": 100,
  "code_max_chars": 200000,
  "code_max_unpacked": 1000000,
- "flask_segments_max": 200
+ "flask_segments_max": 200,
+ "history_page": 100
 }

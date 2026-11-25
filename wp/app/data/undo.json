@@ -1,5 +1,7 @@
 {
  "format": 1,
  "note": "Undo / redo (package 25 A): character commands listed here are not put on the undo stack. Session operations (new, open, close, save, restore_backup, file operations), app settings and catalog edits never go through Session.dispatch, so they are never on the stack; opening or creating a character clears both stacks.",
- "non_undoable": ["set_char_setting", "reset_char_setting"]
+ "non_undoable": ["set_char_setting", "reset_char_setting"],
+ "keep_current": ["char_settings", "log", "log_seq"],
+ "keep_note": "Package 27 D (review 5 F3 F17): undo / redo bring back an older state but keep these fields of the CURRENT state: the data of the non-undoable commands (char_settings) and the journal (an undo line is appended to the current journal, never to the restored one)."
 }

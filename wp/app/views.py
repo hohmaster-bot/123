@@ -36,12 +36,19 @@ def _pool(p):
     return {"current": p.current, "max": p.max, "over_max": p.over_max}
 
 
+def _pool_row(ch, p):
+    """A class pool: current, max and over_max (owner, package 27 F28: a pool above its max is not clamped, it is
+    flagged like HP and balance)."""
+    cur, mx = pv.current(ch, p), pv.max_of(ch, p)
+    return {"current": cur, "max": mx, "over_max": cur > mx}
+
+
 def resources(ch, session=None):
     return {"hp": _pool(dv.hp_pool(ch)), "temp_hp": dv.temp_hp_total(ch), "balance": _pool(dv.balance_pool(ch)),
             "bp": _pool(dv.bp_pool(ch)), "spirit": _pool(dv.spirit_pool(ch)), "mana": _pool(dv.mana_pool(ch)),
             "comfort": _pool(dv.comfort_pool(ch)), "pain": dv.pain_total(ch), "ot": ch.trauma,
             "overload": ch.overload, "reactions": _pool(reaction_cmds.reactions_pool(ch)),
-            "pools": tuple((p.pid, p.name, {"current": pv.current(ch, p), "max": pv.max_of(ch, p)}) for p in ch.pools),
+            "pools": tuple((p.pid, p.name, _pool_row(ch, p)) for p in ch.pools),
             "actions": action_cmds.actions_view(ch),
             "flasks": flask.view(ch, session.app if session is not None else None)}
 
@@ -108,7 +115,16 @@ def notebook(ch, session=None):
 
 def training(ch, session=None):
     return {"training": ch.training, "level": ch.level, "base_slots": dv.base_slots(ch), "reactions": dv.reactions(ch),
-            "comfort": _pool(dv.comfort_pool(ch)), "attention": ch.attention, "experience": experience.view(ch)}
+            "comfort": _pool(dv.comfort_pool(ch)), "attention": ch.attention, "experience": experience.view(ch),
+            "weapons": _weapon_rows(ch), "languages": ch.languages}
+
+
+def _weapon_rows(ch):
+    """Per weapon node (review 5 F16): (id, title, level, grades bought, combat basics bought)."""
+    from wp.core import weapons as wpn
+    catalog = ch.weapon_catalog()
+    return tuple((e.weapon.name, e.title, wpn.level(catalog, e.weapon.name), e.weapon.grades, e.weapon.basics)
+                 for e in ch.weapons)
 
 
 def settings(ch, session=None):
@@ -121,7 +137,8 @@ def catalogs(ch, session=None):
 
 def sheet(ch, session=None):
     return {"abilities": {a: (dv.ability_current(ch, a), dv.ability_mod(ch, a)) for a in ch.abilities},
-            "stats": stats.view(ch), "level": ch.level, "bab": klass.bab(ch), "class_id": ch.class_id, "speed": dv.speed(ch)}
+            "stats": stats.view(ch), "level": ch.level, "bab": klass.bab(ch), "class_id": ch.class_id, "speed": dv.speed(ch),
+            "bab_override": ch.bab_override, "save_override": dict(ch.save_override)}
 
 
 def spells(ch, session=None):

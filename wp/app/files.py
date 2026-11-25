@@ -11,6 +11,7 @@ import re
 import shutil
 import time
 
+from wp.app import history
 from wp.app import limits
 from wp.commands.base import CommandError
 from wp.storage import character_io as cio
@@ -146,10 +147,11 @@ def create(folder, name, ch):
 
 
 def duplicate(folder, name, new_name, sub):
-    """A whole character copy (gear.md "Item codes / sharing": copy character)."""
+    """A whole character copy (gear.md "Item codes / sharing": copy character), its journal archive too."""
     ch = load(folder, name, sub)
     _free(folder, new_name)
     cio.save(ch, path_of(folder, new_name))
+    history.copy(folder, name, new_name)
 
 
 def rename(folder, name, new_name, sub):
@@ -162,6 +164,7 @@ def rename(folder, name, new_name, sub):
     bak = path_of(folder, name) + cio.BAK_SUFFIX
     if os.path.exists(bak):
         os.replace(bak, path_of(folder, new_name) + cio.BAK_SUFFIX)
+    history.rename(folder, name, new_name)       # the journal archive follows (package 27 E)
 
 
 def delete(folder, name, now):
@@ -173,12 +176,16 @@ def delete(folder, name, now):
     os.makedirs(t, exist_ok=True)
     dst = os.path.join(t, "%s.%s%s" % (name, stamp(now), EXT))
     os.replace(p, dst)
+    history.to_trash(folder, name, dst[:-len(EXT)])
     return dst
 
 
 def export(folder, name, dest, sub):
+    """The exported file holds the WHOLE journal (archive + file): it travels with the character (package 27 E);
+    opening it again moves the old lines back into an archive."""
+    from dataclasses import replace
     ch = load(folder, name, sub)
-    cio.save(ch, dest)
+    cio.save(replace(ch, log=history.full_log(folder, name, ch.log)), dest)
     return dest
 
 

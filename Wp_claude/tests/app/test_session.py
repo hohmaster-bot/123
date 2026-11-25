@@ -59,9 +59,11 @@ def _dispatch():
     return ok.ok, ok.topics, s.character.hp_current, bad.ok, bad.reason, calls
 
 
+TAKE_DAMAGE_TOPICS = ("combat", "resources", "attacks", "defense", "injuries", "maneuvers", "rest", "sheet", "skills", "spells", "statuses",
+       "training", "log")      # package 27 F2: damage changes pain, so every panel reading it
 S.case("d-dispatch", "pkg 23: success (topics from the table, HP 8 -> 5); refusal (reason id, nothing changed, no call); "
-       "the subscriber is called once", (True, ("combat", "resources", "log"), 5, False, "not_enough_bp",
-                                         [("combat", "resources", "log")]))(_dispatch)
+       "the subscriber is called once", (True, TAKE_DAMAGE_TOPICS, 5, False, "not_enough_bp",
+                                         [TAKE_DAMAGE_TOPICS]))(_dispatch)
 S.case("d-topics-cover", "pkg 23: the topics table names every registered command and nothing else", ([], []))(
     lambda: (sorted(set(REGISTRY) - set(sm.TOPICS)), sorted(set(sm.TOPICS) - set(REGISTRY))))
 S.case("d-unknown-command-all", "pkg 23: a command missing from the table refreshes every panel", ("all",))(

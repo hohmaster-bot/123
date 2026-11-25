@@ -82,6 +82,8 @@ class AttackView:
     main_hand: str = "right"           # the record's main hand (AttackRecord.main_hand or hands.main_default)
     off_hand: bool = False             # its weapon is held in the other hand than its main hand
     abilities: tuple = ()              # stored-only picks of the record's group as flags (package 25 E, pick_flags)
+    primary: bool = False              # the record is the primary attack (set_primary_attack; review 5 F16)
+    main_hand_set: str = ""            # the main hand typed by the player ("" = the default; review 5 F16)
 
 
 # ------------------------------------------------------------------ helpers
@@ -312,7 +314,8 @@ def attack(ch, record, extra=()):
                       extra_dice=extra_dice(ch, item), cmb=record_cmb(ch, record),
                       available=ok, missing=why["missing"], in_hands=why["in_hands"],
                       drops_shield_ac=item is not None and rec.is_shield(item), iterative=it_pen,
-                      abilities=pick_flags.abilities(ch, record.group), **hand_fields(ch, record))
+                      abilities=pick_flags.abilities(ch, record.group), primary=record.primary,
+                      main_hand_set=record.main_hand, **hand_fields(ch, record))
 
 
 def hand_fields(ch, record):

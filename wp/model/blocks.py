@@ -43,7 +43,7 @@ def active_effects(ch):
         out += [(j.jid or j.name, e) for e in j.effects]
     for src, effects in dv.other_sources(ch):   # quirks not burned, templates (package 16)
         out += [(src, e) for e in effects]
-    return out
+    return tuple(out)                      # cached: a tuple, never a shared list (review 5 F23)
 
 
 def _of(ch, target):

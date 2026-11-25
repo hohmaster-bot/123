@@ -53,6 +53,8 @@ def hit_item(ch, iid="", damage=0):
     if n is None:
         return Result(state=ch, entry=LogEntry(command="hit_item"), events=(),
                       info={"refused": NO_HARDNESS})
+    if n == 0:                         # no notch: nothing changes (review 5 F16 / F18: not a hidden write of full HP)
+        return commit(ch, "hit_item", "%s hit %d -> no notch" % (it.name, damage), {"notches": 0})
     new = itm.damaged(it, n, p)
     return commit(_put(ch, new), "hit_item", "%s hit %d -> %d notch(es), HP %d (%s)" % (
         it.name, damage, n, new.hp_current, itm.state(new, p)), {"notches": n})

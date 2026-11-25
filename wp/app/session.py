@@ -16,10 +16,12 @@ import io
 import json
 import os
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Dict, Tuple
 
 from wp.app import files
+from wp.app import history
+from wp.app import limits
 from wp.app import views as vw
 from wp.catalog import store as cs
 from wp.commands import CommandError
@@ -45,12 +47,14 @@ TOPICS = _topics()
 UNDO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "undo.json")
 
 
-def _non_undoable():
+def _undo_table():
     with io.open(UNDO_PATH, encoding="utf-8") as f:
-        return frozenset(json.load(f)["non_undoable"])
+        return json.load(f)
 
 
-NON_UNDOABLE = _non_undoable()
+NON_UNDOABLE = frozenset(_undo_table()["non_undoable"])
+KEEP_CURRENT = tuple(_undo_table()["keep_current"])   # fields an undo / redo takes from the current state (F3 F17)
+SHORT = "short"
 STAMPS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "stamps.json")
 
 
@@ -121,6 +125,7 @@ class Session(object):
         self.character = files.load(self.characters_dir, name, self._sub())
         self.name, self.dirty_since = name, None
         self._undo, self._redo = [], []
+        self._journal()                # an imported long journal goes into the archive at once
         return self.character
 
     def restore_backup(self, name):
@@ -174,12 +179,16 @@ class Session(object):
     def dispatch(self, command, **params):
         if self.character is None:
             return DispatchResult(False, reason="no_character", params={})
+        at = files.stamp(self.clock())
         if command in STAMPED and "at" not in params:
-            params = dict(params, at=files.stamp(self.clock()))
+            params = dict(params, at=at)
         try:
-            result = character_dispatch(self.character, command, **params)
+            with journal.stamped(at):
+                result = character_dispatch(self.character, command, **params)
         except CommandError as e:
             return DispatchResult(False, reason=e.reason, params=dict(e.params), info={"text": str(e)})
+        if result.state == self.character:     # nothing changed (F18): no undo step, no subscribers, not dirty
+            return DispatchResult(True, topics=(), info=dict(result.info))
         if command not in NON_UNDOABLE and int(self.setting("undo_depth")) > 0:
             self._undo = (self._undo + [(self.character, command)])[-int(self.setting("undo_depth")):]
             self._redo = []
@@ -187,6 +196,7 @@ class Session(object):
         return self._changed(topics_of(command), dict(result.info))
 
     def _changed(self, topics, info):
+        self._journal()
         if self.dirty_since is None:
             self.dirty_since = self.clock()
         if self.setting("autosave") and self.setting("autosave_mode") == EVERY_COMMAND:
@@ -208,8 +218,10 @@ class Session(object):
             return DispatchResult(False, reason="nothing_to_" + line, params={})
         state, command = source.pop()
         target.append((self.character, command))
+        state = replace(state, **{f: getattr(self.character, f) for f in KEEP_CURRENT})
         entry = Result(state=state, entry=LogEntry(command=line))
-        self.character = journal.record(self.character, entry, line, {"command": command}).state
+        with journal.stamped(files.stamp(self.clock())):
+            self.character = journal.record(self.character, entry, line, {"command": command}).state
         return self._changed(topics_of(command), {"command": command})
 
     def undo(self):
@@ -219,6 +231,50 @@ class Session(object):
 
     def redo(self):
         return self._step(self._redo, self._undo, "redo")
+
+    # -------------------------------------------------------------- journal (package 27 E, D29)
+    def _journal(self):
+        """journal_mode short: keep the newest journal_short_max lines, older ones are dropped. full: at
+        journal_archive_at lines the oldest go into the archive file (wp/app/history.py), the newest
+        journal_archive_keep stay; a failed append keeps every line in memory."""
+        ch = self.character
+        if ch is None:
+            return
+        log = ch.log
+        if self.setting("journal_mode") == SHORT:
+            mx = int(self.setting("journal_short_max"))
+            if len(log) > mx:
+                self.character = replace(ch, log=log[-mx:])
+            return
+        if len(log) < int(self.setting("journal_archive_at")):
+            return
+        block = log[:max(0, len(log) - int(self.setting("journal_archive_keep")))]
+        try:
+            history.append(self.characters_dir, self.name, block)
+        except OSError:
+            return
+        self.character = replace(ch, log=log[len(block):])
+
+    def journal_view(self, count=vw.LOG_TAIL, offset=0):
+        """The recent journal lines in memory, newest last: `count` lines ending `offset` lines before the end."""
+        log = self.character.log if self.character is not None else ()
+        end = len(log) - int(offset)
+        return tuple(log[max(0, end - int(count)):max(0, end)])
+
+    def history_view(self, from_date="", to_date="", page=0, size=None):
+        """The whole journal (archive + memory) between two dates YYYYMMDD (inclusive, "" = open), page by page."""
+        def inside(e):
+            d = history.date_of(e.at)
+            return (not from_date or d >= from_date) and (not to_date or d <= to_date)
+        arch = history.read(self.characters_dir, self.name, from_date, to_date)   # by the date index
+        last = history.load_index(self.characters_dir, self.name)["last_seq"]
+        lines = arch + tuple(e for e in (self.character.log if self.character else ()) if e.seq > last and inside(e))
+        size = int(size or limits.get("history_page"))
+        start = int(page) * size
+        return {"lines": lines[start:start + int(size)], "total": len(lines), "page": int(page), "size": int(size)}
+
+    def full_log(self):
+        return history.full_log(self.characters_dir, self.name, self.character.log if self.character else ())
 
     def view(self, name, **params):
         if name not in vw.VIEWS:

@@ -3,6 +3,8 @@ logged by dispatch (commands/base.py). An entry stores ids and numbers only (no 
 by the kind / command ids through wp/i18n): order counter, kind, command id, short params, result,
 combat round (0 = not in combat). No revert. rules_settings.log_limit: keep the last N (0 = unlimited).
 """
+import contextlib
+import contextvars
 import dataclasses
 from dataclasses import replace
 
@@ -65,12 +67,25 @@ def short(v, depth=0):
     return type(v).__name__
 
 
+_AT = contextvars.ContextVar("journal_at", default="")
+
+
+@contextlib.contextmanager
+def stamped(at):
+    """Journal lines written inside get the time stamp `at` (the Session clock; package 27 E)."""
+    token = _AT.set(at)
+    try:
+        yield
+    finally:
+        _AT.reset(token)
+
+
 def record(before, result, command, params):
     """The result with a journal entry appended to its state (called by dispatch for changed states)."""
     ch = result.state
     entry = LogEntry(seq=before.log_seq + 1, command=command, kind=kind_of(command),
                      params={k: short(v) for k, v in params.items()}, result=short(dict(result.info)),
-                     round=ch.combat_round if ch.in_combat else 0)
+                     round=ch.combat_round if ch.in_combat else 0, at=_AT.get())
     log = ch.log + (entry,)
     limit = ch.rules_settings.log_limit
     if limit > 0:

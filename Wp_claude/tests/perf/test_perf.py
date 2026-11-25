@@ -103,6 +103,36 @@ def _mod_scope():
 S.case("c-scope-cached", "pkg 23: a cached function (ability_mod) keyed by the rule scope: Dex 14 with base 12 -> 1, "
        "with the default 10 -> 2", (1, 2))(_mod_scope)
 
+def _journal_save():
+    """Package 27 E (review 5 F29): the heavy character with a 50 000-line journal, opened by the Session (journal_mode
+    full: the old lines go into the archive at once), then one command and a save: under the save budget."""
+    import time
+    from dataclasses import replace
+    from wp.model.character import LogEntry
+    d = tempfile.mkdtemp(prefix="wp_perf_j_")
+    try:
+        ch = heavy.heavy()
+        log = tuple(LogEntry(seq=i + 1, command="take_damage", kind="damage", params={"amount": 3},
+                             at="20260101-000000-000") for i in range(JOURNAL_LINES))
+        ch = replace(ch, log=log, log_seq=JOURNAL_LINES)
+        s = Session(os.path.join(d, "ch"), os.path.join(d, "user"))
+        s.new("heavy", ch)
+        s.dispatch("add_experience", amount=1)
+        best = None
+        for _ in range(2):
+            t = time.perf_counter()
+            s.save()
+            ms = (time.perf_counter() - t) * 1000.0
+            best = ms if best is None else min(best, ms)
+        return best < B["save_journal_ms"], len(s.full_log())
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+
+
+JOURNAL_LINES = 50000
+S.case("b-save-journal", "pkg 27 E: save of the heavy character with a 50 000-line journal (archived) under the budget; "
+       "the full log keeps 50 001 lines", (True, 50001))(_journal_save)
+
 if __name__ == "__main__":
     print("load %.1f ms, dispatch + views %.1f ms, slowest view %.1f ms" % (
         M["load_ms"], M["dispatch_all_views_ms"], max(M["views_ms"].values())))

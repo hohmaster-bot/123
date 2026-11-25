@@ -287,6 +287,7 @@ class LogEntry:
     params: Dict[str, Any] = field(default_factory=dict)
     result: Dict[str, Any] = field(default_factory=dict)
     round: int = 0                     # combat round (0 = not in combat)
+    at: str = ""                       # time stamp of the Session clock (package 27 E; "" without a Session)
 
     def __post_init__(self):
         freeze_fields(self, ("params", "result"))
