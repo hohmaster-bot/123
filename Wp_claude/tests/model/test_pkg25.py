@@ -25,6 +25,7 @@ from wp.model import pick_flags as pf  # noqa: E402
 from wp.model import spell_damage as sd  # noqa: E402
 from wp.model import spell_view as spv  # noqa: E402
 from wp.model import stats_view as stv  # noqa: E402
+from wp.model.experience import XpEntry  # noqa: E402
 from wp.model.character import AttackRecord, Character, Item, WeaponEntry  # noqa: E402
 from wp.rules_data import rules as rd  # noqa: E402
 
@@ -47,6 +48,7 @@ def run(ch, *steps):
 
 
 def classed(cid, level=5, **kw):
+    kw.setdefault("xp_log", (XpEntry("xp0", 1000),))      # enough for one level_up (package 33)
     return run(Character(level=level, **kw), ("set_class", {"class_id": cid}))
 
 

@@ -18,6 +18,7 @@ from wp.core.effects import Effect, Status  # noqa: E402
 from wp.core.injuries import Injury  # noqa: E402
 from wp.core.weapons import Weapon  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
+from wp.model.experience import XpEntry  # noqa: E402
 from wp.model.character import (ABILITIES, Ability, Character, Item, Language, ResourcePool,  # noqa: E402
                                 WeaponEntry)
 from wp.storage import character_io as cio  # noqa: E402
@@ -44,7 +45,7 @@ def abil(**scores):
 
 
 def hero(**kw):
-    base = dict(hp_rolls=(8,), hp_current=8, spirit_current=5, balance_current=5, bp_current=2, training=1000)
+    base = dict(xp_log=(XpEntry("xp0", 1000),), hp_rolls=(8,), hp_current=8, spirit_current=5, balance_current=5, bp_current=2, training=1000)
     base.update(kw)
     return Character(**base)
 
@@ -82,9 +83,9 @@ S.case("b1-level-up", "progression.md: level 1 -> 2: training +100 * 2 = 200 (10
        (2, 1200, (8, 5)))(lambda: (lambda c: (c.level, c.training, c.hp_rolls))(run(hero(), ("level_up", {"hp_roll": 5}))))
 S.case("b1-level-up-3", "progression.md: level 2 -> 3 gives +300", 300)(
     lambda: -spent(hero(level=2, hp_rolls=(8, 5)), ("level_up", {"hp_roll": 4})))
-S.case("b1-refusals", "progression.md: the roll must be 1..die (d8); without a roll 1 is taken (package 17, Q111)",
-       ("allowed", "refused: hit-die roll must be 1..8",
-        "refused: hit-die roll must be 1..8"))(
+S.case("b1-refusals", "progression.md: the roll must be at most the die (d8); without a roll 1 is taken (package 17, "
+       "Q111); a roll of 0 counts the minimum 1 (package 33)",
+       ("allowed", "allowed", "refused: hit-die roll must be 1..8"))(
     lambda: (refused(hero(), "level_up"), refused(hero(), "level_up", hp_roll=0), refused(hero(), "level_up", hp_roll=9)))
 
 # ================================================================ B2 comfort exchange

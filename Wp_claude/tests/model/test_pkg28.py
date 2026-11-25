@@ -11,6 +11,7 @@ from wp.catalog import store as cs  # noqa: E402
 from wp.commands import CommandError, dispatch  # noqa: E402
 from wp.commands import notebook_cmds as nbc  # noqa: E402
 from wp.model.character import Character  # noqa: E402
+from wp.model.experience import XpEntry  # noqa: E402
 from wp.rules_data import rules as rd  # noqa: E402
 
 S = Suite("test_pkg28")
@@ -130,7 +131,7 @@ def _reminders():
 S.case("d-reminders", "owner: level 2 without a principle -> write the taboo; level 4 without a quest -> take a quest; "
        "level 1 -> nothing", (("drive.remind.principle", ("growth",)), ("drive.remind.quest", ("triumph",))))(_reminders)
 S.case("d-level-up", "owner: level_up carries the reminder to distribute drive points (no number)",
-       (("drive.remind.distribute", ()),))(lambda: dispatch(Character(), "level_up", hp_roll=4).info["reminders"])
+       (("drive.remind.distribute", ()),))(lambda: dispatch(Character(xp_log=(XpEntry("xp0", 1000),)), "level_up", hp_roll=4).info["reminders"][:1])
 S.case("d-custom", "owner: a custom drive (no type) is allowed; a second growth drive is not forbidden: 3 drives",
        ("", 3))(lambda: (lambda c: (c.drives[0].dtype, len(drive(1, c).drives)))(
            run(Character(), ("add_drive", {"name": "Revenge", "level": 1}), ("add_drive", {"dtype": "growth"}))))

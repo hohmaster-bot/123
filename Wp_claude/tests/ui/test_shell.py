@@ -1,6 +1,6 @@
 """Package 32: the Classic window shell (wp/ui) without a screen (QT_QPA_PLATFORM=offscreen). Plain Suite + one
 QApplication; without PySide6 the suite is SKIPPED with a message (exit 0). Numbers by hand from wp/ui/data/demo.json:
-experience 1450 of 2000 -> 72 % (1450 x 100 / 2000 = 72.5, the core rounds down); level 1 + one level_up = 2.
+experience 1450 of the goal 1000 (package 33: the level-up cost) -> 100 % (capped); level 1 + one level_up = 2.
 Screenshots of each shipped theme go to Wp_claude/tests/ui_shots/<theme>.png (the owner checks the look by hand).
 Run: python Wp_claude/tests/ui/test_shell.py"""
 import ast
@@ -100,8 +100,8 @@ def _xp():
     return x.bar.value(), x.total.text(), x.goal.text(), x.title.text()
 
 
-S.case("s-xp", "pkg 32: the experience strip shows the demo numbers: 72 %, 1450 xp, goal 2000",
-       (72, "1450 xp", "to next level: 2000", "Experience"))(_xp)
+S.case("s-xp", "pkg 32 / 33: the experience strip shows the demo numbers: 1450 of the goal 1000 -> 100 %, 1450 xp",
+       (100, "1450 xp", "to next level: 1000", "Experience"))(_xp)
 
 
 def _identity():
@@ -120,14 +120,15 @@ def _command():
     r1 = s.dispatch("level_up", hp_roll=5)
     level = w.blocks["identity"].level.text()
     mid = {k: b.refreshed for k, b in w.blocks.items()}
-    r2 = s.dispatch("set_next_level_at", value=2900)
+    r2 = s.dispatch("add_experience", amount=50)
     after = {k: b.refreshed for k, b in w.blocks.items()}
     return (r1.ok, level, sorted(k for k in mid if mid[k] > before[k]) == sorted(w.blocks),
             sorted(k for k in after if after[k] > mid[k]), w.blocks["experience_strip"].bar.value())
 
 
 S.case("s-command", "D25: level_up through the Session -> Level 3 (topics all: every block re-reads); "
-       "set_next_level_at 2900 (topics training, sheet, log) refreshes only the blocks reading them; 1450 / 2900 = 50 %",
+       "add_experience 50 (topics training, sheet, log) refreshes only the blocks reading them; 1450 - 1000 + 50 = "
+       "500 of 1000 = 50 %",
        (True, "Level 3", True, ["bottom_strip", "experience_strip", "identity", "parameters"], 50))(_command)
 
 

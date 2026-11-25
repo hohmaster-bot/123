@@ -22,7 +22,7 @@ ENTRIES = [
          suites=T, rule="pkg 26 C: ids are never reused"),
     dict(id="p26-history", file="wp/commands/progression_cmds.py", old="    new = xp_cmds.add_history(new, level, roll, note, at)",
          new="    new = new", suites=T, rule="pkg 26 C: level_up writes the level history"),
-    dict(id="p26-progress", file="wp/model/experience.py", old="    return max(0, min(PCT, total(ch) * PCT // int(ch.next_level_at)))",
+    dict(id="p26-progress", file="wp/model/experience.py", old="    return max(0, min(PCT, total(ch) * PCT // int(LEVEL_COST)))",
          new="    return total(ch)", suites=T, rule="pkg 26 C: progress percent of the goal"),
     dict(id="p26-stamp", file="wp/app/session.py", old="            params = dict(params, at=at)",
          new="            params = params", suites=T, rule="pkg 26 C: entries carry the Session time stamp"),

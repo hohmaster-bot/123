@@ -21,6 +21,7 @@ from wp.model import attack_view as av  # noqa: E402
 from wp.model import defense_view as dfv  # noqa: E402
 from wp.model import derived_view as dv  # noqa: E402
 from wp.model import spell_view as sv  # noqa: E402
+from wp.model.experience import XpEntry  # noqa: E402
 from wp.model.character import (ABILITIES, Ability, AttackRecord, Character, Item, RulesSettings,  # noqa: E402
                                 WeaponEntry)
 from wp.storage import character_io as cio  # noqa: E402
@@ -47,7 +48,7 @@ def abil(**scores):
 
 
 def hero(**kw):
-    base = dict(hp_rolls=(8,), hp_current=8, spirit_current=5, balance_current=5, bp_current=2, training=1000)
+    base = dict(xp_log=(XpEntry("xp0", 1000),), hp_rolls=(8,), hp_current=8, spirit_current=5, balance_current=5, bp_current=2, training=1000)
     base.update(kw)
     return Character(**base)
 

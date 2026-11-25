@@ -137,28 +137,26 @@ S.case("x-log", "pkg 26 C: 300 + 400 = 700; remove the 300 -> 400; -50 -> 350; i
 
 
 def _history():
-    c = run(Character(), ("add_experience", {"amount": 700}), ("level_up", {"hp_roll": 5, "note": "after the siege"}))
+    c = run(Character(), ("add_experience", {"amount": 1700}), ("level_up", {"hp_roll": 5, "note": "after the siege"}))
     h = c.level_history[0]
     return h.level, h.experience_total, h.hp_roll, h.note
 
 
-S.case("x-history", "pkg 26 C: level_up writes the history: level 2, xp 700 at that moment, roll 5, the note",
-       (2, 700, 5, "after the siege"))(_history)
-S.case("x-progress", "pkg 26 C: goal 1000, total 700 -> 70%; no goal -> None", (70, None))(
-    lambda: (xp.progress_pct(run(Character(), ("add_experience", {"amount": 700}),
-                                 ("set_next_level_at", {"value": 1000}))),
-             xp.progress_pct(run(Character(), ("add_experience", {"amount": 700})))))
+S.case("x-history", "pkg 26 C / 33: level_up writes the history: level 2, xp 1700 at that moment (before the cost), "
+       "roll 5, the note", (2, 1700, 5, "after the siege"))(_history)
+S.case("x-progress", "pkg 33: the goal is always 1000: total 700 -> 70%; 0 -> 0%", (70, 0, 1000))(
+    lambda: (xp.progress_pct(run(Character(), ("add_experience", {"amount": 700}))), xp.progress_pct(Character()),
+             xp.view(Character())["next_level_at"]))
 S.case("x-edit", "pkg 26 C: edit an entry 300 -> 250 and its note; the total follows", (250, "fixed"))(
     lambda: (lambda c: (xp.total(c), c.xp_log[0].note))(
         run(Character(), ("add_experience", {"amount": 300}), ("edit_experience_entry", {"xid": "xp1", "amount": 250,
                                                                                         "note": "fixed"}))))
 S.case("x-history-edit", "pkg 26 C: edit and remove a level history entry (edit mode)", ("typo fixed", 0))(
-    lambda: (lambda c: (run(c, ("edit_level_history", {"lid": "lv1", "note": "typo fixed"})).level_history[0].note,
-                        len(run(c, ("remove_level_history", {"lid": "lv1"})).level_history)))(
-        run(Character(), ("level_up", {"hp_roll": 4}))))
-S.case("x-no-auto", "pkg 26 C: no automatic level-up: 5000 xp over a goal of 1000 keeps level 1 (100%)", (1, 100))(
-    lambda: (lambda c: (c.level, xp.progress_pct(c)))(
-        run(Character(), ("set_next_level_at", {"value": 1000}), ("add_experience", {"amount": 5000}))))
+    lambda: (lambda c: (run(c, ("edit_level_history", {"lid": "lv2", "note": "typo fixed"})).level_history[0].note,
+                        len(run(c, ("remove_level_history", {"lid": "lv2"})).level_history)))(
+        run(Character(), ("add_experience", {"amount": 1000}), ("level_up", {"hp_roll": 4}))))
+S.case("x-no-auto", "pkg 26 C / 33: no automatic level-up: 1500 xp keeps level 1 (100%)", (1, 100))(
+    lambda: (lambda c: (c.level, xp.progress_pct(c)))(run(Character(), ("add_experience", {"amount": 1500}))))
 
 
 class Clock(object):
@@ -183,12 +181,12 @@ S.case("x-session", "pkg 26 C: the Session stamps the entry (clock 1000 s), the 
 
 def _roundtrip():
     from wp.storage import character_io as cio
-    c = run(Character(), ("add_experience", {"amount": 10, "note": "n"}), ("level_up", {"hp_roll": 3}),
-            ("set_next_level_at", {"value": 50}), ("spend_actions", {"n": 1}))
+    c = run(Character(), ("add_experience", {"amount": 1010, "note": "n"}), ("level_up", {"hp_roll": 3}),
+            ("add_experience", {"amount": 1995}), ("spend_actions", {"n": 1}))
     return cio.loads(cio.dumps(c)) == c
 
 
-S.case("x-roundtrip", "pkg 26: experience, level history, the goal and the actions left survive save / load", True)(_roundtrip)
+S.case("x-roundtrip", "pkg 26 / 33: experience (a capped entry, the level-up cost), level history and the actions left survive save / load", True)(_roundtrip)
 
 if __name__ == "__main__":
     try:

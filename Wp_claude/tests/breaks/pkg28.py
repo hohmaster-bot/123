@@ -25,8 +25,8 @@ ENTRIES = [
          new="if d.level >= int(_c(\"drives.quest_allowed_level\", ch)))", suites=T, rule="pkg 28: only a taken quest is open"),
     dict(id="p28-reminders", file="wp/commands/drive_cmds.py", old="        if v[\"quest_missing\"]:\n", new="        if False:\n",
          suites=T, rule="pkg 28: the take-a-quest reminder"),
-    dict(id="p28-level-up", file="wp/commands/progression_cmds.py", old="\"reminders\": ((\"drive.remind.distribute\", ()),)})",
-         new="\"reminders\": ()})", suites=T, rule="pkg 28: level_up reminds to distribute drive points"),
+    dict(id="p28-level-up", file="wp/commands/progression_cmds.py", old="\"reminders\": ((REMIND_DRIVES, ()), (REMIND_TRAINING, (gain,)))})",
+         new="\"reminders\": ((REMIND_TRAINING, (gain,)),)})", suites=T, rule="pkg 28: level_up reminds to distribute drive points"),
     dict(id="p28-quest-state", file="wp/commands/notebook_cmds.py", old="    if isinstance(rec, nb.Drive) and rec.quest_state not in nb.QUEST_STATES:",
          new="    if False:", suites=T, rule="pkg 28: quest states none / taken / closed"),
 ]
