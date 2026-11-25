@@ -77,3 +77,14 @@ language (RU / EN, D4) and theme.
   dialog with minimum 1, level_up, the reminders in a message box). Fonts: app settings font_family,
   font_family_numbers, font_size (qss.fonts; ui_scale on top). Tests: tests/ui/test_resources.py (shots
   tests/ui_shots/resources_<theme>.png), storage/test_ui_logic33.py (no Qt).
+- Package 34 part 1 (D34): the SOURCES dialog (wp/ui/sources_dialog.py) fed by session.view("sources", number=...):
+  total, rows (name, kind + rule file, value, on; "does not stack" for a bonus that loses), read-only outside the
+  editor mode (View > Editor mode = Session.set_editor_mode, topic "editor"); in it a manual row's value / on can be
+  changed or removed and a new manual row added (source_* commands; journal + undo). Opened by a click on any
+  Parameters cell, any AC cell and the "cur / max" text of a tube. PARAMETERS block (wp/ui/screen_blocks.py,
+  params_logic.py without Qt, data/screen_blocks.json; the layout item may carry its own "cells"): melee, ranged,
+  initiative / CMB, CMD, load ("X of max" + light / load / overload, overload in the danger colour) / Fort, Ref, Will.
+  AC block: 3x3 zones (cell 5 = you, naming the shield side), primary variant large, secondary small, zone labels;
+  shield cells get the border token ac_shield and the mark "[shield]"; flat-footed / touch line. Small window
+  (window.adapt): halve the gaps, hide block captions, hide details, then scroll; the saved layout is never touched.
+  Tests: model/test_pkg34.py, storage/test_ui_logic34.py, ui/test_screen34.py (shots parameters_*, ac_*, sources_*).

@@ -85,7 +85,9 @@ Step 1 DONE (package 32): the window shell (python run_wp.py), regions from the 
 RU / EN, scale, the first-run hint, the experience strip and the identity block with real data (D32).
 Step 2 DONE (package 33): the resources block (tubes, value editor, temp HP strip, pools, own buttons), the level-up
 button with the 1000 xp cost (owner), the font settings (D33).
-Steps in order (each a package); next = step 3, the parameters block and the AC block:
+Step 3 DONE (package 34 part 1): the Sources view and dialog for every number (editor mode), the Parameters block,
+the AC block, the small-window steps (D34).
+Steps in order (each a package); next = step 5, statuses / favourites / reminders and the combat tab:
   1. [DONE, package 32] Window shell + the three shipped themes (dark default, light, grey-blue), the Session wiring, one-time hints
      storage (hints_seen, hints_off).
   1b. Theme editor and background: every screen colour a token (the missing tokens of ARCH/ui_gaps.md "Themes"), live
@@ -93,7 +95,7 @@ Steps in order (each a package); next = step 3, the parameters block and the AC 
      dimming and the readable overlay.
   2. [DONE, package 33] Resources: horizontal tubes (glass / flat), the value editor, adjust_value, temp HP strip, pools (3 large),
      custom buttons through Session.run_quick, resource style / colour / size settings.
-  3. Parameters block and AC block (the experience strip is done: packages 32, 33): cell sources view, attack_melee / attack_ranged (Q198), load limits in
+  3. [DONE, package 34] Parameters block and AC block (the experience strip is done: packages 32, 33): cell sources view, attack_melee / attack_ranged (Q198), load limits in
      items.weight, shield_side and cell lines in defense, ac_cell labels.
   5. Statuses, favourites (char setting favorites), reminders view; the combat tab (actions / reaction squares,
      quick access grid with quick_view, quick_cells / quick_columns).

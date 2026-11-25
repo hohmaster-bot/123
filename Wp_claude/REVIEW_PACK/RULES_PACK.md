@@ -2351,6 +2351,8 @@ Every number can be changed per character (rules_settings). Values as shipped.
 |---|---|
 | actions_max | actions per turn (package 26 A): added to the base 3 |
 | armor_skill_penalty | added to the armor skill penalty (positive = smaller penalty, never above 0) |
+| attack_melee | the general melee attack number of the sheet (package 34: its manual source rows) |
+| attack_ranged | the general ranged attack number of the sheet (package 34: its manual source rows) |
 | attention_per_cycle | attention at the end of a cycle |
 | balance_max | balance max (also inside the start-of-combat snapshot) |
 | balance_regen | balance regen per tick |
