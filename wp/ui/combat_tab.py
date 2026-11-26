@@ -29,7 +29,11 @@ from wp.ui.status_blocks import _clear
 
 COMBAT = "combat"
 PAGE_TOPICS = ("log", "items", "training", "injuries", "notebook", "rest", "skills", "combat", "defense")  # pages
-PAGES = {"journal": ("wp.ui.tab_journal", "JournalPage"), "settings": ("wp.ui.tab_settings", "SettingsPage")}
+PAGES = {"journal": ("wp.ui.tab_journal", "JournalPage"), "settings": ("wp.ui.tab_settings", "SettingsPage"),
+         "injuries": ("wp.ui.tab_pages", "InjuriesPage"), "drives": ("wp.ui.tab_pages", "DrivesPage"),
+         "rest": ("wp.ui.tab_pages", "RestPage"), "inventory": ("wp.ui.tab_pages2", "InventoryPage"),
+         "training": ("wp.ui.tab_pages2", "TrainingPage"), "skills": ("wp.ui.tab_pages2", "SkillsPage"),
+         "feats": ("wp.ui.tab_pages2", "FeatsPage"), "catalogs": ("wp.ui.tab_pages2", "CatalogsPage")}
 STEP = 1                               # a square click spends / returns one action / reaction
 BUTTONS = ("combat", "zero", "cycle")  # package 35: "zero" = Zero initiative (the tick), no "end of turn"
 

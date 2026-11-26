@@ -28,6 +28,8 @@ from wp.ui.shell_data import SHELL
 ALL = "all"
 ADAPT_STEPS = ("normal", "gaps", "captions", "details")   # then the scroll (UI_WISHES point 12)
 GAP_DIVISOR = 2                        # the small window halves the gaps (UI, not a rule)
+EXPAND_GAPS = 4                        # gaps kept around an expanded tab (UI, not a rule)
+TABS = "tabs"
 
 
 class HintBar(QFrame):
@@ -88,6 +90,7 @@ class MainWindow(QMainWindow):
         self._system_dark = system_dark    # tests set it; None = ask Qt
         self.files = Files(self)
         self.blocks = {}
+        self.expanded = None               # a tab expanded to the full screen (package 35 P4)
         self.hint = HintBar(self, SHELL["hint"])
         self._build_regions()
         menus.build(self)
@@ -231,6 +234,24 @@ class MainWindow(QMainWindow):
         super().resizeEvent(event)
         if hasattr(self, "gap"):
             QTimer.singleShot(0, self.adapt)       # after the scroll area took its new size
+
+    # ------------------------------------------------------------ expand a tab to the full screen (UI_WISHES 9, pkg 35)
+    def expand_block(self, bid):
+        """bid = a block id: every other block except the tab bar is hidden for a while and the block takes the
+        visible area; None = back to the layout. Never written to the profile (D31)."""
+        prev = self.expanded
+        if prev is not None and prev in self.blocks:
+            self.blocks[prev].setFixedSize(self.blocks[prev].saved)
+        for k, b in self.blocks.items():
+            b.setVisible(bid is None or k in (bid, TABS))
+        if bid is not None and bid in self.blocks:
+            have = self.scroll.viewport().size()
+            tabs = self.blocks[TABS].height() if TABS in self.blocks else 0
+            b = self.blocks[bid]
+            b.setFixedSize(max(b.saved.width(), have.width() - EXPAND_GAPS * self.gap),
+                           max(b.saved.height(), have.height() - tabs - EXPAND_GAPS * self.gap))
+        self.expanded = bid
+        return bid
 
     def retranslate(self):
         tr = self.tr

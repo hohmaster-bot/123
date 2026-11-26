@@ -277,6 +277,7 @@
       "STEP": "a square click spends one action / reaction (UI, not a rule)"
     },
     "wp/ui/window.py": {
+      "EXPAND_GAPS": "gaps kept around an expanded tab (UI, not a rule)",
       "GAP_DIVISOR": "the small window halves the gaps (UI_WISHES 12, not a rule)"
     }
   },
