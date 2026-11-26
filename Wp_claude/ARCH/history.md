@@ -106,3 +106,7 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   wrapping tabs, the AC audit, the no-sources hint, own temp HP: Q229 closed), the bottom strip, the Journal and
   Settings tabs, the theme editor and the background, the content tabs, the Classic layout editor. Report:
   tests/PACKAGE35_REPORT.md.
+- Done in package 36: owner fixes (the package 35 report rebuilt + a report check, untyped bonuses, Settings / Catalog
+  menus, the Narrative tab, the font fit), the engine "anything can change anything" (D35: formulas over sheet
+  numbers, conditions, situational, rule switches, triggers, tags, held-by, moves, typed absorbers), races in the
+  character (take / change / buy, the Race tab) and the owner's 12 races as data. Report: tests/PACKAGE36_REPORT.md.

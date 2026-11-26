@@ -51,6 +51,116 @@ P3 (finished; a race in the character):
 - 3.3 The Race tab replaces the placeholder: the view, Take race / Change race (with the confirmation list), Take of
   a priced ability, the empty state. The Class tab stays a placeholder.
 
+P4 (finished; acceptance on the owner's 12 races):
+- All 12 races of Wp_claude/RACES_SOURCE.md are catalog data in two module files (wp/catalog/data/races/godbound.json:
+  Ankalian, Lomit, Ulstanger; ranniag.json: Azana, White maiden, Moon elf, Mordon, Reflected, Rahim, Silver elf,
+  Skerde, Ragmal), written by the mechanisms above only (no per-race code). Names in Russian with name_en (as
+  feats.json); ability texts in English as in the owner's source. The data files are the source (no generator in the
+  repo).
+- Two small engine extensions the races needed: a compound condition "a&b" (Reflected: in combat AND pressure 0) and
+  "a later equal movement value replaces" (good flight keeps 20 ft but changes the quality). Both in P3's commit.
+- tests/model/test_races36.py: per race a character with the race and hand numbers (below).
+
+Coverage table (every ability -> how it is expressed):
+
+| race | ability | expressed as |
+|---|---|---|
+| Ankalian | stats +2 Str / Dex / Con / Cha, +8 HP, speed 20 | effects (race feat), speed |
+| Ankalian | Universality | text (decision 2) |
+| Ankalian | Shadow of the crown | effects skill:diplomacy / empathy +2; trigger cycle_end "+2 comfort" with a button |
+| Ankalian | Adrenaline | manual trigger (run_command spend_bp 2) + status "Adrenaline" (+2 all rolls); fatigue text |
+| Ankalian | Life among horrors | text (narrative, decision 5) |
+| Ankalian | languages Kerez | language, native |
+| Lomit | stats +2 Con / Int, +6 HP | effects |
+| Lomit | Universality | text |
+| Lomit | Adaptation | text (see "cannot yet") |
+| Lomit | Flexible mind | trigger cycle_end reminder; the extra Attention is text |
+| Lomit | Power of rationality | situational +2 saves "vs magical effects" |
+| Ulstanger | stats +2 Str / +4 Con, +10 HP | effects |
+| Ulstanger | Northerner | text (see "cannot yet") |
+| Ulstanger | Rage | effect damage_per_pain 1 (note: melee weapons) |
+| Ulstanger | Necromancy poisoning | switch heal_percent -50; situational +6 "vs death effects and necromancy"; pain_cap +4 (dies at 12) |
+| Azana | stats +2 Con / -2 Int, +12 HP | effects |
+| Azana | Four-legged run | effect speed +10 with a manual condition "running on all fours" |
+| Azana | Red sun sight | text |
+| Azana | Dynamo | pool "static" (10 x level) as a typed absorber (lightning); the melee spend is text |
+| Azana | Unkillable monster | switch at_negative_hp = status:confused; trigger hp_below_one -> status "static regeneration" (5 per tick, pays 2 static per tick from the pool) |
+| Azana | End of session -4 injury points | manual trigger (reduce_injury_points 4) |
+| Azana | Hungry monster | text (owner: the potion comfort is text) |
+| White maiden | stats +2 Int / Wis, -2 Con | effects |
+| White maiden | Sight of the dead, Copying, Possession, spying | text (owner: text) |
+| White maiden | Puppet | effects pain_reduction 2, heal_percent -50, own temp HP "2 * level" while in combat, switch at_negative_hp = nothing |
+| White maiden | the smoke form | PARKED (needs the creature card) |
+| White maiden | Principledness | quirk "the principle" (text) |
+| Moon elf | stats, +6 HP, speed 25 | effects, speed |
+| Moon elf | Vanguard, State keeping, Meditation | text |
+| Moon elf | Primal sight | situational -4 on rolls "vs blinding and similar"; text |
+| Moon elf | Dance with blades | status with 1 charge + text (spirit by hand) |
+| Moon elf | Shadow of Santerra | status with 2 charges + text |
+| Mordon | -2 Int, +8 HP, speed 25 | effects, speed |
+| Mordon | +2 any characteristic | six effects with manual conditions "Mordon +2 <stat>" (tick one) |
+| Mordon | Blood cleansing, sense of aggression | text |
+| Mordon | Midnight instinct | effect dex_loss_cells -1 on the back cells (7, 8, 9) |
+| Mordon | Red sun sight | text |
+| Mordon | Survival history (d20 table) | text with the table; six history abilities (price 0, taken by choice) |
+| Mordon | 1 Feast of Ravens | effects Dex +2, speed +5; manual trigger "pressure -5: leave"; immunity text; buy-out 300 |
+| Mordon | 2 Wall of Bones | effects Con +2, CMD -4; buy-out 300 gives CMD +4 back; Toughness / wounds / bleeding text |
+| Mordon | 3 Banner of Blood | effects Str +2, DR 2 with the manual condition "mounted"; mount, skill, comfort text; buy-out 400 |
+| Mordon | 4 Fallen of Dantalian | effects Int +2, mana +3, exp_percent -25; buy-out 500 (exp_percent +25); group / focus / slot / spells text |
+| Mordon | 5 Goddess of Humanity | effect Wis +2; rerolls, healing, caster level, the -4 drawback text; buy-out 500 |
+| Mordon | 6 Return to zero | effects Cha +2, base slots -5; buy-out 500 (+5); the rest text |
+| Mordon | Golden grandeur | held-by: an extra history held by the jewellery item ("not backed" when lost) |
+| Reflected | stats +4 Cha / -2 Int, +4 HP | effects |
+| Reflected | Rebirth | manual trigger reminder + text |
+| Reflected | Red sun sight, Prophecy | text (owner: prophecy text) |
+| Reflected | Chameleon | effects disguise / stealth +4, diplomacy / empathy / bluff +2 (racial) |
+| Reflected | Blessing of goddess Zero | effect rolls +4 with the condition "in_combat&pressure_eq:0" |
+| Rahim | stats +2 Str / Con, -2 Int, +10 HP | effects |
+| Rahim | Dragon wings | effects sleight / athletics / acrobatics +4; flight 20 average for 600, good flight for 300 (chain) |
+| Rahim | Dragon tail | manual trigger reminder + text (see "cannot yet") |
+| Rahim | Dragon sight | text |
+| Rahim | Dragon scales | effects spell_resistance "12 + level", resist:fire 5, resist:lightning 5 |
+| Rahim | Intent clothed in word | effects diplomacy / intimidate +4, bluff -6; word-breaking text (owner: text) |
+| Rahim | languages Draconic | language, native |
+| Silver elf | stats, +4 HP, speed 25 | effects, speed |
+| Silver elf | Vanguard, Primal sight | text; situational -4 |
+| Silver elf | Integrity | effects AC +2 dodge, CMB / CMD +4 with the condition hp_full; bleeding text |
+| Silver elf | Pure mind | effect Will +2 with the condition bp_full; immunities and rest text |
+| Silver elf | Dance with blades | status 1 charge + text |
+| Silver elf | Eradication of filth | status 2 charges + text (the GM rolls) |
+| Skerde | stats +2 Int / -2 Str | effects |
+| Skerde | Sea dweller, hold breath | swim 15 for 100 (price), hold breath for 100 more (chain, text) |
+| Skerde | Trophy collection | formulas tagged_base_slots:trophy: skills +N, saves + N / 2, Cha + N / 4 |
+| Skerde | Thorough expedition | effect hp_max "min(base_slots, 4 * level)" |
+| Skerde | Sense of the swell, sea predator | text |
+| Ragmal | stats +2 Con / -2 Cha | effects |
+| Ragmal | Burning gaze, Bottomless belly | text |
+| Ragmal | Magic body | effect mana_max +6, absorber mana (before HP), Str "mana_max / 10" |
+| Ragmal | Blessing of the goddess of people | effects load_mod +3, Fort +2 racial, balance_max +3, natural_regen_percent +100 |
+| Ragmal | Heavy swing | manual trigger: 2 temp HP (run_command set_temp_hp 2) |
+| Ragmal | Hunt for incarnations | trigger combat_start "spend 4 mana" (change_resource mana -4); the +1 fire / acid text |
+
+Cannot be expressed yet (with the reason):
+- Lomit Adaptation: "one level higher" for the comfort exchange and Attention needs a level offset of those two rules
+  (no such target); text.
+- Ulstanger Northerner: the feats Endurance and Toughness are not in the feat catalog; text until they are.
+- Ulstanger Rage: damage_per_pain has no "melee only" scope (the note says it).
+- Ankalian Adrenaline: "these BP come back only by a full rest" needs a per-source BP restore rule; text.
+- Azana Dynamo melee spend (pool -> electric damage), regeneration off for a round after self-damage: text.
+- Rahim Dragon tail: a natural attack record needs a natural weapon item (weapon groups are not touched now); the -2
+  AC until the next turn needs a timed status; reminder + text.
+- Ragmal mana training at 200 per unit: a training price rule per race (no override of the price table); Heavy swing
+  "until the start of the next turn" (sets the "by button" temp HP to 2, no duration); Hunt's +1 fire / acid damage.
+- Mordon drawbacks "-4 on the first five attacks", "no wound penalty", "double bleeding", "1 comfort less for fights":
+  no counters / targets for them; text. Golden grandeur: the extra history is linked to the jewellery by hand.
+- Moon / Silver elf charges: the recharge per combat / per full rest is not wired to a rest (the status has no
+  source_ref); restore by hand.
+- White maiden Puppet: "temporary HP at the start of each combat" is own temp HP 2 x level while in combat (the spent
+  part resets only at the short rest); natural regeneration "to the minimum" has no value (text); the smoke form is
+  PARKED (needs the creature card, the owner's summons notes later).
+- "Two city languages" (most Ranniag races) and the "extra languages" of the Godbound races are not entered: the names
+  are the player's choice / unclear (Q272); the player adds them.
+
 ## Tests and breaks
 - P1: `run_all.py`: suites 92, passed 92, failed 0. `break_check.py`: entries 459, caught 458, missed 1
   (p32-block-size: the blocks now fit their content, so dropping the old setFixedSize changed nothing); the entry now
@@ -72,8 +182,16 @@ P3 (finished; a race in the character):
   its line changed: a later equal value replaces); updated and re-run alone: caught. New suites: model/test_pkg36c.py (5: Str 12 / Int 8 from effects with the base 10, HP 8
   + 6 = 14, speed 25, languages; the chain refused, wings 1000 - 600 = 400; the change list, Dex 12, no refund; undo;
   the snapshot), ui/test_race36.py (3: the tab flow, Class stays a placeholder, shots race_*). Breaks P3: 8.
+- P4: `run_all.py`: suites 97, passed 97, failed 0. `break_check.py`: entries 496, caught 496, missed 0. New suite model/test_races36.py (14: per race the stats, HP at level 1, speed and the key
+  effects by hand: Ankalian 17 HP + comfort 2; Lomit 15 HP, situational +2; Ulstanger 20 HP, heal 5 -> 10, death at
+  12; Azana 21 HP, static 10 takes 7 lightning, confused at -3, OT 6 -> 2, speed 30 on all fours; White maiden 7 HP,
+  pain 3 -> 1, temp HP 2 in combat; Moon elf 13 HP, -4 situational, charges; Mordon 16 HP, +2 Str by the box, history
+  1 Dex 12 / speed 30, history 4 xp 75 and its buy-out, held by the ring, back cells keep Dex 12; Reflected 12 HP,
+  initiative 0 / 4 / 0; Rahim 19 HP, SR 13, flight chain 1100; Silver elf AC 11 / 13, CMB 1 / 5, CMD 12 / 16, Will +2;
+  Skerde 12 HP, trophies Cha 11 / Fort 3, swim 1900; Ragmal 9 HP, mana 20 -> Str 12, mana takes 4 damage). Breaks P4: 8.
 
 ## Changes to old rules
+- P4: the shipped module files races/godbound.json and ranniag.json hold the 12 races; no other old rule changed.
 - P3: old test ui/test_combat34.py c-tabs checks the Class placeholder (Race has content). Empty module files
   races/godbound.json and ranniag.json shipped (filled in P4).
 - P2: old break breaks/core.py formula-unknown-names follows the new variable check.
@@ -89,10 +207,11 @@ P3 (finished; a race in the character):
   not rejected.
 
 ## Assumptions
+- P4: Q270 race data language; Q271 Mordon choices; Q272 race languages; Q273 White maiden; Q274 charges.
 - P3: Q268 taking a race; Q269 the Race tab.
 - P2: Q259 formula variables; Q260 conditions; Q261 situational listing; Q262 at_negative_hp; Q263 trigger notes;
   Q264 held by; Q265 moves; Q266 typed absorbers; Q267 heal / exp percent.
 - P1: Q256 top menus; Q257 the Narrative tab actions; Q258 the font fit.
 
 ## Open questions (ids)
-- Closed: Q245 (owner decision 17). New: Q256-Q269.
+- Closed: Q245 (owner decision 17). New: Q256-Q274; Q272 asks the owner (are the extra languages known?).
