@@ -156,8 +156,8 @@ def _tabs():
     return len(names), names[0], other, c.stack.currentWidget() is c.page
 
 
-S.case("c-tabs", "UI_WISHES 9: 13 tabs; Race shows only its placeholder (no fake content); back to Combat",
-       (13, "Combat", (True, "Race: this tab comes in a later step"), True))(_tabs)
+S.case("c-tabs", "UI_WISHES 9: 12 tabs (pkg 36: Settings / Catalog are menus, Narrative added); Race shows only its placeholder (no fake content); back to Combat",
+       (12, "Combat", (True, "Race: this tab comes in a later step"), True))(_tabs)   # pkg 36: 12 tabs
 
 
 def _shots():

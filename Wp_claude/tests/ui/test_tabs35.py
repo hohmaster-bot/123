@@ -167,17 +167,16 @@ S.case("t-feats", "pkg 35: no feats -> the empty state; the feat catalog count c
 
 
 def _catalogs():
-    s, w, p = started("catalogs", "catalogs")
+    from wp.ui.page_window import open_page          # pkg 36 P1.3: Catalog is a top menu with its own window
+    s, w, _ = started("catalogs", "journal")
+    p = open_page(w, "catalogs").page
     p.kind.setCurrentIndex(p.kind.findData("feats"))
     rows = [r[0] for r in cells(p)]
-    p.toggle_expand()
-    expanded = w.expanded
-    p.toggle_expand()
-    return rows, expanded, shot(w, "catalogs")
+    return rows, p.expand_button.isHidden(), shot(w, "catalogs")
 
 
-S.case("t-catalogs", "pkg 35: the catalog browser lists the feat catalog entries (read-only) and can expand",
-       (["finesse_training"], "combat", True))(
+S.case("t-catalogs", "pkg 35 / 36: the catalog browser (own window of the Catalog menu) lists the feat catalog "
+       "entries (read-only); no Expand in an own window", (["finesse_training"], True, True))(
     lambda: (lambda r: ([x for x in r[0] if x == "finesse_training"],) + r[1:])(_catalogs()))
 
 if __name__ == "__main__":

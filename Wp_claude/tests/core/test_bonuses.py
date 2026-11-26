@@ -80,13 +80,11 @@ S.case("stance-defensive", "combat.md Stances Example", (2, -4))(
     lambda: (bo.total(_stance, bo.AC), bo.total(_stance, bo.ATTACK)))
 
 
-@S.case("unknown-type", "bonus type must be known", "rejected")
+@S.case("unknown-type", "owner (package 36, decision 17): an unknown bonus type is untyped: kept, stacks (1 + 2 = 3)",
+        ("flat", 3))
 def _unknown():
-    try:
-        Bonus(1, "magic")
-    except ValueError:
-        return "rejected"
-    return "allowed"
+    b = [Bonus(1, "magic", bo.AC), Bonus(2, "moral", bo.AC)]
+    return b[0].btype, bo.total(b, bo.AC)
 
 
 if __name__ == "__main__":

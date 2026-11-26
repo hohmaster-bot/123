@@ -86,12 +86,12 @@ def _second():
     b = w.blocks["bottom_strip"]
     h1 = b.height()
     b.toggle_strip()
-    two = len(b.layout_rows), b.height() == 2 * h1, cells(w, 1)
+    two = len(b.layout_rows), b.height() > h1, cells(w, 1)        # pkg 36: taller (it fits its content)
     b.toggle_strip()
     return two, len(b.layout_rows), tuple(s.profile("classic")["strips"])
 
 
-S.case("b-second", "UI_WISHES 10: + strip adds the second strip (temp HP 4, attention 1, initiative +2; twice the "
+S.case("b-second", "UI_WISHES 10: + strip adds the second strip (temp HP 4, attention 1, initiative +2; taller "
        "height); - strip removes it (profile strips empty again)",
        ((2, True, {"temp_hp": "4", "attention": "1", "initiative": "2"}), 1, ()))(_second)
 
