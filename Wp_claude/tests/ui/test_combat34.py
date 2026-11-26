@@ -150,14 +150,14 @@ def _tabs():
     s, w = started("tabs", statuses=False)
     t, c = w.blocks["tabs"], w.blocks["combat"]
     names = [t.bar.tabText(i) for i in range(t.bar.count())]
-    t.bar.setCurrentIndex(t.tabs.index("skills"))
+    t.bar.setCurrentIndex(t.tabs.index("race"))          # pkg 35: Skills has content now; Race stays a placeholder
     other = c.stack.currentWidget() is c.placeholder, c.placeholder.text()
     t.bar.setCurrentIndex(0)
     return len(names), names[0], other, c.stack.currentWidget() is c.page
 
 
-S.case("c-tabs", "UI_WISHES 9: 13 tabs; Skills shows only its placeholder (no fake content); back to Combat",
-       (13, "Combat", (True, "Skills: this tab comes in a later step"), True))(_tabs)
+S.case("c-tabs", "UI_WISHES 9: 13 tabs; Race shows only its placeholder (no fake content); back to Combat",
+       (13, "Combat", (True, "Race: this tab comes in a later step"), True))(_tabs)
 
 
 def _shots():

@@ -136,3 +136,39 @@ ENTRIES += [
          new='        self.central.set_picture("", 0)', suites=UI3,
          rule="owner 16: the own background picture is painted with its dimming"),
 ]
+
+# ---------------------------------------------------------------- P4: the content tabs
+L4 = ("storage/test_ui_logic35c.py",)
+UI4 = ("ui/test_tabs35.py",)
+ENTRIES += [
+    dict(id="p35-tab-injury", file="wp/ui/tab_pages.py",
+         old='        return self.run("add_injury", severity=self.severity.currentData())', new="        return None",
+         suites=UI4, rule="injuries.md: Take an injury runs add_injury (OT 7 - 2 = 5)"),
+    dict(id="p35-tab-drive-up", file="wp/ui/tab_pages.py",
+         old='        return self.run("drive_buy_up" if key == "up" else "drive_buy_down", did=row[0])',
+         new='        return self.run("drive_buy_down", did=row[0])', suites=UI4,
+         rule="narrative.md: +1 buys a drive level for comfort"),
+    dict(id="p35-tab-rest", file="wp/ui/tab_pages.py",
+         old='        return self.run("short_rest" if key == "short" else "long_rest")',
+         new='        return self.run("long_rest")', suites=UI4, rule="rest.md: Short rest runs the short rest"),
+    dict(id="p35-tab-empty", file="wp/ui/tab_pages.py",
+         old='        self.empty.setText(self._tr("tabs_page.%s.empty" % self.TAB) if not rows else "")',
+         new='        self.empty.setText("")', suites=UI4, rule="pkg 35: an empty view shows the empty state"),
+    dict(id="p35-tab-equip", file="wp/ui/tab_pages2.py",
+         old='        return self.run("equip_item" if key == "equip" else "unequip_item", iid=row[0])',
+         new='        return self.run("unequip_item", iid=row[0])', suites=UI4, rule="gear.md: Wear runs equip_item"),
+    dict(id="p35-tab-qualify", file="wp/ui/tab_pages2.py",
+         old='        return None if row is None else self.run("buy_item_qualification", iid=row[0])',
+         new="        return None", suites=UI4, rule="gear.md: the item qualification is bought for 50 x N training"),
+    dict(id="p35-qualification-rows", file="wp/ui/tab_logic.py",
+         old="    return [(it.iid, it.name, it.qualification_n, it.qualified) for it in ch_items if it.qualification_n]",
+         new="    return [(it.iid, it.name, it.qualification_n, it.qualified) for it in ch_items]", suites=L4,
+         rule="gear.md: only the items with a qualification number need one"),
+    dict(id="p35-expand-hide", file="wp/ui/window.py", old="            b.setVisible(bid is None or k in (bid, TABS))",
+         new="            b.setVisible(True)", suites=UI4,
+         rule="UI_WISHES 9: expanding a tab hides the other regions for a while"),
+    dict(id="p35-page-topics", file="wp/ui/combat_tab.py",
+         old='        self.reads = tuple(self.reads) + ("statuses", "attacks", "sheet", "resources") + PAGE_TOPICS',
+         new='        self.reads = tuple(self.reads) + ("statuses", "attacks", "sheet", "resources")', suites=UI4,
+         rule="pkg 35: a tab page shows the new numbers after a command"),
+]
