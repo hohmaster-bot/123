@@ -39,7 +39,6 @@
 - `catalog.field.durability`
 - `catalog.field.durable`
 - `catalog.field.duration`
-- `catalog.field.effects`
 - `catalog.field.effects_off`
 - `catalog.field.effects_on`
 - `catalog.field.finesse`
@@ -107,6 +106,7 @@
 - `catalog.kind.drive_types`
 - `catalog.kind.feats`
 - `catalog.kind.items`
+- `catalog.kind.races`
 - `catalog.kind.skills`
 - `catalog.kind.spells`
 - `catalog.kind.statuses`
@@ -935,7 +935,6 @@
 - `catalog.field.durability`
 - `catalog.field.durable`
 - `catalog.field.duration`
-- `catalog.field.effects`
 - `catalog.field.effects_off`
 - `catalog.field.effects_on`
 - `catalog.field.finesse`
@@ -1003,6 +1002,7 @@
 - `catalog.kind.drive_types`
 - `catalog.kind.feats`
 - `catalog.kind.items`
+- `catalog.kind.races`
 - `catalog.kind.skills`
 - `catalog.kind.spells`
 - `catalog.kind.statuses`
@@ -1591,7 +1591,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (494)
+## Лишние ключи (нигде не нужны) (505)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1960,6 +1960,7 @@
 - `tabs_page.catalog_kind.drive_types`
 - `tabs_page.catalog_kind.feats`
 - `tabs_page.catalog_kind.items`
+- `tabs_page.catalog_kind.races`
 - `tabs_page.catalog_kind.skills`
 - `tabs_page.catalog_kind.spells`
 - `tabs_page.catalog_kind.statuses`
@@ -1979,8 +1980,10 @@
 - `tabs_page.col.layer`
 - `tabs_page.col.level`
 - `tabs_page.col.name`
+- `tabs_page.col.needs`
 - `tabs_page.col.option`
 - `tabs_page.col.permanent`
+- `tabs_page.col.price`
 - `tabs_page.col.principle`
 - `tabs_page.col.qualification`
 - `tabs_page.col.quantity`
@@ -1988,6 +1991,7 @@
 - `tabs_page.col.ranks`
 - `tabs_page.col.severity`
 - `tabs_page.col.state`
+- `tabs_page.col.taken`
 - `tabs_page.col.text`
 - `tabs_page.col.tier`
 - `tabs_page.col.type`
@@ -2035,6 +2039,13 @@
 - `tabs_page.narrative.state.open`
 - `tabs_page.narrative.summary`
 - `tabs_page.narrative.text`
+- `tabs_page.race.buy`
+- `tabs_page.race.change`
+- `tabs_page.race.confirm`
+- `tabs_page.race.empty`
+- `tabs_page.race.none`
+- `tabs_page.race.summary`
+- `tabs_page.race.take`
 - `tabs_page.rest.empty`
 - `tabs_page.rest.long`
 - `tabs_page.rest.option.charges`

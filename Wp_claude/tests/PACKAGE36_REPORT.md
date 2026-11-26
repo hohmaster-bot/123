@@ -40,6 +40,16 @@ P2 (finished; the engine "anything can change anything", D35):
   first native). 2.9 Typed damage absorbers (absorber:<resource>, note = types; pools may absorb).
 - 2.10 RULES/races.md (new, from the owner decisions), buffs.md, resources.md, narrative.md extended (the package text
   is consent); D35; view contract.
+P3 (finished; a race in the character):
+- 3.1 Catalog kind races (catalog_schemas.json): id, name (Russian, as feats.json) and name_en, module, type_tags,
+  speed, effects, abilities (id, name, text, price, needs, effects, triggers, auto, held_by), statuses, pools,
+  quirks, languages. The shipped entries live in one file per game module (wp/catalog/data/races/<module>.json),
+  merged by the catalog store.
+- 3.2 Commands take_race(race), change_race(race, confirm), buy_race_ability(aid) and the view race (decision 15):
+  copies with the source race:<id>, stat changes and HP as effects, the change list confirmed, no refund, one undo
+  step, the snapshot (a catalog change never changes a taken copy).
+- 3.3 The Race tab replaces the placeholder: the view, Take race / Change race (with the confirmation list), Take of
+  a priced ability, the empty state. The Class tab stays a placeholder.
 
 ## Tests and breaks
 - P1: `run_all.py`: suites 92, passed 92, failed 0. `break_check.py`: entries 459, caught 458, missed 1
@@ -58,8 +68,14 @@ P2 (finished; the engine "anything can change anything", D35):
   below 1; held by; moves; languages; typed absorbers 7 lightning -> pool 3 / 5 fire -> HP 3 / mixed / mana 6 -> 2),
   ui/test_p36b.py (4: star and hover, the Sources rows, the speed hover, the status checkbox 3 -> 5, the trigger
   reminder and its button, the manual trigger; shots engine_*). Breaks P2: 21.
+- P3: `run_all.py`: suites 96, passed 96, failed 0. `break_check.py`: entries 488, caught 487, missed 1 (p36-moves:
+  its line changed: a later equal value replaces); updated and re-run alone: caught. New suites: model/test_pkg36c.py (5: Str 12 / Int 8 from effects with the base 10, HP 8
+  + 6 = 14, speed 25, languages; the chain refused, wings 1000 - 600 = 400; the change list, Dex 12, no refund; undo;
+  the snapshot), ui/test_race36.py (3: the tab flow, Class stays a placeholder, shots race_*). Breaks P3: 8.
 
 ## Changes to old rules
+- P3: old test ui/test_combat34.py c-tabs checks the Class placeholder (Race has content). Empty module files
+  races/godbound.json and ranniag.json shipped (filled in P4).
 - P2: old break breaks/core.py formula-unknown-names follows the new variable check.
 - P2 (owner consent in the package text): new RULES/races.md; RULES/buffs.md "Formulas over sheet numbers, conditions,
   situational", "Triggers", "Held by"; RULES/resources.md "Rule switches of races and abilities"; RULES/narrative.md
@@ -73,9 +89,10 @@ P2 (finished; the engine "anything can change anything", D35):
   not rejected.
 
 ## Assumptions
+- P3: Q268 taking a race; Q269 the Race tab.
 - P2: Q259 formula variables; Q260 conditions; Q261 situational listing; Q262 at_negative_hp; Q263 trigger notes;
   Q264 held by; Q265 moves; Q266 typed absorbers; Q267 heal / exp percent.
 - P1: Q256 top menus; Q257 the Narrative tab actions; Q258 the font fit.
 
 ## Open questions (ids)
-- Closed: Q245 (owner decision 17). New: Q256-Q267.
+- Closed: Q245 (owner decision 17). New: Q256-Q269.
