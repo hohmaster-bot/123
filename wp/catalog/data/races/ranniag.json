@@ -5,7 +5,1171 @@
  "counter": 0,
  "retired": [],
  "meta": {
-  "note": "Package 36: the races of the game module ranniag (filled in P4 from Wp_claude/RACES_SOURCE.md)."
+  "note": "Package 36 P4: the races of the game module ranniag (Wp_claude/RACES_SOURCE.md); only what affects the character; texts of narrative abilities in English (the owner's source)."
  },
- "entries": []
+ "entries": [
+  {
+   "id": "azana",
+   "name": "Азана",
+   "name_en": "Azana",
+   "module": "ranniag",
+   "type_tags": [
+    "humanoid",
+    "human",
+    "mutant"
+   ],
+   "speed": 20,
+   "effects": [
+    {
+     "target": "stat:con",
+     "value": 2
+    },
+    {
+     "target": "stat:int",
+     "value": -2
+    },
+    {
+     "target": "hp_max",
+     "value": 12
+    }
+   ],
+   "abilities": [
+    {
+     "id": "four_legged_run",
+     "name": "Бег на четырёх",
+     "name_en": "Four-legged run",
+     "text": "With nothing in the hands she may run on all fours: speed 30 ft per action (tick the box).",
+     "effects": [
+      {
+       "target": "speed",
+       "value": 10,
+       "condition": "manual:running on all fours"
+      }
+     ]
+    },
+    {
+     "id": "red_sun_sight_azana",
+     "name": "Зрение красного солнца",
+     "name_en": "Red sun sight",
+     "text": "Darkvision 60 ft; sees colours at half that distance. Cannot be blinded or dazzled."
+    },
+    {
+     "id": "dynamo",
+     "name": "Динамо",
+     "name_en": "Dynamo",
+     "text": "Static pool = 10 x level. Electric damage is taken from the pool first. A melee attack may spend from the pool the squares moved this round and add the same electric damage (spend by hand).",
+     "effects": [
+      {
+       "target": "absorber:pool:static",
+       "value": 0,
+       "note": "lightning"
+      }
+     ]
+    },
+    {
+     "id": "unkillable_monster",
+     "name": "Неубиваемый монстр",
+     "name_en": "Unkillable monster",
+     "text": "Below 0 HP she keeps her actions and is not dying: she gets 'confused' (rolls twice and chooses). With a non-zero static pool and HP below 1: regeneration 5 (acid, fire) and -2 static each turn; physical damage to herself turns the regeneration off for a round.",
+     "effects": [
+      {
+       "target": "switch:at_negative_hp",
+       "value": 0,
+       "note": "status:confused"
+      }
+     ],
+     "triggers": [
+      {
+       "tid": "regen",
+       "event": "hp_below_one",
+       "text": "Unkillable monster: static > 0 and HP < 1 -> regeneration 5 (turn it on)",
+       "action": "add_status",
+       "target": "static_regeneration",
+       "amount": 0
+      }
+     ]
+    },
+    {
+     "id": "end_of_session",
+     "name": "Конец сессии",
+     "name_en": "End of session",
+     "text": "At the end of every session injury points (OT) received are lowered by 4 (press the button).",
+     "triggers": [
+      {
+       "tid": "session",
+       "event": "manual",
+       "text": "End of session: injury points - 4",
+       "action": "reduce_injury_points",
+       "target": "",
+       "amount": 4
+      }
+     ]
+    },
+    {
+     "id": "hungry_monster",
+     "name": "Голодный монстр",
+     "name_en": "Hungry monster",
+     "text": "Cannot get sick or poisoned from food / water; eats half as much. Any unusual potion except holy water gives 1 extra comfort (add it by hand)."
+    }
+   ],
+   "languages": [],
+   "statuses": [
+    {
+     "id": "confused",
+     "name": "Растерянность",
+     "text": "Confused: roll twice and choose."
+    },
+    {
+     "id": "static_regeneration",
+     "name": "Статическая регенерация",
+     "per_tick_hp": 5,
+     "charge_source": "static",
+     "charge_per_round": 2,
+     "text": "Regeneration 5 (acid, fire) while static > 0 and HP < 1; -2 static each turn."
+    }
+   ],
+   "pools": [
+    {
+     "id": "static",
+     "name": "Статика",
+     "max": "10 * level"
+    }
+   ]
+  },
+  {
+   "id": "white_maiden",
+   "name": "Белая дева",
+   "name_en": "White maiden",
+   "module": "ranniag",
+   "type_tags": [
+    "undead",
+    "incorporeal"
+   ],
+   "speed": 20,
+   "effects": [
+    {
+     "target": "stat:int",
+     "value": 2
+    },
+    {
+     "target": "stat:wis",
+     "value": 2
+    },
+    {
+     "target": "stat:con",
+     "value": -2
+    }
+   ],
+   "abilities": [
+    {
+     "id": "sight_of_the_dead",
+     "name": "Зрение мёртвых",
+     "name_en": "Sight of the dead",
+     "text": "Ignores darkness; senses the living within 60 ft."
+    },
+    {
+     "id": "copying",
+     "name": "Копирование",
+     "name_en": "Copying",
+     "text": "Gets one feat and one racial ability of the body she parasitizes (add them by hand)."
+    },
+    {
+     "id": "puppet",
+     "name": "Марионетка",
+     "name_en": "Puppet",
+     "text": "In negative HP acts as usual; effective pain lowered by 2; at the start of each combat temporary HP = 2 x level; natural regeneration minimal; healing from spells halved. The smoke form when the body is destroyed is PARKED (needs the creature card).",
+     "effects": [
+      {
+       "target": "pain_reduction",
+       "value": 2
+      },
+      {
+       "target": "heal_percent",
+       "value": -50
+      },
+      {
+       "target": "temp_hp",
+       "value": "2 * level",
+       "condition": "in_combat"
+      },
+      {
+       "target": "switch:at_negative_hp",
+       "value": 0,
+       "note": "nothing"
+      }
+     ]
+    },
+    {
+     "id": "possession",
+     "name": "Одержимость",
+     "name_en": "Possession",
+     "text": "As a haze: drain the living for 2d6 days, then pour the force into a recently dead body; shadow attack (the enemy loses an action, d4 acid); spying in a shadow. Text only (the GM rolls)."
+    },
+    {
+     "id": "principledness",
+     "name": "Принципиальность",
+     "name_en": "Principledness",
+     "text": "Every white maiden has a principle (a character trait) because of which she has not killed people; a quirk that helps to keep it at the GM's discretion."
+    }
+   ],
+   "languages": [],
+   "quirks": [
+    {
+     "id": "maiden_principle",
+     "name": "Принцип девы",
+     "text": "The principle of the maiden (the GM names the quirk)."
+    }
+   ]
+  },
+  {
+   "id": "moon_elf",
+   "name": "Лунный эльф",
+   "name_en": "Moon elf",
+   "module": "ranniag",
+   "type_tags": [
+    "humanoid",
+    "elf"
+   ],
+   "speed": 25,
+   "effects": [
+    {
+     "target": "stat:wis",
+     "value": 2
+    },
+    {
+     "target": "stat:dex",
+     "value": 2
+    },
+    {
+     "target": "stat:con",
+     "value": -2
+    },
+    {
+     "target": "hp_max",
+     "value": 6
+    }
+   ],
+   "abilities": [
+    {
+     "id": "vanguard",
+     "name": "Авангард",
+     "name_en": "Vanguard",
+     "text": "The first ten feet over heavy terrain per round ignore the speed penalty."
+    },
+    {
+     "id": "primal_sight",
+     "name": "Первобытное зрение",
+     "name_en": "Primal sight",
+     "text": "Darkvision 120 ft, colours at the whole distance; triple vision in low light. Dazzled in bright light.",
+     "effects": [
+      {
+       "target": "rolls",
+       "value": -4,
+       "situational": "vs blinding and similar"
+      }
+     ]
+    },
+    {
+     "id": "state_keeping",
+     "name": "Сохранение состояния",
+     "name_en": "State keeping",
+     "text": "While HP and BP are positive they lose characteristics only from injuries (not from poisons, diseases, spells)."
+    },
+    {
+     "id": "meditation",
+     "name": "Медитация",
+     "name_en": "Meditation",
+     "text": "Cannot be put to sleep. Short rest 4 hours, no perception penalty; may spend 3 BP for the long-rest benefits (BP back only in a safe place)."
+    },
+    {
+     "id": "dance_with_blades_moon",
+     "name": "Танец с клинками",
+     "name_en": "Dance with blades",
+     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand)."
+    },
+    {
+     "id": "shadow_of_santerra",
+     "name": "Тень Сантерры",
+     "name_en": "Shadow of Santerra",
+     "text": "Twice per full rest, 3 actions: walk up to four times the speed, invisible d4 rounds; notices incorporeal enemies within 60 ft and may hit them for double damage without breaking invisibility."
+    }
+   ],
+   "languages": [],
+   "statuses": [
+    {
+     "id": "dance_with_blades",
+     "name": "Танец с клинками",
+     "duration": "end_of_combat",
+     "charges": 1,
+     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand)."
+    },
+    {
+     "id": "shadow_of_santerra",
+     "name": "Тень Сантерры",
+     "charges": 2,
+     "duration": "ticks",
+     "text": "Invisible d4 rounds (type the rounds)."
+    }
+   ]
+  },
+  {
+   "id": "mordon",
+   "name": "Мордон",
+   "name_en": "Mordon",
+   "module": "ranniag",
+   "type_tags": [
+    "humanoid",
+    "human"
+   ],
+   "speed": 25,
+   "effects": [
+    {
+     "target": "stat:int",
+     "value": -2
+    },
+    {
+     "target": "hp_max",
+     "value": 8
+    },
+    {
+     "target": "stat:str",
+     "value": 2,
+     "condition": "manual:Mordon +2 Str"
+    },
+    {
+     "target": "stat:dex",
+     "value": 2,
+     "condition": "manual:Mordon +2 Dex"
+    },
+    {
+     "target": "stat:con",
+     "value": 2,
+     "condition": "manual:Mordon +2 Con"
+    },
+    {
+     "target": "stat:int",
+     "value": 2,
+     "condition": "manual:Mordon +2 Int"
+    },
+    {
+     "target": "stat:wis",
+     "value": 2,
+     "condition": "manual:Mordon +2 Wis"
+    },
+    {
+     "target": "stat:cha",
+     "value": 2,
+     "condition": "manual:Mordon +2 Cha"
+    }
+   ],
+   "abilities": [
+    {
+     "id": "any_stat",
+     "name": "+2 к любой",
+     "name_en": "Any +2",
+     "text": "+2 to any characteristic: tick ONE box 'Mordon +2 ...'."
+    },
+    {
+     "id": "blood_cleansing",
+     "name": "Очищение крови",
+     "name_en": "Blood cleansing",
+     "text": "If a negative status affects them they may lose 4 HP to shorten it by 1 round (by hand)."
+    },
+    {
+     "id": "midnight_instinct",
+     "name": "Полуночный инстинкт",
+     "name_en": "Midnight instinct",
+     "text": "Keep the dodge bonus against melee attacks from behind (the back cells do not lose Dex); sense an aggressive creature within 120 ft.",
+     "effects": [
+      {
+       "target": "dex_loss_cells",
+       "value": -1,
+       "cells": [
+        "7",
+        "8",
+        "9"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "red_sun_sight_mordon",
+     "name": "Зрение красного солнца",
+     "name_en": "Red sun sight",
+     "text": "Darkvision 60 ft, colours at half that distance. Cannot be blinded or dazzled."
+    },
+    {
+     "id": "survival_history",
+     "name": "История выживания",
+     "name_en": "Survival history",
+     "text": "Roll 1d20 when taking the race (outside the program): 1-5 type 1, 6-10 type 2, 11-14 type 3, 15-16 type 4, 17-18 type 5, 19-20 type 6; then take that history."
+    },
+    {
+     "id": "feast_of_ravens",
+     "name": "Пир воронов",
+     "name_en": "Type 1 Feast of Ravens",
+     "text": "+2 Dex, speed 30 ft, immune to fear; drawback: must leave combat without rolls at pressure -5.",
+     "effects": [
+      {
+       "target": "stat:dex",
+       "value": 2
+      },
+      {
+       "target": "speed",
+       "value": 5
+      }
+     ],
+     "triggers": [
+      {
+       "tid": "flee",
+       "event": "manual",
+       "text": "Feast of Ravens: pressure -5 -> leave the combat"
+      }
+     ],
+     "auto": false
+    },
+    {
+     "id": "feast_of_ravens_buyout",
+     "name": "Выкуп: Пир воронов",
+     "name_en": "Buy-out: Feast of Ravens",
+     "text": "The drawback is bought out.",
+     "price": 300,
+     "needs": "feast_of_ravens"
+    },
+    {
+     "id": "wall_of_bones",
+     "name": "Стена костей",
+     "name_en": "Type 2 Wall of Bones",
+     "text": "+2 Con, the feat Toughness (by hand), no wound penalty; drawbacks: -4 CMD and double HP loss from bleeding.",
+     "effects": [
+      {
+       "target": "stat:con",
+       "value": 2
+      },
+      {
+       "target": "cmd",
+       "value": -4
+      }
+     ],
+     "auto": false
+    },
+    {
+     "id": "wall_of_bones_buyout",
+     "name": "Выкуп: Стена костей",
+     "name_en": "Buy-out: Wall of Bones",
+     "text": "The drawbacks are bought out.",
+     "effects": [
+      {
+       "target": "cmd",
+       "value": 4
+      }
+     ],
+     "price": 300,
+     "needs": "wall_of_bones"
+    },
+    {
+     "id": "banner_of_blood",
+     "name": "Знамя крови",
+     "name_en": "Type 3 Banner of Blood",
+     "text": "+2 Str; animal handling specialised and a free mount up to CR3; mounted DR 2/-; drawback: 1 comfort less for fights.",
+     "effects": [
+      {
+       "target": "stat:str",
+       "value": 2
+      },
+      {
+       "target": "dr",
+       "value": 2,
+       "condition": "manual:mounted",
+       "note": "-"
+      }
+     ],
+     "auto": false
+    },
+    {
+     "id": "banner_of_blood_buyout",
+     "name": "Выкуп: Знамя крови",
+     "name_en": "Buy-out: Banner of Blood",
+     "text": "The drawback is bought out.",
+     "price": 400,
+     "needs": "banner_of_blood"
+    },
+    {
+     "id": "fallen_of_dantalian",
+     "name": "Падший Данталиана",
+     "name_en": "Type 4 Fallen of Dantalian",
+     "text": "+2 Int; extra weapon group and focus (Flails and Chains), +1 divine slot of the 1st circle, mana +3; Cause Fear, Protection from Good, Ray of Enfeeblement (caster level at least 1, Charisma); counts as evil; drawback: 25 % less experience.",
+     "effects": [
+      {
+       "target": "stat:int",
+       "value": 2
+      },
+      {
+       "target": "mana_max",
+       "value": 3
+      },
+      {
+       "target": "exp_percent",
+       "value": -25
+      }
+     ],
+     "auto": false
+    },
+    {
+     "id": "fallen_of_dantalian_buyout",
+     "name": "Выкуп: Падший Данталиана",
+     "name_en": "Buy-out: Fallen of Dantalian",
+     "text": "The drawback is bought out (full experience again).",
+     "effects": [
+      {
+       "target": "exp_percent",
+       "value": 25
+      }
+     ],
+     "price": 500,
+     "needs": "fallen_of_dantalian"
+    },
+    {
+     "id": "goddess_of_humanity",
+     "name": "Богиня человечности",
+     "name_en": "Type 5 Goddess of Humanity",
+     "text": "+2 Wis; allies may reroll one d20 once (back after the long rest); out of combat once per short rest 10 HP to each ally; +2 caster level for divine magic; drawback: -4 on the first five attacks of each combat.",
+     "effects": [
+      {
+       "target": "stat:wis",
+       "value": 2
+      }
+     ],
+     "auto": false
+    },
+    {
+     "id": "goddess_of_humanity_buyout",
+     "name": "Выкуп: Богиня человечности",
+     "name_en": "Buy-out: Goddess of Humanity",
+     "text": "The drawback is bought out.",
+     "price": 500,
+     "needs": "goddess_of_humanity"
+    },
+    {
+     "id": "return_to_zero",
+     "name": "Возврат к нулю",
+     "name_en": "Type 6 Return to zero",
+     "text": "+2 Cha; once per adventure restore all spirit; once per six sessions at the first death 6d6 HP and half spirit; no effects of the evil gods' pressure in Santerra; drawback: -5 base points.",
+     "effects": [
+      {
+       "target": "stat:cha",
+       "value": 2
+      },
+      {
+       "target": "base_slots",
+       "value": -5
+      }
+     ],
+     "auto": false
+    },
+    {
+     "id": "return_to_zero_buyout",
+     "name": "Выкуп: Возврат к нулю",
+     "name_en": "Buy-out: Return to zero",
+     "text": "The drawback is bought out.",
+     "effects": [
+      {
+       "target": "base_slots",
+       "value": 5
+      }
+     ],
+     "price": 500,
+     "needs": "return_to_zero"
+    },
+    {
+     "id": "golden_grandeur",
+     "name": "Золотое величие",
+     "name_en": "Golden grandeur",
+     "text": "Up to 5000 MZ on jewellery worn constantly: per 1000 MZ an extra history roll (duplicates ignored). Take the extra history and set its 'held by' to the jewellery item: if the jewellery is lost the history is 'not backed'; paid-off drawbacks are remembered."
+    }
+   ],
+   "languages": []
+  },
+  {
+   "id": "reflected",
+   "name": "Отражённый",
+   "name_en": "Reflected",
+   "module": "ranniag",
+   "type_tags": [
+    "humanoid",
+    "human",
+    "fey"
+   ],
+   "speed": 20,
+   "effects": [
+    {
+     "target": "stat:cha",
+     "value": 4
+    },
+    {
+     "target": "stat:int",
+     "value": -2
+    },
+    {
+     "target": "hp_max",
+     "value": 4
+    }
+   ],
+   "abilities": [
+    {
+     "id": "rebirth",
+     "name": "Перерождение",
+     "name_en": "Rebirth",
+     "text": "Once per half-year, instead of deadly direct damage: back to full HP and a new appearance; after the session rearrange characteristics and drives at random; may reset the level and get 10 comfort.",
+     "triggers": [
+      {
+       "tid": "rebirth",
+       "event": "manual",
+       "text": "Rebirth: full HP, a new appearance; after the session rearrange characteristics and drives"
+      }
+     ]
+    },
+    {
+     "id": "red_sun_sight_reflected",
+     "name": "Зрение красного солнца",
+     "name_en": "Red sun sight",
+     "text": "Darkvision 60 ft, colours at half that distance. Cannot be blinded or dazzled."
+    },
+    {
+     "id": "prophecy",
+     "name": "Самосбывающееся пророчество",
+     "name_en": "Self-fulfilling prophecy",
+     "text": "Between sessions spend 1-20 spirit and announce a desired future; the GM gives hints. One at a time."
+    },
+    {
+     "id": "chameleon",
+     "name": "Хамелеон",
+     "name_en": "Chameleon",
+     "text": "Disguise and stealth are advanced skills with racial +4; diplomacy, empathy and bluff racial +2.",
+     "effects": [
+      {
+       "target": "skill:disguise",
+       "value": 4,
+       "btype": "racial"
+      },
+      {
+       "target": "skill:stealth",
+       "value": 4,
+       "btype": "racial"
+      },
+      {
+       "target": "skill:diplomacy",
+       "value": 2,
+       "btype": "racial"
+      },
+      {
+       "target": "skill:empathy",
+       "value": 2,
+       "btype": "racial"
+      },
+      {
+       "target": "skill:bluff",
+       "value": 2,
+       "btype": "racial"
+      }
+     ]
+    },
+    {
+     "id": "blessing_of_zero",
+     "name": "Благословение богини Ноль",
+     "name_en": "Blessing of goddess Zero",
+     "text": "+4 to all rolls during combat while the combat pressure equals zero.",
+     "effects": [
+      {
+       "target": "rolls",
+       "value": 4,
+       "condition": "in_combat&pressure_eq:0"
+      }
+     ]
+    }
+   ],
+   "languages": []
+  },
+  {
+   "id": "rahim",
+   "name": "Рахим",
+   "name_en": "Rahim",
+   "module": "ranniag",
+   "type_tags": [
+    "humanoid",
+    "human",
+    "dragon"
+   ],
+   "speed": 20,
+   "effects": [
+    {
+     "target": "stat:str",
+     "value": 2
+    },
+    {
+     "target": "stat:con",
+     "value": 2
+    },
+    {
+     "target": "stat:int",
+     "value": -2
+    },
+    {
+     "target": "hp_max",
+     "value": 10
+    }
+   ],
+   "abilities": [
+    {
+     "id": "dragon_wings",
+     "name": "Драконьи крылья",
+     "name_en": "Dragon wings",
+     "text": "Racial +4 to sleight, athletics and acrobatics.",
+     "effects": [
+      {
+       "target": "skill:sleight",
+       "value": 4,
+       "btype": "racial"
+      },
+      {
+       "target": "skill:athletics",
+       "value": 4,
+       "btype": "racial"
+      },
+      {
+       "target": "skill:acrobatics",
+       "value": 4,
+       "btype": "racial"
+      }
+     ]
+    },
+    {
+     "id": "dragon_flight",
+     "name": "Полёт",
+     "name_en": "Flight",
+     "text": "Fly 20 ft (average).",
+     "effects": [
+      {
+       "target": "move:fly",
+       "value": 20,
+       "note": "average"
+      }
+     ],
+     "price": 600
+    },
+    {
+     "id": "dragon_good_flight",
+     "name": "Хороший полёт",
+     "name_en": "Good flight",
+     "text": "Flight becomes good.",
+     "effects": [
+      {
+       "target": "move:fly",
+       "value": 20,
+       "note": "good"
+      }
+     ],
+     "price": 300,
+     "needs": "dragon_flight"
+    },
+    {
+     "id": "dragon_tail",
+     "name": "Драконий хвост",
+     "name_en": "Dragon tail",
+     "text": "With a melee attack: -2 AC until the start of the next turn and a tail hit: a natural attack 1d8, no extra attack penalty, the iterative penalty applies, no multi-attack penalty.",
+     "triggers": [
+      {
+       "tid": "tail",
+       "event": "manual",
+       "text": "Dragon tail: -2 AC until your next turn; tail 1d8"
+      }
+     ]
+    },
+    {
+     "id": "dragon_sight",
+     "name": "Драконье зрение",
+     "name_en": "Dragon sight",
+     "text": "Darkvision 60 ft, colours over the whole distance."
+    },
+    {
+     "id": "dragon_scales",
+     "name": "Драконья чешуя",
+     "name_en": "Dragon scales",
+     "text": "SR 12 + level; resistance to fire and electricity 5.",
+     "effects": [
+      {
+       "target": "spell_resistance",
+       "value": "12 + level"
+      },
+      {
+       "target": "resist:fire",
+       "value": 5
+      },
+      {
+       "target": "resist:lightning",
+       "value": 5
+      }
+     ]
+    },
+    {
+     "id": "intent_in_word",
+     "name": "Намерение в слове",
+     "name_en": "Intent clothed in word",
+     "text": "+4 diplomacy and intimidation, -6 bluff. Breaking his highlighted word costs 100 training (by hand; without training he sells characteristics).",
+     "effects": [
+      {
+       "target": "skill:diplomacy",
+       "value": 4,
+       "btype": "racial"
+      },
+      {
+       "target": "skill:intimidate",
+       "value": 4,
+       "btype": "racial"
+      },
+      {
+       "target": "skill:bluff",
+       "value": -6,
+       "btype": "racial"
+      }
+     ]
+    }
+   ],
+   "languages": [
+    "Draconic"
+   ]
+  },
+  {
+   "id": "silver_elf",
+   "name": "Серебряный эльф",
+   "name_en": "Silver elf",
+   "module": "ranniag",
+   "type_tags": [
+    "humanoid",
+    "elf"
+   ],
+   "speed": 25,
+   "effects": [
+    {
+     "target": "stat:str",
+     "value": 2
+    },
+    {
+     "target": "stat:dex",
+     "value": 2
+    },
+    {
+     "target": "stat:wis",
+     "value": -2
+    },
+    {
+     "target": "hp_max",
+     "value": 4
+    }
+   ],
+   "abilities": [
+    {
+     "id": "vanguard",
+     "name": "Авангард",
+     "name_en": "Vanguard",
+     "text": "The first ten feet over heavy terrain per round ignore the speed penalty."
+    },
+    {
+     "id": "primal_sight_silver",
+     "name": "Первобытное зрение",
+     "name_en": "Primal sight",
+     "text": "Darkvision 120 ft, colours at the whole distance; triple vision in low light. Dazzled in bright light.",
+     "effects": [
+      {
+       "target": "rolls",
+       "value": -4,
+       "situational": "vs blinding and similar"
+      }
+     ]
+    },
+    {
+     "id": "integrity",
+     "name": "Целостность",
+     "name_en": "Integrity",
+     "text": "While HP are maximal: +2 dodge to AC and racial +4 to CMB and CMD. Bleeding closes by itself in 1d4 rounds.",
+     "effects": [
+      {
+       "target": "ac",
+       "value": 2,
+       "btype": "dodge",
+       "condition": "hp_full"
+      },
+      {
+       "target": "cmb",
+       "value": 4,
+       "btype": "racial",
+       "condition": "hp_full"
+      },
+      {
+       "target": "cmd",
+       "value": 4,
+       "btype": "racial",
+       "condition": "hp_full"
+      }
+     ]
+    },
+    {
+     "id": "pure_mind",
+     "name": "Чистый разум",
+     "name_en": "Pure mind",
+     "text": "Cannot be charmed, immune to confusion. Short rest 4 hours, no perception penalty. With maximal BP racial +2 to Will.",
+     "effects": [
+      {
+       "target": "save:will",
+       "value": 2,
+       "btype": "racial",
+       "condition": "bp_full"
+      }
+     ]
+    },
+    {
+     "id": "dance_with_blades_silver",
+     "name": "Танец с клинками",
+     "name_en": "Dance with blades",
+     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand)."
+    },
+    {
+     "id": "eradication_of_filth",
+     "name": "Искоренение скверны",
+     "name_en": "Eradication of filth",
+     "text": "Twice per full rest, 1 action: a humanoid within 30 ft is a heretic: Will DC 14 + level / 2 or for three minutes his characteristics cannot exceed 10 and racial features do not work (a magical effect)."
+    }
+   ],
+   "languages": [],
+   "statuses": [
+    {
+     "id": "dance_with_blades",
+     "name": "Танец с клинками",
+     "duration": "end_of_combat",
+     "charges": 1,
+     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand)."
+    },
+    {
+     "id": "eradication",
+     "name": "Искоренение скверны",
+     "charges": 2,
+     "text": "Heretic: Will DC 14 + level / 2 (the GM rolls)."
+    }
+   ]
+  },
+  {
+   "id": "skerde",
+   "name": "Скерде",
+   "name_en": "Skerde",
+   "module": "ranniag",
+   "type_tags": [
+    "humanoid",
+    "human"
+   ],
+   "speed": 20,
+   "effects": [
+    {
+     "target": "stat:int",
+     "value": 2
+    },
+    {
+     "target": "stat:str",
+     "value": -2
+    },
+    {
+     "target": "hp_max",
+     "value": "min(base_slots, 4 * level)"
+    }
+   ],
+   "abilities": [
+    {
+     "id": "sea_dweller",
+     "name": "Житель моря",
+     "name_en": "Sea dweller",
+     "text": "Swim 15 ft per action.",
+     "effects": [
+      {
+       "target": "move:swim",
+       "value": 15
+      }
+     ],
+     "price": 100
+    },
+    {
+     "id": "hold_breath",
+     "name": "Задержка дыхания",
+     "name_en": "Hold breath",
+     "text": "Holds breath for twenty minutes.",
+     "price": 100,
+     "needs": "sea_dweller"
+    },
+    {
+     "id": "trophy_collection",
+     "name": "Коллекция трофеев",
+     "name_en": "Trophy collection",
+     "text": "Destroying 2 items from one monster gives a trophy with ilvl + 1 (by hand). Per base slot of trophies racial +1 to athletics, perception and stealth; per two slots +1 to saves; per four slots +1 Cha. Tag the trophy items 'trophy' and keep them at the base.",
+     "effects": [
+      {
+       "target": "skill:athletics",
+       "value": "tagged_base_slots:trophy",
+       "btype": "racial"
+      },
+      {
+       "target": "skill:perception",
+       "value": "tagged_base_slots:trophy",
+       "btype": "racial"
+      },
+      {
+       "target": "skill:stealth",
+       "value": "tagged_base_slots:trophy",
+       "btype": "racial"
+      },
+      {
+       "target": "save",
+       "value": "tagged_base_slots:trophy / 2"
+      },
+      {
+       "target": "stat:cha",
+       "value": "tagged_base_slots:trophy / 4"
+      }
+     ]
+    },
+    {
+     "id": "thorough_expedition",
+     "name": "Тщательная экспедиция",
+     "name_en": "Thorough expedition",
+     "text": "HP equal to the number of base slots, at most 4 x level (in the race effects)."
+    },
+    {
+     "id": "sense_of_the_swell",
+     "name": "Чувство зыби",
+     "name_en": "Sense of the swell",
+     "text": "Low-light vision and blindsense 20 ft."
+    },
+    {
+     "id": "sea_predator",
+     "name": "Гибкость морского хищника",
+     "name_en": "Flexibility of a sea predator",
+     "text": "Maximum damage in a grapple; breaking free restores the actions spent on it (by hand)."
+    }
+   ],
+   "languages": []
+  },
+  {
+   "id": "ragmal",
+   "name": "Рагмал",
+   "name_en": "Ragmal",
+   "module": "ranniag",
+   "type_tags": [
+    "humanoid",
+    "human"
+   ],
+   "speed": 20,
+   "effects": [
+    {
+     "target": "stat:con",
+     "value": 2
+    },
+    {
+     "target": "stat:cha",
+     "value": -2
+    },
+    {
+     "target": "mana_max",
+     "value": 6
+    }
+   ],
+   "abilities": [
+    {
+     "id": "burning_gaze",
+     "name": "Пылающий взгляд",
+     "name_en": "Burning gaze",
+     "text": "Eyes give bright light 20 ft; may be suppressed."
+    },
+    {
+     "id": "magic_body",
+     "name": "Магическое тело",
+     "name_en": "Magic body",
+     "text": "+6 mana at level 1 (in the race effects) even without a class. Mana is used before HP when taking damage. Trains mana at 200 training per unit (by hand). +1 Str per 10 maximum mana.",
+     "effects": [
+      {
+       "target": "absorber:mana",
+       "value": 0
+      },
+      {
+       "target": "stat:str",
+       "value": "mana_max / 10"
+      }
+     ]
+    },
+    {
+     "id": "bottomless_belly",
+     "name": "Бездонное брюхо",
+     "name_en": "Bottomless belly",
+     "text": "Unusual food gives extra training 10 x its ilvl, tripled for raising mana (by hand)."
+    },
+    {
+     "id": "blessing_of_people",
+     "name": "Благословение богини людей",
+     "name_en": "Blessing of the goddess of people",
+     "text": "+3 maximum carried weight, racial +2 Fortitude, +3 balance, natural regeneration doubled.",
+     "effects": [
+      {
+       "target": "load_mod",
+       "value": 3
+      },
+      {
+       "target": "save:fort",
+       "value": 2,
+       "btype": "racial"
+      },
+      {
+       "target": "balance_max",
+       "value": 3
+      },
+      {
+       "target": "natural_regen_percent",
+       "value": 100
+      }
+     ]
+    },
+    {
+     "id": "heavy_swing",
+     "name": "Тяжёлый замах",
+     "name_en": "Heavy swing",
+     "text": "Hitting with a two-handed weapon or a natural attack: 2 temporary HP until the start of the next turn.",
+     "triggers": [
+      {
+       "tid": "swing",
+       "event": "manual",
+       "text": "Heavy swing: 2 temporary HP",
+       "action": "run_command",
+       "target": "set_temp_hp",
+       "amount": 0,
+       "params": {
+        "value": 2
+       }
+      }
+     ]
+    },
+    {
+     "id": "hunt_for_incarnations",
+     "name": "Охота на воплощения",
+     "name_en": "Hunt for incarnations",
+     "text": "At the start of combat, an instant action: spend 4 mana for +1 fire or acid damage on all attacks and spells until the end of combat; cumulative.",
+     "triggers": [
+      {
+       "tid": "hunt",
+       "event": "combat_start",
+       "text": "Hunt for incarnations: spend 4 mana for +1 fire / acid damage",
+       "action": "change_resource",
+       "target": "mana",
+       "amount": -4
+      }
+     ]
+    }
+   ],
+   "languages": []
+  }
+ ]
 }

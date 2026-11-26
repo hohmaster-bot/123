@@ -5,7 +5,260 @@
  "counter": 0,
  "retired": [],
  "meta": {
-  "note": "Package 36: the races of the game module godbound (filled in P4 from Wp_claude/RACES_SOURCE.md)."
+  "note": "Package 36 P4: the races of the game module godbound (Wp_claude/RACES_SOURCE.md); only what affects the character; texts of narrative abilities in English (the owner's source)."
  },
- "entries": []
+ "entries": [
+  {
+   "id": "ankalian_survivor",
+   "name": "Выживший анкалиец",
+   "name_en": "Ankalian survivor",
+   "module": "godbound",
+   "type_tags": [
+    "humanoid",
+    "human"
+   ],
+   "speed": 20,
+   "effects": [
+    {
+     "target": "stat:str",
+     "value": 2
+    },
+    {
+     "target": "stat:dex",
+     "value": 2
+    },
+    {
+     "target": "stat:con",
+     "value": 2
+    },
+    {
+     "target": "stat:cha",
+     "value": 2
+    },
+    {
+     "target": "hp_max",
+     "value": 8
+    }
+   ],
+   "abilities": [
+    {
+     "id": "universality",
+     "name": "Универсальность",
+     "name_en": "Universality",
+     "text": "Common to humanity: get a feat whose prerequisites you meet (prerequisites are not checked)."
+    },
+    {
+     "id": "shadow_of_the_crown",
+     "name": "Тень короны",
+     "name_en": "Shadow of the crown",
+     "text": "+2 to diplomacy and empathy. Each cycle 2 comfort with a reliable rear (a place where you are waited for and loved, loyal friends, relatives).",
+     "effects": [
+      {
+       "target": "skill:diplomacy",
+       "value": 2
+      },
+      {
+       "target": "skill:empathy",
+       "value": 2
+      }
+     ],
+     "triggers": [
+      {
+       "tid": "rear",
+       "event": "cycle_end",
+       "text": "Shadow of the crown: +2 comfort if you have a reliable rear",
+       "action": "change_resource",
+       "target": "comfort",
+       "amount": 2
+      }
+     ]
+    },
+    {
+     "id": "adrenaline",
+     "name": "Адреналин",
+     "name_en": "Adrenaline",
+     "text": "Spend 2 BP: +2 to all rolls for an hour (turn the status on), then fatigue until rested. These BP come back only by a full rest.",
+     "triggers": [
+      {
+       "tid": "adrenaline",
+       "event": "manual",
+       "text": "Adrenaline: spend 2 BP and turn the status on",
+       "action": "run_command",
+       "target": "spend_bp",
+       "amount": 0,
+       "params": {
+        "n": 2
+       }
+      }
+     ]
+    },
+    {
+     "id": "life_among_horrors",
+     "name": "Жизнь среди ужасов",
+     "name_en": "Life among horrors",
+     "text": "Does not lower combat morale from critical hits and pain; once per combat may spend 2 actions not to flee because of low morale."
+    }
+   ],
+   "languages": [
+    "Kerez"
+   ],
+   "statuses": [
+    {
+     "id": "adrenaline",
+     "name": "Адреналин",
+     "effects": [
+      {
+       "target": "rolls",
+       "value": 2
+      }
+     ],
+     "text": "+2 to all rolls for an hour; then fatigue until rested."
+    }
+   ]
+  },
+  {
+   "id": "lomit_renegade",
+   "name": "Ломит-ренегат",
+   "name_en": "Lomit renegade",
+   "module": "godbound",
+   "type_tags": [
+    "humanoid",
+    "human"
+   ],
+   "speed": 20,
+   "effects": [
+    {
+     "target": "stat:con",
+     "value": 2
+    },
+    {
+     "target": "stat:int",
+     "value": 2
+    },
+    {
+     "target": "hp_max",
+     "value": 6
+    }
+   ],
+   "abilities": [
+    {
+     "id": "universality",
+     "name": "Универсальность",
+     "name_en": "Universality",
+     "text": "Common to humanity: get a feat whose prerequisites you meet (prerequisites are not checked)."
+    },
+    {
+     "id": "adaptation",
+     "name": "Адаптация",
+     "name_en": "Adaptation",
+     "text": "Counts as one level higher for exchanging comfort for training and for getting Attention (set by hand)."
+    },
+    {
+     "id": "flexible_mind",
+     "name": "Гибкий ум",
+     "name_en": "Flexible mind",
+     "text": "Once per cycle may redistribute 2 drive points for free. Completing all drive quests of the cycle gives one extra Attention point.",
+     "triggers": [
+      {
+       "tid": "drives",
+       "event": "cycle_end",
+       "text": "Flexible mind: you may move 2 drive points; all drive quests closed = +1 Attention"
+      }
+     ]
+    },
+    {
+     "id": "power_of_rationality",
+     "name": "Сила рациональности",
+     "name_en": "Power of rationality",
+     "text": "+2 to saves against any magical effects.",
+     "effects": [
+      {
+       "target": "save",
+       "value": 2,
+       "situational": "vs magical effects"
+      }
+     ]
+    }
+   ],
+   "languages": [
+    "Stagnir"
+   ]
+  },
+  {
+   "id": "ulstanger_fugitive",
+   "name": "Ульстангер-беглец",
+   "name_en": "Ulstanger fugitive",
+   "module": "godbound",
+   "type_tags": [
+    "humanoid",
+    "human"
+   ],
+   "speed": 20,
+   "effects": [
+    {
+     "target": "stat:str",
+     "value": 2
+    },
+    {
+     "target": "stat:con",
+     "value": 4
+    },
+    {
+     "target": "hp_max",
+     "value": 10
+    }
+   ],
+   "abilities": [
+    {
+     "id": "universality",
+     "name": "Универсальность",
+     "name_en": "Universality",
+     "text": "Common to humanity: get a feat whose prerequisites you meet (prerequisites are not checked)."
+    },
+    {
+     "id": "northerner",
+     "name": "Северянин",
+     "name_en": "Northerner",
+     "text": "Gets the feats Endurance and Toughness (add them from the feat catalog by hand when it has them)."
+    },
+    {
+     "id": "rage",
+     "name": "Ярость",
+     "name_en": "Rage",
+     "text": "For each level of pain the melee weapon damage grows by 1.",
+     "effects": [
+      {
+       "target": "damage_per_pain",
+       "value": 1,
+       "note": "melee weapons"
+      }
+     ]
+    },
+    {
+     "id": "necromancy_poisoning",
+     "name": "Отравление некромантией",
+     "name_en": "Necromancy poisoning",
+     "text": "Restores half as many HP from positive energy (every heal by the Heal button); +6 against death effects and necromancy spells; dies at 12 pain, not 8.",
+     "effects": [
+      {
+       "target": "heal_percent",
+       "value": -50
+      },
+      {
+       "target": "rolls",
+       "value": 6,
+       "situational": "vs death effects and necromancy"
+      },
+      {
+       "target": "pain_cap",
+       "value": 4
+      }
+     ]
+    }
+   ],
+   "languages": [
+    "Stagnir"
+   ]
+  }
+ ]
 }
