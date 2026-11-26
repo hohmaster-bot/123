@@ -260,6 +260,16 @@
       "SCREEN_SHARE": "the Sources table asks for at most half the screen height (UI, not a rule)",
       "FRAME_SIDES": "a table frame on both sides (UI, not a rule)"
     },
+    "wp/ui/theme_editor.py": {
+      "COLS": "the columns of the theme token table (UI, not a rule)",
+      "HEX_RGB": "the 7 characters of #rrggbb (a colour text, not a rule)"
+    },
+    "wp/ui/theme_logic.py": {
+      "ALPHA_MAX": "an 8-bit alpha channel (not a rule)",
+      "PCT": "background_dim is a percent (not a rule)",
+      "ROUND_HALF": "round half up (not a rule)",
+      "PLACES": "the contrast ratio is shown with 2 decimals (not a rule)"
+    },
     "wp/ui/tab_settings.py": {
       "COMBO_CHARS": "a settings combo box shows about 10 characters (UI, not a rule)"
     },

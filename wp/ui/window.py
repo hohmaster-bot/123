@@ -12,14 +12,16 @@ the Session: a command result refreshes the blocks whose views are in its topics
 window_classic (saved on close, restored on open). The first-run hint shows until "Understood!" (hint_dismiss).
 """
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QFontDatabase, QGuiApplication
+from PySide6.QtGui import QColor, QFontDatabase, QGuiApplication, QPainter, QPixmap
 from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QMainWindow, QMessageBox, QPushButton, QScrollArea,
-                               QVBoxLayout, QWidget)
+                               QStyle, QStyleOption, QVBoxLayout, QWidget)
 
 from wp.app.session import EDITOR_TOPICS, SETTINGS_TOPICS
 from wp.i18n import i18n
 from wp.theme import qss
+from wp.app import ui_data
 from wp.ui import blocks, menus
+from wp.ui import theme_logic as thl
 from wp.ui.files_ui import Files
 from wp.ui.shell_data import SHELL
 
@@ -44,6 +46,35 @@ class HintBar(QFrame):
     def retranslate(self, tr):
         self.text.setText(tr("hint." + self.hint_id))
         self.button.setText(tr("hint.understood"))
+
+
+class Backdrop(QWidget):
+    """The central area: the theme background, or the own background picture (package 35 P3) scaled to cover, with a
+    black dimming of alpha dim_alpha(background_dim). No picture by default."""
+
+    def __init__(self):
+        super().__init__()
+        self.setObjectName("central")
+        self.pixmap, self.alpha, self.path = None, 0, ""
+
+    def set_picture(self, path, alpha):
+        if path != self.path:
+            pm = QPixmap(path) if path else None
+            self.pixmap = pm if pm is not None and not pm.isNull() else None
+            self.path = path
+        self.alpha = int(alpha)
+        self.update()
+
+    def paintEvent(self, event):
+        p = QPainter(self)
+        opt = QStyleOption()
+        opt.initFrom(self)
+        self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
+        if self.pixmap is not None:
+            scaled = self.pixmap.scaled(self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+            p.drawPixmap(0, 0, scaled)
+            p.fillRect(self.rect(), QColor(0, 0, 0, self.alpha))
+        p.end()
 
 
 class MainWindow(QMainWindow):
@@ -76,8 +107,7 @@ class MainWindow(QMainWindow):
         by_dock = {}
         for it in sorted(items, key=lambda i: (tuple(i.get("position") or (0, 0))[::-1], i.get("tab_order", 0))):
             by_dock.setdefault(it.get("dock", reg["center"]), []).append(it)
-        self.central = QWidget()
-        self.central.setObjectName("central")
+        self.central = Backdrop()
         self.outer = QVBoxLayout(self.central)
         self.outer.addWidget(self.hint)
         self.layouts = [self.outer]
@@ -155,7 +185,7 @@ class MainWindow(QMainWindow):
         theme = self.session.theme(self.system_dark())
         scale = float(self.session.setting("ui_scale"))
         fonts = self.fonts(theme)
-        self.qss = qss.build_qss(theme, scale, fonts=fonts)
+        self.qss = qss.build_qss(theme, scale, fonts=fonts) + self.background(theme)
         self.setStyleSheet(self.qss)
         self.gap = int(qss.scaled(theme, scale)["spacing"])
         colors = qss.scaled(theme, scale, fonts=fonts)
@@ -163,6 +193,16 @@ class MainWindow(QMainWindow):
             b.apply_look(colors, scale, self.session)
         self.retranslate()
         self.adapt()
+
+    def background(self, theme):
+        """The own background picture (app settings background_image / background_dim / background_readable; package
+        35 P3): painted by the central Backdrop; the readable overlay = extra QSS behind the blocks. "" = none."""
+        s = self.session
+        path = ui_data.background_path(s)
+        shown = bool(path)
+        self.central.set_picture(path, thl.dim_alpha(s.setting("background_dim")))
+        self.background_shown = shown
+        return thl.background_qss(theme, bool(s.setting("background_readable"))) if shown else ""
 
     # ------------------------------------------------------------ small window (UI_WISHES point 12, package 34)
     def _apply_level(self, level):

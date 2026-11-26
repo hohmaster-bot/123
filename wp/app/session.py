@@ -171,6 +171,29 @@ class Session(object):
             fn(SETTINGS_TOPICS)
         return DispatchResult(True, topics=SETTINGS_TOPICS, info=dict(result.info))
 
+    THEME_COMMANDS = ("theme_copy", "theme_edit", "theme_reset", "theme_remove")
+
+    def theme_command(self, command, **params):
+        """A theme command of the theme editor (package 35 P3): theme_copy / theme_edit / theme_reset / theme_remove on
+        the theme layers, saved to the user folder at once; subscribers get "settings" (the window restyles live).
+        The shipped themes stay untouched: theme_edit / theme_remove of a shipped id are refused (shipped_theme)."""
+        tid = params.get("tid", "")
+        try:
+            if command not in self.THEME_COMMANDS:
+                raise CommandError("unknown theme command %r" % (command,), "unknown_command", values=(command,))
+            if command in ("theme_edit", "theme_remove") and tid in themes.shipped_ids():
+                raise CommandError("%s is a shipped theme" % (tid,), "shipped_theme", values=(tid,))
+            out = getattr(themes, command)(self.themes, **params)
+            layers, new_id = out if isinstance(out, tuple) else (out, tid)
+            self.themes = themes.save(layers, self.user_dir)
+        except CommandError as e:
+            return DispatchResult(False, reason=e.reason, params=dict(e.params), info={"text": str(e)})
+        except OSError as e:
+            return DispatchResult(False, reason="settings_error", params={}, info={"text": str(e)})
+        for fn in self._subscribers:
+            fn(SETTINGS_TOPICS)
+        return DispatchResult(True, topics=SETTINGS_TOPICS, info={"id": new_id})
+
     def profile(self, mode):
         return st.profile(self.app, mode)
 

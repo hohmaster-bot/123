@@ -45,6 +45,7 @@ def build(win):
         a.setText("%d %%" % round(s * PERCENT))
         group.addAction(a)
     v.addSeparator()
+    _act(win, v, "theme_editor", lambda: __import__("wp.ui.theme_editor", fromlist=["open_editor"]).open_editor(win))
     _act(win, v, "editor", lambda on: win.session.set_editor_mode(bool(on)), True)   # package 34
     h = win.menus["help"] = bar.addMenu("")
     _act(win, h, "hints_reset", lambda: win.session_settings("hints_reset"))
@@ -80,7 +81,7 @@ def retranslate(win, tr):
     for key in ("character", "view", "theme", "language", "scale", "help"):
         win.menus[key].setTitle(tr("menu." + key))
     win.actions["editor"].setChecked(bool(getattr(win.session, "editor_mode", False)))
-    for key in ("new_demo", "open", "save", "save_as", "exit", "hints_reset", "editor"):
+    for key in ("new_demo", "open", "save", "save_as", "exit", "hints_reset", "editor", "theme_editor"):
         win.actions[key].setText(tr("menu." + key))
     lang = win.session.setting("language")
     for lg in LANGS:

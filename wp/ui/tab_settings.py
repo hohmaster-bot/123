@@ -47,6 +47,7 @@ class SettingsPage(QWidget):
         self.w["language"] = self._combo(i18n.LANGS, lambda v: self.set("language", v))
         self.w["theme"] = self._combo((), self.choose_theme)
         self.w["theme_follow_system"] = self._check(lambda on: self.set("theme_follow_system", on))
+        self.w["theme_editor"] = self._button(self.open_theme_editor)          # package 35 P3
         fams = ("",) + tuple(QFontDatabase.families())
         self.w["font_family"] = self._combo(fams, lambda v: self.set("font_family", v))
         self.w["font_family_numbers"] = self._combo(fams, lambda v: self.set("font_family_numbers", v))
@@ -107,6 +108,10 @@ class SettingsPage(QWidget):
     def choose_theme(self, tid):
         return self.block.win.choose_theme(tid)
 
+    def open_theme_editor(self):
+        from wp.ui.theme_editor import open_editor
+        return open_editor(self.block.win)
+
     def editor(self, on):
         self.session.set_editor_mode(bool(on))
 
@@ -117,6 +122,7 @@ class SettingsPage(QWidget):
             if lab is not None:
                 lab.setText(tr("settings_tab." + key))
         self.w["hints_reset"].setText(tr("settings_tab.hints_reset_button"))
+        self.w["theme_editor"].setText(tr("settings_tab.theme_editor_button"))
         for combo, prefix in ((self.w["language"], "lang."), (self.w["journal_mode"], "journal.mode."),
                               (self.w["resource_style"], "settings_tab.style.")):
             for i in range(combo.count()):
