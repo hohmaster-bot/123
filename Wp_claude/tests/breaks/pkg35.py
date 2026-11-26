@@ -111,3 +111,28 @@ ENTRIES += [
          old="        return self.block.win.set_setting(key, value)", new="        return None", suites=UI2,
          rule="pkg 35: every Settings tab control is a settings command (saved, read back)"),
 ]
+
+# ---------------------------------------------------------------- P3: the theme editor and the background (step 1b)
+L3 = ("storage/test_themes35.py",)
+UI3 = ("ui/test_themes35_ui.py",)
+ENTRIES += [
+    dict(id="p35-contrast-warn", file="wp/ui/theme_logic.py",
+         old='            out.append((fg, bg, round(r, PLACES), r >= themes.SCHEMA["contrast_min"]))',
+         new='            out.append((fg, bg, round(r, PLACES), True))', suites=L3 + UI3,
+         rule="owner 16: a contrast under 4.5:1 warns"),
+    dict(id="p35-dim-round", file="wp/ui/theme_logic.py",
+         old="    return int(d * ALPHA_MAX / float(PCT) + ROUND_HALF)", new="    return int(d * ALPHA_MAX / float(PCT))",
+         suites=L3 + UI3, rule="owner 16: the dimming 0..100 -> alpha 0..255 (50 -> 128, half up)"),
+    dict(id="p35-readable", file="wp/ui/theme_logic.py", old="    if not readable:", new="    if False:",
+         suites=L3 + UI3, rule="owner 16: 'keep numbers readable' off = no overlay"),
+    dict(id="p35-shipped-lock", file="wp/app/session.py",
+         old='            if command in ("theme_edit", "theme_remove") and tid in themes.shipped_ids():',
+         new="            if False:", suites=L3 + UI3, rule="pkg 35: the three shipped themes stay untouched"),
+    dict(id="p35-theme-saved", file="wp/app/session.py",
+         old="            self.themes = themes.save(layers, self.user_dir)", new="            self.themes = layers",
+         suites=L3, rule="owner 16: own themes are stored in the settings data (read back by a new Session)"),
+    dict(id="p35-background", file="wp/ui/window.py",
+         old='        self.central.set_picture(path, thl.dim_alpha(s.setting("background_dim")))',
+         new='        self.central.set_picture("", 0)', suites=UI3,
+         rule="owner 16: the own background picture is painted with its dimming"),
+]
