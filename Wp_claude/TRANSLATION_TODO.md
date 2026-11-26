@@ -1591,7 +1591,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (425)
+## Лишние ключи (нигде не нужны) (447)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1724,6 +1724,25 @@
 - `layer.penalty`
 - `layer.shield`
 - `layer.size`
+- `layout_editor.col.block`
+- `layout_editor.col.column`
+- `layout_editor.col.position`
+- `layout_editor.col.size`
+- `layout_editor.col.visible`
+- `layout_editor.column.center`
+- `layout_editor.column.left`
+- `layout_editor.column.right`
+- `layout_editor.down`
+- `layout_editor.higher`
+- `layout_editor.lower`
+- `layout_editor.narrower`
+- `layout_editor.no_warnings`
+- `layout_editor.reset`
+- `layout_editor.tab_rows`
+- `layout_editor.title`
+- `layout_editor.up`
+- `layout_editor.visible`
+- `layout_editor.wider`
 - `levelup.ask`
 - `levelup.button`
 - `levelup.done`
@@ -1740,6 +1759,7 @@
 - `menu.help`
 - `menu.hints_reset`
 - `menu.language`
+- `menu.layout_editor`
 - `menu.new_demo`
 - `menu.open`
 - `menu.save`
@@ -1802,6 +1822,8 @@
 - `settings_tab.hints_reset_button`
 - `settings_tab.journal_mode`
 - `settings_tab.language`
+- `settings_tab.layout_editor`
+- `settings_tab.layout_editor_button`
 - `settings_tab.profile_reset`
 - `settings_tab.profile_reset_button`
 - `settings_tab.quick_cells`

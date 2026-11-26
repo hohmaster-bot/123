@@ -21,6 +21,8 @@ blocks; new core pieces: Session.reminders_view / dismiss_note (one-shot reminde
 not saved), Session.quick_view (the grid from the profile and the app quick buttons), sources view "status:<sid>"
 (the effects of a buff).
 
+Package 35: the UI of the remaining rows is built: bottom_strip (+ sources numbers ot / pain / morale), journal tab (+ journal_note), the tabs (Race and Class stay placeholders: no core data, Q206), expand to full screen, the layout editor (layout_edit / profile_reset with the warnings), themes (the theme editor: Session.theme_command; the background picture). New core pieces: return_action / return_reaction, the effect target temp_hp (Q229 closed), app settings sources_show_all / dialog_sizes, the profile field tab_rows, wp/app/ui_data.py (core data for the UI, D25).
+
 Spec: `UI_WISHES.md` "Classic screen v2". Names are the exact views (`session.view(...)`, ARCH/view_contract.md)
 and commands of the registry. "Gap" = what the block needs and the core does not give yet; "Proposed" = the
 smallest addition. The proposed additions are scheduled as Phase 5 steps in ROADMAP.md (step number in brackets).

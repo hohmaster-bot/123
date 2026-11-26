@@ -1,12 +1,12 @@
 # Status (update at the end of every package; at most 40 lines)
 
-Branch: `Rework`. Phase: 5 (UI) steps 3 and 5 DONE (`python run_wp.py`, D34).
-Last finished package: 34 (sources of every number + editor mode; Parameters, AC, statuses, favourites, reminders,
-tab bar, combat tab). Last report: `Wp_claude/tests/PACKAGE34_REPORT.md`.
+Branch: `Rework`. Phase: 5 (UI) steps 1-8 DONE for Classic (`python run_wp.py`); Lite not started.
+Last finished package: 35 (owner review fixes; bottom strip, Journal / Settings tabs; theme editor and background;
+content tabs; layout editor). Last report: `Wp_claude/tests/PACKAGE35_REPORT.md`.
 
-## Tests (last run in package 34)
-- `python Wp_claude/tests/run_all.py`: suites 78, passed 78, failed 0.
-- `python Wp_claude/tests/break_check.py`: entries 396, caught 396, missed 0.
+## Tests (last run in package 35)
+- `python Wp_claude/tests/run_all.py`: suites 89, passed 89, failed 0.
+- `python Wp_claude/tests/break_check.py`: entries 450, caught 450 (full run 449 + p32-live-settings updated and re-run alone).
 - UI suites tests/ui/*.py run headless inside run_all (skipped without PySide6); screenshots tests/ui_shots/.
 - Legacy baseline (separate): 105 examples, 69 pass, 17 fail, 19 not built (BASELINE_REPORT.md).
 
@@ -14,12 +14,12 @@ tab bar, combat tab). Last report: `Wp_claude/tests/PACKAGE34_REPORT.md`.
 - Waiting for the owner: the overlay spike test; nothing blocking. Russian texts to fill: Wp_claude/TRANSLATION_TODO.md.
 - Assumptions to confirm: Q23, Q96, Q98-Q102, Q105, Q106, Q112, Q114, Q116-Q121, Q123, Q124, Q126-Q129, Q131,
   Q132, Q134-Q144, Q146, Q148-Q150, Q152, Q153, Q160-Q187, Q189-Q196, Q199-Q215, Q217-Q223, Q225-Q228,
-  Q230-Q238; proposal Q229 (an effect target for temp HP).
+  Q230-Q244, Q246-Q255; proposal Q245 (check the bonus type in add_status).
 
 ## Next (ROADMAP.md)
-1. Phase 5 step 6: the bottom strip (then step 7, the other tabs).
-2. The owner: look at the window (python run_wp.py; View > Editor mode and a click on any number; the combat tab),
-   tests/ui_shots/*.png, the overlay spike (OVERLAY_SPIKE.md), ru.json texts (TRANSLATION_TODO.md).
+1. The owner: look at the window (python run_wp.py: the strip, the tabs, View > Theme editor, View > Editor mode and
+   View > Layout editor), tests/ui_shots/*.png, ru.json texts (TRANSLATION_TODO.md).
+2. Then Lite (Phase 5) or the owner's next review of Classic; Race / Class content waits for the game-module data.
 
 ## Known gaps (rule exists, no code)
 - Stored-only weapon picks are flags without mechanics (package 25 E). Multiclass, reverting an arbitrary journal

@@ -123,3 +123,8 @@ language (RU / EN, D4) and theme.
   Training, Skills, Feats, Catalogs; Qt-free tab_logic.py): a table of the view, a summary line, the empty state, one or
   two actions through existing commands; heavy tabs Expand (window.expand_block: never saved). Race and Class stay
   placeholders (game-module neutrality). Tests: storage/test_ui_logic35c.py, ui/test_tabs35.py (shots tab_*_dark).
+- Package 35 P5 (step 8): the LAYOUT EDITOR (wp/ui/layout_editor.py, Qt-free layout_logic.py; View > Layout
+  editor in the editor mode, or the Settings tab): move / column / resize with grid snap, show / hide, the tab rows
+  pin, restore the default profile, the warnings; every change is layout_edit / profile_set / profile_reset; the
+  window rebuilds its regions when the panels change (window.rebuild); in the editor mode the blocks get the
+  block_border_edit border. Tests: ui/test_layout35.py (shots layout_editor_*).

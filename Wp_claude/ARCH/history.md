@@ -102,3 +102,7 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
 - Done in package 34: sources of every number (view, manual rows in the editor mode, Sources dialog; Q224 closed),
   the Parameters and AC blocks, the small-window steps (part 1); the statuses / favourites / reminders blocks, the tab
   bar and the combat tab with action squares and the quick grid (part 2). Report: tests/PACKAGE34_REPORT.md.
+- Done in package 35: fixes of the owner review (Zero initiative, squares one by one, Sources zero rows, dialog sizes,
+  wrapping tabs, the AC audit, the no-sources hint, own temp HP: Q229 closed), the bottom strip, the Journal and
+  Settings tabs, the theme editor and the background, the content tabs, the Classic layout editor. Report:
+  tests/PACKAGE35_REPORT.md.
