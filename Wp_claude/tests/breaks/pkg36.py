@@ -83,7 +83,7 @@ ENTRIES += [
          new="    new = _run(ch, n)", suites=M2 + UI2, rule="decision 6: the action marks the reminder handled"),
     dict(id="p36-held-by", file="wp/model/links.py", old="    return holder_present(ch, holder)",
          new="    return True", suites=M2, rule="decision 14: a missing holder gives 'not backed'"),
-    dict(id="p36-moves", file="wp/model/moves.py", old="            if mode not in best or feet > best[mode][1]:",
+    dict(id="p36-moves", file="wp/model/moves.py", old="            if mode not in best or feet >= best[mode][1]:     # a later equal one (good flight) replaces",
          new="            if mode not in best:", suites=M2, rule="decision 10: per mode the best value"),
     dict(id="p36-native", file="wp/model/race_languages.py",
          old="        out.append(Language(lid, name, native=first and not any(lg.native for lg in taken)))",
@@ -94,4 +94,31 @@ ENTRIES += [
          rule="P2.9: a typed absorber takes only its damage types"),
     dict(id="p36-star", file="wp/ui/screen_blocks.py", old="        if rows and not self.caption.text().endswith(STAR):",
          new="        if False:", suites=UI2, rule="decision 8: a star marks a cell with situational bonuses"),
+]
+
+# ---------------------------------------------------------------- P3: a race in the character (decision 15)
+M3 = ("model/test_pkg36c.py",)
+UI3 = ("ui/test_race36.py",)
+ENTRIES += [
+    dict(id="p36-race-effects", file="wp/model/races.py",
+         old="                effects=_effects(entry), text=entry.get(\"text\", \"\"))", new="                effects=(), text=\"\")",
+         suites=M3 + UI3, rule="decision 15: stat changes and HP are effects of the race"),
+    dict(id="p36-race-auto", file="wp/model/races.py",
+         old='    return bool(a.get("auto", not int(a.get("price", 0))))', new="    return True", suites=M3 + UI3,
+         rule="decision 9: a priced race ability is bought, not given"),
+    dict(id="p36-race-source", file="wp/model/races.py", old="def source_of(rid):\n    return SOURCE + rid",
+         new="def source_of(rid):\n    return \"\"", suites=M3, rule="decision 15: race copies carry the source race:<id>"),
+    dict(id="p36-race-confirm", file="wp/commands/race_cmds.py", old="    if not confirm:", new="    if False:",
+         suites=M3 + UI3, rule="decision 15: changing a race shows the list and needs a confirmation"),
+    dict(id="p36-race-remove", file="wp/model/races.py",
+         old="        fields[coll] = tuple(r for r in getattr(ch, coll) if (coll, getattr(r, key)) not in gone)",
+         new="        fields[coll] = getattr(ch, coll)", suites=M3,
+         rule="decision 15: everything of the old race is removed (quirks and paid traits too)"),
+    dict(id="p36-race-needs", file="wp/commands/race_cmds.py",
+         old="    if need and not any(f.fid == need for f in ch.feats):", new="    if False:", suites=M3,
+         rule="decision 9: a chain: the second ability needs the first"),
+    dict(id="p36-race-price", file="wp/commands/race_cmds.py", old="        left = tr.pay(ch.training, price, source)",
+         new="        left = ch.training", suites=M3 + UI3, rule="decision 9: a race trait is paid in training"),
+    dict(id="p36-race-ask", file="wp/ui/tab_race.py", old="            if not self.block.win.ask(text):",
+         new="            if False:", suites=UI3, rule="decision 15: the change is confirmed by the player"),
 ]
