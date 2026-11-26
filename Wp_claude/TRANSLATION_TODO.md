@@ -1591,7 +1591,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (447)
+## Лишние ключи (нигде не нужны) (473)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1753,6 +1753,8 @@
 - `load.limits`
 - `load.of`
 - `load.overload`
+- `menu.catalog`
+- `menu.catalogs`
 - `menu.character`
 - `menu.editor`
 - `menu.exit`
@@ -1765,6 +1767,7 @@
 - `menu.save`
 - `menu.save_as`
 - `menu.scale`
+- `menu.settings`
 - `menu.theme`
 - `menu.theme_editor`
 - `menu.theme_follow_system`
@@ -1927,6 +1930,7 @@
 - `tab.injuries`
 - `tab.inventory`
 - `tab.journal`
+- `tab.narrative`
 - `tab.placeholder`
 - `tab.race`
 - `tab.rest`
@@ -1972,6 +1976,7 @@
 - `tabs_page.col.ranks`
 - `tabs_page.col.severity`
 - `tabs_page.col.state`
+- `tabs_page.col.text`
 - `tabs_page.col.tier`
 - `tabs_page.col.type`
 - `tabs_page.col.weight`
@@ -1979,6 +1984,8 @@
 - `tabs_page.collapse`
 - `tabs_page.drives.down`
 - `tabs_page.drives.empty`
+- `tabs_page.drives.no_quest`
+- `tabs_page.drives.quest_title`
 - `tabs_page.drives.summary`
 - `tabs_page.drives.up`
 - `tabs_page.expand`
@@ -1995,6 +2002,25 @@
 - `tabs_page.layer.override`
 - `tabs_page.layer.shipped`
 - `tabs_page.layer.user`
+- `tabs_page.narrative.add`
+- `tabs_page.narrative.close.court`
+- `tabs_page.narrative.close.quest`
+- `tabs_page.narrative.close.quirk`
+- `tabs_page.narrative.close.story`
+- `tabs_page.narrative.edit`
+- `tabs_page.narrative.empty`
+- `tabs_page.narrative.kind.court`
+- `tabs_page.narrative.kind.quest`
+- `tabs_page.narrative.kind.quirk`
+- `tabs_page.narrative.kind.story`
+- `tabs_page.narrative.name`
+- `tabs_page.narrative.remove`
+- `tabs_page.narrative.state.active`
+- `tabs_page.narrative.state.burned`
+- `tabs_page.narrative.state.done`
+- `tabs_page.narrative.state.open`
+- `tabs_page.narrative.summary`
+- `tabs_page.narrative.text`
 - `tabs_page.rest.empty`
 - `tabs_page.rest.long`
 - `tabs_page.rest.option.charges`
