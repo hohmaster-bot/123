@@ -1591,7 +1591,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (328)
+## Лишние ключи (нигде не нужны) (346)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1746,6 +1746,7 @@
 - `menu.save_as`
 - `menu.scale`
 - `menu.theme`
+- `menu.theme_editor`
 - `menu.theme_follow_system`
 - `menu.view`
 - `number.attack_melee`
@@ -1809,6 +1810,8 @@
 - `settings_tab.style.flat`
 - `settings_tab.style.glass`
 - `settings_tab.theme`
+- `settings_tab.theme_editor`
+- `settings_tab.theme_editor_button`
 - `settings_tab.theme_follow_system`
 - `settings_tab.ui_scale`
 - `shell.error`
@@ -1912,6 +1915,21 @@
 - `tabs.fewer`
 - `tabs.more`
 - `tabs.pin`
+- `theme_editor.add_image`
+- `theme_editor.background`
+- `theme_editor.color`
+- `theme_editor.contrast_ok`
+- `theme_editor.copy`
+- `theme_editor.copy_name`
+- `theme_editor.low_contrast`
+- `theme_editor.no_image`
+- `theme_editor.own`
+- `theme_editor.readable`
+- `theme_editor.remove`
+- `theme_editor.reset`
+- `theme_editor.shipped`
+- `theme_editor.title`
+- `theme_editor.token`
 - `warning.block_outside_window`
 - `warning.block_under_minimum`
 - `warning.hp_controls_hidden`

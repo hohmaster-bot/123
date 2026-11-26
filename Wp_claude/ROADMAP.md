@@ -90,11 +90,11 @@ the AC block, the small-window steps (D34).
 Step 5 DONE (package 34 part 2): statuses / favourites / reminders blocks, the tab bar and the combat tab.
 Package 35 P1: fixes of the owner review (Zero initiative, squares one by one, Sources zero rows, dialog sizes, the
 wrapping tab bar, the AC audit, the no-sources hint, own temp HP). Step 6 DONE (package 35 P2): the bottom strip, the
-Journal and Settings tabs.
-Steps in order (each a package); next = step 1b, the theme editor:
+Journal and Settings tabs. Step 1b DONE (package 35 P3): the theme editor and the background picture.
+Steps in order (each a package); next = step 7, the content tabs:
   1. [DONE, package 32] Window shell + the three shipped themes (dark default, light, grey-blue), the Session wiring, one-time hints
      storage (hints_seen, hints_off).
-  1b. Theme editor and background: every screen colour a token (the missing tokens of ARCH/ui_gaps.md "Themes"), live
+  1b. [DONE, package 35 P3] Theme editor and background: every screen colour a token (the missing tokens of ARCH/ui_gaps.md "Themes"), live
      preview, copy / reset to shipped, follow the system, the 4.5:1 contrast warning, an own background picture with
      dimming and the readable overlay.
   2. [DONE, package 33] Resources: horizontal tubes (glass / flat), the value editor, adjust_value, temp HP strip, pools (3 large),

@@ -114,3 +114,8 @@ language (RU / EN, D4) and theme.
   short / full mode, journal_note) and SETTINGS (tab_settings.py: every control a settings command). The UI reads
   core data it may not import through wp/app/ui_data.py (D25). Tests: model/test_pkg35b.py,
   storage/test_ui_logic35b.py, ui/test_p35b.py (shots strip_*, journal_*, settings_*).
+- Package 35 P3 (step 1b): the THEME EDITOR (wp/ui/theme_editor.py, Qt-free theme_logic.py; View > Theme editor
+  or the Settings tab): the theme list, Copy / Reset to the shipped one / Remove, every colour token (a click picks a
+  colour of an own theme: Session.theme_command theme_edit, saved at once, live restyle), the contrast warnings (4.5:1,
+  never a refusal), the own background picture (none by default) with dimming and the readable overlay (the central
+  Backdrop of window.py). Tests: storage/test_themes35.py, ui/test_themes35_ui.py (shots themes_*).
