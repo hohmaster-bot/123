@@ -88,7 +88,10 @@ button with the 1000 xp cost (owner), the font settings (D33).
 Step 3 DONE (package 34 part 1): the Sources view and dialog for every number (editor mode), the Parameters block,
 the AC block, the small-window steps (D34).
 Step 5 DONE (package 34 part 2): statuses / favourites / reminders blocks, the tab bar and the combat tab.
-Steps in order (each a package); next = step 6, the bottom strip:
+Package 35 P1: fixes of the owner review (Zero initiative, squares one by one, Sources zero rows, dialog sizes, the
+wrapping tab bar, the AC audit, the no-sources hint, own temp HP). Step 6 DONE (package 35 P2): the bottom strip, the
+Journal and Settings tabs.
+Steps in order (each a package); next = step 1b, the theme editor:
   1. [DONE, package 32] Window shell + the three shipped themes (dark default, light, grey-blue), the Session wiring, one-time hints
      storage (hints_seen, hints_off).
   1b. Theme editor and background: every screen colour a token (the missing tokens of ARCH/ui_gaps.md "Themes"), live
@@ -100,7 +103,7 @@ Steps in order (each a package); next = step 6, the bottom strip:
      items.weight, shield_side and cell lines in defense, ac_cell labels.
   5. [DONE, package 34] Statuses, favourites (char setting favorites), reminders view; the combat tab (actions / reaction squares,
      quick access grid with quick_view, quick_cells / quick_columns).
-  6. Bottom strip (+ a second strip: profile field strips).
+  6. [DONE, package 35 P2] Bottom strip (+ a second strip: profile field strips); the Journal and Settings tabs.
   7. Tabs: Journal, Skills, Feats, Race, Class (class / race views), Injuries, Drives, Inventory / Doll, Training,
      Rest, Catalogs, Settings; expand to full screen without touching the profile.
   8. Layout editor: grid snap, resize, profiles, the three validation warnings, profile_reset.

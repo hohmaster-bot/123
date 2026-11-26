@@ -107,3 +107,10 @@ language (RU / EN, D4) and theme.
   takes its content's size or the size the owner dragged it to (app setting dialog_sizes, wp/ui/dialog_size.py), never
   larger than the screen; a resource whose max is 0 without sources shows the one-time hint no_sources. Qt-free:
   wp/ui/dialog_logic.py. Tests: storage/test_ui_logic35.py, ui/test_p35a.py, model/test_pkg35a.py.
+- Package 35 P2 (step 6): the BOTTOM STRIP (wp/ui/bottom_strip.py; Qt-free strip_logic.py): OT, pain, morale (only in
+  combat, its sources total), speed, load; every cell opens the Sources dialog (new numbers ot / pain / morale);
+  "+ strip" / "- strip" (profile field strips); "Journal" opens the Journal tab. The right column tabs build their
+  pages on first use (combat_tab.PAGES): JOURNAL (tab_journal.py: newest first, kind / text filter, Undo / Redo,
+  short / full mode, journal_note) and SETTINGS (tab_settings.py: every control a settings command). The UI reads
+  core data it may not import through wp/app/ui_data.py (D25). Tests: model/test_pkg35b.py,
+  storage/test_ui_logic35b.py, ui/test_p35b.py (shots strip_*, journal_*, settings_*).

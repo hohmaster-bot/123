@@ -383,6 +383,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `end_cycle()`
   - `exchange_comfort(n=1)` reasons: exchange_least_1_comfort, not_enough_comfort_have
   - `hit_item(iid='', damage=0)` reasons: damage_cannot_negative, item_destroyed
+  - `journal_note(text='')` reasons: note_needs_text
   - `learn_spell(name='', circle=1, discount=None, source='training')` reasons: circle_must_0_9, spell_needs_name
   - `make_language_native(lid='', source='training')` reasons: already_native, no_language
   - `pay_hp_cost(amount=0)`
@@ -497,6 +498,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `start_points`: int
   - `text`: str
 - `drives`: tuple[]
+- `journal_notes`: int
 - `lenses`: tuple[]
 - `quests`: tuple[]
 - `quirks`: tuple[]
@@ -514,6 +516,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `drive_buy_up(did='')`
   - `edit_drive(did='', **fields)` reasons: unknown_field
   - `end_cycle()`
+  - `journal_note(text='')` reasons: note_needs_text
   - `remove_drive(did='')`
   - `set_drive_level(did='', level=0)`
   - `set_drive_level_note(did='', level=0, text='')`
