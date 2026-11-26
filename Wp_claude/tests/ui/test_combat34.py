@@ -104,11 +104,11 @@ def _actions():
     s, w = started("actions", statuses=False)
     c = w.blocks["combat"]
     c.squares[2].click()                            # any free square spends ONE: the smallest number goes
-    first = [b.isEnabled() for b in c.squares]
+    first = [not b.property("spent") for b in c.squares]          # pkg 35: spent squares stay clickable (return)
     c.squares[2].click()
-    second = [b.isEnabled() for b in c.squares]
+    second = [not b.property("spent") for b in c.squares]
     c.reaction_squares[0].click()
-    return first, second, [b.isEnabled() for b in c.reaction_squares], s.view("combat")["actions"]["current"]
+    return first, second, [not b.property("spent") for b in c.reaction_squares],         s.view("combat")["actions"]["current"]
 
 
 S.case("c-actions", "combat.md (owner): spending takes the smallest number first: 1 grey, then 1 and 2; the reaction "
@@ -120,13 +120,13 @@ def _combat():
     c = w.blocks["combat"]
     c.buttons["combat"].click()
     on = s.view("combat")["in_combat"], c.buttons["combat"].text(), c.round.text()
-    c.buttons["turn"].click()
+    c.buttons["zero"].click()                       # pkg 35: Zero initiative (the tick)
     rnd = c.round.text()
     c.buttons["combat"].click()
     return on, rnd, s.view("combat")["in_combat"]
 
 
-S.case("c-combat", "combat.md: Start combat -> round 1 (button End combat); End of turn -> round 2; End combat",
+S.case("c-combat", "combat.md: Start combat -> round 1 (button End combat); Zero initiative -> round 2; End combat",
        ((True, "End combat", "Round 1"), "Round 2", False))(_combat)
 
 

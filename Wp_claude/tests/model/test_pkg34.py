@@ -126,9 +126,9 @@ def _session():
 
 S.case("e-session", "owner 1A: outside the editor mode the edit is refused; in it mana 0 -> 8 (editable); undo -> 0; "
        "read-only again", ("editor_mode_needed", (8, True), 0, False))(_session)
-S.case("e-refusals", "pkg 34: temp HP sources are read-only; an unknown number, an empty name, an unknown row refused",
+S.case("e-refusals", "pkg 34: the effects of a status are read-only (pkg 35: temp HP got a target); an unknown number, an empty name, an unknown row refused",
        ("sources_read_only", "unknown_number", "source_name_needed", "not_found"))(
-    lambda: (ref(lambda: dispatch(hero(), "source_add", number="temp_hp", name="x", value=1)),
+    lambda: (ref(lambda: dispatch(SAMPLE, "source_add", number="status:bless", name="x", value=1)),
              ref(lambda: dispatch(hero(), "source_add", number="luck", name="x", value=1)),
              ref(lambda: dispatch(hero(), "source_add", number="hp_max", name=" ", value=1)),
              ref(lambda: dispatch(hero(), "source_edit", sid="zz", value=1))))
