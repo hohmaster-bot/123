@@ -61,6 +61,7 @@ class SettingsPage(QWidget):
         self.w["quick_columns"] = self._spin(_field_range("quick_columns"), lambda v: self.profile(quick_columns=v))
         self.w["resource_style"] = self._combo(STYLES, lambda v: self.set("resource_style", v))
         self.w["editor_mode"] = self._check(self.editor)
+        self.w["layout_editor"] = self._button(self.open_layout_editor)        # package 35 P5
         self.w["profile_reset"] = self._button(lambda: self.run("profile_reset", mode=CLASSIC,
                                                                 pid=self.session.profile(CLASSIC).get("id")))
         self.labels = {}
@@ -112,6 +113,10 @@ class SettingsPage(QWidget):
         from wp.ui.theme_editor import open_editor
         return open_editor(self.block.win)
 
+    def open_layout_editor(self):
+        from wp.ui.layout_editor import open_layout_editor
+        return open_layout_editor(self.block.win)
+
     def editor(self, on):
         self.session.set_editor_mode(bool(on))
 
@@ -123,6 +128,7 @@ class SettingsPage(QWidget):
                 lab.setText(tr("settings_tab." + key))
         self.w["hints_reset"].setText(tr("settings_tab.hints_reset_button"))
         self.w["theme_editor"].setText(tr("settings_tab.theme_editor_button"))
+        self.w["layout_editor"].setText(tr("settings_tab.layout_editor_button"))
         for combo, prefix in ((self.w["language"], "lang."), (self.w["journal_mode"], "journal.mode."),
                               (self.w["resource_style"], "settings_tab.style.")):
             for i in range(combo.count()):

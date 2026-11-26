@@ -11,6 +11,8 @@ the Session: a command result refreshes the blocks whose views are in its topics
 "settings" re-applies the theme, the language and the scale LIVE. The window geometry is the app setting
 window_classic (saved on close, restored on open). The first-run hint shows until "Understood!" (hint_dismiss).
 """
+import json
+
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QColor, QFontDatabase, QGuiApplication, QPainter, QPixmap
 from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QMainWindow, QMessageBox, QPushButton, QScrollArea,
@@ -104,8 +106,25 @@ class MainWindow(QMainWindow):
         self.refresh_all()
 
     # ------------------------------------------------------------ layout from the profile
+    def panels_signature(self):
+        return json.dumps([dict(i) for i in self.session.profile("classic").get("panels", ())], sort_keys=True)
+
+    def rebuild(self):
+        """The layout editor changed the profile panels (package 35 P5): the regions are built again from it."""
+        self.expanded = None
+        self.blocks = {}
+        old = self.takeCentralWidget()     # deleted later: no widget dies inside the signal that rebuilt it
+        self._build_regions()
+        if old is not None:
+            old.hide()
+            old.deleteLater()
+        self.apply_settings()
+        self.refresh_all()
+        self.retranslate()
+
     def _build_regions(self):
         reg = SHELL["regions"]
+        self.built = self.panels_signature()
         items = [i for i in self.session.profile("classic").get("panels", ()) if i.get("visible", True)]
         by_dock = {}
         for it in sorted(items, key=lambda i: (tuple(i.get("position") or (0, 0))[::-1], i.get("tab_order", 0))):
@@ -279,7 +298,10 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------ the Session subscription (D25)
     def on_topics(self, topics):
         if tuple(topics) == SETTINGS_TOPICS:
-            self.apply_settings()
+            if self.panels_signature() != self.built:     # the layout editor / a profile reset (package 35 P5)
+                self.rebuild()
+            else:
+                self.apply_settings()
             return
         if tuple(topics) == EDITOR_TOPICS:     # the editor mode switched (package 34)
             self.refresh_all()
@@ -292,7 +314,12 @@ class MainWindow(QMainWindow):
             self.sources.reload()
 
     def refresh_all(self):
+        editing = bool(self.session.editor_mode)
         for b in self.blocks.values():
+            if b.property("editing") != editing:      # editor mode: block borders (token block_border_edit)
+                b.setProperty("editing", editing)
+                b.style().unpolish(b)
+                b.style().polish(b)
             b.refresh(self.session)
 
     def character_changed(self):

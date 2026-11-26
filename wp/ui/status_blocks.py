@@ -100,12 +100,16 @@ class StatusesBlock(_Scroll):
             b = QPushButton()
             b.setObjectName("small")
             b.setCheckable(True)
-            b.clicked.connect(lambda _=False, m=m: self.set_mode(m))
+            b.setProperty("mode", m)
+            b.clicked.connect(self._filter_clicked)    # a bound method, no lambda: no cycle kept past a rebuild
             self.filters[m] = b
             bar.addWidget(b)
         bar.addStretch(1)
         self.box.insertLayout(0, bar)
         self.entries, self.rows = (), {}
+
+    def _filter_clicked(self):
+        return self.set_mode(self.sender().property("mode"))
 
     def set_mode(self, mode):
         self.mode = mode

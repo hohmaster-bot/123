@@ -47,6 +47,7 @@ def build(win):
     v.addSeparator()
     _act(win, v, "theme_editor", lambda: __import__("wp.ui.theme_editor", fromlist=["open_editor"]).open_editor(win))
     _act(win, v, "editor", lambda on: win.session.set_editor_mode(bool(on)), True)   # package 34
+    _act(win, v, "layout_editor", lambda: __import__("wp.ui.layout_editor", fromlist=["x"]).open_layout_editor(win))
     h = win.menus["help"] = bar.addMenu("")
     _act(win, h, "hints_reset", lambda: win.session_settings("hints_reset"))
 
@@ -81,7 +82,8 @@ def retranslate(win, tr):
     for key in ("character", "view", "theme", "language", "scale", "help"):
         win.menus[key].setTitle(tr("menu." + key))
     win.actions["editor"].setChecked(bool(getattr(win.session, "editor_mode", False)))
-    for key in ("new_demo", "open", "save", "save_as", "exit", "hints_reset", "editor", "theme_editor"):
+    for key in ("new_demo", "open", "save", "save_as", "exit", "hints_reset", "editor", "theme_editor",
+                "layout_editor"):
         win.actions[key].setText(tr("menu." + key))
     lang = win.session.setting("language")
     for lg in LANGS:
@@ -90,6 +92,7 @@ def retranslate(win, tr):
     scale = float(win.session.setting("ui_scale"))
     for s in win.shell["scales"]:
         win.actions["scale.%s" % s].setChecked(float(s) == scale)   # the setting holds one of these values
+    win.actions["layout_editor"].setEnabled(bool(getattr(win.session, "editor_mode", False)))   # package 35 P5
     win.actions["save"].setEnabled(win.session.character is not None)
     win.actions["save_as"].setEnabled(win.session.character is not None)
     _theme_menu(win, tr)

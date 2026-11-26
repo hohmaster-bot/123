@@ -56,6 +56,7 @@
    {"selector": "QScrollArea#list_area, QWidget#list_inner", "declarations": [["background-color", "transparent"], ["border", "none"]]},
    {"selector": "QTabBar::tab", "declarations": [["background-color", "{surface}"], ["color", "{text}"], ["padding", "3px 6px"]]},
    {"selector": "QTabBar::tab:selected", "declarations": [["background-color", "{accent}"], ["color", "{accent_text}"]]},
+   {"selector": "QFrame#block[editing=\"true\"], QFrame#strip[editing=\"true\"]", "declarations": [["border", "1px dashed {block_border_edit}"]]},
    {"selector": "QPushButton#tab", "declarations": [["background-color", "{surface}"], ["color", "{text}"], ["padding", "3px 6px"]]},
    {"selector": "QPushButton#tab:checked", "declarations": [["background-color", "{accent}"], ["color", "{accent_text}"]]}
   ]}
