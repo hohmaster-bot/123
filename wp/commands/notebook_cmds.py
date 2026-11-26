@@ -217,4 +217,5 @@ def notebook_view(ch):
             "courts": tuple((x.cid, x.label()) for x in ch.courts),
             "quirks": tuple((x.kid, nb.quirk_state(x)) for x in ch.quirks),
             "drives": tuple(drive_view(ch, x) for x in ch.drives), "drive_summary": _drive_summary(ch),
-            "quests": tuple((x.qid, x.done) for x in ch.quests), "stories": tuple(x.stid for x in ch.stories)}
+            "quests": tuple((x.qid, x.done) for x in ch.quests), "stories": tuple(x.stid for x in ch.stories),
+            "journal_notes": ch.journal_notes}

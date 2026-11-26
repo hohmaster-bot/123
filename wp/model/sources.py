@@ -21,7 +21,7 @@ from wp.rules_data import rules as rd
 
 RULE, STORED, EFFECT, MANUAL = "rule", "stored", "effect", "manual"
 NUMBERS = ("hp_max", "balance_max", "spirit_max", "mana_max", "temp_hp", "attack_melee", "attack_ranged",
-           "initiative", "cmb", "cmd", "fort", "ref", "will", "speed", "load", "attention")
+           "initiative", "cmb", "cmd", "fort", "ref", "will", "speed", "load", "attention", "ot", "pain", "morale")
 SAVES = ("fort", "ref", "will")
 MANUAL_PREFIX = "source:"
 STATUS = "status:"                     # package 34 part 2: the effects of one buff / status (read-only)
@@ -236,6 +236,25 @@ def _attention(ch):
     return dv.attention_per_cycle(ch), rows
 
 
+def _ot(ch):
+    """OT (trauma): a stored count (resources.md "OT"); no effect target: read-only (package 35, the bottom strip)."""
+    return ch.trauma, [stored_row("ot_stored", ch.trauma)]
+
+
+def _pain(ch):
+    """Pain: every pain entry (resources.md "Pain") and the temporary pain from HP below 0; read-only."""
+    from wp.core import pain as pn
+    rows = [_row("pain:%d" % i, e.source or "source.pain_entry", STORED, e.amount) for i, e in enumerate(ch.pain)]
+    rows.append(rule_row("pain_hp", pn.pain_from_hp(ch.hp_current), "resources.md"))
+    return dv.pain_total(ch), rows
+
+
+def _morale(ch):
+    """The morale scale (defense.md): the stored scale + effects "morale_scale" (manual rows: that target)."""
+    rows = [stored_row("morale_scale", ch.morale_scale)] + _target_rows(ch, "morale", "morale_scale")
+    return sum(r["value"] for r in rows if r["counted"]), rows
+
+
 def _ac(ch, cell):
     from wp.model import ac_zones_view as zv
     from wp.model import screen_view as scr
@@ -264,7 +283,7 @@ def _floor(rows, total):
 
 _BUILD = {"hp_max": _hp, "balance_max": _balance, "spirit_max": _spirit, "mana_max": _mana, "temp_hp": _temp,
           "attack_melee": lambda ch: _attack(ch, "melee"), "attack_ranged": lambda ch: _attack(ch, "ranged"),
-          "speed": _speed, "load": _load, "attention": _attention}
+          "speed": _speed, "load": _load, "attention": _attention, "ot": _ot, "pain": _pain, "morale": _morale}
 
 
 def _status(ch, sid):

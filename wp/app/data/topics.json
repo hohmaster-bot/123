@@ -316,6 +316,10 @@
    "items",
    "log"
   ],
+  "journal_note": [
+   "notebook",
+   "log"
+  ],
   "learn_spell": [
    "spells",
    "training",

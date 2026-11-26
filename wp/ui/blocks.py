@@ -219,6 +219,9 @@ def make(pid, item, shell):
     if pid in ("tabs", "combat"):
         from wp.ui import combat_tab as ct
         return (ct.TabsBlock if pid == "tabs" else ct.CombatBlock)(pid, item, shell)
+    if pid == "bottom_strip":
+        from wp.ui.bottom_strip import BottomStrip            # package 35 P2
+        return BottomStrip(pid, item, shell)
     if pid in ("parameters", "ac_block"):
         from wp.ui import screen_blocks as sb                 # package 34
         return (sb.ParametersBlock if pid == "parameters" else sb.AcBlock)(pid, item, shell)

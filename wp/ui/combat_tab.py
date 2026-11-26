@@ -15,6 +15,8 @@ first; spent ones grey; a click on a spent one returns one: return_action, packa
 (statuses view "active": a click = use_attack); the quick-access grid (Session.quick_view: profile quick_cells 4-16,
 quick_columns; a click = Session.run_quick). Every control is an existing Session command (D25).
 """
+import importlib
+
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QPushButton, QStackedWidget, QVBoxLayout, QWidget
 
@@ -26,6 +28,8 @@ from wp.ui.screen_blocks import SB
 from wp.ui.status_blocks import _clear
 
 COMBAT = "combat"
+PAGE_TOPICS = ("log", "items", "training", "injuries", "notebook", "rest", "skills", "combat", "defense")  # pages
+PAGES = {"journal": ("wp.ui.tab_journal", "JournalPage"), "settings": ("wp.ui.tab_settings", "SettingsPage")}
 STEP = 1                               # a square click spends / returns one action / reaction
 BUTTONS = ("combat", "zero", "cycle")  # package 35: "zero" = Zero initiative (the tick), no "end of turn"
 
@@ -176,6 +180,14 @@ class TabsBlock(Block):
         self.session = session
         self.bar.set_pinned(session.profile("classic").get("tab_rows", 0))
 
+    def select(self, tab):
+        """Show one tab by its id (the bottom strip's Journal button)."""
+        if tab in self.tabs:
+            self.bar.setCurrentIndex(self.tabs.index(tab))
+            if self.win is not None and COMBAT in self.win.blocks:
+                self.win.blocks[COMBAT].show_tab(tab)
+        return tab in self.tabs
+
     def choose(self, index):
         if self.win is not None and COMBAT in self.win.blocks:
             self.win.blocks[COMBAT].show_tab(self.tabs[index])
@@ -239,23 +251,45 @@ class CombatBlock(Block):
         self.stack.addWidget(self.page)
         self.stack.addWidget(self.placeholder)
         self.tab = COMBAT
-        self.reads = tuple(self.reads) + ("statuses", "attacks", "sheet", "resources")
+        self.pages = {}                      # the other implemented tabs (package 35): built on first use
+        self.reads = tuple(self.reads) + ("statuses", "attacks", "sheet", "resources") + PAGE_TOPICS
         self._tr, self.session, self.combat, self.active, self.quick = None, None, None, None, None
         self.squares, self.reaction_squares, self.quick_cells = [], [], []
 
     # ------------------------------------------------------------ tabs
     def show_tab(self, tab):
         self.tab = tab
+        if tab in PAGES and tab in SB["implemented_tabs"] and tab not in self.pages:
+            mod, cls = PAGES[tab]
+            page = getattr(importlib.import_module(mod), cls)(self)
+            self.pages[tab] = page
+            self.stack.addWidget(page)
+            if self._tr is not None:
+                page.retranslate(self._tr)
+            if self.session is not None:
+                page.refresh(self.session)
         self._show()
+
+    def tab_page(self, tab):
+        """The page of an implemented tab (built when first needed; tests)."""
+        if tab not in self.pages:
+            keep = self.tab
+            self.show_tab(tab)
+            self.show_tab(keep)
+        return self.pages.get(tab)
 
     def retranslate(self, tr):
         super().retranslate(tr)
         self._tr = tr
+        for page in self.pages.values():
+            page.retranslate(tr)
         self._show()
 
     def refresh(self, session):
         super().refresh(session)
         self.session = session
+        for page in self.pages.values():
+            page.refresh(session)
         if session.character is not None:
             self.combat = session.view("combat")
             self.active = session.view("statuses")["active"]
@@ -263,7 +297,9 @@ class CombatBlock(Block):
         self._show()
 
     def apply_look(self, colors, scale, session):
-        """A settings change (quick buttons, profile quick fields) re-reads the quick grid."""
+        """A settings change (quick buttons, profile quick fields) re-reads the quick grid and the pages."""
+        for page in self.pages.values():
+            page.refresh(session)
         if session.character is not None and self.combat is not None:
             self.session = session
             self.quick = session.quick_view("classic")
@@ -274,7 +310,11 @@ class CombatBlock(Block):
         if self._tr is None:
             return
         tr = self._tr
-        if self.tab not in SB["implemented_tabs"]:
+        if self.tab in self.pages:
+            self.title.setText(tr("tab." + self.tab))
+            self.stack.setCurrentWidget(self.pages[self.tab])
+            return
+        if self.tab not in SB["implemented_tabs"] or self.tab != COMBAT:
             self.title.setText(tr("tab." + self.tab))
             self.placeholder.setText(tr("tab.placeholder", name=tr("tab." + self.tab)))
             self.stack.setCurrentWidget(self.placeholder)
@@ -356,6 +396,10 @@ class CombatBlock(Block):
 
     def run(self, command, **params):
         return self._result(self.session.dispatch(command, **params))
+
+    def step(self, result):
+        """Undo / redo of the Journal tab: a refusal shows its text."""
+        return self._result(result)
 
     def quick_press(self, bid):
         return self._result(self.session.run_quick(bid))

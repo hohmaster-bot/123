@@ -260,6 +260,9 @@
       "SCREEN_SHARE": "the Sources table asks for at most half the screen height (UI, not a rule)",
       "FRAME_SIDES": "a table frame on both sides (UI, not a rule)"
     },
+    "wp/ui/tab_settings.py": {
+      "COMBO_CHARS": "a settings combo box shows about 10 characters (UI, not a rule)"
+    },
     "wp/ui/combat_tab.py": {
       "STEP": "a square click spends one action / reaction (UI, not a rule)"
     },

@@ -40,6 +40,15 @@ def source_add(ch, number="", name="", value=0):
 
 
 @command
+def journal_note(ch, text=""):
+    """A note of the player in the journal (package 35 P2, the Journal tab): the text lives in its journal line
+    (params); the character counts the notes (journal_notes) so the line is a change like every command."""
+    if not str(text).strip():
+        raise CommandError("a note needs a text", "note_needs_text")
+    return commit(replace(ch, journal_notes=ch.journal_notes + 1), "journal_note", "note")
+
+
+@command
 def source_edit(ch, sid="", name=None, value=None):
     r = _row(ch, sid)
     if name is not None and not str(name).strip():

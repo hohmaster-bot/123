@@ -308,6 +308,7 @@ class Character:
     hp_current: int = rd.default("new.hit_die")
     temp_hp: int = 0
     temp_hp_spent: int = 0             # own effect temp HP already used (target temp_hp, package 35)
+    journal_notes: int = 0             # journal notes written (journal_note; the text is in its journal line, pkg 35)
     # balance / BP (maxima derived)
     balance_current: int = 0
     balance_bonus: int = 0             # race, class, other
