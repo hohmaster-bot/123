@@ -27,6 +27,7 @@ Each file: rules, then numeric examples (use them as tests).
 | training.md | modes (play/training/edit), sources and cost, ability/armor/shield/language prices, seeds, qualification, professionalism, attention course |
 | crafting.md | recipes, OV, craft DC, unusual items, ILVL |
 | doll.md | 22 doll slots |
+| races.md | races: what a race stores, taking / changing a race, paid traits, languages, movement (package 36) |
 
 Cross-cutting: ANY part of the sheet (item, feat, race, class, injury, quirk, buff) can change ANY base parameter
 (stats, resources, regen, caps, forbid recovery, add resources). Model this as one generic effect system.
@@ -37,8 +38,8 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
 
 - `ac_zones.md` (74 lines): AC by direction, 3x3 cells, shield coverage (owner draft); variants and settings built in package 24
   sections: Cells (6) | Shield coverage (shield in the LEFT hand) (16) | Features change cells (27) | Requirement for the implementation (31) | Values per cell [OWNER, package 14, closes Q92] (35) | Parry and shields [OWNER, package 15, closes Q93] (39) | Variants and settings (package 24) [OWNER, package 24 B; built] (48) | Flank with the shield in either hand (package 27) [OWNER, review 5 F15; built] (69)
-- `buffs.md` (199 lines): effects, buffs, duration, charges
-  sections: What an effect can change (4) | Duration kinds (9) | Value from the current overload [OWNER] (25) | Value from a stat modifier [OWNER, package 11 B; closes Q65] (29) | Skills target [OWNER] (39) | Condition [OWNER, package 8] (42) | Status container [OWNER, package 11 A; closes Q63] (50) | Charges and activation (78) | Stacking (see defense.md) (86) | Ready-made buffs (90) | Stacking flags [OWNER] (93) | Block effects [OWNER, package 13 B; closes Q82] (100) | Per-round cost [OWNER, package 13 C] (119) | Formulas [OWNER, package 14 C] (149) | Action and restore blocks, restore by effect [OWNER, package 14 F] (163) | Effect targets of every sheet number [OWNER, package 16 A2] (177)
+- `buffs.md` (227 lines): effects, buffs, duration, charges
+  sections: What an effect can change (4) | Duration kinds (9) | Value from the current overload [OWNER] (25) | Value from a stat modifier [OWNER, package 11 B; closes Q65] (29) | Skills target [OWNER] (39) | Condition [OWNER, package 8] (42) | Status container [OWNER, package 11 A; closes Q63] (50) | Charges and activation (78) | Stacking (see defense.md) (86) | Ready-made buffs (90) | Stacking flags [OWNER] (93) | Block effects [OWNER, package 13 B; closes Q82] (100) | Per-round cost [OWNER, package 13 C] (119) | Formulas [OWNER, package 14 C] (149) | Action and restore blocks, restore by effect [OWNER, package 14 F] (163) | Effect targets of every sheet number [OWNER, package 16 A2] (177) | Formulas over sheet numbers, conditions, situational [OWNER, package 36, decisions 7, 8, 12, 13, 17] (201) | Triggers [OWNER, package 36, decision 6] (215) | Held by [OWNER, package 36, decision 14] (224)
 - `catalog.md` (61 lines): catalogs, sharing, sorting
   sections: Two names [OWNER] (31) | Catalog files [OWNER, package 18, D21] (35)
 - `classes_magic.md` (59 lines): class editor tabs, mana/slots restore
@@ -57,12 +58,14 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: Doll [OWNER] (3) | Qualification (15) | Belt (unload) [OWNER] (18) | Bag (22) | Weight [OWNER] (28) | Base (resource for strengthening) [OWNER] (44) | Armor [OWNER] (52) | Masterwork [OWNER, package 8; package 9 closes Q39, Q40] (84) | Enchantment [OWNER, package 5] (99) | Item HP [OWNER, package 6, closes Q31] (123) | Item codes / sharing [OWNER] (168) | Enabled / disabled (activation) [OWNER] (173) | Consumables [OWNER, package 13 D] (188) | Charges and cooldown [OWNER, package 14 B; closes Q94] (200) | Base contents [OWNER text above; built in package 16 G7] (213) | Load display (package 30) [OWNER; closes Q197; the numbers do not change] (219)
 - `injuries.md` (44 lines): trauma points, injuries
   sections: Trauma points (OT) [OWNER] (3) | Injury [OWNER] (17) | Healing rating (RL) [OWNER] (35)
-- `narrative.md` (85 lines): quirks, stories, courts, quests, drives, attention
-  sections: Courts (Dvory) [OWNER] (9) | Cycle end button (idea) [OWNER] (15) | Lens [OWNER] (25) | Notebook commands [OWNER, package 16 F] (33) | Not built on purpose [OWNER, package 17, closes Q122] (41) | Drives: level notes and principles (package 25) [OWNER] (49) | Drives (package 28) [OWNER] (55)
-- `progression.md` (50 lines): level up, training, weapon mastery, spell mastery
-  sections: Level up [OWNER] (3) | Weapon mastery (22) | Spell mastery [OWNER] (25) | Class system v0 (package 25) [OWNER consent, package 25 B; ASSUMPTION values marked] (38)
-- `resources.md` (204 lines): HP, temp HP, balance, pain, trauma points, spirit, mana, overload, comfort, class resources, zero initiative, buffs
-  sections: HP and temp HP [OWNER] (3) | Damage pipeline [OWNER] (17) | Balance [OWNER] (33) | Pain [OWNER] (86) | Zero initiative phase [OWNER] (120) | Spirit, mana, overload [OWNER] (139) | Class resources [OWNER] (155) | Comfort [OWNER] (159) | Over max [OWNER, confirmed] (163) | Base, attention, money -> gear.md / narrative.md (172) | Resource pools [OWNER, package 13 C] (174) | Rule switches [OWNER, package 14 G] (184) | Journal [OWNER, package 14 H] (198)
+- `narrative.md` (91 lines): quirks, stories, courts, quests, drives, attention
+  sections: Courts (Dvory) [OWNER] (9) | Cycle end button (idea) [OWNER] (15) | Lens [OWNER] (25) | Notebook commands [OWNER, package 16 F] (33) | Not built on purpose [OWNER, package 17, closes Q122] (41) | Drives: level notes and principles (package 25) [OWNER] (50) | Drives (package 28) [OWNER] (56) | Race narrative and end of session [OWNER, package 36] (88)
+- `progression.md` (59 lines): level up, training, weapon mastery, spell mastery
+  sections: Level up [OWNER] (3) | Weapon mastery (31) | Spell mastery [OWNER] (34) | Class system v0 (package 25) [OWNER consent, package 25 B; ASSUMPTION values marked] (47)
+- `races.md` (40 lines): races: what a race stores, taking / changing a race, paid traits, languages, movement (package 36)
+  sections: What a race stores [OWNER, decision 1] (6) | Taking and changing a race [OWNER, decision 15] (12) | Paid traits and chains [OWNER, decision 9] (20) | Languages [OWNER, decision 16] (27) | Movement [OWNER, decision 10] (31) | Combat pressure [OWNER, decision 4] (35) | Tests (38)
+- `resources.md` (215 lines): HP, temp HP, balance, pain, trauma points, spirit, mana, overload, comfort, class resources, zero initiative, buffs
+  sections: HP and temp HP [OWNER] (3) | Damage pipeline [OWNER] (17) | Balance [OWNER] (33) | Pain [OWNER] (86) | Zero initiative phase [OWNER] (120) | Spirit, mana, overload [OWNER] (139) | Class resources [OWNER] (155) | Comfort [OWNER] (159) | Over max [OWNER, confirmed] (163) | Base, attention, money -> gear.md / narrative.md (172) | Resource pools [OWNER, package 13 C] (174) | Rule switches [OWNER, package 14 G] (184) | Journal [OWNER, package 14 H] (198) | Rule switches of races and abilities [OWNER, package 36, decisions 3, 17] (206)
 - `rest.md` (80 lines): short rest, long rest, BP
   sections: BP and balance [OWNER] (5) | Action UI [OWNER] (21) | Long rest [OWNER] (25) | Short rest [OWNER] (38) | What is restored when [package 22 B8: a summary of the current rules, nothing new] (61)
 - `skills.md` (43 lines): skill categories and costs
@@ -73,7 +76,7 @@ Search a file by its heading (`grep -n "^## "`), then read only that section.
   sections: Metamagic [OWNER, package 10, docs only; not built] (11)
 - `stats.md` (10 lines): stat damage, current/max, permanent stat damage
   sections: (no ## headings)
-- `training.md` (181 lines): modes (play/training/edit), sources and cost, ability/armor/shield/language prices, seeds, qualification, professionalism, attention course
+- `training.md` (182 lines): modes (play/training/edit), sources and cost, ability/armor/shield/language prices, seeds, qualification, professionalism, attention course
   sections: Modes (5) | Ability score cost (24) | Comfort for training [OWNER] (30) | Armor / shield grades [OWNER confirmed, package 4] (33) | Languages [OWNER confirmed] (63) | Other purchases [OWNER, package 4, verbatim; commands since package 15, see below] (75) | Base points [OWNER, Q22] (96) | Seeds, quirks, stories (99) | Qualification (105) | Professionalism [OWNER confirmed] (108) | Attention course (spend 1 attention; Str/Dex/Con/Int/Wis/Cha = modifiers, never below 2 when converted into something useful) (121) | Package 16 additions [OWNER, package 16 G2, G4, G5, A10] (134) | Purchase and progression commands [package 15] (148)
 - `weapons.md` (105 lines): weapon proficiency levels, costs, bonuses
   sections: Levels 0-12 (3) | Difficulty and scale (9) | Cost of +1 grade (15) | Combat basics (one-time per weapon branch) (22) | Bonuses by tier (player picks) (30) | Weapon groups and attack records [OWNER] (45) | Weapon card details [OWNER] (69) | Mastery bonuses in the final numbers [OWNER] (82) | Notes (93)

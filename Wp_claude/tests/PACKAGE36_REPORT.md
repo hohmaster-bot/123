@@ -21,6 +21,25 @@ P1 (finished; fixes of the owner review of package 35):
   grows to at least the minimum its content needs (the saved size is the lower bound, nothing is saved), measured
   again after the new style sheet is polished; the layouts are invalidated. Test: three changes in a row, then no
   overlap, every block inside the window area and fitting its content; shots fonts_before / fonts_after.
+P2 (finished; the engine "anything can change anything", D35):
+- 2.1 Audit ARCH/rule_audit.md: rule numbers were already all data (test_rule_literals); the behaviours a race / feat /
+  item may change are listed with how they are open now.
+- 2.2 Formulas over the real sheet numbers (hp_max, mana_max, base_slots, pain, morale, balance / spirit / bp /
+  comfort max, tagged_base_slots:<tag>), lazy and safe (one pass); the Sources dialog warns "cycle in formulas".
+- 2.3 Effect conditions (hp_full, bp_full, in_combat, pressure =/>=/<= N, pain >= N, manual:<text> = a checkbox on the
+  status and in the Feats tab) and situational texts (never in a total; a star and the hover on Parameters / AC cells;
+  a row in the Sources dialog).
+- 2.4 Rule switches in data (wp/rules_data/switches.json) read by one function: at_negative_hp, death_pain_cap,
+  heal_percent, exp_percent, pain_reduction, natural_regen_percent, injury_points_reduction (a trigger action).
+- 2.5 Triggers on feats, items, statuses, injuries, quirks: the events fire in dispatch (end_cycle, combat start /
+  end, zero initiative, level up, rests, HP below 1) plus manual buttons (Feats tab "Trigger"); each becomes a
+  reminder with an optional action button and Handled (reminders block); closed action list (triggers.json).
+- 2.6 Item tags and the "held by" link (feat / status / quirk held by a feat, item, quirk, status or a text holder):
+  "not backed" + a reminder, nothing removed.
+- 2.7 Movement modes (effects move:<mode>, feet, quality in the note) on the speed hover. 2.8 Race languages (the
+  first native). 2.9 Typed damage absorbers (absorber:<resource>, note = types; pools may absorb).
+- 2.10 RULES/races.md (new, from the owner decisions), buffs.md, resources.md, narrative.md extended (the package text
+  is consent); D35; view contract.
 
 ## Tests and breaks
 - P1: `run_all.py`: suites 92, passed 92, failed 0. `break_check.py`: entries 459, caught 458, missed 1
@@ -29,15 +48,34 @@ P1 (finished; fixes of the owner review of package 35):
 - New suites P1: storage/test_reports.py (3), model/test_pkg36a.py (3: untyped AC 12 + 1 + 2 = 15, Fort 3, melee 1; a
   feat with "luk" twice 12 + 2 = 14; the narrative commands), ui/test_p36a.py (5: top menus and their windows, the
   Narrative tab, the drive quest text, the font fit, shots narrative_*). Breaks tests/breaks/pkg36.py (P1: 9).
+- P2: `run_all.py`: suites 94, passed 94, failed 0. `break_check.py`: entries 480, caught 479, missed 1
+  (formula-unknown-names: the variable check line changed for tagged_base_slots); the entry was updated and re-run
+  alone: caught. After that full run a recursion fix went in (a condition "HP is max" read while HP max is computed is
+  now guarded, found by the P3 race smoke test); after it run_all again 94 / 94 and the 30 package 36 breaks re-run:
+  30 caught. New suites: model/test_pkg36b.py (18: mana 25 -> Str + 2; skerde HP 12 / 34; the cycle;
+  trophies 2 + 3 + 2 = 7 -> saves + 3; HP / BP max conditions; situational; pressure 0 -> +4; in combat; manual
+  checkbox; heal 7, xp 75, pain 1, rest 11; Azana confused; cycle_end comfort + 2; manual injury points 6 -> 2 -> 0; HP
+  below 1; held by; moves; languages; typed absorbers 7 lightning -> pool 3 / 5 fire -> HP 3 / mixed / mana 6 -> 2),
+  ui/test_p36b.py (4: star and hover, the Sources rows, the speed hover, the status checkbox 3 -> 5, the trigger
+  reminder and its button, the manual trigger; shots engine_*). Breaks P2: 21.
 
 ## Changes to old rules
+- P2: old break breaks/core.py formula-unknown-names follows the new variable check.
+- P2 (owner consent in the package text): new RULES/races.md; RULES/buffs.md "Formulas over sheet numbers, conditions,
+  situational", "Triggers", "Held by"; RULES/resources.md "Rule switches of races and abilities"; RULES/narrative.md
+  "Race narrative and end of session". Old test model/test_pkg14.py c-effect-bad-refused: the allowed variable list
+  is longer. New stored fields: Item.tags / triggers, Feat.triggers / held_by / held_kept / text / needs, Status and
+  Quirk triggers / held_by / held_kept (Quirk.source), Injury.triggers, Character.manual_conditions / trigger_notes /
+  trigger_counter / race_id; Effect.condition / situational.
 - No RULES change in P1. Old break breaks/pkg32.py p32-block-size follows the content fit. Old tests:
   ui/test_combat34.py c-tabs (12 tabs), ui/test_p35b.py b-second (taller, not exactly twice), ui/test_tabs35.py
   t-catalogs (the own window of the Catalog menu). Old test core/test_bonuses.py unknown-type: an unknown type is now untyped (decision 17),
   not rejected.
 
 ## Assumptions
+- P2: Q259 formula variables; Q260 conditions; Q261 situational listing; Q262 at_negative_hp; Q263 trigger notes;
+  Q264 held by; Q265 moves; Q266 typed absorbers; Q267 heal / exp percent.
 - P1: Q256 top menus; Q257 the Narrative tab actions; Q258 the font fit.
 
 ## Open questions (ids)
-- Closed: Q245 (owner decision 17). New: Q256-Q258.
+- Closed: Q245 (owner decision 17). New: Q256-Q267.

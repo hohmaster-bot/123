@@ -202,3 +202,14 @@ After everyone acted, in this order [OWNER]:
 - Entries store ids and numbers only, no texts (the UI translates through wp/i18n). Old text entries load with their
   command id only. Read-only or softly refused commands (nothing changed) are not logged. No cap by default
   (log_limit 0). No revert.
+
+## Rule switches of races and abilities [OWNER, package 36, decisions 3, 17]
+- A declared list in data (wp/rules_data/switches.json), read through one function: at_negative_hp (dying / nothing /
+  status:<id>: HP below 0 turns that status of the character on instead of dying), death_pain_cap (= pain_cap),
+  heal_percent (every heal by the Heal button is positive energy: -50 = half), exp_percent (-25 = a quarter less
+  experience), pain_reduction (effective pain lowered by N, never below 0), natural_regen_percent (the HP of a rest:
+  100 = double), injury_points_reduction (a trigger action: OT - N by a button).
+- Tests: heal 10 at -50 % -> 5; xp 100 at -25 % -> 75; pain 3 - 2 = 1; a rest gain 3 at +100 % -> 6.
+- Damage absorbers (classes_magic.md "Racial damage absorbers") may be limited to damage types and stand after temp HP,
+  before HP: the static pool of an azana takes only electricity (7 electric -> the pool -7, HP untouched); mana before
+  HP for a ragmal.

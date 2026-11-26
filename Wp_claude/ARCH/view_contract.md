@@ -2,7 +2,7 @@
 
 The UI talks only to `wp.app.session.Session` (D25): `session.view(panel id, **params)` gives the data of a panel, `session.dispatch(command, **params)` changes the character and returns the topics (panel ids) to refresh. Fields below are read from a sample character (tests/perf/heavy.py).
 
-Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `add_hidden_property`, `add_injury`, `add_template`, `burn_quirk`, `buy_ability`, `deactivate_item`, `edit_ability`, `edit_entry`, `edit_rules`, `edit_sheet`, `end_combat`, `equip_hands`, `equip_item`, `equip_to_slot`, `level_up`, `long_rest`, `long_rest_end_combat`, `move_hand_item`, `remove_entry`, `remove_feat`, `remove_hidden_property`, `remove_injury`, `remove_item`, `remove_template`, `reset_rule_setting`, `reset_settings_group`, `set_active_stance`, `set_bab_override`, `set_class`, `set_rule_setting`, `set_save_override`, `set_size`, `short_rest`, `source_add`, `source_edit`, `source_remove`, `source_toggle`, `start_combat`, `swap_slots`, `tick`, `unequip_hands`, `unequip_item`, `unequip_slot`
+Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `add_hidden_property`, `add_injury`, `add_template`, `burn_quirk`, `buy_ability`, `deactivate_item`, `edit_ability`, `edit_entry`, `edit_rules`, `edit_sheet`, `end_combat`, `equip_hands`, `equip_item`, `equip_to_slot`, `level_up`, `long_rest`, `long_rest_end_combat`, `move_hand_item`, `remove_entry`, `remove_feat`, `remove_hidden_property`, `remove_injury`, `remove_item`, `remove_template`, `reset_rule_setting`, `reset_settings_group`, `run_trigger_action`, `set_active_stance`, `set_bab_override`, `set_class`, `set_manual_condition`, `set_rule_setting`, `set_save_override`, `set_size`, `short_rest`, `source_add`, `source_edit`, `source_remove`, `source_toggle`, `start_combat`, `swap_slots`, `tick`, `unequip_hands`, `unequip_item`, `unequip_slot`
 
 ## attacks
 
@@ -382,6 +382,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `edit_pool(pid='', **fields)` reasons: unknown_pool_fields
   - `end_cycle()`
   - `exchange_comfort(n=1)` reasons: exchange_least_1_comfort, not_enough_comfort_have
+  - `fire_trigger(source='', tid='')` reasons: not_found
   - `hit_item(iid='', damage=0)` reasons: damage_cannot_negative, item_destroyed
   - `journal_note(text='')` reasons: note_needs_text
   - `learn_spell(name='', circle=1, discount=None, source='training')` reasons: circle_must_0_9, spell_needs_name
@@ -419,6 +420,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_drive_principle(did='', text='')`
   - `set_drive_quest(did='', quest=None, state=None, comfort_received=None)`
   - `set_favorite(kind='', oid='', on=True)` reasons: not_allowed
+  - `set_held_kept(collection='', oid='', kept=True)` reasons: not_found, unknown_collection
   - `set_hp_roll(level=1, value=1)` reasons: hit_die_hp_must, no_hit_die_roll
   - `set_ignore_bag_weight(value=True)`
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
@@ -431,6 +433,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_status_favorite(sid='', value=True)`
   - `set_status_hidden(sid='', value=True)`
   - `set_temp_hp(value=0)` reasons: temp_hp_cannot_negative
+  - `set_trigger_handled(nid='', handled=True)`
   - `set_twf(rid='', off='', on=True)` reasons: no_attack_record, off_hand_record_must, two_weapon_combination_needs, without_off_hand_record
   - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_actions(n=1)` reasons: cannot_spend_negative_amount
@@ -685,6 +688,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `class_id`: str
 - `feats`: tuple[tuple[NoneType|str|tuple[int]]]
 - `level`: int
+- `moves`: tuple[]
 - `name`: str
 - `save_override`: map
 - `speed`: int
@@ -695,6 +699,13 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `initiative`: Stat
   - `ref`: Stat
   - `will`: Stat
+- `switches`: map
+  - `at_negative_hp`: str
+  - `death_pain_cap`: int
+  - `exp_percent`: int
+  - `heal_percent`: int
+  - `natural_regen_percent`: int
+  - `pain_reduction`: int
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_experience(amount=0, note='', at='')`
@@ -799,7 +810,10 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
 - `favorites`: map
   - `abilities`: tuple[]
   - `statuses`: tuple[]
+- `manual_conditions`: tuple[]
+- `not_backed`: tuple[]
 - `reminders`: tuple[]
+- `triggers`: tuple[]
 - commands:
   - `activate_status(sid='', ticks=None)`
   - `add_drive(name='', level=0, principle='', level_notes=None, text='', dtype='')` reasons: note_needs_name
@@ -811,6 +825,8 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `drive_buy_down(did='')`
   - `drive_buy_up(did='')`
   - `edit_drive(did='', **fields)` reasons: unknown_field
+  - `end_cycle()`
+  - `fire_trigger(source='', tid='')` reasons: not_found
   - `pay_hp_cost(amount=0)`
   - `remove_attack(rid='')` reasons: no_attack_record
   - `remove_drive(did='')`
@@ -825,12 +841,14 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_drive_principle(did='', text='')`
   - `set_drive_quest(did='', quest=None, state=None, comfort_received=None)`
   - `set_favorite(kind='', oid='', on=True)` reasons: not_allowed
+  - `set_held_kept(collection='', oid='', kept=True)` reasons: not_found, unknown_collection
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
   - `set_item_masterwork(iid='', value=True)`
   - `set_iterative_count(n=0)` reasons: iterative_count_negative
   - `set_status_duration(sid='', remaining=0)` reasons: status_has_no_tick
   - `set_status_favorite(sid='', value=True)`
   - `set_status_hidden(sid='', value=True)`
+  - `set_trigger_handled(nid='', handled=True)`
   - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_charge(owner_kind='item', owner_id='', n=1)` reasons: cooldown_rounds_left, not_enough_charges_have, spend_least_1
   - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0

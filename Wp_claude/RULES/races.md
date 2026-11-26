@@ -1,0 +1,40 @@
+# Races [OWNER, package 36]
+
+Source texts of the owner: Wp_claude/RACES_SOURCE.md (12 races of two game modules). Nothing about a race, class,
+weapon group or module is written in code: a race is catalog data (kind races), every entry names its module.
+
+## What a race stores [OWNER, decision 1]
+- Only what affects the character: name, stat changes, HP, speed, abilities (name, text, effects, price, charges,
+  triggers), languages, type tags. NO general description.
+- A feat "whose prerequisites you meet" is plain text on the ability; prerequisites are never checked (decision 2).
+- Narrative abilities with no mechanics are text only (decision 5), e.g. "does not lower morale from crits and pain".
+
+## Taking and changing a race [OWNER, decision 15]
+- Taking a race copies its entries into the character, each with the source "race:<id>". Stat changes and HP are
+  EFFECTS of the race, never edits of base values.
+- Changing a race: the list of everything with the old race source (quirks the race gave and paid race traits
+  included) is shown and must be confirmed; it is removed and the new race entries are added. One command, one
+  journal line, one undo step. No training refund.
+- A catalog change never changes the copies already taken.
+
+## Paid traits and chains [OWNER, decision 9]
+- A paid race trait (fly for 600 training, then good flight for 300; swim; a drawback buy-out) is an ordinary ability
+  of the race with a price in training, taken by the normal purchase. A chain = two abilities, the second needs the
+  first. Training spent is never refunded automatically (the owner adds training by hand in the editor if needed).
+- Mordon histories (6 types by d20) are six separate abilities; the player takes the one the roll gave; the d20 table
+  is in the hint text. The program never rolls (decision 11).
+
+## Languages [OWNER, decision 16]
+- A race gives known languages: the first is the native one (free), the others are known, not native
+  (training.md "Languages").
+
+## Movement [OWNER, decision 10]
+- The speed cell shows the land speed; the other modes (fly with a quality text, swim, climb) come from abilities /
+  effects (move:<mode>, feet) and are listed on hover. Feet only.
+
+## Combat pressure [OWNER, decision 4]
+- Combat pressure IS the morale scale -10..+10 of the core.
+
+## Tests
+- Every race of RACES_SOURCE.md: a character with the race, hand numbers of the stats, HP at level 1, speed and two or
+  three key effects (tests/model/test_races36.py).

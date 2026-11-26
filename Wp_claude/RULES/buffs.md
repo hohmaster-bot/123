@@ -197,3 +197,31 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   short_rest_heal, short_rest_bp, spell_cost, spell_overload, mana_level, percent:<damage type>.
   Tests (test_pkg17.py): pain 10 dies at cap 8, alive at cap 12; pain 2 -> -2, per pain +1 -> -4; sword HP 10 + 3 ->
   13, axe stays 10; hardness 5 + 2 -> 7; scale 4 + 2 -> morale +3; free heal 3 + 2; circle 2 mana 3 + 1; overload 2 + 1.
+
+## Formulas over sheet numbers, conditions, situational [OWNER, package 36, decisions 7, 8, 12, 13, 17]
+- An effect value may be a formula over other sheet numbers: level (lvl), the stat modifiers, bab, hp_max, mana_max,
+  base_slots, pain, morale, balance_max, spirit_max, bp_max, comfort_max and tagged_base_slots:<tag> (the BASE slots
+  taken by the items with that tag lying at the base: trophies of 2 + 3 + 2 slots = 7, not the number of items).
+  "/" is integer division rounding down. Cycles are NOT blocked: one pass, a value read while it is computed counts 0,
+  and the Sources dialog warns "cycle in formulas". The GM watches cheats.
+- Tests: mana_max 25 -> mana_max / 10 = 2; skerde HP = min(base slots, 4 x level): level 1 with 10 slots -> 4.
+- Condition of an effect: automatic ones the core can read (HP is max, BP is max, pressure = / >= / <= N, in combat,
+  pain >= N) or manual ones (a checkbox with the condition text). No other automatic conditions. The effect counts
+  only while the condition holds; the Sources dialog shows the condition and whether it holds.
+- Situational bonuses (vs magic, vs death effects, mounted ...) are NEVER in a total: hovering the cell lists them
+  ("+2 vs magic"), a small star marks the cell, the Sources dialog has a "situational" row.
+- An unknown bonus type is untyped (stacks with everything); a view never raises (decision 17, closes Q245).
+
+## Triggers [OWNER, package 36, decision 6]
+- Any carrier (item, race, class, feat, spell, status, injury, quirk) may have triggers: a reminder text, an OPTIONAL
+  action button (always pressed by the player) and a handled mark; unhandled reminders stay visible.
+- Events: cycle_end, combat_start, combat_end, zero_initiative, level_up, short_rest, long_rest, hp_below_one, plus a
+  MANUAL trigger = a button on the ability card (there is no "end of session" button: Q122).
+- Actions (closed list): add_status(id), change_resource(id, n), add_reminder(text), add_pain(n),
+  reduce_injury_points(n) (= OT, never below 0), run_command(name, params) from an allowlist (data).
+- Test: cycle_end reminder "+2 comfort" with its button; unhandled stays visible.
+
+## Held by [OWNER, package 36, decision 14]
+- Any ability / bonus may be held by another ability, an item or a quirk (or a text holder with a manual kept / lost
+  checkbox). If the holder disappears the dependent gets a "not backed" mark and a reminder; nothing is removed
+  automatically.

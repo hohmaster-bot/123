@@ -1591,7 +1591,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (473)
+## Лишние ключи (нигде не нужны) (494)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1772,6 +1772,11 @@
 - `menu.theme_editor`
 - `menu.theme_follow_system`
 - `menu.view`
+- `move.burrow`
+- `move.climb`
+- `move.fly`
+- `move.line`
+- `move.swim`
 - `number.attack_melee`
 - `number.attack_ranged`
 - `number.attention`
@@ -1800,6 +1805,7 @@
 - `param.ref`
 - `param.will`
 - `reason.editor_mode_needed`
+- `reminder.not_backed`
 - `reminders.dismiss`
 - `reminders.empty`
 - `resources.amount`
@@ -1848,6 +1854,7 @@
 - `shell.saved`
 - `shell.title`
 - `shell.unexpected`
+- `situational.line`
 - `source.ac_base`
 - `source.ac_other`
 - `source.armor`
@@ -1891,21 +1898,26 @@
 - `sources.col.name`
 - `sources.col.on`
 - `sources.col.value`
+- `sources.condition`
+- `sources.cycle`
 - `sources.effects`
 - `sources.external`
 - `sources.hidden`
+- `sources.holds`
 - `sources.kind.effect`
 - `sources.kind.manual`
 - `sources.kind.rule`
 - `sources.kind.stored`
 - `sources.new_name`
 - `sources.not_counted`
+- `sources.not_holds`
 - `sources.off`
 - `sources.on`
 - `sources.read_only`
 - `sources.read_only_number`
 - `sources.remove`
 - `sources.show_all`
+- `sources.situational`
 - `sources.title`
 - `sources.total`
 - `statuses.end`
@@ -1982,6 +1994,7 @@
 - `tabs_page.col.weight`
 - `tabs_page.col.worn`
 - `tabs_page.collapse`
+- `tabs_page.condition`
 - `tabs_page.drives.down`
 - `tabs_page.drives.empty`
 - `tabs_page.drives.no_quest`
@@ -1991,6 +2004,7 @@
 - `tabs_page.expand`
 - `tabs_page.feats.empty`
 - `tabs_page.feats.favorite`
+- `tabs_page.feats.fire`
 - `tabs_page.feats.summary`
 - `tabs_page.injuries.empty`
 - `tabs_page.injuries.summary`
@@ -2057,6 +2071,13 @@
 - `theme_editor.shipped`
 - `theme_editor.title`
 - `theme_editor.token`
+- `trigger.action.add_pain`
+- `trigger.action.add_reminder`
+- `trigger.action.add_status`
+- `trigger.action.change_resource`
+- `trigger.action.reduce_injury_points`
+- `trigger.action.run_command`
+- `trigger.handled`
 - `warning.block_outside_window`
 - `warning.block_under_minimum`
 - `warning.hp_controls_hidden`

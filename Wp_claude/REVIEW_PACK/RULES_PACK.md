@@ -61,6 +61,7 @@ then the domain ratings and the top-10 list.
 - training.md
 - crafting.md
 - doll.md
+- races.md
 - Appendix (drafts, not built): ac_zones.md
 - Data tables
 
@@ -128,6 +129,7 @@ Each file: rules, then numeric examples (use them as tests).
 | training.md | modes (play/training/edit), sources and cost, ability/armor/shield/language prices, seeds, qualification, professionalism, attention course |
 | crafting.md | recipes, OV, craft DC, unusual items, ILVL |
 | doll.md | 22 doll slots |
+| races.md | races: what a race stores, taking / changing a race, paid traits, languages, movement (package 36) |
 
 Cross-cutting: ANY part of the sheet (item, feat, race, class, injury, quirk, buff) can change ANY base parameter
 (stats, resources, regen, caps, forbid recovery, add resources). Model this as one generic effect system.
@@ -699,6 +701,34 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   Tests (test_pkg17.py): pain 10 dies at cap 8, alive at cap 12; pain 2 -> -2, per pain +1 -> -4; sword HP 10 + 3 ->
   13, axe stays 10; hardness 5 + 2 -> 7; scale 4 + 2 -> morale +3; free heal 3 + 2; circle 2 mana 3 + 1; overload 2 + 1.
 
+#### Formulas over sheet numbers, conditions, situational [OWNER, package 36, decisions 7, 8, 12, 13, 17]
+- An effect value may be a formula over other sheet numbers: level (lvl), the stat modifiers, bab, hp_max, mana_max,
+  base_slots, pain, morale, balance_max, spirit_max, bp_max, comfort_max and tagged_base_slots:<tag> (the BASE slots
+  taken by the items with that tag lying at the base: trophies of 2 + 3 + 2 slots = 7, not the number of items).
+  "/" is integer division rounding down. Cycles are NOT blocked: one pass, a value read while it is computed counts 0,
+  and the Sources dialog warns "cycle in formulas". The GM watches cheats.
+- Tests: mana_max 25 -> mana_max / 10 = 2; skerde HP = min(base slots, 4 x level): level 1 with 10 slots -> 4.
+- Condition of an effect: automatic ones the core can read (HP is max, BP is max, pressure = / >= / <= N, in combat,
+  pain >= N) or manual ones (a checkbox with the condition text). No other automatic conditions. The effect counts
+  only while the condition holds; the Sources dialog shows the condition and whether it holds.
+- Situational bonuses (vs magic, vs death effects, mounted ...) are NEVER in a total: hovering the cell lists them
+  ("+2 vs magic"), a small star marks the cell, the Sources dialog has a "situational" row.
+- An unknown bonus type is untyped (stacks with everything); a view never raises (decision 17, closes Q245).
+
+#### Triggers [OWNER, package 36, decision 6]
+- Any carrier (item, race, class, feat, spell, status, injury, quirk) may have triggers: a reminder text, an OPTIONAL
+  action button (always pressed by the player) and a handled mark; unhandled reminders stay visible.
+- Events: cycle_end, combat_start, combat_end, zero_initiative, level_up, short_rest, long_rest, hp_below_one, plus a
+  MANUAL trigger = a button on the ability card (there is no "end of session" button: Q122).
+- Actions (closed list): add_status(id), change_resource(id, n), add_reminder(text), add_pain(n),
+  reduce_injury_points(n) (= OT, never below 0), run_command(name, params) from an allowlist (data).
+- Test: cycle_end reminder "+2 comfort" with its button; unhandled stays visible.
+
+#### Held by [OWNER, package 36, decision 14]
+- Any ability / bonus may be held by another ability, an item or a quirk (or a text holder with a manual kept / lost
+  checkbox). If the holder disappears the dependent gets a "not backed" mark and a reminder; nothing is removed
+  automatically.
+
 ## File: rest.md
 
 ### Rest
@@ -1097,6 +1127,17 @@ After everyone acted, in this order [OWNER]:
 - Entries store ids and numbers only, no texts (the UI translates through wp/i18n). Old text entries load with their
   command id only. Read-only or softly refused commands (nothing changed) are not logged. No cap by default
   (log_limit 0). No revert.
+
+#### Rule switches of races and abilities [OWNER, package 36, decisions 3, 17]
+- A declared list in data (wp/rules_data/switches.json), read through one function: at_negative_hp (dying / nothing /
+  status:<id>: HP below 0 turns that status of the character on instead of dying), death_pain_cap (= pain_cap),
+  heal_percent (every heal by the Heal button is positive energy: -50 = half), exp_percent (-25 = a quarter less
+  experience), pain_reduction (effective pain lowered by N, never below 0), natural_regen_percent (the HP of a rest:
+  100 = double), injury_points_reduction (a trigger action: OT - N by a button).
+- Tests: heal 10 at -50 % -> 5; xp 100 at -25 % -> 75; pain 3 - 2 = 1; a rest gain 3 at +100 % -> 6.
+- Damage absorbers (classes_magic.md "Racial damage absorbers") may be limited to damage types and stand after temp HP,
+  before HP: the static pool of an azana takes only electricity (7 electric -> the pool -7, HP untouched); mana before
+  HP for a ragmal.
 
 ## File: gear.md
 
@@ -1629,6 +1670,11 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   missing; level 5 -> obsessed; buy up at comfort 3 -> +1 level, comfort 0; at comfort 2 -> refused; buy down at 0 ->
   refused; buy down costs 2; levels 14 of 12 -> no refusal, hint only.
 
+#### Race narrative and end of session [OWNER, package 36]
+- Narrative race abilities with no mechanics are text only. "End of session" effects (Azana: injury points - 4) are a
+  manual trigger button on the ability (there is no session button, Q122). Comfort per cycle (a reliable rear) is a
+  cycle_end trigger with a button "+2 comfort".
+
 ## File: catalog.md
 
 ### Catalog [OWNER]
@@ -2039,6 +2085,49 @@ Each slot holds ONE item that gives a bonus; items can be swapped for the situat
   views "basic" (only the two hands) and "body" (every slot on a human figure). Commands equip_to_slot, unequip_slot,
   swap_slots; an item fits only its own slot (Item.slot).
 
+## File: races.md
+
+### Races [OWNER, package 36]
+
+Source texts of the owner: Wp_claude/RACES_SOURCE.md (12 races of two game modules). Nothing about a race, class,
+weapon group or module is written in code: a race is catalog data (kind races), every entry names its module.
+
+#### What a race stores [OWNER, decision 1]
+- Only what affects the character: name, stat changes, HP, speed, abilities (name, text, effects, price, charges,
+  triggers), languages, type tags. NO general description.
+- A feat "whose prerequisites you meet" is plain text on the ability; prerequisites are never checked (decision 2).
+- Narrative abilities with no mechanics are text only (decision 5), e.g. "does not lower morale from crits and pain".
+
+#### Taking and changing a race [OWNER, decision 15]
+- Taking a race copies its entries into the character, each with the source "race:<id>". Stat changes and HP are
+  EFFECTS of the race, never edits of base values.
+- Changing a race: the list of everything with the old race source (quirks the race gave and paid race traits
+  included) is shown and must be confirmed; it is removed and the new race entries are added. One command, one
+  journal line, one undo step. No training refund.
+- A catalog change never changes the copies already taken.
+
+#### Paid traits and chains [OWNER, decision 9]
+- A paid race trait (fly for 600 training, then good flight for 300; swim; a drawback buy-out) is an ordinary ability
+  of the race with a price in training, taken by the normal purchase. A chain = two abilities, the second needs the
+  first. Training spent is never refunded automatically (the owner adds training by hand in the editor if needed).
+- Mordon histories (6 types by d20) are six separate abilities; the player takes the one the roll gave; the d20 table
+  is in the hint text. The program never rolls (decision 11).
+
+#### Languages [OWNER, decision 16]
+- A race gives known languages: the first is the native one (free), the others are known, not native
+  (training.md "Languages").
+
+#### Movement [OWNER, decision 10]
+- The speed cell shows the land speed; the other modes (fly with a quality text, swim, climb) come from abilities /
+  effects (move:<mode>, feet) and are listed on hover. Feet only.
+
+#### Combat pressure [OWNER, decision 4]
+- Combat pressure IS the morale scale -10..+10 of the core.
+
+#### Tests
+- Every race of RACES_SOURCE.md: a character with the race, hand numbers of the stats, HP at level 1, speed and two or
+  three key effects (tests/model/test_races36.py).
+
 ## Appendix: ac_zones.md (DRAFT, not built; review optional)
 
 ### AC zones (AC by direction) [OWNER, package 13 H] - DRAFT, NOT IMPLEMENTED
@@ -2349,6 +2438,7 @@ Every number can be changed per character (rules_settings). Values as shipped.
 
 | target | meaning |
 |---|---|
+| absorber: | a damage absorber (absorber:mana, absorber:pool:<id>): note = the damage types it takes, comma list ('' = all); after temp HP, before HP (package 36) |
 | actions_max | actions per turn (package 26 A): added to the base 3 |
 | armor_skill_penalty | added to the armor skill penalty (positive = smaller penalty, never above 0) |
 | attack_melee | the general melee attack number of the sheet (package 34: its manual source rows) |
@@ -2365,7 +2455,9 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | dex_loss_cells | AC cells losing Dex and dodge: cells added (value >= 0) or removed (value < 0) (package 24 B2) |
 | dex_loss_chance_pct | percent chance that the Dex loss is cancelled in a Dex-loss cell (package 24 B2) |
 | dr | damage reduction vs physical damage; Effect.note = the bypass text (narrative only); Effect.stacks: total = the largest non-stacking entry + all stacking entries |
+| exp_percent | experience received changed by this percent (-25 = a quarter less; package 36, rule switch) |
 | extra_hit_dice | one extra hit die per effect; the value is the HP of that die; it counts max(1, value + current Con mod) like every die |
+| heal_percent | healing by the Heal button changed by this percent (-50 = half; package 36, rule switch) |
 | hp_max | max HP |
 | item_hardness | hardness of items (Effect.weapon = one item id; none = every item); never below 0 |
 | item_hp | max HP of items (Effect.weapon = one item id; none = every item); not from item tabs |
@@ -2375,8 +2467,11 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | mana_max | max mana |
 | max_dex | Dex cap of the worn armor (only when a cap exists) |
 | morale_scale | count the morale scale X higher (defense.md; the scale stays -10..10) |
+| move: | a movement mode (move:fly, move:swim, move:climb): value in feet, note = the quality text (package 36) |
+| natural_regen_percent | the HP a rest gives changed by this percent (100 = double; package 36, rule switch) |
 | pain_cap | pain count at which the character dies (default 8) |
 | pain_penalty_per_pain | roll penalty per pain point (default 1; -1 makes 0, never below 0) |
+| pain_reduction | the effective pain lowered by N, never below 0 (package 36, rule switch) |
 | parry | parry layer |
 | parry_cells | AC cells where parry works: effect cells added (value >= 0) or removed (value < 0) (package 24 B2) |
 | percent: | signed percent damage modifier of one type (percent:fire 50 = 50% more, -100 = immune) |
@@ -2393,4 +2488,5 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | spell_resistance | spell resistance (shown only, not a damage step) |
 | spirit_max | max spirit |
 | stat: | ability score (stat:str ... stat:cha): typed bonuses stack by the normal rules; the modifier and everything built on it follow |
+| switch: | a choice rule switch (switch:at_negative_hp): the effect note is the value (package 36, switches.json) |
 | temp_hp | own temp HP of the character (manual source rows, own feats / items; package 35, owner Q229): added on read, spent by damage after the 'by button' pool and before buff temp HP (counted in temp_hp_spent), cleared by the short rest; temp HP from an external effect is a status (temp_hp_left) |

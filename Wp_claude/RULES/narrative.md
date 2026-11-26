@@ -84,3 +84,8 @@
   -> none; level 1 -> no flags; level 2 without a principle -> principle missing; level 4 without a quest -> quest
   missing; level 5 -> obsessed; buy up at comfort 3 -> +1 level, comfort 0; at comfort 2 -> refused; buy down at 0 ->
   refused; buy down costs 2; levels 14 of 12 -> no refusal, hint only.
+
+## Race narrative and end of session [OWNER, package 36]
+- Narrative race abilities with no mechanics are text only. "End of session" effects (Azana: injury points - 4) are a
+  manual trigger button on the ability (there is no session button, Q122). Comfort per cycle (a reliable rear) is a
+  cycle_end trigger with a button "+2 comfort".
