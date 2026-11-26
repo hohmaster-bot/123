@@ -45,6 +45,7 @@
     "spell_cost": "mana cost of every circle 1+ spell (never below 0)",
     "spell_overload": "overload gained by every cast (never below 0)",
     "mana_level": "the most one spell may cost in mana (level + this)",
-    "percent:": "signed percent damage modifier of one type (percent:fire 50 = 50% more, -100 = immune)"
+    "percent:": "signed percent damage modifier of one type (percent:fire 50 = 50% more, -100 = immune)",
+    "temp_hp": "own temp HP of the character (manual source rows, own feats / items; package 35, owner Q229): added on read, spent by damage after the 'by button' pool and before buff temp HP (counted in temp_hp_spent), cleared by the short rest; temp HP from an external effect is a status (temp_hp_left)"
   }
 }

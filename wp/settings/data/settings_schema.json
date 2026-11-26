@@ -12,6 +12,8 @@
   {"id": "background_readable", "domain": "app", "type": "bool", "default": true, "group": "general"},
   {"id": "hints_seen", "domain": "app", "type": "list", "item": "string", "default": [], "group": "hints"},
   {"id": "hints_off", "domain": "app", "type": "bool", "default": false, "group": "hints"},
+  {"id": "sources_show_all", "domain": "app", "type": "bool", "default": false, "group": "display"},
+  {"id": "dialog_sizes", "domain": "app", "type": "map", "value": "point", "default": {}, "group": "windows"},
   {"id": "resource_style", "domain": "app", "type": "enum", "default": "glass", "allowed": ["glass", "flat"], "group": "display"},
   {"id": "resource_size", "domain": "app", "type": "map", "value": "point", "default": {"hp": [240, 26], "balance": [240, 20], "spirit": [240, 20], "mana": [240, 20], "pool": [240, 18]}, "group": "display"},
   {"id": "resource_autoswitch", "domain": "app", "type": "bool", "default": true, "group": "display"},
@@ -69,7 +71,8 @@
   "classic": [
    {"id": "name", "type": "string"}, {"id": "panels", "type": "list"}, {"id": "cells", "type": "list"},
    {"id": "doll", "type": "map"}, {"id": "quick_cells", "type": "int", "min": 4, "max": 16},
-   {"id": "quick_columns", "type": "int", "min": 1, "max": 16}, {"id": "strips", "type": "list"}
+   {"id": "quick_columns", "type": "int", "min": 1, "max": 16}, {"id": "strips", "type": "list"},
+   {"id": "tab_rows", "type": "int", "min": 0, "max": 16}
   ],
   "lite": [
    {"id": "name", "type": "string"}, {"id": "elements", "type": "list"},

@@ -1,7 +1,7 @@
 """Manual source rows of sheet numbers (package 34, model/sources.py): source_add(number, name, value),
 source_edit(sid, name, value), source_toggle(sid, on), source_remove(sid). Journaled and undoable like every command;
-the Session lets them run only in the editor mode (EDITOR_ONLY). A row of a number without an effect target (temp HP)
-is refused: that number's sources are read-only. The derived total is never written (the owner corrects a derived
+the Session lets them run only in the editor mode (EDITOR_ONLY). A row of a number without an effect target (the
+effects of a status) is refused: that number's sources are read-only (temp HP has the target temp_hp: package 35). The derived total is never written (the owner corrects a derived
 row with a manual row)."""
 from dataclasses import replace
 

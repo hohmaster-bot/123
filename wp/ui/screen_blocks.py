@@ -170,5 +170,9 @@ class AcBlock(Block):
             primary, secondary, label, shield = info[cid]
             cell.caption.setText(tr(label) + (" " + tr("ac.shield_mark") if shield else ""))
             cell.value.setText(str(primary))
-            cell.note.setText(str(secondary) if secondary != primary else "")
+            names = pl.variant_labels(d, cid)    # package 35 (AC audit): the small number names its variant
+            sec = names.get(dict(d.get("display", {})).get("secondary"), "")
+            cell.note.setText(tr("ac.variant_value", label=tr(sec), ac=secondary) if secondary != primary else "")
+            cell.setToolTip(", ".join(tr("ac.variant_value", label=tr(lab), ac=ac)
+                                      for lab, ac in pl.variant_list(d, cid)))
             _repolish(cell, "shield_cell" if shield else "cell")

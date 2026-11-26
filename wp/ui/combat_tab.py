@@ -3,37 +3,178 @@ point 9).
 
 TabsBlock: a tab bar with every planned tab (data/screen_blocks.json "tabs" or the layout item's own "tabs"); only
 Combat has content now, any other tab shows an empty placeholder with its name in the combat block (no fake content).
-CombatBlock: combat on / off (start_combat / end_combat), End of turn (tick), End of cycle (end_cycle), the round;
-actions as numbered one-colour squares (a click spends 1: the core spends the SMALLEST free number first; spent ones
-grey) and Restore (restore_actions); the reaction squares (spend_reaction / restore_reactions); the attacks list
+Package 35 P1 (owner review 5): the tabs WRAP onto further rows when the block is narrow and back when it is wide (no
+scroll, no clipping; dialog_logic.flow_rows); the profile field tab_rows (> 0) pins the number of rows (editor mode:
+View > Editor mode, then the pin buttons of the block); the block height follows the rows; the saved layout is never
+rewritten by a resize.
+CombatBlock: combat on / off (start_combat / end_combat), Zero initiative (tick: pressed when every character has
+acted and the circle ends; not tied to the character's own turn; package 35), End of cycle (end_cycle), the round;
+actions as numbered one-colour squares (a click on a free one spends 1: the core spends the SMALLEST free number
+first; spent ones grey; a click on a spent one returns one: return_action, package 35) and Restore = restore all
+(restore_actions); the reaction squares (spend_reaction / return_reaction / restore_reactions); the attacks list
 (statuses view "active": a click = use_attack); the quick-access grid (Session.quick_view: profile quick_cells 4-16,
 quick_columns; a click = Session.run_quick). Every control is an existing Session command (D25).
 """
-from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QPushButton, QStackedWidget, QTabBar, QVBoxLayout, \
-    QWidget
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QLabel, QPushButton, QStackedWidget, QVBoxLayout, QWidget
 
 from wp.i18n import i18n
 from wp.ui import combat_logic as cl
+from wp.ui import dialog_logic as dl
 from wp.ui.blocks import Block
 from wp.ui.screen_blocks import SB
 from wp.ui.status_blocks import _clear
 
 COMBAT = "combat"
-STEP = 1                               # a square click spends one action / reaction
+STEP = 1                               # a square click spends / returns one action / reaction
+BUTTONS = ("combat", "zero", "cycle")  # package 35: "zero" = Zero initiative (the tick), no "end of turn"
+
+
+class TabFlow(QWidget):
+    """Checkable tab buttons laid out in rows (the API of a tab bar: count, tabText, setCurrentIndex)."""
+    currentChanged = Signal(int)
+
+    def __init__(self, on_height=None):
+        super().__init__()
+        self.buttons, self.pinned, self.gap, self.current = [], 0, 0, 0
+        self.on_height = on_height
+        self.row_list = []
+
+    def addTab(self, text):
+        b = QPushButton(text, self)
+        b.setObjectName("tab")
+        b.setCheckable(True)
+        b.clicked.connect(lambda _=False, i=len(self.buttons): self.setCurrentIndex(i))
+        self.buttons.append(b)
+        self.relayout()
+
+    def count(self):
+        return len(self.buttons)
+
+    def tabText(self, i):
+        return self.buttons[i].text()
+
+    def setTabText(self, i, text):
+        self.buttons[i].setText(text)
+        self.relayout()
+
+    def currentIndex(self):
+        return self.current
+
+    def setCurrentIndex(self, i):
+        changed = i != self.current
+        self.current = i
+        for k, b in enumerate(self.buttons):
+            b.setChecked(k == i)
+        if changed:
+            self.currentChanged.emit(i)
+
+    def set_pinned(self, rows):
+        self.pinned = int(rows or 0)
+        self.relayout()
+
+    def set_gap(self, gap):
+        self.gap = gap
+        self.relayout()
+
+    def rows_for(self, width):
+        if self.pinned:
+            return dl.pinned_rows(len(self.buttons), self.pinned)
+        return dl.flow_rows([b.sizeHint().width() for b in self.buttons], width, self.gap)
+
+    def heightForWidth(self, width):
+        rows = self.rows_for(width)
+        hs = [max(self.buttons[i].sizeHint().height() for i in r) for r in rows]
+        return sum(hs) + self.gap * max(0, len(rows) - 1)
+
+    def hasHeightForWidth(self):
+        return True
+
+    def relayout(self):
+        rows = self.row_list = self.rows_for(max(1, self.width()))
+        y = 0
+        for r in rows:
+            x, h = 0, max(self.buttons[i].sizeHint().height() for i in r)
+            for i in r:
+                w = self.buttons[i].sizeHint().width()
+                self.buttons[i].setGeometry(x, y, w, h)
+                x += w + self.gap
+            y += h + self.gap
+        need = max(0, y - self.gap)
+        self.setMinimumHeight(need)
+        if self.on_height is not None:
+            self.on_height(need)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.relayout()
 
 
 class TabsBlock(Block):
     def __init__(self, pid, item, shell):
         super().__init__(pid, item, shell)
         self.tabs = cl.tab_list(item, SB["tabs"])
-        self.bar = QTabBar()
-        self.bar.setUsesScrollButtons(True)
-        self.bar.setExpanding(False)
+        self.bar = TabFlow(self.fit_height)
         for _ in self.tabs:
             self.bar.addTab("")
+        self.bar.setCurrentIndex(0)
         self.bar.currentChanged.connect(self.choose)
-        self.box.addWidget(self.bar)
-        self.box.addStretch(1)
+        self.box.addWidget(self.bar, 1)
+        self.pin_row = QWidget()                 # editor mode only: pin the rows (profile field tab_rows)
+        pr = QHBoxLayout(self.pin_row)
+        pr.setContentsMargins(0, 0, 0, 0)
+        self.pin_buttons = {}
+        for key in ("pin", "fewer", "more"):
+            b = QPushButton()
+            b.setObjectName("small")
+            b.clicked.connect(lambda _=False, k=key: self.pin(k))
+            self.pin_buttons[key] = b
+            pr.addWidget(b)
+        pr.addStretch(1)
+        self.pin_row.hide()
+        self.box.addWidget(self.pin_row)
+        self.session = None
+
+    def fit_height(self, flow_height):
+        """The block height follows the rows of tabs (the width is the layout's; nothing is saved)."""
+        m = self.box.contentsMargins()
+        title = self.title.sizeHint().height() if not self.title.isHidden() else 0
+        row = getattr(self, "pin_row", None)
+        pin = (row.sizeHint().height() + self.box.spacing()) if row is not None and not row.isHidden() else 0
+        self.setFixedHeight(m.top() + m.bottom() + title + self.box.spacing() + flow_height + pin)
+
+    def set_compact(self, no_caption, no_details):
+        super().set_compact(no_caption, no_details)
+        self.bar.relayout()
+
+    def rows(self):
+        return len(self.bar.row_list)
+
+    def pin(self, key):
+        """Editor mode: pin the current number of rows / one row fewer / more; pin again = automatic (0)."""
+        if self.session is None or self.win is None:
+            return None
+        prof = self.session.profile("classic")
+        now = int(prof.get("tab_rows", 0) or 0)
+        if key == "pin":
+            rows = 0 if now else self.rows()
+        else:
+            rows = max(1, (now or self.rows()) + (1 if key == "more" else -1))
+        return self.win.session_settings("profile_set", mode="classic", pid=prof.get("id"), tab_rows=rows)
+
+    def set_gap(self, gap):
+        super().set_gap(gap)
+        self.bar.set_gap(gap)
+
+    def refresh(self, session):
+        super().refresh(session)
+        self.session = session
+        self.pin_row.setVisible(bool(session.editor_mode))
+        self.bar.set_pinned(session.profile("classic").get("tab_rows", 0))
+
+    def apply_look(self, colors, scale, session):
+        self.session = session
+        self.bar.set_pinned(session.profile("classic").get("tab_rows", 0))
 
     def choose(self, index):
         if self.win is not None and COMBAT in self.win.blocks:
@@ -43,6 +184,10 @@ class TabsBlock(Block):
         super().retranslate(tr)
         for i, t in enumerate(self.tabs):
             self.bar.setTabText(i, tr("tab." + t))
+        pinned = bool(self.session is not None and self.session.profile("classic").get("tab_rows", 0))
+        self.pin_buttons["pin"].setText(tr("tabs.auto") if pinned else tr("tabs.pin"))
+        self.pin_buttons["fewer"].setText(tr("tabs.fewer"))
+        self.pin_buttons["more"].setText(tr("tabs.more"))
 
 
 class CombatBlock(Block):
@@ -55,7 +200,7 @@ class CombatBlock(Block):
         lay.setContentsMargins(0, 0, 0, 0)
         top = QHBoxLayout()
         self.buttons = {}
-        for key in ("combat", "turn", "cycle"):
+        for key in BUTTONS:
             b = QPushButton()
             b.setObjectName("small")
             b.clicked.connect(lambda _=False, k=key: self.press(k))
@@ -140,15 +285,16 @@ class CombatBlock(Block):
             return
         c = self.combat
         self.buttons["combat"].setText(tr("combat.end") if c["in_combat"] else tr("combat.start"))
-        self.buttons["turn"].setText(tr("combat.turn"))
+        self.buttons["zero"].setText(tr("combat.zero"))
+        self.buttons["zero"].setToolTip(tr("combat.zero_hint"))
         self.buttons["cycle"].setText(tr("combat.cycle"))
         self.round.setText(tr("combat.round", n=c["round"]) if c["in_combat"] else tr("combat.out"))
         self.actions_label.setText(tr("combat.actions"))
         self.reactions_label.setText(tr("combat.reactions"))
         self.squares = self._squares(self.actions_row, c["action_squares"], "action", "spend_actions",
-                                     "restore_actions")
+                                     "return_action", "restore_actions")
         self.reaction_squares = self._squares(self.reactions_row, c["reaction_squares"], "reaction",
-                                              "spend_reaction", "restore_reactions")
+                                              "spend_reaction", "return_reaction", "restore_reactions")
         self.attacks_title.setText(tr("combat.attacks"))
         _clear(self.attacks)
         for a in getattr(self.active, "attacks", ()):
@@ -158,17 +304,19 @@ class CombatBlock(Block):
             self.attacks.addWidget(b)
         self._quick_grid()
 
-    def _squares(self, row, squares, kind, spend, restore):
+    def _squares(self, row, squares, kind, spend, give_back, restore):
         _clear(row)
         out = []
         for n, spent in squares:
             b = QPushButton(str(n))
             b.setObjectName("%s_spent" % kind if spent else "%s_square" % kind)
-            b.setEnabled(not spent)
-            b.clicked.connect(lambda _=False: self.run(spend, n=STEP))
+            b.setProperty("spent", bool(spent))
+            b.setToolTip(self._tr("combat.square_return" if spent else "combat.square_spend"))
+            b.clicked.connect(lambda _=False, s=spent: self.run(give_back if s else spend, n=STEP))
             row.addWidget(b)
             out.append(b)
         r = QPushButton(self._tr("combat.restore"))
+        r.setToolTip(self._tr("combat.restore_hint"))
         r.setObjectName("small")
         r.clicked.connect(lambda _=False: self.run(restore))
         row.addWidget(r)
@@ -215,4 +363,4 @@ class CombatBlock(Block):
     def press(self, key):
         if key == "combat":
             return self.run("end_combat" if self.combat["in_combat"] else "start_combat")
-        return self.run("tick" if key == "turn" else "end_cycle")
+        return self.run("tick" if key == "zero" else "end_cycle")

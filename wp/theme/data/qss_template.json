@@ -55,6 +55,8 @@
    {"selector": "QPushButton#quick_cell", "declarations": [["background-color", "{surface}"], ["color", "{text}"], ["border", "{border_width}px solid {border}"], ["min-height", "28px"]]},
    {"selector": "QScrollArea#list_area, QWidget#list_inner", "declarations": [["background-color", "transparent"], ["border", "none"]]},
    {"selector": "QTabBar::tab", "declarations": [["background-color", "{surface}"], ["color", "{text}"], ["padding", "3px 6px"]]},
-   {"selector": "QTabBar::tab:selected", "declarations": [["background-color", "{accent}"], ["color", "{accent_text}"]]}
+   {"selector": "QTabBar::tab:selected", "declarations": [["background-color", "{accent}"], ["color", "{accent_text}"]]},
+   {"selector": "QPushButton#tab", "declarations": [["background-color", "{surface}"], ["color", "{text}"], ["padding", "3px 6px"]]},
+   {"selector": "QPushButton#tab:checked", "declarations": [["background-color", "{accent}"], ["color", "{accent_text}"]]}
   ]}
 }

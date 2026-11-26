@@ -58,6 +58,17 @@ def restore_reactions(ch):
 
 
 @command
+def return_reaction(ch, n=1):
+    """Give back n spent reactions (owner, package 35: a click on a spent square returns that one)."""
+    n = int(n)
+    have, mx = reactions_current(ch), reactions_max(ch)
+    if have + n > mx:
+        raise CommandError("only %d reactions are spent" % (mx - have), "nothing_spent", values=(n, mx - have))
+    new = replace(ch, reactions_current=None if have + n == mx else have + n)
+    return commit(new, "return_reaction", "reactions +%d" % n, {"left": have + n})
+
+
+@command
 def restore_mana(ch, amount=0):
     amount = int(amount)
     if amount < 0:

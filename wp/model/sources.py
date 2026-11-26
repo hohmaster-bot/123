@@ -171,9 +171,14 @@ def _pool(ch, pid):
 
 
 def _temp(ch):
-    rows = [stored_row("temp_button", ch.temp_hp)]
-    rows += [_row(s.sid, s.name, EFFECT, s.temp_hp_left) for s in ch.statuses if s.active and s.temp_hp_left]
-    return dv.temp_hp_total(ch), rows
+    """Own temp HP (owner, package 35, Q229 closed): the "by button" pool, the effects of target temp_hp (manual
+    rows, own feats / items) and the part damage already used; the temp HP of statuses (external buffs) are no rows:
+    view() gives them as "external" (shown in the statuses block)."""
+    rows = [stored_row("temp_button", ch.temp_hp)] + _target_rows(ch, "temp_hp", dv.TEMP_HP_TARGET)
+    if ch.temp_hp_spent:
+        own = sum(r["value"] for r in rows[1:] if r["counted"])
+        rows.append(stored_row("temp_spent", -min(ch.temp_hp_spent, own)))
+    return ch.temp_hp + dv.temp_hp_own_effects(ch), rows
 
 
 def _lines(ch, number, lines, bonuses, rule="combat.md"):
@@ -291,5 +296,12 @@ def view(ch, number):
     else:
         total, rows = _BUILD[number](ch)
     target, _ = sr.target_of(number)
-    return {"number": number, "total": int(total), "rows": tuple(rows), "target": target or "",
-            "editable_target": bool(target), "effects_only": False}
+    out = {"number": number, "total": int(total), "rows": tuple(rows), "target": target or "",
+           "editable_target": bool(target), "effects_only": False}
+    if number == "temp_hp":
+        out["external"] = int(dv.temp_hp_external(ch))      # buffs: the statuses block shows them (package 35)
+    if number.startswith(sr.AC):         # package 35 (AC audit): every variant of the cell, named
+        from wp.model import ac_zones_view as zv
+        cell = zv.cells(ch)[number[len(sr.AC):]]
+        out["variants"] = tuple((v["id"], v["label"], int(v["ac"])) for v in cell.get("variants", ()))
+    return out

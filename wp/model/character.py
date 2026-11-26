@@ -307,6 +307,7 @@ class Character:
     hp_bonus: int = 0                  # other bonuses to max HP (feats, class, quirks, items)
     hp_current: int = rd.default("new.hit_die")
     temp_hp: int = 0
+    temp_hp_spent: int = 0             # own effect temp HP already used (target temp_hp, package 35)
     # balance / BP (maxima derived)
     balance_current: int = 0
     balance_bonus: int = 0             # race, class, other

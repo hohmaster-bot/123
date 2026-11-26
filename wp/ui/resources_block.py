@@ -16,7 +16,7 @@ import json
 import os
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
 
 from wp.i18n import i18n
 from wp.ui import dialogs
@@ -31,6 +31,7 @@ MANA = "mana"
 OVERLOAD = "overload"
 STEP = 1                               # the -1 / +1 buttons
 MAX_OF = {"hp": "hp_max", "balance": "balance_max", "spirit": "spirit_max", "mana": "mana_max"}   # sources (pkg 34)
+NO_SOURCES = "no_sources"              # the one-time hint of a maximum 0 without sources (package 35 P1)
 ROW_GAP = 2                            # px between the label, the tube and the buttons of one row
 
 
@@ -104,6 +105,20 @@ class Row(QWidget):
             lay.addLayout(top)
             lay.addWidget(self.tube)
             lay.addLayout(self.buttons)
+        self.hint = QFrame(self)          # "no sources - editor mode: click to add" (package 35 P1, hints system)
+        self.hint.setObjectName("hint")
+        hl = QHBoxLayout(self.hint)
+        hl.setContentsMargins(0, 0, 0, 0)
+        self.hint_text = ClickLabel(self.hint)
+        self.hint_text.setWordWrap(True)
+        self.hint_text.clicked.connect(lambda: block.open_sources(self.rid))
+        self.hint_button = QPushButton(self.hint)
+        self.hint_button.setObjectName("small")
+        self.hint_button.clicked.connect(block.dismiss_hint)
+        hl.addWidget(self.hint_text, 1)
+        hl.addWidget(self.hint_button)
+        self.hint.hide()
+        lay.addWidget(self.hint)
 
     def set_custom(self, buttons, session):
         for bid in [b for b in self.custom if b not in dict(buttons)]:
@@ -248,6 +263,29 @@ class ResourcesBlock(Block):
                           seg.get("temp_hp", RES["temp_step"]))
             row.value.setVisible(mode != "thin" and not row.compact)
             row.set_custom(buttons.get(rid, ()), s)
+            self._empty_hint(row, data)
+
+    def no_sources(self, rid, data):
+        """A maximum of 0 that has no source giving it a value (package 35 P1, owner review 7)."""
+        if int(data["max"]) != 0 or self.session is None:
+            return False
+        number = MAX_OF.get(rid, "pool:" + rid)
+        try:
+            rows = self.session.view("sources", number=number)["rows"]
+        except Exception:              # noqa: BLE001 - a number without a sources view shows no hint
+            return False
+        return not any(r["value"] for r in rows if r["counted"])
+
+    def _empty_hint(self, row, data):
+        show = self.no_sources(row.rid, data) and self.session.hint_visible(NO_SOURCES)
+        row.hint_text.setText(self._tr("hint." + NO_SOURCES))
+        row.hint_button.setText(self._tr("hint.understood"))
+        row.hint.setVisible(show)
+
+    def dismiss_hint(self):
+        if self.win is not None:
+            return self.win.session_settings("hint_dismiss", hint_id=NO_SOURCES)
+        return None
 
     # ------------------------------------------------------------ commands (only through the Session)
     def say(self, text):

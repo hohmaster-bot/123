@@ -322,9 +322,24 @@ def natives(ch):
     return sum(1 for lang in ch.languages if lang.native)
 
 
+TEMP_HP_TARGET = "temp_hp"
+
+
+def temp_hp_own_effects(ch):
+    """Own temp HP from effects (target temp_hp: manual source rows, own feats / items; owner, package 35, Q229
+    closed): the effect total minus the part damage already used (temp_hp_spent); never below 0."""
+    from wp.model import sheet_targets as stg
+    return max(0, stg.value(ch, TEMP_HP_TARGET) - ch.temp_hp_spent)
+
+
+def temp_hp_external(ch):
+    """Temp HP held by active statuses (buffs: an external effect; shown in the statuses block, not as a source)."""
+    return sum(s.temp_hp_left for s in ch.statuses if s.active)
+
+
 def temp_hp_total(ch):
-    """Temp HP 'until the end of combat' + temp HP held by statuses with their own duration."""
-    return ch.temp_hp + sum(s.temp_hp_left for s in ch.statuses if s.active)
+    """Temp HP "by button" + own effect temp HP + temp HP held by statuses with their own duration."""
+    return ch.temp_hp + temp_hp_own_effects(ch) + temp_hp_external(ch)
 
 
 def comfort_max(ch):

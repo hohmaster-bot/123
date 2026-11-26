@@ -102,6 +102,7 @@ def short_rest(ch, spends=(), other_heal=0, extra_bp=0, keep_overcap=False):
     new = switch_off_items(bridge.from_rest(ch, rs.apply_short_rest(session, keep_overcap)), SHORT)
     # rest.md [OWNER]: after the spends the short rest clears ALL temp HP
     new = replace(new, temp_hp=0, statuses=tuple(replace(s, temp_hp_left=0) for s in new.statuses))
+    new = replace(new, temp_hp_spent=stg.value(new, dv.TEMP_HP_TARGET))     # own effect temp HP too (pkg 35)
     new = pools.restore_by(new, pools.SHORT_REST)      # resource pools with restore "short_rest" (package 13 C)
     new = rst.guard(ch, rst.rest_hp(ch, new))           # rest HP switch, then restore blocks (package 14 F, G)
     new = us.recharge(new, us.SHORT_REST)               # usage charges (package 14 B)

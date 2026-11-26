@@ -51,6 +51,16 @@ def variant(cell, vid):
     return next((v["ac"] for v in cell.get("variants", ()) if v["id"] == vid), cell.get("full"))
 
 
+def variant_labels(defense, cell):
+    """{variant id: its label key} of one cell of the defense view (package 35: the small number is named)."""
+    return {v["id"]: v["label"] for v in dict(defense.get("cells", {})).get(cell, {}).get("variants", ())}
+
+
+def variant_list(defense, cell):
+    """((label key, AC), ...) of every variant of one cell (the cell tooltip; the Sources dialog shows the same)."""
+    return tuple((v["label"], v["ac"]) for v in dict(defense.get("cells", {})).get(cell, {}).get("variants", ()))
+
+
 def ac_cells(defense, grid, you):
     """{cell: (primary AC, secondary AC, label key, shield counts there)} for the grid cells except "you"; primary /
     secondary = the variants of the app setting display (defense["display"])."""

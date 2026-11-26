@@ -18,7 +18,8 @@ class SourceRow:
 TARGETS = {"hp_max": "hp_max", "balance_max": "balance_max", "spirit_max": "spirit_max", "mana_max": "mana_max",
            "attack_melee": "attack_melee", "attack_ranged": "attack_ranged", "initiative": "initiative",
            "cmb": "cmb", "cmd": "cmd", "fort": "save:fort", "ref": "save:ref", "will": "save:will",
-           "speed": "speed", "load": "load_mod", "attention": "attention_per_cycle", "temp_hp": None}
+           "speed": "speed", "load": "load_mod", "attention": "attention_per_cycle",
+           "temp_hp": "temp_hp"}
 POOL = "pool:"
 AC = "ac:"
 POOL_TARGET = "pool_max:"

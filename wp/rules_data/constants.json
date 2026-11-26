@@ -256,7 +256,9 @@
     },
     "wp/ui/sources_dialog.py": {
       "COLS": "the columns of the Sources table (UI, not a rule)",
-      "VALUE_LIMIT": "the value spin box range of the Sources dialog (UI, not a rule)"
+      "VALUE_LIMIT": "the value spin box range of the Sources dialog (UI, not a rule)",
+      "SCREEN_SHARE": "the Sources table asks for at most half the screen height (UI, not a rule)",
+      "FRAME_SIDES": "a table frame on both sides (UI, not a rule)"
     },
     "wp/ui/combat_tab.py": {
       "STEP": "a square click spends one action / reaction (UI, not a rule)"

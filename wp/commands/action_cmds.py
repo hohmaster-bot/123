@@ -15,6 +15,7 @@ from wp.rules_data import rules as rd
 
 TARGET = "actions_max"
 NOT_ENOUGH = "not_enough_actions"
+NOTHING_SPENT = "nothing_spent"
 
 
 def actions_max(ch):
@@ -64,3 +65,15 @@ def spend_actions(ch, n=1):
 @command
 def restore_actions(ch):
     return commit(refill(ch), "restore_actions", "actions to max")
+
+
+@command
+def return_action(ch, n=1):
+    """Give back n spent actions (owner, package 35: a click on a spent square returns that one); the squares stay
+    derived smallest-first; refused when fewer than n are spent."""
+    n = int(n)
+    have, mx = actions_current(ch), actions_max(ch)
+    if have + n > mx:
+        raise CommandError("only %d actions are spent" % (mx - have), NOTHING_SPENT, values=(n, mx - have))
+    new = replace(ch, actions_current=None if have + n == mx else have + n)
+    return commit(new, "return_action", "actions +%d" % n, {"left": have + n})

@@ -29,17 +29,20 @@ def to_vitals(ch):
 
 
 def _spend_temp(ch, left):
-    """Split the remaining temp HP back: the "by button" pool is used first, then statuses in order (Q23)."""
+    """Split the remaining temp HP back: the "by button" pool is used first (Q23), then the own effect temp HP
+    (package 35, Q239: counted in temp_hp_spent), then statuses in order. -> (temp, own spent, statuses)."""
     used = dv.temp_hp_total(ch) - left
     take = min(used, ch.temp_hp)
     temp = ch.temp_hp - take
     used -= take
+    own = min(used, dv.temp_hp_own_effects(ch))
+    used -= own
     statuses = []
     for s in ch.statuses:
         t = min(used, s.temp_hp_left) if s.active else 0
         used -= t
         statuses.append(replace(s, temp_hp_left=s.temp_hp_left - t) if t else s)
-    return temp, tuple(statuses)
+    return temp, ch.temp_hp_spent + own, tuple(statuses)
 
 
 def from_vitals(ch, v, pain_source=OVERFLOW):
@@ -51,9 +54,9 @@ def from_vitals(ch, v, pain_source=OVERFLOW):
         else:
             resources[a.name] = replace(resources[a.name], current=a.current)
     pain = pn.add(ch.pain, v.pain, pain_source) if v.pain else ch.pain
-    temp, statuses = _spend_temp(ch, v.temp_hp)
+    temp, spent, statuses = _spend_temp(ch, v.temp_hp)
     return replace(ch, hp_current=v.hp.current, balance_current=v.balance.current,
-                   temp_hp=temp, statuses=statuses, mana=mana, resources=resources, trauma=v.trauma, pain=pain)
+                   temp_hp=temp, temp_hp_spent=spent, statuses=statuses, mana=mana, resources=resources, trauma=v.trauma, pain=pain)
 
 
 STATUS_CHARGE = "status:"          # rest charge name for the charges kept on a status (rage 2/3)

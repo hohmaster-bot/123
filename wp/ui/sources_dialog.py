@@ -6,19 +6,28 @@ Outside the editor mode the table is read-only. In the editor mode a MANUAL row'
 it can be removed; a new manual row (name + value) can be added; derived rows are never written (a manual row
 corrects them). Every change is a Session command (source_add / source_edit / source_toggle / source_remove): a
 journal line and an undo step. A refusal shows its i18n text in the message line. Non-blocking (open()).
+Package 35 P1: rows whose value is 0 are hidden unless "show all" is on (the app setting sources_show_all; in the
+editor mode the toggle starts ON and is not saved); an AC cell names every variant (the small second number of the
+cell is the variant "with parry"); temp HP names the buff temp HP shown in the statuses block; the dialog takes the
+size of its content or the size the owner dragged it to (dialog_size.SizedDialog, id "sources").
 """
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QCheckBox, QDialog, QHBoxLayout, QLabel, QLineEdit, QPushButton, QSpinBox,
                                QTableWidget, QTableWidgetItem, QVBoxLayout)
 
 from wp.i18n import i18n
+from wp.ui import dialog_logic as dl
+from wp.ui.dialog_size import SizedDialog
 
 COLS = 5                               # name, kind, value, on, remove
 C_NAME, C_KIND, C_VALUE, C_ON, C_REMOVE = range(COLS)
 VALUE_LIMIT = 100000                   # the value spin box range (the core accepts any int)
+SCREEN_SHARE = 2                       # the table asks for at most 1 / SCREEN_SHARE of the screen height (UI)
+SHOW_ALL = "sources_show_all"
+FRAME_SIDES = 2                        # the table frame is on both sides (UI)
 
 
-class SourcesDialog(QDialog):
+class SourcesDialog(SizedDialog, QDialog):
     def __init__(self, win, number):
         super().__init__(win)
         self.win, self.session, self.number = win, win.session, number
@@ -27,6 +36,14 @@ class SourcesDialog(QDialog):
         self.total = QLabel()
         self.total.setObjectName("big")
         lay.addWidget(self.total)
+        self.extra = QLabel()                 # AC variants / buff temp HP (package 35)
+        self.extra.setObjectName("muted")
+        self.extra.setWordWrap(True)
+        lay.addWidget(self.extra)
+        self.show_all = QCheckBox()
+        self.show_all.setChecked(dl.show_all_start(win.session.setting(SHOW_ALL), win.session.editor_mode))
+        self.show_all.toggled.connect(self.set_show_all)
+        lay.addWidget(self.show_all)
         self.table = QTableWidget(0, COLS)
         self.table.verticalHeader().setVisible(False)
         lay.addWidget(self.table, 1)
@@ -46,6 +63,7 @@ class SourcesDialog(QDialog):
         lay.addWidget(self.message)
         self.view = None
         self.reload()
+        self.setup_size(win, "sources")
 
     def tr(self, key, **params):
         return self.win.tr(key, **params)
@@ -61,7 +79,18 @@ class SourcesDialog(QDialog):
                                if not self.number.startswith(("pool:", "ac:", "status:")) else self.number))
         self.total.setText(tr("sources.effects") if v.get("effects_only") else tr("sources.total", total=v["total"]))
         self.table.setHorizontalHeaderLabels([tr("sources.col." + c) for c in ("name", "kind", "value", "on")] + [""])
-        rows = v["rows"]
+        self.show_all.setText(tr("sources.show_all"))
+        rows = dl.visible_rows(v["rows"], self.show_all.isChecked())
+        self.hidden = len(v["rows"]) - len(rows)
+        extra = []
+        if v.get("variants"):
+            extra.append(", ".join(tr("ac.variant_value", label=tr(label), ac=ac) for _, label, ac in v["variants"]))
+        if v.get("external"):
+            extra.append(tr("sources.external", n=v["external"]))
+        if self.hidden:
+            extra.append(tr("sources.hidden", n=self.hidden))
+        self.extra.setText("; ".join(extra))
+        self.extra.setVisible(bool(extra))
         self.table.setRowCount(len(rows))
         for i, r in enumerate(rows):
             name = tr(r["name"]) if r["name"].startswith(("source.", "layer.")) else r["name"]
@@ -98,6 +127,25 @@ class SourcesDialog(QDialog):
         elif not edit:
             self.message.setText(tr("sources.read_only"))
         self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
+        self._fit_table()
+
+    def _fit_table(self):
+        """The table asks for the size of its rows and columns (no fixed frame, no empty area)."""
+        t = self.table
+        frame = FRAME_SIDES * t.frameWidth()
+        w = sum(t.columnWidth(c) for c in range(t.columnCount())) + frame
+        h = t.horizontalHeader().height() + sum(t.rowHeight(r) for r in range(t.rowCount())) + frame
+        screen = self.screen()
+        if screen is not None:
+            h = min(h, screen.availableGeometry().height() // SCREEN_SHARE)
+        t.setMinimumSize(w, h)
+        t.setMaximumHeight(h)                     # no empty table area under the last row
+
+    def set_show_all(self, on):
+        if not self.session.editor_mode:          # the editor starts ON and is not remembered
+            self.win.set_setting(SHOW_ALL, bool(on))
+        self.reload()
 
     def _cell(self, row, col, text):
         it = QTableWidgetItem(str(text))

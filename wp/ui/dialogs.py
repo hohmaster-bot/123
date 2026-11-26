@@ -6,12 +6,16 @@ and calls accept().
 EditPopup: the tube value editor ("+N" / "-N" / a number; for HP a second field = temporary HP).
 AmountDialog: an amount (and optionally a damage type) for Take damage / Heal / Damage to balance.
 RollDialog: the hit-die roll of a level-up (spin box, minimum 1).
+Package 35: every dialog takes the size of its content or the size the owner dragged it to, never larger than the
+screen (dialog_size.SizedDialog; ids edit / amount / level_up).
 """
 from PySide6.QtWidgets import (QComboBox, QDialog, QDialogButtonBox, QFormLayout, QLabel, QLineEdit, QSpinBox,
                                QVBoxLayout)
 
+from wp.ui.dialog_size import SizedDialog
 
-class _Base(QDialog):
+
+class _Base(SizedDialog, QDialog):
     def __init__(self, parent, title, tr):
         super().__init__(parent)
         self.setWindowTitle(title)
@@ -42,6 +46,7 @@ class EditPopup(_Base):
             self.temp = QLineEdit()
             self.temp.setPlaceholderText(temp_text)
             self.form.addRow(tr("resources.edit_temp"), self.temp)
+        self.setup_size(parent, "edit")
 
     def texts(self):
         return self.value.text().strip(), (self.temp.text().strip() if self.temp is not None else "")
@@ -59,6 +64,7 @@ class AmountDialog(_Base):
             for t in types:
                 self.kind.addItem(tr("damage." + t), t)
             self.form.addRow(tr("resources.damage_type"), self.kind)
+        self.setup_size(parent, "amount")
 
     def values(self):
         return int(self.amount.value()), (self.kind.currentData() if self.kind is not None else None)
@@ -71,6 +77,7 @@ class RollDialog(_Base):
         self.roll.setRange(1, int(maximum))
         self.roll.setValue(1)
         self.form.addRow(tr("levelup.roll"), self.roll)
+        self.setup_size(parent, "level_up")
 
     def value(self):
         return int(self.roll.value())

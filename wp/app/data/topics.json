@@ -493,6 +493,16 @@
    "resources",
    "log"
   ],
+  "return_action": [
+   "combat",
+   "resources",
+   "log"
+  ],
+  "return_reaction": [
+   "combat",
+   "resources",
+   "log"
+  ],
   "set_active_stance": [
    "all"
   ],
@@ -652,6 +662,18 @@
   "short_rest": [
    "all"
   ],
+  "source_add": [
+   "all"
+  ],
+  "source_edit": [
+   "all"
+  ],
+  "source_remove": [
+   "all"
+  ],
+  "source_toggle": [
+   "all"
+  ],
   "spend_actions": [
    "combat",
    "resources",
@@ -664,18 +686,6 @@
   "spend_bp": [
    "resources",
    "log"
-  ],
-  "source_add": [
-   "all"
-  ],
-  "source_edit": [
-   "all"
-  ],
-  "source_remove": [
-   "all"
-  ],
-  "source_toggle": [
-   "all"
   ],
   "spend_charge": [
    "attacks",
