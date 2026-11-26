@@ -95,8 +95,15 @@ language (RU / EN, D4) and theme.
   set_favorite). REMINDERS block: Session.reminders_view = the standing reminders + the one-shot reminders of command
   results (Session.notes, not saved; topic "reminders"; dismiss = Session.dismiss_note). TABS block: the 13 planned
   tabs (data/screen_blocks.json or the layout item's "tabs"); only Combat has content, any other tab shows its
-  placeholder in the combat block. COMBAT tab (wp/ui/combat_tab.py): Start / End combat, End of turn (tick), End of
-  cycle, the round; numbered action squares (a click spends one, the core spends the smallest free number; spent ones
-  grey), restore; reaction squares; the attacks (statuses.active, a click = use_attack); the quick grid
+  placeholder in the combat block. COMBAT tab (wp/ui/combat_tab.py): Start / End combat, Zero initiative (the tick:
+  pressed when every character has acted and the circle ends; package 35), End of cycle, the round; numbered action
+  squares (a click on a free one spends one, the core spends the smallest free number; spent ones grey; a click on a
+  spent one returns one: return_action), Restore = restore all; reaction squares (return_reaction); the attacks (statuses.active, a click = use_attack); the quick grid
   (Session.quick_view: profile quick_cells clamped 4-16, quick_columns; app quick buttons without a resource group;
   a click = Session.run_quick). Tests: storage/test_ui_logic34b.py, ui/test_combat34.py (shots statuses_*, combat_*).
+- Package 35 P1 (owner review of package 34): the tab bar wraps onto further rows inside the tabs block (TabFlow;
+  the profile field tab_rows pins the rows, editor mode); the Sources dialog hides rows of value 0 unless "show all"
+  (app setting sources_show_all; ON in the editor mode), names the AC variants and the buff temp HP; every dialog
+  takes its content's size or the size the owner dragged it to (app setting dialog_sizes, wp/ui/dialog_size.py), never
+  larger than the screen; a resource whose max is 0 without sources shows the one-time hint no_sources. Qt-free:
+  wp/ui/dialog_logic.py. Tests: storage/test_ui_logic35.py, ui/test_p35a.py, model/test_pkg35a.py.

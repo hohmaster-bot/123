@@ -2,7 +2,7 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (866)
+## Нет в ru.json (870)
 
 ### catalog (107)
 - `catalog.field.ac_bonus`
@@ -713,7 +713,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (156)
+### settings (160)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -744,6 +744,8 @@
 - `settings.damage_order.desc`
 - `settings.default_mode`
 - `settings.default_mode.desc`
+- `settings.dialog_sizes`
+- `settings.dialog_sizes.desc`
 - `settings.font_family`
 - `settings.font_family.desc`
 - `settings.font_family_numbers`
@@ -844,6 +846,8 @@
 - `settings.rest_regen_bonus.desc`
 - `settings.rest_regen_multiplier`
 - `settings.rest_regen_multiplier.desc`
+- `settings.sources_show_all`
+- `settings.sources_show_all.desc`
 - `settings.speed_multiplier`
 - `settings.speed_multiplier.desc`
 - `settings.theme`
@@ -894,7 +898,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (669)
+## Нет в en.json (673)
 
 ### catalog (107)
 - `catalog.field.ac_bonus`
@@ -1365,7 +1369,7 @@
 - `rules.weapons.specialist_slots`
 - `rules.weapons.specialist_slots.desc`
 
-### settings (156)
+### settings (160)
 - `settings.ac_cell_primary`
 - `settings.ac_cell_primary.desc`
 - `settings.ac_cell_secondary`
@@ -1396,6 +1400,8 @@
 - `settings.damage_order.desc`
 - `settings.default_mode`
 - `settings.default_mode.desc`
+- `settings.dialog_sizes`
+- `settings.dialog_sizes.desc`
 - `settings.font_family`
 - `settings.font_family.desc`
 - `settings.font_family_numbers`
@@ -1496,6 +1502,8 @@
 - `settings.rest_regen_bonus.desc`
 - `settings.rest_regen_multiplier`
 - `settings.rest_regen_multiplier.desc`
+- `settings.sources_show_all`
+- `settings.sources_show_all.desc`
 - `settings.speed_multiplier`
 - `settings.speed_multiplier.desc`
 - `settings.theme`
@@ -1583,11 +1591,12 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (252)
+## Лишние ключи (нигде не нужны) (270)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
 - `ac.shield_side.right`
+- `ac.variant_value`
 - `ac_cell.1`
 - `ac_cell.2`
 - `ac_cell.3`
@@ -1597,6 +1606,10 @@
 - `ac_cell.7`
 - `ac_cell.8`
 - `ac_cell.9`
+- `ac_variant.melee`
+- `ac_variant.melee_parry`
+- `ac_variant.ranged`
+- `ac_variant.with_dex`
 - `combat.actions`
 - `combat.attacks`
 - `combat.cycle`
@@ -1605,9 +1618,13 @@
 - `combat.quick`
 - `combat.reactions`
 - `combat.restore`
+- `combat.restore_hint`
 - `combat.round`
+- `combat.square_return`
+- `combat.square_spend`
 - `combat.start`
-- `combat.turn`
+- `combat.zero`
+- `combat.zero_hint`
 - `counter.attention`
 - `counter.load`
 - `counter.morale`
@@ -1657,6 +1674,7 @@
 - `hint.expand_tab`
 - `hint.first_run`
 - `hint.layout_editor`
+- `hint.no_sources`
 - `hint.quick_access`
 - `hint.tube_editor`
 - `hint.understood`
@@ -1783,6 +1801,7 @@
 - `source.stat_str`
 - `source.stat_wis`
 - `source.temp_button`
+- `source.temp_spent`
 - `source.unknown`
 - `sources.add`
 - `sources.col.kind`
@@ -1790,6 +1809,8 @@
 - `sources.col.on`
 - `sources.col.value`
 - `sources.effects`
+- `sources.external`
+- `sources.hidden`
 - `sources.kind.effect`
 - `sources.kind.manual`
 - `sources.kind.rule`
@@ -1801,6 +1822,7 @@
 - `sources.read_only`
 - `sources.read_only_number`
 - `sources.remove`
+- `sources.show_all`
 - `sources.title`
 - `sources.total`
 - `statuses.end`
@@ -1828,6 +1850,10 @@
 - `tab.settings`
 - `tab.skills`
 - `tab.training`
+- `tabs.auto`
+- `tabs.fewer`
+- `tabs.more`
+- `tabs.pin`
 - `warning.block_outside_window`
 - `warning.block_under_minimum`
 - `warning.hp_controls_hidden`

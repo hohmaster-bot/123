@@ -2393,3 +2393,4 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | spell_resistance | spell resistance (shown only, not a damage step) |
 | spirit_max | max spirit |
 | stat: | ability score (stat:str ... stat:cha): typed bonuses stack by the normal rules; the modifier and everything built on it follow |
+| temp_hp | own temp HP of the character (manual source rows, own feats / items; package 35, owner Q229): added on read, spent by damage after the 'by button' pool and before buff temp HP (counted in temp_hp_spent), cleared by the short rest; temp HP from an external effect is a status (temp_hp_left) |

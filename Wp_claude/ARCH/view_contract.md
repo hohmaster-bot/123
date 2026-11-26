@@ -123,6 +123,8 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `restore_actions()`
   - `restore_all_balance(pick_id='')` reasons: not_enough_charges_have, restoring_blocked, wrong_pick
   - `restore_reactions()`
+  - `return_action(n=1)`
+  - `return_reaction(n=1)` reasons: nothing_spent
   - `set_iterative_count(n=0)` reasons: iterative_count_negative
   - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_actions(n=1)` reasons: cannot_spend_negative_amount
@@ -404,6 +406,8 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `restore_mana(amount=0)` reasons: amount_must_0, restoring_blocked
   - `restore_pool(pid='')` reasons: restoring_blocked
   - `restore_reactions()`
+  - `return_action(n=1)`
+  - `return_reaction(n=1)` reasons: nothing_spent
   - `set_attack_source(kind='', source='')` reasons: no_attack_record, not_allowed
   - `set_base_speed(feet=None)` reasons: speed_cannot_negative
   - `set_char_setting(key='', value=None)`
@@ -593,6 +597,8 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `restore_mana(amount=0)` reasons: amount_must_0, restoring_blocked
   - `restore_pool(pid='')` reasons: restoring_blocked
   - `restore_reactions()`
+  - `return_action(n=1)`
+  - `return_reaction(n=1)` reasons: nothing_spent
   - `set_hp_roll(level=1, value=1)` reasons: hit_die_hp_must, no_hit_die_roll
   - `set_item_hp(iid='', value=0)` reasons: item_destroyed
   - `set_primary_attack(rid='', on=True)` reasons: most_primary_attack_records, no_attack_record
