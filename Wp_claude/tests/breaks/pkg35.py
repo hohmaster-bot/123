@@ -172,3 +172,26 @@ ENTRIES += [
          new='        self.reads = tuple(self.reads) + ("statuses", "attacks", "sheet", "resources")', suites=UI4,
          rule="pkg 35: a tab page shows the new numbers after a command"),
 ]
+
+# ---------------------------------------------------------------- P5: the Classic layout editor (step 8)
+UI5 = ("ui/test_layout35.py",)
+ENTRIES += [
+    dict(id="p35-snap", file="wp/ui/layout_logic.py", old="    return int((float(value) / step) + ROUND_HALF) * step",
+         new="    return int(float(value) / step) * step", suites=UI5, rule="UI_WISHES 13: grid snap (half up)"),
+    dict(id="p35-move", file="wp/ui/layout_logic.py",
+         old='    return {item_id: {"position": b}, other["id"]: {"position": a}}', new="    return {}", suites=UI5,
+         rule="UI_WISHES 13: a block moves up / down in its column"),
+    dict(id="p35-to-column", file="wp/ui/layout_logic.py",
+         old='        y = _key(last)[0] + int((last.get("size") or (0, 0))[1]) + int(step)', new="        y = 0",
+         suites=UI5, rule="pkg 35: a block moved to another column goes under its last block"),
+    dict(id="p35-resize-min", file="wp/ui/layout_logic.py",
+         old='    return {"size": [max(int(step), snap(w, step)), max(int(step), snap(h, step))]}',
+         new='    return {"size": [snap(w, step), snap(h, step)]}', suites=UI5,
+         rule="pkg 35: a size never below one grid step"),
+    dict(id="p35-rebuild", file="wp/ui/window.py", old="            if self.panels_signature() != self.built:",
+         new="            if False:", suites=UI5, rule="UI_WISHES 13: the window follows the edited profile"),
+    dict(id="p35-hide-block", file="wp/ui/layout_editor.py",
+         old='        return None if it is None else self._done(self._edit(it["id"], visible=bool(on)), it["id"])',
+         new='        return None if it is None else self._done(self._edit(it["id"], visible=True), it["id"])',
+         suites=UI5, rule="UI_WISHES 13: show / hide a block"),
+]
