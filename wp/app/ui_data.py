@@ -8,6 +8,8 @@ setting_range(key) / profile_field_range(mode, field) -> (min, max) of an app se
 layout_warnings(session, mode) -> the layout warnings of the active profile (never refusals).
 background_path(session) -> the file of the own background picture, or "" (none, unknown or missing).
 """
+import json
+
 from wp.catalog import schema as csch
 from wp.catalog import store as cs
 from wp.commands import journal
@@ -27,6 +29,14 @@ def catalog_kinds():
 def catalog_rows(session, kind):
     return tuple(sorted((e["id"], str(e.get("name") or e.get("title") or ""), layer)
                         for e, layer in cs.merged(session.catalog(kind))))
+
+
+def catalog_entry(session, kind, eid):
+    """One catalog entry as a plain dict (the race tab gives it to take_race / change_race), or None."""
+    for e, _layer in cs.merged(session.catalog(kind)):
+        if e["id"] == eid:
+            return json.loads(json.dumps(e))
+    return None
 
 
 def setting_range(key):

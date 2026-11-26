@@ -131,6 +131,16 @@ def shipped_path(kind):
 
 
 def load_shipped(kind):
+    """The shipped catalog of a kind; package 36: a folder data/<kind>/ of one file per game module (races) is
+    merged into one catalog (the entries of every module file, in file name order)."""
+    folder = os.path.join(SHIPPED_DIR, kind)
+    if os.path.isdir(folder):
+        data = {"kind": kind, "format": FORMAT, "title": kind, "counter": 0, "retired": [], "meta": {}, "entries": []}
+        for name in sorted(os.listdir(folder)):
+            if name.endswith(".json"):
+                with io.open(os.path.join(folder, name), encoding="utf-8") as f:
+                    data["entries"] += json.load(f)["entries"]
+        return from_data(data, folder)
     p = shipped_path(kind)
     return load(p) if os.path.exists(p) else None
 

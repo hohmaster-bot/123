@@ -34,7 +34,7 @@ PAGES = {"journal": ("wp.ui.tab_journal", "JournalPage"), "settings": ("wp.ui.ta
          "rest": ("wp.ui.tab_pages", "RestPage"), "inventory": ("wp.ui.tab_pages2", "InventoryPage"),
          "training": ("wp.ui.tab_pages2", "TrainingPage"), "skills": ("wp.ui.tab_pages2", "SkillsPage"),
          "feats": ("wp.ui.tab_pages2", "FeatsPage"), "catalogs": ("wp.ui.tab_pages2", "CatalogsPage"),
-         "narrative": ("wp.ui.tab_narrative", "NarrativePage")}
+         "narrative": ("wp.ui.tab_narrative", "NarrativePage"), "race": ("wp.ui.tab_race", "RacePage")}
 STEP = 1                               # a square click spends / returns one action / reaction
 BUTTONS = ("combat", "zero", "cycle")  # package 35: "zero" = Zero initiative (the tick), no "end of turn"
 

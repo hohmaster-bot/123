@@ -189,6 +189,12 @@ def sheet(ch, session=None):
             "switches": _switches(ch)}
 
 
+def race(ch, session=None):
+    """The race of the character (package 36 P3, model/races.py view)."""
+    from wp.model import races
+    return races.view(ch)
+
+
 def situational(ch, session=None):
     """{sheet number: ((value, text, source), ...)} of the situational bonuses (package 36, decision 8)."""
     from wp.model import situational as sit
@@ -235,5 +241,5 @@ VIEWS = {"resources": resources, "combat": combat, "defense": defense, "attacks"
          "items": items, "statuses": statuses, "skills": skills, "rest": rest, "log": log, "notebook": notebook,
          "training": training, "settings": settings, "catalogs": catalogs, "sheet": sheet, "spells": spells,
          "injuries": injuries, "editor": editor, "sources": sources_view,
-         "situational": situational}
+         "situational": situational, "race": race}
 PARAMS = {"log": ("tail",), "items": ("doll_view",), "sources": ("number",)}

@@ -5,6 +5,8 @@
  "nonneg": ["n", "amount", "extra_bp", "other_heal", "damage", "projects", "class_skill_points", "metamagic", "cast_actions", "mana_cost", "penalty_balance", "remaining", "ticks", "min_qualification", "hp_roll", "feet", "target"],
  "signed": {"add_experience": ["amount"], "edit_experience_entry": ["amount"], "set_iterative_count": ["n"]},
  "commands": {
+  "take_race": {"race": "map?"},
+  "change_race": {"race": "map?", "confirm": "bool"},
   "set_attack_source": {"kind": "str", "source": "str"},
   "source_edit": {"name": "str?", "value": "int?"},
   "set_drive_quest": {"quest": "str?", "state": "str?", "comfort_received": "bool?"},

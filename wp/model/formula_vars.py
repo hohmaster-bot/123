@@ -16,6 +16,7 @@ from wp.core import formula as fm
 
 COND = "cond:"
 MANUAL = "manual:"
+AND = "&"
 TAGGED = fm.TAGGED + ":"
 _BUSY = []                             # (id(ch), key) being computed: a second read inside is a cycle -> 0
 
@@ -55,8 +56,11 @@ def _number_after(cid, prefix):
 
 
 def condition(ch, cid):
-    """True / False of one condition id (decision 7); an unknown id is False."""
+    """True / False of one condition id (decision 7); an unknown id is False; "a&b" holds when both hold
+    (package 36 P4: "in combat while the pressure is 0")."""
     from wp.model import derived_view as dv
+    if AND in cid:
+        return all(condition(ch, part) for part in cid.split(AND))
     if cid.startswith(MANUAL):
         return cid[len(MANUAL):] in tuple(getattr(ch, "manual_conditions", ()))
     if cid == "hp_full":

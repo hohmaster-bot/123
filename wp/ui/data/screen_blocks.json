@@ -1,6 +1,6 @@
 {
  "format": 1,
- "note": "Package 34: the default content of the Parameters block and the AC grid (UI data, not rules). A layout item of the classic profile may carry its own \"cells\" (rows of number ids) for the Parameters block; numbers = the sheet numbers of wp/model/sources.py. ac_grid = the 3x3 AC zones (cell ids of RULES/ac_zones.md; 5 = you). levels = the number hierarchy (UI_WISHES point 11): large / medium / small object names of the labels. Package 34 part 2: tabs = the tab bar of the right column (a layout item may carry its own \"tabs\"); only \"combat\" has content now; quick = the quick grid size limits (UI_WISHES 9: default 8, 4-16). Package 35 P2: bottom_strip = the cells of the bottom strip (UI_WISHES 10; morale only in combat); second_strip = the cells \"+ strip\" adds (profile field strips); implemented_tabs gain journal and settings. Package 35 P4: implemented_tabs gain injuries, drives, rest, inventory, training, skills, feats, catalogs (race and class stay placeholders). Package 35 P5: layout_grid = the grid step (px) of the Classic layout editor (snap). Package 36 P1.3: Settings and Catalog are top menus (own windows), not tabs; P1.4: the tab narrative.",
+ "note": "Package 34: the default content of the Parameters block and the AC grid (UI data, not rules). A layout item of the classic profile may carry its own \"cells\" (rows of number ids) for the Parameters block; numbers = the sheet numbers of wp/model/sources.py. ac_grid = the 3x3 AC zones (cell ids of RULES/ac_zones.md; 5 = you). levels = the number hierarchy (UI_WISHES point 11): large / medium / small object names of the labels. Package 34 part 2: tabs = the tab bar of the right column (a layout item may carry its own \"tabs\"); only \"combat\" has content now; quick = the quick grid size limits (UI_WISHES 9: default 8, 4-16). Package 35 P2: bottom_strip = the cells of the bottom strip (UI_WISHES 10; morale only in combat); second_strip = the cells \"+ strip\" adds (profile field strips); implemented_tabs gain journal and settings. Package 35 P4: implemented_tabs gain injuries, drives, rest, inventory, training, skills, feats, catalogs (race and class stay placeholders). Package 35 P5: layout_grid = the grid step (px) of the Classic layout editor (snap). Package 36 P1.3: Settings and Catalog are top menus (own windows), not tabs; P1.4: the tab narrative. Package 36 P3: the race tab has content (the class tab stays a placeholder).",
  "parameters": [
   [
    "attack_melee",
@@ -67,7 +67,8 @@
   "skills",
   "feats",
   "catalogs",
-  "narrative"
+  "narrative",
+  "race"
  ],
  "quick": {
   "default": 8,

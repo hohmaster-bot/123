@@ -133,6 +133,12 @@
    {"name": "saves", "type": "dict"}, {"name": "class_skills", "type": "list"}, {"name": "spellbook", "type": "bool"},
    {"name": "divine", "type": "bool"}, {"name": "spell_failure_mode", "type": "str", "allowed": ["", "cancel", "zero_balance"]},
    {"name": "own_professionalism", "type": "bool"}, {"name": "notes", "type": "str"}
+  ],
+  "races": [
+   {"name": "module", "type": "str", "required": true}, {"name": "type_tags", "type": "list"}, {"name": "speed", "type": "int"},
+   {"name": "effects", "type": "list"}, {"name": "abilities", "type": "list"}, {"name": "statuses", "type": "list"},
+   {"name": "pools", "type": "list"}, {"name": "quirks", "type": "list"}, {"name": "languages", "type": "list"},
+   {"name": "text", "type": "str"}
   ]
  }
 }

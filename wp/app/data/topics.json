@@ -151,6 +151,9 @@
    "training",
    "log"
   ],
+  "buy_race_ability": [
+   "all"
+  ],
   "buy_reaction": [
    "combat",
    "resources",
@@ -194,6 +197,9 @@
   "change_lens": [
    "notebook",
    "log"
+  ],
+  "change_race": [
+   "all"
   ],
   "convert_attention": [
    "notebook",
@@ -757,6 +763,9 @@
    "statuses",
    "training",
    "log"
+  ],
+  "take_race": [
+   "all"
   ],
   "tick": [
    "all"

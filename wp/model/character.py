@@ -410,6 +410,7 @@ class Character:
     trigger_notes: Tuple[TriggerNote, ...] = ()   # package 36 (decision 6): fired triggers, kept until handled
     trigger_counter: int = 0           # last trigger note number (never reused)
     race_id: str = ""                  # package 36: the race taken (its entries carry source "race:<id>")
+    race_info: str = ""                # package 36: the snapshot of the taken race entry (JSON text, model/races.py)
 
     def __post_init__(self):
         # dict fields are read-only mappings (package 16 A7): no in-place change without a command

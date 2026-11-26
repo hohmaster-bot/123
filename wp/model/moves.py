@@ -15,6 +15,6 @@ def moves(ch):
     for src, e in blk.active_effects(ch):
         if e.target.startswith(PREFIX) and e.applies(ctx):
             mode, feet = e.target[len(PREFIX):], int(e.resolve(ctx))
-            if mode not in best or feet > best[mode][1]:
+            if mode not in best or feet >= best[mode][1]:     # a later equal one (good flight) replaces
                 best[mode] = (mode, feet, e.note, src)
     return tuple(best[m] for m in sorted(best))
