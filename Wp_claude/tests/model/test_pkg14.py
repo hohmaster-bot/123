@@ -206,7 +206,7 @@ S.case("c-broken-never-crashes", "buffs.md: a broken formula stored by hand give
 S.case("c-effect-formula", "buffs.md: an effect value \"2*lvl\" at level 3 -> attack +6", 6)(
     lambda: dv.total(hero(level=3, statuses=(Status("s", sid="s", effects=(Effect(bo.ATTACK, "2*lvl"),)),)), bo.ATTACK))
 S.case("c-effect-bad-refused", "buffs.md: a status with a broken formula is refused when added",
-       "refused: bad effect formula in s: unknown variable 'foo' (allowed: level, lvl, str_mod, dex_mod, con_mod, int_mod, wis_mod, cha_mod, bab)")(
+       "refused: bad effect formula in s: unknown variable 'foo' (allowed: level, lvl, str_mod, dex_mod, con_mod, int_mod, wis_mod, cha_mod, bab, hp_max, mana_max, base_slots, pain, morale, balance_max, spirit_max, bp_max, comfort_max, tagged_base_slots:<tag>)")(
     lambda: refused(hero(), "add_status", status=Status("s", sid="s", effects=(Effect(bo.ATTACK, "foo"),))))
 
 # ================================================================ D. injury effects
