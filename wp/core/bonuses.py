@@ -19,6 +19,7 @@ from typing import Optional, Tuple
 
 # types
 FLAT = "flat"
+UNTYPED = FLAT                  # package 36: an unknown bonus type counts as untyped = flat (stacks with all)
 DODGE = "dodge"
 PROFICIENCY = "proficiency"     # weapon proficiency (mastery) bonus
 ARMOR = "armor"                 # parry uses the same type as armor
@@ -74,8 +75,8 @@ class Bonus:
     cells: Tuple[str, ...] = ()     # AC cells this bonus counts in (package 24 B2); () = every cell / no cells
 
     def __post_init__(self):
-        if self.btype not in TYPES:
-            raise ValueError("unknown bonus type: %r" % (self.btype,))
+        if self.btype not in TYPES:    # owner (package 36, decision 17): an unknown type is untyped (stacks)
+            object.__setattr__(self, "btype", UNTYPED)
 
 
 def morale(value):

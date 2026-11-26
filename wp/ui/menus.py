@@ -48,6 +48,11 @@ def build(win):
     _act(win, v, "theme_editor", lambda: __import__("wp.ui.theme_editor", fromlist=["open_editor"]).open_editor(win))
     _act(win, v, "editor", lambda on: win.session.set_editor_mode(bool(on)), True)   # package 34
     _act(win, v, "layout_editor", lambda: __import__("wp.ui.layout_editor", fromlist=["x"]).open_layout_editor(win))
+    for key, page in (("settings", "settings"), ("catalog", "catalogs")):     # package 36 P1.3: top menus
+        a = QAction(win)
+        a.triggered.connect(lambda _=False, pg=page: __import__("wp.ui.page_window", fromlist=["x"]).open_page(win, pg))
+        bar.addAction(a)
+        win.actions["top." + key] = a
     h = win.menus["help"] = bar.addMenu("")
     _act(win, h, "hints_reset", lambda: win.session_settings("hints_reset"))
 
@@ -82,6 +87,8 @@ def retranslate(win, tr):
     for key in ("character", "view", "theme", "language", "scale", "help"):
         win.menus[key].setTitle(tr("menu." + key))
     win.actions["editor"].setChecked(bool(getattr(win.session, "editor_mode", False)))
+    win.actions["top.settings"].setText(tr("menu.settings"))
+    win.actions["top.catalog"].setText(tr("menu.catalog"))
     for key in ("new_demo", "open", "save", "save_as", "exit", "hints_reset", "editor", "theme_editor",
                 "layout_editor"):
         win.actions[key].setText(tr("menu." + key))

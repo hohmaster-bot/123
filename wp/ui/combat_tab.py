@@ -33,7 +33,8 @@ PAGES = {"journal": ("wp.ui.tab_journal", "JournalPage"), "settings": ("wp.ui.ta
          "injuries": ("wp.ui.tab_pages", "InjuriesPage"), "drives": ("wp.ui.tab_pages", "DrivesPage"),
          "rest": ("wp.ui.tab_pages", "RestPage"), "inventory": ("wp.ui.tab_pages2", "InventoryPage"),
          "training": ("wp.ui.tab_pages2", "TrainingPage"), "skills": ("wp.ui.tab_pages2", "SkillsPage"),
-         "feats": ("wp.ui.tab_pages2", "FeatsPage"), "catalogs": ("wp.ui.tab_pages2", "CatalogsPage")}
+         "feats": ("wp.ui.tab_pages2", "FeatsPage"), "catalogs": ("wp.ui.tab_pages2", "CatalogsPage"),
+         "narrative": ("wp.ui.tab_narrative", "NarrativePage")}
 STEP = 1                               # a square click spends / returns one action / reaction
 BUTTONS = ("combat", "zero", "cycle")  # package 35: "zero" = Zero initiative (the tick), no "end of turn"
 
@@ -149,7 +150,17 @@ class TabsBlock(Block):
         title = self.title.sizeHint().height() if not self.title.isHidden() else 0
         row = getattr(self, "pin_row", None)
         pin = (row.sizeHint().height() + self.box.spacing()) if row is not None and not row.isHidden() else 0
-        self.setFixedHeight(m.top() + m.bottom() + title + self.box.spacing() + flow_height + pin)
+        self.flow_height = m.top() + m.bottom() + title + self.box.spacing() + flow_height + pin
+        self.setFixedHeight(self.flow_height)
+        self.updateGeometry()
+
+    def base_size(self):
+        from PySide6.QtCore import QSize
+        return QSize(self.saved.width(), getattr(self, "flow_height", self.saved.height()))
+
+    def fit_content(self):
+        self.bar.relayout()                    # the rows follow the new font; the height follows the rows
+        self.setFixedWidth(max(self.saved.width(), self.minimumSizeHint().width()))
 
     def set_compact(self, no_caption, no_details):
         super().set_compact(no_caption, no_details)

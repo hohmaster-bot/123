@@ -57,3 +57,19 @@ def skill_rows(view):
 def feat_rows(sheet):
     """(id, title, charges, cooldown) of the character's feats."""
     return [(fid, title, ch, cd) for fid, title, ch, cd in sheet["feats"]]
+
+
+def narrative_rows(ch, kind):
+    """(id, name, state, text) of the quests / courts / stories / quirks (RULES/narrative.md); state: quests open /
+    done, quirks active / burned, courts "level x tier y"; a court quest names its court (the giver)."""
+    if kind == "quest":
+        courts = {c.cid: c.name for c in ch.courts}
+        return [(q.qid, q.name + ((" (" + courts.get(q.giver, q.giver) + ")") if q.giver else ""),
+                 "done" if q.done else "open", q.text) for q in ch.quests]
+    if kind == "court":
+        return [(c.cid, c.label(), "", c.note) for c in ch.courts]
+    if kind == "story":
+        return [(x.stid, x.name, "", x.text) for x in ch.stories]
+    if kind == "quirk":
+        return [(k.kid, k.name, "burned" if k.burned else "active", k.text) for k in ch.quirks]
+    return []

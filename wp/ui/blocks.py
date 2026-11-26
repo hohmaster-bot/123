@@ -51,6 +51,25 @@ class Block(QFrame):
     def apply_look(self, colors, scale, session):
         """Theme colours and the scale after a settings change (blocks that paint use them)."""
 
+    def base_size(self):
+        """The size the layout asks for (the saved one; a few blocks compute their own height)."""
+        return self.saved
+
+    def fit_content(self):
+        """Package 36 P1.5 (owner: "I changed the font and the layout drifted"): after a font / scale change the block
+        is at least as large as its content needs (the saved size stays the lower bound; nothing is saved)."""
+        lay = self.layout()
+        if lay is None:
+            return
+        lay.invalidate()
+        need, base = lay.minimumSize(), self.base_size()
+        if self.strip:
+            self.setFixedHeight(max(base.height(), need.height()))
+            self.setMinimumWidth(max(int(self.entry["min_size"][0]), need.width()))
+        else:
+            self.setFixedSize(max(base.width(), need.width()), max(base.height(), need.height()))
+        self.updateGeometry()
+
     def sizeHint(self):
         return self.saved
 

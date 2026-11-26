@@ -59,6 +59,11 @@ class BottomStrip(Block):
             self.rows_box.addLayout(line)
         self.layout_rows = [list(r) for r in rows]
         self.setFixedHeight(self.row_height * max(1, len(rows)))
+        self.saved_rows = max(1, len(rows))
+
+    def base_size(self):
+        from PySide6.QtCore import QSize
+        return QSize(self.saved.width(), self.row_height * getattr(self, "saved_rows", 1))
 
     def open_sources(self, nid):
         if self.win is None or self.session is None or self.session.character is None:

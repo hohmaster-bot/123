@@ -93,6 +93,7 @@ class MainWindow(QMainWindow):
         self.files = Files(self)
         self.blocks = {}
         self.expanded = None               # a tab expanded to the full screen (package 35 P4)
+        self.page_windows = {}             # the own windows of the top menus Settings / Catalog (package 36 P1.3)
         self.hint = HintBar(self, SHELL["hint"])
         self._build_regions()
         menus.build(self)
@@ -214,7 +215,26 @@ class MainWindow(QMainWindow):
         for b in self.blocks.values():
             b.apply_look(colors, scale, self.session)
         self.retranslate()
+        self.fit_blocks()
         self.adapt()
+        QTimer.singleShot(0, self.refit)       # the new style sheet is polished on the next event: measure again
+
+    def refit(self):
+        self.fit_blocks()
+        self.adapt()
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        QTimer.singleShot(0, self.refit)
+
+    def fit_blocks(self):
+        """Package 36 P1.5: every block recomputes its size for the new font / scale and the layouts follow."""
+        for b in self.blocks.values():
+            b.fit_content()
+        for lay in self.layouts:
+            lay.invalidate()
+        self.central.updateGeometry()
+        self.central.adjustSize()
 
     def background(self, theme):
         """The own background picture (app settings background_image / background_dim / background_readable; package
@@ -280,6 +300,9 @@ class MainWindow(QMainWindow):
         self.hint.setVisible(self.session.hint_visible(self.hint.hint_id))
         for b in self.blocks.values():
             b.retranslate(tr)
+        for pw in getattr(self, "page_windows", {}).values():
+            pw.retranslate(tr)
+            pw.refresh(self.session)
 
     def session_settings(self, command, **params):
         r = self.session.settings(command, **params)
@@ -312,6 +335,8 @@ class MainWindow(QMainWindow):
                 b.refresh(self.session)
         if topics and getattr(self, "sources", None) is not None:     # ANY_TOPIC_VIEWS (package 34)
             self.sources.reload()
+        for pw in self.page_windows.values():
+            pw.refresh(self.session)
 
     def refresh_all(self):
         editing = bool(self.session.editor_mode)

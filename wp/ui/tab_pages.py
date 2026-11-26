@@ -161,6 +161,11 @@ class DrivesPage(Page):
     COLS = ("name", "type", "level", "principle", "quest", "comfort_received")
     ACTIONS = ("up", "down")
 
+    def __init__(self, block):
+        super().__init__(block)
+        self.quests = {}
+        self.table.cellClicked.connect(self.cell_clicked)
+
     def show_data(self, tr, s):
         v = s.view("notebook")
         rows = tl.drive_rows(v)
@@ -171,6 +176,19 @@ class DrivesPage(Page):
         self.summary.setText("\n".join(lines))
         self.fill(rows, [(name + (" !" if remind else ""), dtype, level, principle, quest, yes(tr, got))
                          for _did, name, dtype, level, principle, quest, got, remind in rows])
+        self.quests = {d["did"]: d["quest"] for d in s.view("notebook")["drives"]}
+        for r, row in enumerate(rows):
+            text = self.quests.get(row[0]) or tr("tabs_page.drives.no_quest")
+            self.table.item(r, self.COLS.index("quest")).setToolTip(text)
+
+    def quest_text(self, row):
+        """The quest of a drive (a click on its quest state; owner, package 36 P1.4)."""
+        return self.quests.get(self.rows[row][0], "") if 0 <= row < len(self.rows) else ""
+
+    def cell_clicked(self, row, col):
+        if col == self.COLS.index("quest") and self.block.win is not None and self._tr is not None:
+            self.block.win.info(self._tr("tabs_page.drives.quest_title"),
+                                self.quest_text(row) or self._tr("tabs_page.drives.no_quest"))
 
     def act(self, key):
         row = self.selected()
