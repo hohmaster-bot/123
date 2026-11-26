@@ -119,3 +119,7 @@ language (RU / EN, D4) and theme.
   colour of an own theme: Session.theme_command theme_edit, saved at once, live restyle), the contrast warnings (4.5:1,
   never a refusal), the own background picture (none by default) with dimming and the readable overlay (the central
   Backdrop of window.py). Tests: storage/test_themes35.py, ui/test_themes35_ui.py (shots themes_*).
+- Package 35 P4 (step 7): the CONTENT TABS (wp/ui/tab_pages.py: Injuries, Drives, Rest; tab_pages2.py: Inventory,
+  Training, Skills, Feats, Catalogs; Qt-free tab_logic.py): a table of the view, a summary line, the empty state, one or
+  two actions through existing commands; heavy tabs Expand (window.expand_block: never saved). Race and Class stay
+  placeholders (game-module neutrality). Tests: storage/test_ui_logic35c.py, ui/test_tabs35.py (shots tab_*_dark).
