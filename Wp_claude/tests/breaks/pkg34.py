@@ -66,7 +66,7 @@ ENTRIES = [
          new='            b.setProperty("spent", False)', suites=UI2,
          rule="combat.md: spent squares are greyed (pkg 35: still clickable, a click returns one)"),
     dict(id="p34-placeholder-tab", file="wp/ui/combat_tab.py",
-         old='        if self.tab not in SB["implemented_tabs"]:', new="        if False:", suites=UI2,
+         old='        if self.tab not in SB["implemented_tabs"] or self.tab != COMBAT:', new="        if False:", suites=UI2,
          rule="pkg 34: a tab without content shows only its placeholder"),
     dict(id="p34-quick-cells", file="wp/app/session.py",
          old='        return {"cells": int(prof.get("quick_cells") or 0),', new='        return {"cells": 0,', suites=UI2,
