@@ -122,3 +122,24 @@ ENTRIES += [
     dict(id="p36-race-ask", file="wp/ui/tab_race.py", old="            if not self.block.win.ask(text):",
          new="            if False:", suites=UI3, rule="decision 15: the change is confirmed by the player"),
 ]
+
+# ---------------------------------------------------------------- P4: the owner's 12 races (data)
+M4 = ("model/test_races36.py",)
+ENTRIES += [
+    dict(id="p36-azana-static", file="wp/catalog/data/races/ranniag.json", old='"absorber:pool:static"',
+         new='"absorber:pool:none"', suites=M4, rule="owner (Azana): the static pool takes the electric damage"),
+    dict(id="p36-azana-confused", file="wp/catalog/data/races/ranniag.json", old='"status:confused"',
+         new='"dying"', suites=M4, rule="owner (Azana): below 0 HP confused, not dying"),
+    dict(id="p36-reflected-zero", file="wp/catalog/data/races/ranniag.json", old='"in_combat&pressure_eq:0"',
+         new='"in_combat"', suites=M4, rule="owner (Reflected): +4 only while the pressure is 0"),
+    dict(id="p36-skerde-hp", file="wp/catalog/data/races/ranniag.json", old='"min(base_slots, 4 * level)"',
+         new='"base_slots"', suites=M4, rule="owner (Skerde): HP = base slots, at most 4 x level"),
+    dict(id="p36-skerde-cha", file="wp/catalog/data/races/ranniag.json", old='"tagged_base_slots:trophy / 4"',
+         new='"tagged_base_slots:trophy / 2"', suites=M4, rule="owner (Skerde): +1 Cha per four trophy slots"),
+    dict(id="p36-ragmal-str", file="wp/catalog/data/races/ranniag.json", old='"mana_max / 10"',
+         new='"mana_max / 5"', suites=M4, rule="owner (Ragmal): +1 Str per 10 maximum mana"),
+    dict(id="p36-ulstanger-heal", file="wp/catalog/data/races/godbound.json", old='"heal_percent"',
+         new='"heal_percent_x"', suites=M4, rule="owner (Ulstanger): half healing from positive energy"),
+    dict(id="p36-mordon-choice", file="wp/catalog/data/races/ranniag.json", old='"manual:Mordon +2 Str"',
+         new='"manual:Mordon +2 Dex"', suites=M4, rule="owner (Mordon): +2 to the chosen characteristic"),
+]
