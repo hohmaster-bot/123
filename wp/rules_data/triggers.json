@@ -1,0 +1,8 @@
+{
+ "format": 1,
+ "note": "Package 36 (owner decision 6): the trigger events the core has, the closed vocabulary of actions and the commands run_command may run. A trigger becomes a reminder with an optional action button (always pressed by the player) and a handled mark.",
+ "events": ["cycle_end", "combat_start", "combat_end", "zero_initiative", "level_up", "short_rest", "long_rest", "hp_below_one"],
+ "event_of_command": {"end_cycle": "cycle_end", "start_combat": "combat_start", "end_combat": "combat_end", "tick": "zero_initiative", "level_up": "level_up", "short_rest": "short_rest", "long_rest": "long_rest", "long_rest_end_combat": "long_rest"},
+ "actions": ["add_status", "change_resource", "add_reminder", "add_pain", "reduce_injury_points", "run_command"],
+ "run_command_allowlist": ["set_temp_hp", "adjust_value", "restore_pool", "spend_pool", "spend_bp", "add_experience", "activate_status", "remove_status", "restore"]
+}

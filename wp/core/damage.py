@@ -75,9 +75,11 @@ class Reductions:
 
 @dataclass(frozen=True)
 class Absorber:
-    """A temp-HP analog (e.g. racial mana pool). Absorbs 1:1, does not hit balance."""
+    """A temp-HP analog (e.g. racial mana pool). Absorbs 1:1, does not hit balance. Package 36 (P2.9): dtypes = the
+    damage types it takes (() = every type: the static pool of an azana takes only electricity)."""
     name: str
     current: int
+    dtypes: Tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -150,18 +152,31 @@ def reduce_hit(parts, reductions=None):
     return sum(reduce_part(p, reductions) for p in parts)
 
 
-def _absorb(vitals, amount):
-    """Steps 3-4: temp HP, then absorbers in order. Returns (vitals, left, temp_loss, absorbed)."""
+def _absorb(vitals, amount, typed=None):
+    """Steps 3-4: temp HP, then absorbers in order. Returns (vitals, left, temp_loss, absorbed).
+    typed = [[dtype, amount], ...] of the reduced parts (package 36): a typed absorber takes only its types."""
+    typed = [[t, a] for t, a in (typed or [[None, amount]])]
     temp_loss = min(amount, vitals.temp_hp)
-    left = amount - temp_loss
+    rest = temp_loss
+    for part in typed:                 # temp HP takes any type, part by part
+        t = min(rest, part[1])
+        part[1] -= t
+        rest -= t
     new_abs = []
     absorbed = []
     for ab in vitals.absorbers:
-        take = min(left, max(0, ab.current))
-        left -= take
+        cap = max(0, ab.current)
+        take = 0
+        for part in typed:
+            if ab.dtypes and part[0] not in ab.dtypes:
+                continue
+            t = min(cap - take, part[1])
+            part[1] -= t
+            take += t
         new_abs.append(replace(ab, current=ab.current - take))
         if take:
             absorbed.append((ab.name, take))
+    left = sum(a for _t, a in typed)
     vitals = replace(vitals, temp_hp=vitals.temp_hp - temp_loss,
                      absorbers=tuple(new_abs))
     return vitals, left, temp_loss, tuple(absorbed)
@@ -169,8 +184,10 @@ def _absorb(vitals, amount):
 
 def take_hit(vitals, parts, reductions=None):
     """Apply one hit (one or more typed parts). Returns (new_vitals, DamageReport)."""
-    total = reduce_hit(parts, reductions)
-    vitals, to_hp, temp_loss, absorbed = _absorb(vitals, total)
+    reductions = reductions or Reductions()
+    typed = [[p.dtype, reduce_part(p, reductions)] for p in parts]
+    total = sum(a for _t, a in typed)
+    vitals, to_hp, temp_loss, absorbed = _absorb(vitals, total, typed)
 
     bal = max(0, vitals.balance.current)
     balance_loss = min(to_hp, bal)

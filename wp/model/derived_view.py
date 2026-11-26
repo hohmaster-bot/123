@@ -354,12 +354,10 @@ def comfort_pool(ch):
 
 @cached
 def context(ch):
-    """Values effects may read (buffs.md): the current overload and the CURRENT stat modifiers."""
-    ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": klass.bab(ch)}
-    for name in ch.abilities:
-        ctx[ef.stat_mod_key(name)] = ability_mod(ch, name)
-        ctx["%s_mod" % name] = ctx[ef.stat_mod_key(name)]     # formula variables (package 14 C)
-    return ctx
+    """Values effects may read (buffs.md): the current overload and the CURRENT stat modifiers; package 36: the stat
+    modifiers, the sheet numbers of formulas and the conditions are computed on first use (wp/model/formula_vars)."""
+    from wp.model import formula_vars as fv
+    return fv.Context(ch, {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": klass.bab(ch)}, lazy_mods=True)
 
 
 def item_effects(ch, ctx=None):

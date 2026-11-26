@@ -11,7 +11,9 @@ from wp.model import derived_view as dvw
 
 
 def pain_total(ch):
-    return pn.total_pain(ch.pain, ch.hp_current)
+    """The effective pain: the entries + the pain from HP below 0, lowered by the rule switch pain_reduction (pkg 36)."""
+    from wp.model import sheet_targets as stg
+    return max(0, pn.total_pain(ch.pain, ch.hp_current) - stg.value(ch, "pain_reduction"))
 
 
 def pain_profile(ch):

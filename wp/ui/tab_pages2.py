@@ -5,7 +5,7 @@ qualifications (buy_item_qualification). Skills: name, tier, ranks, bonus; +1 ra
 character's feats with charges and cooldown; a star makes one a favourite (set_favorite). Catalogs: a read-only browser
 of every catalog kind (shipped, override and own entries; game-module data, nothing hard-coded).
 """
-from PySide6.QtWidgets import QComboBox
+from PySide6.QtWidgets import QCheckBox, QComboBox
 
 from wp.app import ui_data
 from wp.ui import params_logic as pl
@@ -72,7 +72,11 @@ class SkillsPage(Page):
 class FeatsPage(Page):
     TAB = "feats"
     COLS = ("name", "charges", "cooldown")
-    ACTIONS = ("favorite",)
+    ACTIONS = ("favorite", "fire")
+
+    def __init__(self, block):
+        super().__init__(block)
+        self.condition_boxes = {}
 
     def show_data(self, tr, s):
         rows = tl.feat_rows(s.view("sheet"))
@@ -80,10 +84,38 @@ class FeatsPage(Page):
         self.summary.setText(tr("tabs_page.feats.summary", n=len(rows), catalog=n))
         self.fill(rows, [(title or fid, "" if charges is None else charges, "" if cooldown is None else cooldown)
                          for fid, title, charges, cooldown in rows])
+        texts = {f.fid: f.text for f in s.character.feats}
+        for r, (fid, _t, _c, _cd) in enumerate(rows):
+            self.table.item(r, 0).setToolTip(texts.get(fid, ""))
+        self._conditions(tr, s)
+
+    def _conditions(self, tr, s):
+        """Package 36 (decision 7): the manual conditions of the feats as checkboxes."""
+        while self.extra.count():
+            w = self.extra.takeAt(0).widget()
+            if w is not None:
+                w.hide()
+                w.setParent(None)
+                w.deleteLater()
+        self.condition_boxes = {}
+        for text in tl.manual_conditions(s.character.feats):
+            box = QCheckBox(tr("tabs_page.condition", text=text))
+            box.setChecked(text in s.character.manual_conditions)
+            box.toggled.connect(lambda on, t=text: self.run("set_manual_condition", text=t, on=bool(on)))
+            self.extra.addWidget(box)
+            self.condition_boxes[text] = box
 
     def act(self, key):
         row = self.selected()
-        return None if row is None else self.run("set_favorite", kind="feat", oid=row[0], on=True)
+        if row is None:
+            return None
+        if key == "fire":                  # package 36: the manual triggers of the ability (a button on its card)
+            ts = tl.manual_triggers(self.session.character.feats, row[0])
+            r = None
+            for tid in ts:
+                r = self.run("fire_trigger", source="feat:" + row[0], tid=tid)
+            return r
+        return self.run("set_favorite", kind="feat", oid=row[0], on=True)
 
 
 class CatalogsPage(Page):

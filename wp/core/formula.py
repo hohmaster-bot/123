@@ -5,13 +5,19 @@ parentheses, functions min(a, b, ...), max(a, b, ...), floor(x).
   - + - * are exact (fractions);
   - / is INTEGER division rounding DOWN (towards minus infinity): 7 / 2 = 3, -7 / 2 = -4;
   - the final result is rounded DOWN to a whole number (floor): 2.5 -> 2, -2.5 -> -3.
-Variables (VARIABLES): level (also lvl), str_mod, dex_mod, con_mod, int_mod, wis_mod, cha_mod, bab.
+Variables (VARIABLES): level (also lvl), str_mod, dex_mod, con_mod, int_mod, wis_mod, cha_mod, bab; package 36
+(owner decision 12): the sheet numbers SHEET_VARIABLES (hp_max, mana_max, base_slots, pain, morale, balance_max,
+spirit_max, bp_max, comfort_max) and tagged_base_slots:<tag> (the base slots taken by the items with that tag lying at
+the base). The values come from the caller (wp/model/formula_vars.py reads them from the real derived numbers).
 validate(expr) raises FormulaError with a clear reason; evaluate(expr, values) returns an int.
 """
 import math
 from fractions import Fraction
 
-VARIABLES = ("level", "lvl", "str_mod", "dex_mod", "con_mod", "int_mod", "wis_mod", "cha_mod", "bab")
+SHEET_VARIABLES = ("hp_max", "mana_max", "base_slots", "pain", "morale", "balance_max", "spirit_max", "bp_max",
+                   "comfort_max")
+VARIABLES = ("level", "lvl", "str_mod", "dex_mod", "con_mod", "int_mod", "wis_mod", "cha_mod", "bab") + SHEET_VARIABLES
+TAGGED = "tagged_base_slots"           # "tagged_base_slots:trophy" (package 36, decision 13)
 FUNCTIONS = ("min", "max", "floor")
 MAX_LENGTH = 200
 
@@ -43,7 +49,15 @@ def _tokens(text):
             j = i
             while j < len(text) and ((text[j].isascii() and text[j].isalnum()) or text[j] == "_"):
                 j += 1
-            out.append(("name", text[i:j]))
+            name = text[i:j]
+            if name == TAGGED and j < len(text) and text[j] == ":":     # the tag after the colon
+                k = j + 1
+                while k < len(text) and ((text[k].isascii() and text[k].isalnum()) or text[k] in "_-"):
+                    k += 1
+                if k == j + 1:
+                    raise FormulaError("tagged_base_slots needs a tag: tagged_base_slots:<tag>")
+                name, j = text[i:k], k
+            out.append(("name", name))
             i = j
         elif c in "+-*/(),":
             out.append(("op", c))
@@ -125,9 +139,9 @@ class _Parser:
                         raise FormulaError("floor takes one value")
                     return Fraction(math.floor(args[0]))
                 return min(args) if val == "min" else max(args)
-            if val not in VARIABLES:
-                raise FormulaError("unknown variable %r (allowed: %s)" % (val, ", ".join(VARIABLES)))
-            return Fraction(int(self.values.get("level" if val == "lvl" else val, 0)))
+            if val not in VARIABLES and not val.startswith(TAGGED + ":"):
+                raise FormulaError("unknown variable %r (allowed: %s)" % (val, ", ".join(VARIABLES + (TAGGED + ":<tag>",))))
+            return Fraction(int(self.values.get("level" if val == "lvl" else val, 0) or 0))
         raise FormulaError("unexpected end" if kind is None else "unexpected %r" % (val,))
 
 
@@ -144,6 +158,21 @@ def evaluate(text, values=None):
     return int(math.floor(v))
 
 
+class _Ones(dict):
+    """Every variable (also any tagged_base_slots:<tag>) counts 1 for the check."""
+
+    def get(self, key, default=None):
+        return 1
+
+
 def validate(text):
-    """Raise FormulaError when the formula is not valid (all variables count as 0 for the check)."""
-    evaluate(text, {name: 1 for name in VARIABLES})
+    """Raise FormulaError when the formula is not valid (all variables count as 1 for the check)."""
+    evaluate(text, _Ones())
+
+
+def variables(text):
+    """The variable names a valid formula reads (the cycle check of wp/model/formula_vars.py)."""
+    try:
+        return tuple(sorted({v for k, v in _tokens(text) if k == "name" and v not in FUNCTIONS}))
+    except FormulaError:
+        return ()

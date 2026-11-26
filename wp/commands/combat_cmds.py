@@ -20,6 +20,26 @@ from wp.model import usage as us
 from wp.model import spell_view as sv
 
 
+def _negative_hp(before, after):
+    """Rule switch at_negative_hp (package 36): when HP falls below 0 a "status:<id>" value activates that status of
+    the character (e.g. confused instead of dying); "dying" / "nothing" change nothing here (dying stays by hand)."""
+    from wp.model import switches as sw
+    if not (before.hp_current >= 0 > after.hp_current):
+        return after
+    v = sw.value(after, "at_negative_hp")
+    if not v.startswith("status:"):
+        return after
+    sid = v[len("status:"):]
+    st = next((s for s in after.statuses if s.sid == sid), None)
+    if st is None or st.active:
+        return after
+    try:
+        new, started = _start(after, st)
+    except CommandError:
+        return after
+    return _put_status(new, started)
+
+
 @command
 def take_damage(ch, amount=0, dtype=dm.PHYSICAL, parts=None, reductions=None, skip=()):
     """One hit: amount of dtype, or several typed parts [(amount, dtype), ...]. The sheet's DR and resistances
@@ -36,6 +56,7 @@ def take_damage(ch, amount=0, dtype=dm.PHYSICAL, parts=None, reductions=None, sk
     if ch.in_combat and rep.hp_loss > 0:
         # owner homerule: a hit that reached HP/balance lowers the balance cap by 1 this combat
         new = replace(new, balance_cap_hits=new.balance_cap_hits + 1)
+    new = _negative_hp(ch, new)
     return commit(new, "take_damage", "hit %d -> hp -%d, balance -%d, OT +%d, pain +%d" % (
         rep.after_reduction, rep.hp_loss, rep.balance_loss, rep.overflow, rep.pain_added),
         {"report": rep})

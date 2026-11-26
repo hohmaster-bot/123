@@ -99,9 +99,11 @@ def one_shot(ch, status):
 
 def rest_hp(before, after):
     """HP a rest gave -> floor(gain * rest_regen_multiplier) + rest_regen_bonus, never above the max."""
+    from wp.model import switches as sw
     rs = after.rules_settings
     gain = after.hp_current - before.hp_current
-    if gain <= 0 or (rs.rest_regen_multiplier == 1 and rs.rest_regen_bonus == 0):
+    pct = sw.value(after, "natural_regen_percent")       # package 36 rule switch: 100 = double
+    if gain <= 0 or (rs.rest_regen_multiplier == 1 and rs.rest_regen_bonus == 0 and not pct):
         return after
-    new_gain = int(math.floor(gain * Fraction(str(rs.rest_regen_multiplier)))) + int(rs.rest_regen_bonus)
+    new_gain = int(math.floor(sw.percent(gain, pct) * Fraction(str(rs.rest_regen_multiplier)))) + int(rs.rest_regen_bonus)
     return replace(after, hp_current=min(dv.hp_max(after), before.hp_current + max(0, new_gain)))

@@ -293,6 +293,7 @@
   "end_cycle": [
    "notebook",
    "resources",
+   "statuses",
    "training",
    "log"
   ],
@@ -308,6 +309,10 @@
   "exchange_comfort": [
    "resources",
    "training",
+   "log"
+  ],
+  "fire_trigger": [
+   "statuses",
    "log"
   ],
   "hit_item": [
@@ -507,6 +512,9 @@
    "resources",
    "log"
   ],
+  "run_trigger_action": [
+   "all"
+  ],
   "set_active_stance": [
    "all"
   ],
@@ -566,6 +574,10 @@
    "statuses",
    "log"
   ],
+  "set_held_kept": [
+   "statuses",
+   "log"
+  ],
   "set_hp_roll": [
    "resources",
    "sheet",
@@ -608,6 +620,9 @@
    "attacks",
    "log"
   ],
+  "set_manual_condition": [
+   "all"
+  ],
   "set_primary_attack": [
    "attacks",
    "defense",
@@ -642,6 +657,10 @@
   ],
   "set_temp_hp": [
    "resources",
+   "log"
+  ],
+  "set_trigger_handled": [
+   "statuses",
    "log"
   ],
   "set_twf": [

@@ -24,6 +24,7 @@ from wp.core import bonuses as bo
 from wp.core import formula as fm
 from wp.core.frozen import freeze_fields
 from wp.core.damage import Pool
+from wp.core.triggers import Trigger  # noqa: F401 (a Status field type)
 
 TICKS = "ticks"
 END_OF_COMBAT = "end_of_combat"
@@ -37,6 +38,7 @@ OVERLOAD = "overload"      # value source: the current overload number
 STAT_MOD = "stat_mod:"     # context key prefix: "stat_mod:str" = the CURRENT Str modifier
 ALL = "all"                # value "all": unlimited (e.g. ignore the armor slowdown completely, gear.md)
 ALL_VALUE = 10 ** 6        # what "all" resolves to: more than any real number on the sheet
+COND = "cond:"             # context key prefix of a condition (wp/model/formula_vars.py, package 36)
 
 
 def stat_mod_key(stat):
@@ -64,10 +66,27 @@ class Effect:
     cells: Tuple[str, ...] = ()        # AC cell ids (package 24 B2): an AC / parry bonus counts only there; for the
                                        # targets parry_cells / shield_cells / dex_loss_cells: the cells added (value >= 0)
                                        # or removed (value < 0); () = every cell
+    condition: str = ""                # package 36 (decision 7): "" = always; an automatic id (hp_full, bp_full,
+                                       # in_combat, pressure_eq:N / pressure_ge:N / pressure_le:N, pain_ge:N) or
+                                       # "manual:<text>" (a checkbox); the effect counts only while it holds
+    situational: str = ""              # package 36 (decision 8): "vs magic" ... never in a total, listed on hover
+
+    def applies(self, context=None):
+        """Does the effect count now: not situational and its condition holds (read from the context)."""
+        if self.situational:
+            return False
+        return not self.condition or bool((context or {}).get(COND + self.condition, False))
 
     def resolve(self, context=None):
         """The effect's number: a fixed value, a context value (current overload), or the current
-        modifier of a stat times the multiplier (rounded down; a negative modifier stays negative)."""
+        modifier of a stat times the multiplier (rounded down; a negative modifier stays negative). Package 36: 0
+        while it does not apply (situational, or its condition does not hold); nominal() is the number itself."""
+        if (self.situational or self.condition) and not self.applies(context):
+            return 0
+        return self.nominal(context)
+
+    def nominal(self, context=None):
+        """The effect's own number, whether it applies now or not (the Sources dialog, the situational hover)."""
         ctx = context or {}
         if self.value == ALL:
             return ALL_VALUE
@@ -122,6 +141,9 @@ class Status:
     hidden: bool = False               # DISPLAY ONLY: hidden on the panel, still active / ticking
     favorite: bool = False             # pinned for the panel / screen
     note: str = ""                     # the player's note shown on the chip (package 30)
+    triggers: Tuple[Trigger, ...] = ()   # package 36 (decision 6)
+    held_by: str = ""                  # package 36 (decision 14)
+    held_kept: bool = True
 
     def __post_init__(self):
         freeze_fields(self, ("per_tick_restore",))     # read-only (package 16 A7)

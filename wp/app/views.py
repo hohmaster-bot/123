@@ -134,8 +134,11 @@ def _load(ch):
 
 def statuses(ch, session=None):
     from wp.model import screen_view as scr
+    from wp.model import links
+    from wp.model import trigger_view as tv
     return {"container": cv.container_view(ch), "active": al.active_list(ch), "favorites": scr.favorites(ch),
-            "reminders": scr.reminders(ch)}
+            "reminders": scr.reminders(ch), "triggers": tv.notes_view(ch), "manual_conditions": ch.manual_conditions,
+            "not_backed": links.not_backed(ch)}
 
 
 def skills(ch, session=None):
@@ -182,7 +185,24 @@ def sheet(ch, session=None):
             "stats": stats.view(ch), "level": ch.level, "bab": klass.bab(ch), "class_id": ch.class_id, "speed": dv.speed(ch),
             "bab_override": ch.bab_override, "save_override": dict(ch.save_override),
             "feats": _feat_rows(ch), "attack_melee": _attack(ch, "melee"), "attack_ranged": _attack(ch, "ranged"),
-            "class": ch.class_info, "name": session.name if session is not None else ""}
+            "class": ch.class_info, "name": session.name if session is not None else "", "moves": _moves(ch),
+            "switches": _switches(ch)}
+
+
+def situational(ch, session=None):
+    """{sheet number: ((value, text, source), ...)} of the situational bonuses (package 36, decision 8)."""
+    from wp.model import situational as sit
+    return sit.by_number(ch)
+
+
+def _moves(ch):
+    from wp.model import moves as mv
+    return mv.moves(ch)
+
+
+def _switches(ch):
+    from wp.model import switches as sw
+    return sw.view(ch)
 
 
 def _attack(ch, kind):
@@ -214,5 +234,6 @@ def editor(ch, session=None):
 VIEWS = {"resources": resources, "combat": combat, "defense": defense, "attacks": attacks, "maneuvers": maneuvers,
          "items": items, "statuses": statuses, "skills": skills, "rest": rest, "log": log, "notebook": notebook,
          "training": training, "settings": settings, "catalogs": catalogs, "sheet": sheet, "spells": spells,
-         "injuries": injuries, "editor": editor, "sources": sources_view}
+         "injuries": injuries, "editor": editor, "sources": sources_view,
+         "situational": situational}
 PARAMS = {"log": ("tail",), "items": ("doll_view",), "sources": ("number",)}

@@ -273,6 +273,9 @@
     "wp/ui/layout_logic.py": {
       "ROUND_HALF": "round half up when snapping to the layout grid (UI, not a rule)"
     },
+    "wp/model/switches.py": {
+      "PCT": "a percent of the rule switches heal_percent / exp_percent / natural_regen_percent (not a rule)"
+    },
     "wp/ui/tab_settings.py": {
       "COMBO_CHARS": "a settings combo box shows about 10 characters (UI, not a rule)"
     },

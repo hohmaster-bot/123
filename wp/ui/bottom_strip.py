@@ -131,3 +131,6 @@ class BottomStrip(Block):
             else:
                 c.note.setText(tr(note) if note else "")
             _repolish(c.value, "overload" if style == "overload" else SB["levels"]["working"])
+            if nid == "speed":                 # package 36 (decision 10): fly / swim / climb on hover, in feet
+                c.setToolTip("\n".join(tr("move.line", mode=tr("move." + m), feet=ft, quality=q)
+                                        for m, ft, q, _src in d["sheet"].get("moves", ())))

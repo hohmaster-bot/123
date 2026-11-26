@@ -21,6 +21,7 @@ from wp.ui.blocks import Block
 from wp.ui.sources_dialog import open_sources
 
 CELL_PAD = 2                           # px inside a number cell (UI, not a rule)
+STAR = " *"                            # the mark of a cell with situational bonuses (package 36)
 DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "screen_blocks.json")
 
 
@@ -68,6 +69,13 @@ class Cell(QFrame):
             self.on_click(self.nid)
         super().mouseReleaseEvent(event)
 
+    def set_situational(self, rows, tr, base_tip=""):
+        """Package 36 (decision 8): a star on the caption and the situational bonuses on hover (never in the total)."""
+        lines = [tr("situational.line", value=pl.signed(v), text=t) for v, t, _src in rows]
+        if rows and not self.caption.text().endswith(STAR):
+            self.caption.setText(self.caption.text() + STAR)
+        self.setToolTip("\n".join(([base_tip] if base_tip else []) + lines))
+
 
 class ParametersBlock(Block):
     def __init__(self, pid, item, shell):
@@ -95,6 +103,7 @@ class ParametersBlock(Block):
         if session.character is None:
             return
         self.sheet, self.items = session.view("sheet"), session.view("items")
+        self.situational = session.view("situational")
         self._show()
 
     def _show(self):
@@ -114,6 +123,7 @@ class ParametersBlock(Block):
                 cell.note.setText(src or "")
             _repolish(cell.value, "overload" if style == pl.OVER else SB["levels"]["working"])
             _repolish(cell.note, "overload" if style == pl.OVER else "muted")
+            cell.set_situational(dict(getattr(self, "situational", {}) or {}).get(nid, ()), tr)
 
 
 class AcBlock(Block):
@@ -148,6 +158,7 @@ class AcBlock(Block):
         super().refresh(session)
         if session.character is not None:
             self.defense = session.view("defense")
+            self.situational = session.view("situational")
         self._show()
 
     def shield_cells(self):
@@ -173,6 +184,7 @@ class AcBlock(Block):
             names = pl.variant_labels(d, cid)    # package 35 (AC audit): the small number names its variant
             sec = names.get(dict(d.get("display", {})).get("secondary"), "")
             cell.note.setText(tr("ac.variant_value", label=tr(sec), ac=secondary) if secondary != primary else "")
-            cell.setToolTip(", ".join(tr("ac.variant_value", label=tr(lab), ac=ac)
-                                      for lab, ac in pl.variant_list(d, cid)))
+            cell.set_situational(dict(getattr(self, "situational", {}) or {}).get("ac:" + cid, ()), tr,
+                                 ", ".join(tr("ac.variant_value", label=tr(lab), ac=ac)
+                                           for lab, ac in pl.variant_list(d, cid)))
             _repolish(cell, "shield_cell" if shield else "cell")

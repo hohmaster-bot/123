@@ -8,6 +8,7 @@ from dataclasses import dataclass, replace
 from typing import Tuple
 
 from wp.core.damage import Pool
+from wp.core.triggers import Trigger
 from wp.core.effects import Effect
 from wp.rules_data import rules as rd
 
@@ -31,6 +32,7 @@ class Injury:
     charges: Pool = Pool(0, 0)   # injury charges: never restored by rest
     jid: str = ""                # stable id (D7), made by the program (wp/model/ids.py, package 12 Q70)
     effects: Tuple[Effect, ...] = ()   # apply while the injury exists (package 14 D, Q89)
+    triggers: Tuple[Trigger, ...] = ()   # package 36 (decision 6)
 
 
 def attention_value(str_mod):

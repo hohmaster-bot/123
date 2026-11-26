@@ -44,6 +44,9 @@ def spend_for_level(ch, note="", at=""):
 @command
 def add_experience(ch, amount=0, note="", at=""):
     amount = int(amount)
+    if amount > 0:                     # rule switch exp_percent (package 36: -25 = a quarter less)
+        from wp.model import switches as sw
+        amount = sw.percent(amount, sw.value(ch, "exp_percent"))
     got = xp.counted(xp.total(ch), amount)
     new, xid = _next_id(ch, XP_PREFIX)
     entry = XpEntry(xid, got, str(note), str(at), None if got == amount else amount)

@@ -46,6 +46,13 @@
     "spell_overload": "overload gained by every cast (never below 0)",
     "mana_level": "the most one spell may cost in mana (level + this)",
     "percent:": "signed percent damage modifier of one type (percent:fire 50 = 50% more, -100 = immune)",
-    "temp_hp": "own temp HP of the character (manual source rows, own feats / items; package 35, owner Q229): added on read, spent by damage after the 'by button' pool and before buff temp HP (counted in temp_hp_spent), cleared by the short rest; temp HP from an external effect is a status (temp_hp_left)"
+    "temp_hp": "own temp HP of the character (manual source rows, own feats / items; package 35, owner Q229): added on read, spent by damage after the 'by button' pool and before buff temp HP (counted in temp_hp_spent), cleared by the short rest; temp HP from an external effect is a status (temp_hp_left)",
+    "heal_percent": "healing by the Heal button changed by this percent (-50 = half; package 36, rule switch)",
+    "exp_percent": "experience received changed by this percent (-25 = a quarter less; package 36, rule switch)",
+    "pain_reduction": "the effective pain lowered by N, never below 0 (package 36, rule switch)",
+    "natural_regen_percent": "the HP a rest gives changed by this percent (100 = double; package 36, rule switch)",
+    "switch:": "a choice rule switch (switch:at_negative_hp): the effect note is the value (package 36, switches.json)",
+    "move:": "a movement mode (move:fly, move:swim, move:climb): value in feet, note = the quality text (package 36)",
+    "absorber:": "a damage absorber (absorber:mana, absorber:pool:<id>): note = the damage types it takes, comma list ('' = all); after temp HP, before HP (package 36)"
   }
 }

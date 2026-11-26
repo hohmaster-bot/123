@@ -47,11 +47,12 @@ def raw_mod(ch, name):
 
 
 def base_context(ch):
+    from wp.model import formula_vars as fv
     ctx = {ef.OVERLOAD: ch.overload, "level": ch.level, "bab": klass.bab(ch)}
     for name in ch.abilities:
         ctx[ef.stat_mod_key(name)] = raw_mod(ch, name)
         ctx["%s_mod" % name] = ctx[ef.stat_mod_key(name)]
-    return ctx
+    return fv.Context(ch, ctx)          # package 36: + the sheet numbers and conditions on first use
 
 
 def sheet_bonuses(ch, ctx=None):

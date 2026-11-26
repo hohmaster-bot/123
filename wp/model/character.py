@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, Optional, Tuple
 
 from wp.core.damage import Pool
+from wp.core.triggers import Trigger, TriggerNote
 from wp.core.effects import Effect, Status
 from wp.core.frozen import freeze_fields
 from wp.core.injuries import Injury
@@ -133,6 +134,8 @@ class Item:
     ilvl: Optional[int] = None         # item level ILVL (doll.md); None = not given (package 21, Q133)
     base_slot_cost: int = 1            # base slots taken while left at the base (gear.md "Base"; grey items 0)
     source: str = ""                   # where it came from (loot, shop, template:<id>...), a label
+    tags: Tuple[str, ...] = ()         # free tags ("trophy"; package 36, decision 13): tagged_base_slots:<tag>
+    triggers: Tuple[Trigger, ...] = ()   # reminders on events or by hand (package 36, decision 6)
 
 
 @dataclass(frozen=True)
@@ -274,6 +277,12 @@ class Feat:
     cost: int = 0
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only
     effects: Tuple[Effect, ...] = ()   # permanent while the feat is owned (same structure as statuses)
+    triggers: Tuple[Trigger, ...] = ()   # package 36 (decision 6)
+    held_by: str = ""                  # package 36 (decision 14): feat:<id> / item:<id> / quirk:<id> / status:<id> /
+                                       # text:<what>; "" = nothing holds it
+    held_kept: bool = True             # a text holder: kept (the manual checkbox)
+    text: str = ""                     # the ability text (race abilities; narrative rules are text only)
+    needs: str = ""                    # package 36: the ability this one needs (a chain: fly -> good flight)
     usage: Optional[Usage] = None      # charges and cooldown (package 14 B)
     granted_maneuvers: Tuple[str, ...] = ()   # maneuver ids (used from package 12)
     is_stance: bool = False            # a stance: its effects apply only while it is the active stance (Q74)
@@ -397,6 +406,10 @@ class Character:
     xp_counter: int = 0                # last experience / level history id number (never reused)
     level_history: Tuple[LevelRecord, ...] = ()   # written by level_up
     source_rows: Tuple[SourceRow, ...] = ()   # manual source rows of sheet numbers (package 34, model/sources.py)
+    manual_conditions: Tuple[str, ...] = ()   # package 36 (decision 7): the ticked manual conditions (their texts)
+    trigger_notes: Tuple[TriggerNote, ...] = ()   # package 36 (decision 6): fired triggers, kept until handled
+    trigger_counter: int = 0           # last trigger note number (never reused)
+    race_id: str = ""                  # package 36: the race taken (its entries carry source "race:<id>")
 
     def __post_init__(self):
         # dict fields are read-only mappings (package 16 A7): no in-place change without a command

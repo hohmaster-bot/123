@@ -1,0 +1,13 @@
+{
+ "format": 1,
+ "note": "Package 36 (owner decisions 3, 17; P2.4): rule switches a race / feat / item may change, read through ONE function (wp/model/switches.py value). kind choice: the value is the note of the last active effect with the target switch:<id> (else the default). kind target: the stacked effects of that sheet target (a number, default 0). kind action: a trigger action (no stored value).",
+ "switches": [
+  {"id": "at_negative_hp", "kind": "choice", "default": "dying", "allowed": ["dying", "nothing", "status:<id>"], "description": "what HP below 0 gives: the usual dying, nothing, or a status of the character (e.g. confused)"},
+  {"id": "death_pain_cap", "kind": "target", "target": "pain_cap", "default": 0, "description": "added to the pain count of death (default 8)"},
+  {"id": "heal_percent", "kind": "target", "target": "heal_percent", "default": 0, "description": "healing by the Heal button (positive energy) changed by this percent: -50 = half"},
+  {"id": "exp_percent", "kind": "target", "target": "exp_percent", "default": 0, "description": "experience received changed by this percent: -25 = a quarter less"},
+  {"id": "pain_reduction", "kind": "target", "target": "pain_reduction", "default": 0, "description": "the effective pain lowered by N (never below 0)"},
+  {"id": "natural_regen_percent", "kind": "target", "target": "natural_regen_percent", "default": 0, "description": "the HP a rest gives changed by this percent: 100 = double"},
+  {"id": "injury_points_reduction", "kind": "action", "action": "reduce_injury_points", "default": 0, "description": "a trigger action: lowers OT (injury points) by N, by a button"}
+ ]
+}

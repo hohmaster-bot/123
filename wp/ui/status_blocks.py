@@ -9,7 +9,7 @@ it (set_favorite on=False). RemindersBlock: the standing reminders of the charac
 this Session (Session.reminders_view; a one-shot one has a dismiss button: Session.dismiss_note).
 Every change is a Session command; the blocks read only views (D25).
 """
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
 
 from wp.i18n import i18n
 from wp.ui import combat_logic as cl
@@ -17,6 +17,19 @@ from wp.ui.blocks import Block
 from wp.ui.sources_dialog import open_sources
 
 STATUS = "status"
+
+
+MANUAL = "manual:"
+
+
+def manual_conditions(session, sid):
+    """The texts of the manual conditions of a status's effects (package 36, decision 7)."""
+    st = next((s for s in session.character.statuses if s.sid == sid), None) if session.character else None
+    out = []
+    for e in (st.effects if st is not None else ()):
+        if e.condition.startswith(MANUAL) and e.condition[len(MANUAL):] not in out:
+            out.append(e.condition[len(MANUAL):])
+    return out
 
 
 def _clear(lay):
@@ -152,6 +165,12 @@ class StatusesBlock(_Scroll):
                 row.addWidget(on)
                 row.addWidget(star)
                 widgets.update(on=on, star=star)
+                for text in manual_conditions(self.session, e.eid):      # package 36: the manual condition box
+                    box = QCheckBox(text)
+                    box.setChecked(text in self.session.character.manual_conditions)
+                    box.toggled.connect(lambda on, t=text: self.run("set_manual_condition", text=t, on=bool(on)))
+                    row.addWidget(box)
+                    widgets.setdefault("conditions", {})[text] = box
             self.rows[e.eid] = widgets
             self.list.addLayout(row)
         self.list.addStretch(1)
@@ -207,8 +226,9 @@ class FavoritesBlock(_Scroll):
 class RemindersBlock(_Scroll):
     def __init__(self, pid, item, shell):
         super().__init__(pid, item, shell, inline=True)
-        self.reads = tuple(self.reads) + ("reminders",)
-        self.data = {"standing": (), "notes": ()}
+        self.reads = tuple(self.reads) + ("reminders", "statuses")
+        self.data = {"standing": (), "notes": (), "triggers": ()}
+        self.trigger_rows = {}
 
     def _read(self):
         if self.session.character is not None:
@@ -237,7 +257,29 @@ class RemindersBlock(_Scroll):
             row.addWidget(lab, 1)
             row.addWidget(x)
             self.list.addLayout(row)
-        if not (self.data["standing"] or self.data["notes"]):
+        self.trigger_rows = {}
+        for nid, _src, text, action, target, amount, _handled in self.data.get("triggers", ()):
+            row = QWidget()                    # a trigger reminder: text, the optional action button, Handled
+            hl = QHBoxLayout(row)
+            hl.setContentsMargins(0, 0, 0, 0)
+            lab = QLabel(text)
+            lab.setWordWrap(True)
+            hl.addWidget(lab, 1)
+            widgets = {"text": lab}
+            if action:
+                b = QPushButton(tr("trigger.action." + action, target=target, amount=amount))
+                b.setObjectName("small")
+                b.clicked.connect(lambda _=False, n=nid: self.run("run_trigger_action", nid=n))
+                hl.addWidget(b)
+                widgets["action"] = b
+            done = QPushButton(tr("trigger.handled"))
+            done.setObjectName("small")
+            done.clicked.connect(lambda _=False, n=nid: self.run("set_trigger_handled", nid=n, handled=True))
+            hl.addWidget(done)
+            widgets["handled"] = done
+            self.trigger_rows[nid] = widgets
+            self.list.addWidget(row)
+        if not (self.data["standing"] or self.data["notes"] or self.data.get("triggers")):
             lab = QLabel(tr("reminders.empty"))
             lab.setObjectName("muted")
             self.list.addWidget(lab)

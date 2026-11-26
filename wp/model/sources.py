@@ -319,6 +319,11 @@ def view(ch, number):
            "editable_target": bool(target), "effects_only": False}
     if number == "temp_hp":
         out["external"] = int(dv.temp_hp_external(ch))      # buffs: the statuses block shows them (package 35)
+    from wp.model import formula_vars as fv
+    from wp.model import situational as sit
+    out["situational"] = sit.situational(ch, number)        # package 36: never in the total, a row of their own
+    out["conditions"] = sit.conditions(ch, number)
+    out["cycle"] = bool(set(sit.targets_of(number)) & fv.cycles(ch))
     if number.startswith(sr.AC):         # package 35 (AC audit): every variant of the cell, named
         from wp.model import ac_zones_view as zv
         cell = zv.cells(ch)[number[len(sr.AC):]]

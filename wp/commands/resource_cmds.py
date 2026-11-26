@@ -55,6 +55,9 @@ def restore(ch, resource="hp", amount=0):
         raise CommandError("healing is blocked by %s" % ", ".join(blk.action_block_reasons(ch, "heal")), "healing_blocked", values=", ".join(blk.action_block_reasons(ch, "heal")))
     if blk.restore_blocked(ch, resource):
         raise CommandError("restoring %s is blocked by %s" % (resource, ", ".join(blk.restore_block_reasons(ch, resource))), "restoring_blocked", values=(resource, ", ".join(blk.restore_block_reasons(ch, resource))))
+    if resource == "hp":               # owner decision 3: every heal by the button is positive energy (heal_percent)
+        from wp.model import switches as sw
+        amount = sw.percent(amount, sw.value(ch, "heal_percent"))
     before = _get(ch, resource)
     after = dm.restore(before, amount)
     return commit(_put(ch, resource, after), "restore", "%s %d -> %d" % (

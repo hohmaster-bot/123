@@ -89,6 +89,13 @@ class SourcesDialog(SizedDialog, QDialog):
             extra.append(tr("sources.external", n=v["external"]))
         if self.hidden:
             extra.append(tr("sources.hidden", n=self.hidden))
+        for value, text, src in v.get("situational", ()):        # package 36: never in the total
+            extra.append(tr("sources.situational", value="%+d" % value, text=text, source=src))
+        for src, cond, holds, value in v.get("conditions", ()):
+            extra.append(tr("sources.condition", value="%+d" % value, cond=cond, source=src,
+                            state=tr("sources.holds") if holds else tr("sources.not_holds")))
+        if v.get("cycle"):
+            extra.append(tr("sources.cycle"))
         self.extra.setText("; ".join(extra))
         self.extra.setVisible(bool(extra))
         self.table.setRowCount(len(rows))

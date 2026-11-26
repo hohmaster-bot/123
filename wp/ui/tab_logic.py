@@ -73,3 +73,21 @@ def narrative_rows(ch, kind):
     if kind == "quirk":
         return [(k.kid, k.name, "burned" if k.burned else "active", k.text) for k in ch.quirks]
     return []
+
+
+MANUAL = "manual:"
+
+
+def manual_conditions(records):
+    """The texts of the manual conditions of the records' effects (package 36, decision 7), in order."""
+    out = []
+    for r in records:
+        for e in r.effects:
+            if e.condition.startswith(MANUAL) and e.condition[len(MANUAL):] not in out:
+                out.append(e.condition[len(MANUAL):])
+    return out
+
+
+def manual_triggers(records, fid):
+    """The trigger ids of the manual triggers of one record (feat id)."""
+    return [t.tid for r in records if r.fid == fid for t in r.triggers if t.event == "manual"]

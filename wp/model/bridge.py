@@ -16,14 +16,35 @@ from wp.model import pool_view as pv
 OVERFLOW = "balance overflow"
 
 
+POOL = "pool:"
+ABSORBER = "absorber:"
+
+
 def _absorber_pool(ch, name):
     if name == "mana":
         return dv.mana_pool(ch)
+    if name.startswith(POOL):
+        p = next(x for x in ch.pools if x.pid == name[len(POOL):])
+        return Pool(pv.current(ch, p), pv.max_of(ch, p))
     return ch.resources[name]
 
 
+def absorbers(ch):
+    """((name, damage types), ...): Character.absorbers (every type) + the effects absorber:<resource> (note = the
+    types, comma list; package 36, P2.9), in that order; an unknown resource is skipped."""
+    out = [(n, ()) for n in ch.absorbers]
+    for _src, e in blk.active_effects(ch):
+        if e.target.startswith(ABSORBER):
+            name = e.target[len(ABSORBER):]
+            known = name == "mana" or name in ch.resources or (name.startswith(POOL) and any(
+                p.pid == name[len(POOL):] for p in ch.pools))
+            if known and name not in [n for n, _ in out]:
+                out.append((name, tuple(t.strip() for t in e.note.split(",") if t.strip())))
+    return tuple(out)
+
+
 def to_vitals(ch):
-    abs_ = tuple(Absorber(n, _absorber_pool(ch, n).current) for n in ch.absorbers)
+    abs_ = tuple(Absorber(n, _absorber_pool(ch, n).current, types) for n, types in absorbers(ch))
     return Vitals(hp=dv.hp_pool(ch), balance=dv.balance_pool(ch), temp_hp=dv.temp_hp_total(ch),
                   absorbers=abs_, pain=0, trauma=ch.trauma)
 
@@ -48,14 +69,17 @@ def _spend_temp(ch, left):
 def from_vitals(ch, v, pain_source=OVERFLOW):
     """Write HP, balance, temp HP, absorbers, OT back; new pain becomes an entry."""
     mana, resources = ch.mana, dict(ch.resources)
+    pools = ch.pools
     for a in v.absorbers:
         if a.name == "mana":   # the current only (the stored max is the base value)
             mana = replace(mana, current=a.current)
+        elif a.name.startswith(POOL):
+            pools = tuple(replace(p, current=a.current) if p.pid == a.name[len(POOL):] else p for p in pools)
         else:
             resources[a.name] = replace(resources[a.name], current=a.current)
     pain = pn.add(ch.pain, v.pain, pain_source) if v.pain else ch.pain
     temp, spent, statuses = _spend_temp(ch, v.temp_hp)
-    return replace(ch, hp_current=v.hp.current, balance_current=v.balance.current,
+    return replace(ch, hp_current=v.hp.current, balance_current=v.balance.current, pools=pools,
                    temp_hp=temp, temp_hp_spent=spent, statuses=statuses, mana=mana, resources=resources, trauma=v.trauma, pain=pain)
 
 

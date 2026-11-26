@@ -65,6 +65,20 @@ def command(fn):
     return fn
 
 
+def _fire_events(before, result, cmd):
+    """The events of the command (end_cycle -> cycle_end ...) and "HP fell below 1" fire their triggers."""
+    from wp.model import trigger_view as tv
+    state = result.state
+    if not hasattr(state, "trigger_notes"):
+        return result
+    event = tv.EVENT_OF.get(cmd)
+    if event:
+        state = tv.fire(state, event)
+    if before.hp_current >= 1 > state.hp_current:
+        state = tv.fire(state, tv.HP_BELOW_ONE)
+    return result if state is result.state else replace(result, state=state)
+
+
 def dispatch(ch, cmd, listeners=(), /, **params):
     """Run a command by name; on success notify listeners(result)."""
     if cmd not in REGISTRY:
@@ -91,6 +105,7 @@ def dispatch(ch, cmd, listeners=(), /, **params):
     if bad:                            # the result must still fit the stored types (review 5 F5)
         raise CommandError("the result of %s does not fit the character: %s" % (cmd, bad), WRONG_TYPE, command=cmd,
                            values=(bad,))
+    result = _fire_events(ch, result, cmd)   # package 36 (decision 6): event triggers become reminder notes
     if CHANGED in result.events and result.state == ch:
         result = replace(result, events=tuple(e for e in result.events if e != CHANGED))   # no-op: not logged (F7)
     if CHANGED in result.events:       # read-only / refused-softly / no-op commands are not logged

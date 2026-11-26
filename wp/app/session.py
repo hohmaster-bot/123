@@ -110,8 +110,9 @@ class Session(object):
     def reminders_view(self):
         """The standing reminders of the character (statuses view) + the one-shot ones of this Session
         ({"standing": ((key, values), ...), "notes": ((key, values), ...)})."""
-        standing = self.view("statuses")["reminders"] if self.character is not None else ()
-        return {"standing": tuple(standing), "notes": tuple(self.notes)}
+        st = self.view("statuses") if self.character is not None else {}
+        return {"standing": tuple(st.get("reminders", ())), "notes": tuple(self.notes),
+                "triggers": tuple(r for r in st.get("triggers", ()) if not r[-1])}    # unhandled notes (pkg 36)
 
     def dismiss_note(self, index):
         """Drop one one-shot reminder (or all with index None); subscribers get the topic "reminders"."""
