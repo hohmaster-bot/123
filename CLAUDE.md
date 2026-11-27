@@ -54,6 +54,10 @@ Reading rules:
 - Of the package reports read only the LAST `Wp_claude/tests/PACKAGE*_REPORT.md`.
 - `RULES/skills_list.md` only for catalog work.
 - Do not re-read a file you just wrote or edited.
+- Never open PNG screenshots (`Wp_claude/tests/ui_shots/`): the owner and the chat look at them.
+- During a part run break_check only by id prefix; the full run once at the end of the part.
+- Never paste long logs into messages or reports, only the summary lines.
+- Closed questions: `Wp_claude/ARCH/questions_archive.md` (word for word); search it by id, never load it whole.
 
 ## Testing
 Anything with numbers or state (formulas, effects, ticks, rest, purchases, save/load) gets a test.

@@ -1,6 +1,7 @@
 # Open questions
 Format: id | question | recommendation | status. Owner answers; Claude records the result in RULES/ or ARCH/decisions.md.
 Closed questions (answered, removed from here): ARCH/decision_log.md (append-only).
+Closed / answered / superseded entries word for word: ARCH/questions_archive.md (search by id).
 
 ## Game rules (owner decides)
 - Q23 | Temp HP spend order. ASSUMPTION (owner, package 4): first the "by button" temp HP, then buff temp HP in order (resources.md). Stacking flag: a non-stacking buff adds only up to its amount over the current total. | as is | assumption
@@ -155,12 +156,9 @@ Closed questions (answered, removed from here): ARCH/decision_log.md (append-onl
 - Q277 | Catalog trainings: units counted on the character with a snapshot of the unit effects; price and limit formulas read the sheet numbers at the purchase; repeatable false = one unit; the lock reason names the unlock id (the ability may not be on the character yet). | as is | assumption (package 37)
 - Q278 | Links: the holder may be a feat, item, quirk, status, training or a text; dependents are feats, statuses, quirks and trainings; an item holder counts while the item is anywhere on the character; a link cycle is still listed. | as is | assumption (package 37)
 - Q279 | damage_per_pain scope: melee / ranged match the attack kind exactly (a thrown attack is neither); the base value of the pain profile has no scope. | as is | assumption (package 37)
-- Q280 | Mordon drawbacks: "no wound penalty" = no pain penalty (pain_penalty_per_pain -1); the bleeding loss and the comfort per fight have no rule in RULES, so no number to expose: text until the owner writes them. | write the rules if they should count | proposal (package 37)
 - Q281 | Adrenaline: spend_bp(restore_only=long_rest) marks the BP (bp_long_rest_only); the short rest never brings the character above max - marked; the long rest clears the mark. | as is | assumption (package 37)
 - Q282 | Charged racial statuses: the race ability holds only the recharge rule (usage without charges of its own; Dance combat_start, Shadow / Eradication long_rest), the status keeps the count; the status's source_ref points to the ability of that race. | as is | assumption (package 37)
-- Q283 | Mordon type 5: the history's 5 charges are the -4 counter (spent by hand per attack, spend_charge; the -4 counts in combat while a charge is left: condition charges_left:feat:<id>); the reroll once per long rest and the 10 HP once per short rest stay text (the ability has one charge counter). | say if the reroll needs its own counter | proposal (package 37)
 - Q284 | Mordon type 6: one manual charge (once per adventure, restored by hand); the six-session first-death rule is text. | as is | assumption (package 37)
 - Q285 | Hunt for incarnations: two buttons (spend 4 mana; +1 stack): the first use turns the status on with 1 stack, each next adds one; the bonus is the general damage bonus with the note fire or acid (spells: text); it ends with the combat. | as is | assumption (package 37)
 - Q286 | Heavy swing and the Rahim tail last one zero-initiative tick (the package wording; the source says until the start of the next turn). | as is | assumption (package 37)
-- Q287 | Northerner: Endurance and Toughness are placeholder feats (sample, price 0, no effects) until the owner writes them; the player takes them and links them to the Northerner. | write the two feats | proposal (package 37)
 - Q288 | Decision 6: Ragmal mana is a catalog training (repeatable units, 200 each); the Skerde swim and the Rahim flight stay one-time race abilities bought with training (buy_race_ability, needs chain): they are bought once, have no units and belong to the race, so a training adds nothing. | as is | assumption (package 37)

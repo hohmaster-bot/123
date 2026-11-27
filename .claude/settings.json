@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./Wp_claude/tests/ui_shots/**)",
+      "Read(./Wp_claude/TRANSLATION_TODO.md)",
+      "Read(./Wp_claude/AUDIT.md)"
+    ]
+  }
+}
