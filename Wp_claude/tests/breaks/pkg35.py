@@ -157,7 +157,7 @@ ENTRIES += [
     dict(id="p35-tab-equip", file="wp/ui/tab_pages2.py",
          old='        return self.run("equip_item" if key == "equip" else "unequip_item", iid=row[0])',
          new='        return self.run("unequip_item", iid=row[0])', suites=UI4, rule="gear.md: Wear runs equip_item"),
-    dict(id="p35-tab-qualify", file="wp/ui/tab_pages2.py",
+    dict(id="p35-tab-qualify", file="wp/ui/tab_training.py",
          old='        return None if row is None else self.run("buy_item_qualification", iid=row[0])',
          new="        return None", suites=UI4, rule="gear.md: the item qualification is bought for 50 x N training"),
     dict(id="p35-qualification-rows", file="wp/ui/tab_logic.py",
