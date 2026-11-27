@@ -112,6 +112,8 @@
   {"id": "spirit.per_cha", "value": 5, "type": "int", "group": "sheet", "unit": "spirit", "description": "spirit per Cha modifier", "label": "rules.spirit.per_cha", "min": 0, "max": 1000000},
   {"id": "attention.drive_level", "value": 4, "type": "int", "group": "sheet", "unit": "level", "description": "a drive at this level or above gives +1 attention", "label": "rules.attention.drive_level", "min": 0, "max": 1000000},
   {"id": "items.broken_defense_divisor", "value": 2, "type": "int", "group": "sheet", "unit": "", "description": "a broken armor / shield bonus is divided by this", "label": "rules.items.broken_defense_divisor", "min": 0, "max": 1000000},
+  {"id": "attention.level_offset", "value": 0, "type": "int", "group": "sheet", "unit": "levels", "description": "levels added for the Attention per cycle only (package 37: a source changes it through const:attention.level_offset)", "label": "rules.attention.level_offset", "min": -1000, "max": 1000},
+  {"id": "training.comfort_exchange_level_offset", "value": 0, "type": "int", "group": "training", "unit": "levels", "description": "levels added for the comfort exchange rate only (package 37: const:training.comfort_exchange_level_offset)", "label": "rules.training.comfort_exchange_level_offset", "min": -1000, "max": 1000},
   {"id": "attention.level_step", "value": 3, "type": "int", "group": "sheet", "unit": "levels", "description": "attention per cycle +1 per this many levels", "label": "rules.attention.level_step", "min": 0, "max": 1000000},
   {"id": "items.broken_weapon_penalty", "value": -2, "type": "int", "group": "items", "unit": "to-hit", "description": "a broken weapon: attack and damage", "label": "rules.items.broken_weapon_penalty", "min": -1000000, "max": 1000000},
   {"id": "items.masterwork_attack", "value": 1, "type": "int", "group": "items", "unit": "to-hit", "description": "masterwork weapon attack bonus", "label": "rules.items.masterwork_attack", "min": 0, "max": 1000000},
@@ -275,6 +277,9 @@
     },
     "wp/model/switches.py": {
       "PCT": "a percent of the rule switches heal_percent / exp_percent / natural_regen_percent (not a rule)"
+    },
+    "wp/ui/tab_training.py": {
+      "UNITS_MAX": "the units spin box range of the Training tab (UI, not a rule)"
     },
     "wp/ui/tab_settings.py": {
       "COMBO_CHARS": "a settings combo box shows about 10 characters (UI, not a rule)"

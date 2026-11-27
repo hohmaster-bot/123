@@ -96,6 +96,8 @@ class SourcesDialog(SizedDialog, QDialog):
                             state=tr("sources.holds") if holds else tr("sources.not_holds")))
         if v.get("cycle"):
             extra.append(tr("sources.cycle"))
+        if v.get("warning"):
+            extra.append(tr("sources." + v["warning"]))
         self.extra.setText("; ".join(extra))
         self.extra.setVisible(bool(extra))
         self.table.setRowCount(len(rows))

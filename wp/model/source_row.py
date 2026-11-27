@@ -24,6 +24,7 @@ POOL = "pool:"
 AC = "ac:"
 POOL_TARGET = "pool_max:"
 AC_TARGET = "ac"
+CONST = "const:"
 
 
 def target_of(number):
@@ -32,6 +33,10 @@ def target_of(number):
         return POOL_TARGET + number[len(POOL):], ()
     if number.startswith(AC):
         return AC_TARGET, (number[len(AC):],)
+    if number.startswith(CONST):            # package 37: every numeric rule constant (const:<id>)
+        from wp.rules_data import rules as rd
+        cid = number[len(CONST):]
+        return (number if cid in rd.DEFAULTS and rd.numeric(rd.DEFAULTS[cid]) else None), ()
     return TARGETS.get(number), ()
 
 

@@ -171,6 +171,11 @@ class StatusesBlock(_Scroll):
                     box.toggled.connect(lambda on, t=text: self.run("set_manual_condition", text=t, on=bool(on)))
                     row.addWidget(box)
                     widgets.setdefault("conditions", {})[text] = box
+            if e.kind == STATUS and self.session is not None and self.session.character is not None:
+                from wp.ui import tab_logic as tlg            # package 37: the status links on hover
+                win = self.win
+                danger = self.session.theme(win.system_dark() if win is not None else None)["colors"]["danger"]
+                name.setToolTip(tlg.link_tooltip(self.session.view("links"), "status:" + e.eid, tr, danger))
             self.rows[e.eid] = widgets
             self.list.addLayout(row)
         self.list.addStretch(1)

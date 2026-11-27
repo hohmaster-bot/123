@@ -181,6 +181,9 @@
    "training",
    "log"
   ],
+  "buy_training": [
+   "all"
+  ],
   "buy_weapon_grade": [
    "attacks",
    "defense",
@@ -579,6 +582,9 @@
   "set_favorite": [
    "statuses",
    "log"
+  ],
+  "set_held_by": [
+   "all"
   ],
   "set_held_kept": [
    "statuses",

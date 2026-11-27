@@ -4,6 +4,7 @@ rules.using(character), so the UI never has to.
 
 A view: fn(ch, session, **params). Params are listed in PARAMS (the view contract, ARCH/view_contract.md).
 """
+import json
 from wp.catalog import schema as cat
 from wp.commands.base import CommandError
 from wp.commands import action_cmds, edit_cmds, notebook_cmds, reaction_cmds
@@ -189,6 +190,29 @@ def sheet(ch, session=None):
             "switches": _switches(ch)}
 
 
+def trainings(ch, session=None):
+    """The catalog trainings (package 37): rows (id, name, module, price, units, limit, unlocked, reason)."""
+    from wp.catalog import store as cs
+    from wp.model import trainings as trn
+    if session is None:
+        return ()
+    return trn.rows(ch, [json.loads(json.dumps(e)) for e, _layer in cs.merged(session.catalog("trainings"))])
+
+
+def links(ch, session=None):
+    """The held-by links both ways (package 37, decision 5): {carrier ref: name, held_by, backed, holds}."""
+    from wp.model import links as lk
+    return lk.view(ch)
+
+
+def effect_targets(ch, session=None):
+    """Every effect target an editor may offer (package 37): the sheet targets (prefix targets end with ':') and
+    const:<id> for every numeric rule constant (generated from the rule data, no hand-kept list)."""
+    from wp.model import sheet_targets as stg
+    from wp.rules_data import rules as rd
+    return tuple(sorted(t for t in stg.TARGETS if t != "const:")) + tuple("const:" + cid for cid in sorted(rd.numeric_ids()))
+
+
 def race(ch, session=None):
     """The race of the character (package 36 P3, model/races.py view)."""
     from wp.model import races
@@ -241,5 +265,6 @@ VIEWS = {"resources": resources, "combat": combat, "defense": defense, "attacks"
          "items": items, "statuses": statuses, "skills": skills, "rest": rest, "log": log, "notebook": notebook,
          "training": training, "settings": settings, "catalogs": catalogs, "sheet": sheet, "spells": spells,
          "injuries": injuries, "editor": editor, "sources": sources_view,
-         "situational": situational, "race": race}
+         "situational": situational, "race": race, "effect_targets": effect_targets,
+         "trainings": trainings, "links": links}
 PARAMS = {"log": ("tail",), "items": ("doll_view",), "sources": ("number",)}

@@ -14,7 +14,7 @@ from wp.core import pain as pn
 from wp.core import triggers as tg
 from wp.model import trigger_view as tv
 
-HOLDER_COLLECTIONS = {"feats": "fid", "statuses": "sid", "quirks": "kid"}
+HOLDER_COLLECTIONS = {"feats": "fid", "statuses": "sid", "quirks": "kid", "trainings": "tid"}
 
 
 @command
@@ -91,3 +91,27 @@ def set_held_kept(ch, collection="", oid="", kept=True):
         raise CommandError("no %s %r" % (collection, oid), "not_found", values=(collection, oid))
     new = tuple(replace(r, held_kept=bool(kept)) if getattr(r, key) == oid else r for r in rows)
     return commit(replace(ch, **{collection: new}), "set_held_kept", "%s %s %s" % (collection, oid, bool(kept)))
+
+
+@command
+def set_held_by(ch, collection="", oid="", holder=""):
+    """Link a dependent to its holder (package 37, owner decision 5): holder = feat:<id> / item:<id> / quirk:<id> /
+    status:<id> / training:<id> / text:<what>; "" removes the link. The holder must exist (a text holder always
+    does) and cannot be the dependent itself."""
+    from wp.model import links
+    key = HOLDER_COLLECTIONS.get(collection)
+    if key is None:
+        raise CommandError("no holder links in %s" % collection, "unknown_collection", values=(collection,))
+    rows = getattr(ch, collection)
+    if not any(getattr(r, key) == oid for r in rows):
+        raise CommandError("no %s %r" % (collection, oid), "not_found", values=(collection, oid))
+    holder = str(holder or "")
+    if holder and not holder.startswith(links.PREFIXES):
+        raise CommandError("a holder is feat: / item: / quirk: / status: / training: / text:", "bad_holder",
+                           values=(holder,))
+    if holder and not holder.startswith(links.TEXT) and not links.holder_present(ch, holder):
+        raise CommandError("no holder %s" % holder, "not_found", values=("holders", holder))
+    if holder == links.REF[collection] + oid:
+        raise CommandError("an entry cannot hold itself", "bad_holder", values=(holder,))
+    new = tuple(replace(r, held_by=holder, held_kept=True) if getattr(r, key) == oid else r for r in rows)
+    return commit(replace(ch, **{collection: new}), "set_held_by", "%s %s <- %s" % (collection, oid, holder or "-"))

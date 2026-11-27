@@ -80,7 +80,7 @@ def exchange_comfort(ch, n=1):
         raise CommandError("exchange at least 1 comfort", "exchange_least_1_comfort")
     if ch.comfort_current < n:
         raise CommandError("not enough comfort: have %d, exchange %d" % (ch.comfort_current, n), "not_enough_comfort_have", values=(ch.comfort_current, n))
-    gain = n * tr.comfort_rate(ch.level, dv.comfort_rate_bonus(ch))   # effect "comfort_rate_bonus" (package 16 G2)
+    gain = n * tr.comfort_rate(dv.comfort_exchange_level(ch), dv.comfort_rate_bonus(ch))   # effect "comfort_rate_bonus" (package 16 G2)
     return commit(replace(ch, comfort_current=ch.comfort_current - n, training=ch.training + gain), "exchange_comfort",
                   "comfort -%d, training +%d" % (n, gain), {"training": gain})
 
@@ -253,7 +253,7 @@ def attention_to_training(ch, n=1):
     (assumption Q114)."""
     n = _spend_attention(ch, n)
     comfort = tr.attention_comfort_equivalent(dv.ability_mod(ch, "dex") + ch.attention_course)
-    rate = tr.comfort_rate(ch.level, dv.comfort_rate_bonus(ch))
+    rate = tr.comfort_rate(dv.comfort_exchange_level(ch), dv.comfort_rate_bonus(ch))
     tenths = int(rd.const("training.tenths_per_point", ch))     # review 5 F22: the constant, not a literal 10
     comfort_tenths = int(math.floor(comfort * tenths + HALF))   # "rounded to tenths" (training.md), half up
     gain = comfort_tenths * rate * n // tenths

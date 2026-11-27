@@ -53,6 +53,7 @@
     "natural_regen_percent": "the HP a rest gives changed by this percent (100 = double; package 36, rule switch)",
     "switch:": "a choice rule switch (switch:at_negative_hp): the effect note is the value (package 36, switches.json)",
     "move:": "a movement mode (move:fly, move:swim, move:climb): value in feet, note = the quality text (package 36)",
-    "absorber:": "a damage absorber (absorber:mana, absorber:pool:<id>): note = the damage types it takes, comma list ('' = all); after temp HP, before HP (package 36)"
+    "absorber:": "a damage absorber (absorber:mana, absorber:pool:<id>): note = the damage types it takes, comma list ('' = all); after temp HP, before HP (package 36)",
+    "const:": "any numeric rule constant (const:<id> of wp/rules_data/constants.json): the value is added, or replaces it with the note 'replace' (package 37, owner decision 1)"
   }
 }

@@ -44,9 +44,12 @@ class NarrativePage(Page):
         texts = [(name, tr("tabs_page.narrative.state." + state) if state else "", text)
                  for _oid, name, state, text in rows]
         self.fill(rows, texts)
-        for r, (_oid, _name, _state, text) in enumerate(rows):
+        links = s.view("links")                  # package 37: the quirk links both ways on hover
+        danger = s.theme(self.block.win.system_dark() if self.block.win is not None else None)["colors"]["danger"]
+        for r, (oid, _name, _state, text) in enumerate(rows):
+            tip = tl.link_tooltip(links, "quirk:" + oid, tr, danger, text) if kind == "quirk" else text
             for c in range(self.table.columnCount()):
-                self.table.item(r, c).setToolTip(text)
+                self.table.item(r, c).setToolTip(tip)
         self.buttons["close"].setText(tr("tabs_page.narrative.close." + kind))
         self.buttons["close"].setEnabled(bool(rows) and kind in ("quest", "quirk"))
         for key in ("edit", "remove"):

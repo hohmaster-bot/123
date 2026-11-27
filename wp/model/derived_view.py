@@ -312,9 +312,20 @@ def spirit_pool(ch):
 ATTENTION_DRIVE_LEVEL = rd.ref("attention.drive_level")
 
 
+def attention_level(ch):
+    """The level the Attention per cycle reads: level + attention.level_offset (package 37: Lomit Adaptation)."""
+    return ch.level + int(rd.const("attention.level_offset", ch))
+
+
+def comfort_exchange_level(ch):
+    """The level the comfort exchange rate reads: level + training.comfort_exchange_level_offset (package 37)."""
+    return ch.level + int(rd.const("training.comfort_exchange_level_offset", ch))
+
+
 def attention_per_cycle(ch):
     """1 + levels reached that are multiples of 3 + 1 per drive at level 4+ (narrative.md)."""
-    return (1 + ch.level // ATTENTION_LEVEL_STEP + sum(1 for d in ch.drives if d.level >= ATTENTION_DRIVE_LEVEL)
+    return (1 + attention_level(ch) // ATTENTION_LEVEL_STEP
+            + sum(1 for d in ch.drives if d.level >= ATTENTION_DRIVE_LEVEL)
             + stg.value(ch, "attention_per_cycle"))
 
 
@@ -392,8 +403,10 @@ def effect_bonuses(ch, ctx=None):
 def other_sources(ch):
     """(source id, effects) of quirks that are not burned and of templates (package 16 F, G6)."""
     from wp.model import source_row          # manual source rows of sheet numbers (package 34)
+    from wp.model import training_taken      # catalog trainings, N units = N times (package 37)
     return ([(q.kid, q.effects) for q in ch.quirks if not q.burned]
-            + [(t.tid, t.effects) for t in ch.templates] + source_row.effects(ch.source_rows))
+            + [(t.tid, t.effects) for t in ch.templates] + source_row.effects(ch.source_rows)
+            + training_taken.effects(ch.trainings))
 
 
 @cached

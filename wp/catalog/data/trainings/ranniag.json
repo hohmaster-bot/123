@@ -1,0 +1,28 @@
+{
+ "kind": "trainings",
+ "format": 1,
+ "title": "ranniag",
+ "counter": 0,
+ "retired": [],
+ "meta": {
+  "note": "Package 37: the catalog trainings of the game module ranniag (owner decision 2)."
+ },
+ "entries": [
+  {
+   "id": "ragmal_mana",
+   "name": "Тренировка маны",
+   "name_en": "Mana training",
+   "module": "ranniag",
+   "price": 200,
+   "repeatable": true,
+   "effects": [
+    {
+     "target": "mana_max",
+     "value": 1
+    }
+   ],
+   "unlock": "feat:magic_body",
+   "text": "Ragmal: +1 maximum mana per unit, 200 training per unit."
+  }
+ ]
+}

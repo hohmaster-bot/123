@@ -139,6 +139,11 @@
    {"name": "effects", "type": "list"}, {"name": "abilities", "type": "list"}, {"name": "statuses", "type": "list"},
    {"name": "pools", "type": "list"}, {"name": "quirks", "type": "list"}, {"name": "languages", "type": "list"},
    {"name": "text", "type": "str"}
+  ],
+  "trainings": [
+   {"name": "module", "type": "str", "required": true}, {"name": "price", "type": "any", "required": true},
+   {"name": "repeatable", "type": "bool"}, {"name": "limit", "type": "any"}, {"name": "effects", "type": "list"},
+   {"name": "unlock", "type": "str"}, {"name": "text", "type": "str"}
   ]
  }
 }

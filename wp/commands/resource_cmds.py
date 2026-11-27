@@ -86,12 +86,21 @@ def set_temp_hp(ch, value=0):
 
 
 @command
-def spend_bp(ch, n=1):
-    """Spend BP by hand (BP above max is ordinary BP)."""
+def spend_bp(ch, n=1, restore_only=""):
+    """Spend BP by hand (BP above max is ordinary BP). restore_only "long_rest" (package 37, Adrenaline): these BP
+    come back only by the long rest (the short rest leaves them missing)."""
     if n < 0 or ch.bp_current < n:
         raise CommandError("not enough BP", "not_enough_bp")
+    if restore_only not in ("", LONG_REST_ONLY):
+        raise CommandError("restore_only must be long_rest", "not_allowed", values=(restore_only,),
+                           allowed=(LONG_REST_ONLY,))
     new = replace(ch, bp_current=ch.bp_current - n)
+    if restore_only == LONG_REST_ONLY:
+        new = replace(new, bp_long_rest_only=new.bp_long_rest_only + n)
     return commit(new, "spend_bp", "BP -%d" % n)
+
+
+LONG_REST_ONLY = "long_rest"
 
 
 @command
@@ -103,6 +112,9 @@ def short_rest(ch, spends=(), other_heal=0, extra_bp=0, keep_overcap=False):
     for opt, params in spends:
         session = rs.spend(session, opt, **dict(params))
     new = switch_off_items(bridge.from_rest(ch, rs.apply_short_rest(session, keep_overcap)), SHORT)
+    if ch.bp_long_rest_only:           # package 37: the BP of a long-rest-only cost stay missing until the long rest
+        cap = max(ch.bp_current, dv.bp_pool(ch).max - ch.bp_long_rest_only)
+        new = replace(new, bp_current=min(new.bp_current, cap))
     # rest.md [OWNER]: after the spends the short rest clears ALL temp HP
     new = replace(new, temp_hp=0, statuses=tuple(replace(s, temp_hp_left=0) for s in new.statuses))
     new = replace(new, temp_hp_spent=stg.value(new, dv.TEMP_HP_TARGET))     # own effect temp HP too (pkg 35)
@@ -137,7 +149,7 @@ def long_rest_end_combat(ch):
 def _long_rest(ch, name="long_rest"):
     # charges of statuses (rage 2/3) come back through the bridge as ability charges (buffs.md)
     new = switch_off_items(bridge.from_rest(ch, rs.long_rest(bridge.to_rest(ch))), LONG)
-    new = replace(new, overload=0)
+    new = replace(new, overload=0, bp_long_rest_only=0)        # package 37: the long rest brings every BP back
     new = replace(new, balance_current=max(new.balance_current, dv.balance_max(new)))
     # a long rest includes a short one: "long_rest" and "short_rest" pools (package 14, Q88)
     new = pools.restore_by(pools.restore_by(new, pools.LONG_REST), pools.SHORT_REST)

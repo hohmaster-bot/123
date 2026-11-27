@@ -20,6 +20,7 @@ from wp.core.weapons import Pick, Weapon
 from wp.model.class_types import ClassInfo, HiddenProperty, SpellDamage
 from wp.model.experience import LevelRecord, XpEntry
 from wp.model.source_row import SourceRow
+from wp.model.training_taken import TrainingTaken
 from wp.model.notebook import Court, Drive, Lens, Quest, Quirk, Story
 from wp.model.template import Template
 from wp.rules_data import rules as rd
@@ -411,6 +412,8 @@ class Character:
     trigger_counter: int = 0           # last trigger note number (never reused)
     race_id: str = ""                  # package 36: the race taken (its entries carry source "race:<id>")
     race_info: str = ""                # package 36: the snapshot of the taken race entry (JSON text, model/races.py)
+    bp_long_rest_only: int = 0         # package 37: BP spent with restore_only long_rest: the short rest leaves them
+    trainings: Tuple[TrainingTaken, ...] = ()   # package 37: catalog trainings bought (units, model/trainings.py)
 
     def __post_init__(self):
         # dict fields are read-only mappings (package 16 A7): no in-place change without a command

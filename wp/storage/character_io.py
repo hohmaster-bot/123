@@ -16,6 +16,7 @@ from dataclasses import replace
 import os
 import shutil
 
+from wp.model.training_taken import TrainingTaken
 from wp.core.triggers import Trigger, TriggerNote
 from wp.core.damage import Pool
 from wp.core.effects import Effect, OneShot, Status
@@ -61,7 +62,7 @@ _TYPES = {cls.__name__: cls for cls in (
     NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
     ResourcePool, RulesSettings, Seed, Spell, SpellUpgrade, Usage, WeaponEntry,
     Court, Drive, Lens, Quest, Quirk, Story, Template, ClassInfo, HiddenProperty, SpellDamage, XpEntry, LevelRecord, SourceRow,
-    Trigger, TriggerNote)}
+    Trigger, TriggerNote, TrainingTaken)}
 
 
 class StorageError(Exception):

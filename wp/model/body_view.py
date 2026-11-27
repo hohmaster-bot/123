@@ -10,6 +10,18 @@ from wp.core import pain as pn
 from wp.model import derived_view as dvw
 
 
+def damage_per_pain(ch, kind=""):
+    """The effects damage_per_pain of an attack kind (package 37): unscoped ones always, "melee" / "ranged" ones only
+    for that kind ("" = the unscoped ones only); typed stacking like every target."""
+    from wp.core import bonuses as bo
+    from wp.model import blocks as blk
+    from wp.model import derived_view as dvw2
+    ctx = dvw2.context(ch)
+    bs = [e.as_bonus(src, ctx) for src, e in blk.active_effects(ch)
+          if e.target == "damage_per_pain" and e.scope in ("", kind)]
+    return bo.stack(bs)
+
+
 def pain_total(ch):
     """The effective pain: the entries + the pain from HP below 0, lowered by the rule switch pain_reduction (pkg 36)."""
     from wp.model import sheet_targets as stg
@@ -24,7 +36,7 @@ def pain_profile(ch):
     # effect targets (package 17, Q125): death cap, penalty per pain, damage per pain
     p = replace(p, cap=p.cap + stg.value(ch, "pain_cap"),
                 penalty_per_pain=max(0, p.penalty_per_pain + stg.value(ch, "pain_penalty_per_pain")),
-                damage_per_pain=p.damage_per_pain + stg.value(ch, "damage_per_pain"))
+                damage_per_pain=p.damage_per_pain + damage_per_pain(ch, ""))
     if ch.rules_settings.ignore_pain and not p.no_penalty:
         return replace(p, no_penalty=True)
     return p

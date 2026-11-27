@@ -91,3 +91,52 @@ def manual_conditions(records):
 def manual_triggers(records, fid):
     """The trigger ids of the manual triggers of one record (feat id)."""
     return [t.tid for r in records if r.fid == fid for t in r.triggers if t.event == "manual"]
+
+
+def link_lines(links, ref, tr):
+    """Package 37 (owner decision 5): the link of one carrier both ways: ((text, lost), ...): "held by: X" (lost =
+    the holder is gone: shown red "not backed: X") and "holds: A, B"."""
+    v = dict(links or {}).get(ref)
+    if not v:
+        return ()
+    out = []
+    if v["held_by"]:
+        holder = dict(links).get(v["held_by"], {}).get("name") or v["held_by"]
+        out.append((tr("links.not_backed", holder=holder) if not v["backed"] else tr("links.held_by", holder=holder),
+                    not v["backed"]))
+    if v["holds"]:
+        out.append((tr("links.holds", names=", ".join(n for _c, _o, n in v["holds"])), False))
+    return tuple(out)
+
+
+def link_tooltip(links, ref, tr, danger, base=""):
+    """A rich-text tooltip: the base text and the link lines (a lost holder in the danger colour)."""
+    parts = [base] if base else []
+    for text, lost in link_lines(links, ref, tr):
+        parts.append('<span style="color:%s">%s</span>' % (danger, text) if lost else text)
+    return "<br>".join(parts)
+
+
+def nested(rows, links, ref_of):
+    """Rows ordered so that every dependent follows its holder (the Feats tab: children under the parent ability);
+    -> ((row, depth), ...)."""
+    by_ref = {ref_of(r): r for r in rows}
+    children, top = {}, []
+    for r in rows:
+        holder = dict(links or {}).get(ref_of(r), {}).get("held_by", "")
+        if holder in by_ref and holder != ref_of(r):
+            children.setdefault(holder, []).append(r)
+        else:
+            top.append(r)
+    out = []
+
+    def walk(r, depth, seen):
+        out.append((r, depth))
+        for c in children.get(ref_of(r), ()):
+            if ref_of(c) not in seen:
+                walk(c, depth + 1, seen | {ref_of(c)})
+    for r in top:
+        walk(r, 0, {ref_of(r)})
+    shown = {ref_of(r) for r, _d in out}
+    out += [(r, 0) for r in rows if ref_of(r) not in shown]     # a link cycle: still listed
+    return tuple(out)

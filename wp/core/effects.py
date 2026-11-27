@@ -70,6 +70,7 @@ class Effect:
                                        # in_combat, pressure_eq:N / pressure_ge:N / pressure_le:N, pain_ge:N) or
                                        # "manual:<text>" (a checkbox); the effect counts only while it holds
     situational: str = ""              # package 36 (decision 8): "vs magic" ... never in a total, listed on hover
+    scope: str = ""                    # package 37: damage_per_pain only for "melee" / "ranged" attacks ("" = all)
 
     def applies(self, context=None):
         """Does the effect count now: not situational and its condition holds (read from the context)."""

@@ -287,7 +287,12 @@ def attack(ch, record, extra=()):
     dmg = [Line(*akd.damage_part(ch, record, item, dv.ability_mod, str_damage))]   # kind rules (package 17)
     if pain:
         dmg.append(Line("pain", pain))
-    race = pn.damage_bonus(dv.pain_total(ch), dv.pain_profile(ch))
+    from dataclasses import replace as _replace
+    from wp.model import body_view as bv
+    kind = akd.kind(record, item)                  # package 37: a scoped damage_per_pain counts for its kind only
+    prof = dv.pain_profile(ch)
+    prof = _replace(prof, damage_per_pain=prof.damage_per_pain + bv.damage_per_pain(ch, kind) - bv.damage_per_pain(ch, ""))
+    race = pn.damage_bonus(dv.pain_total(ch), prof)
     if race:
         dmg.append(Line("pain: race bonus", race))   # resources.md: damage bonus per pain (R6)
     dmg += _typed_lines(blk.unblocked(ch, bonuses, bo.DAMAGE), bo.DAMAGE, ids)

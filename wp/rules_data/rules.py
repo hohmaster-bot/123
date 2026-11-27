@@ -10,6 +10,9 @@ The code reads a constant ONLY through this module:
   comparison, indexing, int()) reads the value of the CURRENT scope at that moment.
 - using(ch): the scope of one character. dispatch() runs every command inside using(ch); a UI that reads views of a
   character outside a command wraps the reads in `with rules.using(ch):` (otherwise the table defaults are used).
+Package 37 (owner decision 1): every numeric constant is also an effect target const:<id>: a source adds to it or
+replaces it (Effect note "replace"). The model layer installs EFFECTS = fn(ch) -> {id: ("add" | "replace", number)}
+(wp/model/const_effects.py); const() applies it to the character's value (the override or the table value).
 """
 import contextlib
 import contextvars
@@ -19,6 +22,9 @@ import os
 
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "constants.json")
 _SCOPE = contextvars.ContextVar("wp_rule_constants", default=None)
+_SCOPE_CH = contextvars.ContextVar("wp_rule_character", default=None)
+EFFECTS = None                         # fn(ch) -> {id: (mode, number)}: the const:<id> effects (package 37)
+PREFIX = "const:"
 
 
 def _load(path=PATH):
@@ -55,20 +61,44 @@ def overrides_of(ch):
     return getattr(rs, "constants", None) or {}
 
 
-def const(cid, ch=None):
+def stored(cid, ch=None):
+    """The character's value without the const:<id> effects (its override, else the table)."""
     if cid not in DEFAULTS:
         raise KeyError("no rule constant %r" % (cid,))
     over = overrides_of(ch) if ch is not None else (_SCOPE.get() or {})
     return _plain(over[cid]) if cid in over else DEFAULTS[cid]
 
 
+def numeric(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def const(cid, ch=None):
+    v = stored(cid, ch)
+    who = ch if ch is not None else _SCOPE_CH.get()
+    if EFFECTS is None or who is None or not numeric(v):
+        return v
+    change = EFFECTS(who).get(cid)
+    if change is None:
+        return v
+    mode, n = change
+    return type(v)(n) if mode == "replace" else type(v)(v + n)
+
+
 @contextlib.contextmanager
 def using(ch):
     token = _SCOPE.set(dict(overrides_of(ch)))
+    token_ch = _SCOPE_CH.set(ch)
     try:
         yield
     finally:
+        _SCOPE_CH.reset(token_ch)
         _SCOPE.reset(token)
+
+
+def numeric_ids():
+    """The ids of the numeric constants: every one is an effect target const:<id> (package 37)."""
+    return tuple(cid for cid, v in DEFAULTS.items() if numeric(v))
 
 
 def _v(x):

@@ -37,7 +37,7 @@ def known(ch, number):
         return number[len(sr.AC):] in acz.CELLS
     if number.startswith(STATUS):
         return any(s.sid == number[len(STATUS):] for s in ch.statuses)
-    return False
+    return number.startswith(sr.CONST)      # package 37: any name (an unknown one gives a warning, never a raise)
 
 
 def _row(rid, name, kind, value, on=True, derived=False, manual=False, counted=True, rule=""):
@@ -229,7 +229,7 @@ def _load(ch):
 def _attention(ch):
     from wp.model.derived_view import ATTENTION_DRIVE_LEVEL, ATTENTION_LEVEL_STEP
     rows = [rule_row("attention_base", 1, "narrative.md"),
-            rule_row("attention_level", ch.level // ATTENTION_LEVEL_STEP, "narrative.md"),
+            rule_row("attention_level", dv.attention_level(ch) // ATTENTION_LEVEL_STEP, "narrative.md"),
             rule_row("attention_drives", sum(1 for d in ch.drives if d.level >= ATTENTION_DRIVE_LEVEL),
                      "narrative.md")]
     rows += _target_rows(ch, "attention", "attention_per_cycle")
@@ -301,7 +301,35 @@ def _status(ch, sid):
     return 0, rows
 
 
+def _const(ch, number):
+    """A rule constant (package 37, decision 1): its table value (rule), the character's override (stored) and every
+    const:<id> effect (add / replace); the total is rules.const(); an unknown or non-numeric id: warning, total 0."""
+    from wp.model import const_effects as ce
+    cid = number[len(sr.CONST):]
+    if cid not in rd.DEFAULTS or not rd.numeric(rd.DEFAULTS[cid]):
+        return 0, [], "unknown_constant"
+    rows = [_row("const_default", "source.const_default", RULE, rd.DEFAULTS[cid], derived=True, rule="constants.json")]
+    stored_v = rd.stored(cid, ch)
+    if stored_v != rd.DEFAULTS[cid]:
+        rows.append(_row("const_override", "source.const_override", STORED, stored_v - rd.DEFAULTS[cid]))
+    replaced = [n for _s, c, mode, n in ce.entries(ch) if c == cid and mode == ce.REPLACE]
+    if replaced:                       # a replacing source: the value it sets stands instead of the table and override
+        rows = [dict(r, counted=False) for r in rows]
+    for src, c, mode, n in ce.entries(ch):
+        if c == cid:
+            rows.append(_row("const:" + src, src, MANUAL if src.startswith("source:") else EFFECT,
+                             n if mode == "add" else n, manual=src.startswith("source:"),
+                             rule="replace" if mode == ce.REPLACE else "",
+                             counted=mode == "add" or n == replaced[-1]))
+    return rd.const(cid, ch), rows, ""
+
+
 def view(ch, number):
+    if number.startswith(sr.CONST):
+        total, rows, warn = _const(ch, number)
+        target, _ = sr.target_of(number)
+        return {"number": number, "total": int(total), "rows": tuple(rows), "target": target or "",
+                "editable_target": bool(target), "effects_only": False, "warning": warn}
     if number.startswith(STATUS):
         total, rows = _status(ch, number[len(STATUS):])
         return {"number": number, "total": 0, "rows": tuple(rows), "target": "", "editable_target": False,
