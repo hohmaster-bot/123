@@ -2153,6 +2153,20 @@ weapon group or module is written in code: a race is catalog data (kind races), 
   ability from the catalog as usual and links it to them with "held by".
 - BP spent by an ability with "restore only by the long rest" (Ankalian Adrenaline) stay missing after a short rest.
 - Ragmal mana training is a catalog training (see training.md).
+- Package 37 P2 (the 12 races done properly):
+  - A charged racial status (Dance with blades, Shadow of Santerra, Eradication of filth) follows its race ability:
+    Dance comes back at every combat start, Shadow and Eradication after the long rest. Test: Dance 1 -> 0 -> 1 at
+    the next combat; Shadow 2 -> 1, the short rest keeps 1, the long rest -> 2.
+  - Heavy swing (Ragmal): 2 temporary HP until the next zero-initiative tick. Dragon tail (Rahim): -2 AC until the
+    next zero-initiative tick (the natural tail attack is parked).
+  - Hunt for incarnations (Ragmal): every use costs 4 mana and adds +1 fire or acid damage (cumulative) until the end
+    of combat. Test: mana 9 -> 5 -> 1, damage +1 then +2, 0 after the combat.
+  - Mordon type 5: -4 on the first five attacks of each combat = 5 charges of the history, one spent per attack,
+    refilled at the combat start; the buy-out removes the -4. Type 2: no wound penalty = no pain penalty.
+  - Lomit Adaptation: one level higher for the comfort exchange and Attention (level 2: 20 instead of 15, Attention 2).
+  - Ulstanger Rage: +1 damage per pain on melee attacks only. Northerner: Endurance and Toughness are placeholder
+    feats (the owner's text is needed).
+  - Races with "two city languages": the text "choose two languages of the region" (added by hand).
 
 ## Appendix: ac_zones.md (DRAFT, not built; review optional)
 
