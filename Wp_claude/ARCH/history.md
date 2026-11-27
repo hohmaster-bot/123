@@ -110,3 +110,4 @@ Moved here from ROADMAP.md (package H, unchanged text). Append-only: add a line 
   menus, the Narrative tab, the font fit), the engine "anything can change anything" (D35: formulas over sheet
   numbers, conditions, situational, rule switches, triggers, tags, held-by, moves, typed absorbers), races in the
   character (take / change / buy, the Race tab) and the owner's 12 races as data. Report: tests/PACKAGE36_REPORT.md.
+- Done in package 37: universal mechanisms (D36: every numeric rule constant is an effect target const:<id>, catalog trainings with units and the Training tab catalog, links shown both ways with set_held_by, level offsets, a damage_per_pain scope, BP restored only by the long rest) and the 12 races done properly (charges follow the race ability, one-tick statuses, cumulative stacks, the Mordon -4 counter, effect-less Copying / Universality, placeholder feats, language texts). Report: tests/PACKAGE37_REPORT.md.

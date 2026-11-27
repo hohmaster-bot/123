@@ -94,6 +94,7 @@ Journal and Settings tabs. Step 1b DONE (package 35 P3): the theme editor and th
 Step 7 DONE (package 35 P4): the content tabs (Race and Class stay placeholders).
 Step 8 DONE (package 35 P5): the Classic layout editor.
 Package 36: owner fixes, the engine D35 (RULES/races.md), races in the character and the 12 races as data.
+Package 37: universal mechanisms (D36: const:<id> targets, catalog trainings, links both ways) and the 12 races done properly.
 Steps in order (each a package); next = Lite (Phase 5, after the owner's look at Classic):
   1. [DONE, package 32] Window shell + the three shipped themes (dark default, light, grey-blue), the Session wiring, one-time hints
      storage (hints_seen, hints_off).
