@@ -26,6 +26,11 @@ max, group, i18n label and description ids). Code never lists setting keys by ha
 - A cell source is a reference resolved by the model (`wp/settings/layout.py`): resource:, ability:, status:, pool:,
   skill:, value:. A broken reference gives a warning, never a crash.
 
+- Package 38 (decision 8): the classic profile field notes = [{"id", "target", "text"}] holds the "!" notes
+  (wp/settings/notes.py Qt-free, settings commands note_add / note_edit / note_move / note_remove in
+  wp/settings/note_cmds.py; target = a block id of the profile or tab:<tab id>; ids note_<n> made by the program);
+  profile_reset keeps the notes; the window draws them (wp/ui/note_marks.py).
+
 ## Quick buttons
 - id, label, icon, action (a command id + params) or macro (a plain list of existing commands, run in order, all or
   nothing), hotkey, group, order. Usable in both modes.

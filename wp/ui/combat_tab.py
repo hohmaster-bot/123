@@ -284,6 +284,9 @@ class CombatBlock(Block):
             if self.session is not None:
                 page.refresh(self.session)
         self._show()
+        if self.win is not None:               # package 38: the notes of a tab show with their tab
+            from wp.ui import note_marks
+            note_marks.sync(self.win)
 
     def tab_page(self, tab):
         """The page of an implemented tab (built when first needed; tests)."""

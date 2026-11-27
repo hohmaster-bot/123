@@ -1607,7 +1607,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (542)
+## Лишние ключи (нигде не нужны) (551)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1802,6 +1802,13 @@
 - `move.fly`
 - `move.line`
 - `move.swim`
+- `notes.add`
+- `notes.delete`
+- `notes.move`
+- `notes.on_tab`
+- `notes.save`
+- `notes.text`
+- `notes.title`
 - `number.attack_melee`
 - `number.attack_ranged`
 - `number.attention`
@@ -1830,6 +1837,8 @@
 - `param.ref`
 - `param.will`
 - `reason.editor_mode_needed`
+- `reason.note_text_needed`
+- `reason.unknown_note_target`
 - `reminder.bleeding_x2`
 - `reminder.not_backed`
 - `reminders.dismiss`

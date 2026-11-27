@@ -162,6 +162,13 @@ still lacks for each block: ARCH/ui_gaps.md.
 - Validation WARNS (a block under its minimum, all HP controls hidden, a block outside the window) but never forbids;
   a "restore the default profile" action always exists.
 
+### 13a. "!" notes (owner, package 38, decision 8)
+- In the layout editor the owner places a note anywhere the editor places widgets (a block of the layout, the bottom
+  strip, a tab) and writes its text himself; it shows as a "!" mark in the corner, the text on hover and on click.
+  Add / edit the text / move / delete in the editor's notes part. Stored with the layout profile (UI settings, not in
+  the character); a layout reset keeps them. Colours: theme tokens (warning, accent_text). A tab note shows while
+  its tab is open.
+
 ### 14. One-time hints
 - Every explanatory hint ("how to use this", first-run tips, a how-to picture) is shown once and stays until the
   player ticks "Understood!" ("Понятно!"). The per-hint state is stored in the app settings (a list of hint ids);

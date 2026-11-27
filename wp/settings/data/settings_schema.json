@@ -72,7 +72,7 @@
    {"id": "name", "type": "string"}, {"id": "panels", "type": "list"}, {"id": "cells", "type": "list"},
    {"id": "doll", "type": "map"}, {"id": "quick_cells", "type": "int", "min": 4, "max": 16},
    {"id": "quick_columns", "type": "int", "min": 1, "max": 16}, {"id": "strips", "type": "list"},
-   {"id": "tab_rows", "type": "int", "min": 0, "max": 16}
+   {"id": "tab_rows", "type": "int", "min": 0, "max": 16}, {"id": "notes", "type": "list"}
   ],
   "lite": [
    {"id": "name", "type": "string"}, {"id": "elements", "type": "list"},

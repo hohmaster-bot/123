@@ -92,5 +92,7 @@ def profile_reset(app, mode="", pid=""):
     prof = sc._profile(app, mode, pid or None)
     shipped = st._shipped_profiles()[mode][0]
     data = dict(st._plain(shipped), id=prof["id"], name=prof.get("name", shipped.get("name", "")))
+    if prof.get("notes"):              # package 38: the owner's "!" notes survive a reset of the layout
+        data["notes"] = st._plain(prof["notes"])
     new = sc._with_profile(app, mode, st.freeze(data))
     return sc.SettingsResult(replace(new), {"id": prof["id"]})

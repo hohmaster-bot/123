@@ -22,7 +22,7 @@ from wp.app.session import EDITOR_TOPICS, SETTINGS_TOPICS
 from wp.i18n import i18n
 from wp.theme import qss
 from wp.app import ui_data
-from wp.ui import blocks, menus
+from wp.ui import blocks, menus, note_marks
 from wp.ui import theme_logic as thl
 from wp.ui.files_ui import Files
 from wp.ui.shell_data import SHELL
@@ -105,6 +105,7 @@ class MainWindow(QMainWindow):
         self.restore_geometry()
         self.apply_settings()
         self.refresh_all()
+        note_marks.apply(self)             # package 38: the "!" notes of the layout
 
     # ------------------------------------------------------------ layout from the profile
     def panels_signature(self):
@@ -122,6 +123,7 @@ class MainWindow(QMainWindow):
         self.apply_settings()
         self.refresh_all()
         self.retranslate()
+        note_marks.apply(self)
 
     def _build_regions(self):
         reg = SHELL["regions"]
@@ -273,6 +275,7 @@ class MainWindow(QMainWindow):
         super().resizeEvent(event)
         if hasattr(self, "gap"):
             QTimer.singleShot(0, self.adapt)       # after the scroll area took its new size
+        QTimer.singleShot(0, lambda: note_marks.place_all(self))
 
     # ------------------------------------------------------------ expand a tab to the full screen (UI_WISHES 9, pkg 35)
     def expand_block(self, bid):
@@ -325,6 +328,7 @@ class MainWindow(QMainWindow):
                 self.rebuild()
             else:
                 self.apply_settings()
+                note_marks.apply(self)                     # the notes may have changed (package 38)
             return
         if tuple(topics) == EDITOR_TOPICS:     # the editor mode switched (package 34)
             self.refresh_all()

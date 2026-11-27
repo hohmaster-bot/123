@@ -8,6 +8,7 @@ the default profile" (profile_reset) and the layout warnings (screen_settings.la
 minimum, all HP controls hidden, a block outside the window): warnings never forbid. Free placement is only for Lite
 (not built). Every change is a settings command (layout_edit / profile_set / profile_reset) saved in the profile
 (data); a window resize alone never writes it. The window rebuilds its regions when the profile panels change.
+Package 38: the notes part (wp/ui/notes_panel.py) adds / edits / moves / deletes the "!" notes of the profile.
 """
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QHBoxLayout, QLabel, QPushButton, QSpinBox,
@@ -17,6 +18,7 @@ from wp.app import ui_data
 from wp.i18n import i18n
 from wp.ui import layout_logic as ll
 from wp.ui.dialog_size import SizedDialog
+from wp.ui.notes_panel import NotesPanel
 from wp.ui.screen_blocks import SB
 
 CLASSIC = "classic"
@@ -71,6 +73,8 @@ class LayoutEditor(SizedDialog, QDialog):
         self.message.setObjectName("message")
         self.message.setWordWrap(True)
         lay.addWidget(self.message)
+        self.notes = NotesPanel(self)            # package 38: the "!" notes
+        lay.addWidget(self.notes)
         self.items = []
         self.table.itemSelectionChanged.connect(self._sync)
         self.reload()
@@ -117,6 +121,7 @@ class LayoutEditor(SizedDialog, QDialog):
         self.warnings.setText("\n".join(("%s: %s" % (tr("panel." + p), tr("warning." + w))) if p else
                                         tr("warning." + w) for w, _i, p in warn) or tr("layout_editor.no_warnings"))
         self.warnings.setObjectName("message" if warn else "muted")
+        self.notes.reload()
         self._sync()
 
     def _sync(self):

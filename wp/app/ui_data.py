@@ -48,6 +48,22 @@ def race_grants(session, aid):
     return [e for e in found if e]
 
 
+def notes(session):
+    """The "!" notes of the active classic profile (package 38): ({"id", "target", "text"}, ...)."""
+    from wp.settings import notes as nt
+    return nt.notes(session.profile("classic"))
+
+
+def note_targets(session):
+    """Every place a note may sit (the profile blocks, then tab:<id> of every tab)."""
+    from wp.settings import note_cmds
+    from wp.settings import notes as nt
+    return nt.targets(session.profile("classic"), note_cmds.tabs())
+
+
+NOTE_TAB = "tab:"
+
+
 def setting_range(key):
     k = sch.KEYS[key]
     return int(k["min"]), int(k["max"])

@@ -2,6 +2,8 @@
 M = ("model/test_pkg38a.py",)
 M3 = ("model/test_pkg38b.py",)
 UI3 = ("ui/test_p38a.py",)
+N4 = ("app/test_notes38.py",)
+UI4 = ("ui/test_p38b.py",)
 R = ("model/test_races37.py",)
 FEATS = "wp/catalog/data/feats.json"
 RAN = "wp/catalog/data/races/ranniag.json"
@@ -94,4 +96,31 @@ ENTRIES = [
     dict(id="p38-data-m5-reroll", file=RAN, old='"recharge": "long_rest"\n      }\n     ]',
          new='"recharge": "combat_start"\n      }\n     ]', suites=M3,
          rule="decision 6: the Mordon reroll comes back with the long rest"),
+    # ------------------------------------------------------------ P4 "!" notes
+    dict(id="p38-note-target", file="wp/settings/notes.py",
+         old='    if target not in targets(profile, tabs):\n        raise NoteError("unknown_note_target", (target,))\n    if not',
+         new='    if False:\n        raise NoteError("unknown_note_target", (target,))\n    if not', suites=N4,
+         rule="decision 8: a note sits only where the layout editor places widgets"),
+    dict(id="p38-note-text", file="wp/settings/notes.py",
+         old='    return tuple(dict(x, text=str(text).strip()) if x["id"] == nid else x for x in have), nid',
+         new="    return have, nid", suites=N4 + UI4, rule="decision 8: the owner edits the text"),
+    dict(id="p38-note-move", file="wp/settings/notes.py",
+         old='    return tuple(dict(x, target=target) if x["id"] == nid else x for x in have), nid',
+         new="    return have, nid", suites=N4 + UI4, rule="decision 8: a note can be moved"),
+    dict(id="p38-note-remove", file="wp/settings/notes.py",
+         old='    return tuple(x for x in have if x["id"] != nid), nid', new="    return have, nid",
+         suites=N4 + UI4, rule="decision 8: a note can be deleted"),
+    dict(id="p38-note-reset", file="wp/settings/screen_settings.py",
+         old='        data["notes"] = st._plain(prof["notes"])', new="        pass", suites=N4,
+         rule="decision 8: a layout reset keeps the notes"),
+    dict(id="p38-note-schema", file="wp/settings/data/settings_schema.json", old=', {"id": "notes", "type": "list"}',
+         new="", suites=N4, rule="decision 8: the notes are stored in the UI settings"),
+    dict(id="p38-note-mark-tip", file="wp/ui/note_marks.py", old='        self.setToolTip(self.note.get("text", ""))',
+         new="        pass", suites=UI4, rule="decision 8: the text on hover"),
+    dict(id="p38-note-mark-tab", file="wp/ui/note_marks.py",
+         old="        m.setVisible(m.tab is None or m.tab == now)", new="        m.setVisible(True)", suites=UI4,
+         rule="decision 8: a tab note shows with its tab"),
+    dict(id="p38-note-mark-apply", file="wp/ui/window.py",
+         old="                note_marks.apply(self)                     # the notes may have changed (package 38)",
+         new="                pass", suites=UI4, rule="decision 8: a new note shows at once"),
 ]
