@@ -1607,7 +1607,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (551)
+## Лишние ключи (нигде не нужны) (589)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1680,6 +1680,33 @@
 - `drive_type.society`
 - `drive_type.success`
 - `drive_type.triumph`
+- `effects.add`
+- `effects.change`
+- `effects.field.effects`
+- `effects.field.effects_off`
+- `effects.field.effects_on`
+- `effects.form.btype`
+- `effects.form.condition`
+- `effects.form.mode`
+- `effects.form.scope`
+- `effects.form.search`
+- `effects.form.situational`
+- `effects.form.target`
+- `effects.form.value`
+- `effects.kind.feats`
+- `effects.kind.injuries`
+- `effects.kind.items`
+- `effects.kind.quirks`
+- `effects.kind.statuses`
+- `effects.kind.trainings`
+- `effects.mode.add`
+- `effects.mode.replace`
+- `effects.remove`
+- `effects.replace`
+- `effects.scope.all`
+- `effects.scope.melee`
+- `effects.scope.ranged`
+- `effects.title`
 - `exp.kind.level_up`
 - `exp.remind.excess`
 - `exp.remind.training`
@@ -1837,7 +1864,14 @@
 - `param.ref`
 - `param.will`
 - `reason.editor_mode_needed`
+- `reason.effect_value_needed`
 - `reason.note_text_needed`
+- `reason.replace_const_only`
+- `reason.scope_not_allowed`
+- `reason.unknown_bonus_type`
+- `reason.unknown_condition`
+- `reason.unknown_effect_mode`
+- `reason.unknown_effect_target`
 - `reason.unknown_note_target`
 - `reminder.bleeding_x2`
 - `reminder.not_backed`
@@ -2014,6 +2048,7 @@
 - `tabs_page.catalog_kind.trainings`
 - `tabs_page.catalog_kind.weapon_groups`
 - `tabs_page.catalog_kind.weapons`
+- `tabs_page.catalogs.effects`
 - `tabs_page.catalogs.empty`
 - `tabs_page.catalogs.summary`
 - `tabs_page.col.bonus`
@@ -2057,14 +2092,17 @@
 - `tabs_page.drives.summary`
 - `tabs_page.drives.up`
 - `tabs_page.expand`
+- `tabs_page.feats.effects`
 - `tabs_page.feats.empty`
 - `tabs_page.feats.favorite`
 - `tabs_page.feats.fire`
 - `tabs_page.feats.link`
 - `tabs_page.feats.summary`
+- `tabs_page.injuries.effects`
 - `tabs_page.injuries.empty`
 - `tabs_page.injuries.summary`
 - `tabs_page.injuries.take`
+- `tabs_page.inventory.effects`
 - `tabs_page.inventory.empty`
 - `tabs_page.inventory.equip`
 - `tabs_page.inventory.summary`

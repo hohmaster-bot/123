@@ -811,6 +811,15 @@
   "restore_reroll": [
    "rerolls",
    "log"
+  ],
+  "effect_add": [
+   "all"
+  ],
+  "effect_change": [
+   "all"
+  ],
+  "effect_remove": [
+   "all"
   ]
  }
 }

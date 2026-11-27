@@ -64,6 +64,12 @@ def note_targets(session):
 NOTE_TAB = "tab:"
 
 
+def effect_catalog_kinds():
+    """The catalog kinds whose entries the effect editor edits (package 38 P5)."""
+    from wp.app import effect_editor as ee
+    return tuple(ee.CATALOG_KINDS)
+
+
 def setting_range(key):
     k = sch.KEYS[key]
     return int(k["min"]), int(k["max"])

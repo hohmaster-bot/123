@@ -4,6 +4,8 @@ M3 = ("model/test_pkg38b.py",)
 UI3 = ("ui/test_p38a.py",)
 N4 = ("app/test_notes38.py",)
 UI4 = ("ui/test_p38b.py",)
+M5 = ("model/test_pkg38c.py",)
+UI5 = ("ui/test_p38c.py",)
 R = ("model/test_races37.py",)
 FEATS = "wp/catalog/data/feats.json"
 RAN = "wp/catalog/data/races/ranniag.json"
@@ -123,4 +125,40 @@ ENTRIES = [
     dict(id="p38-note-mark-apply", file="wp/ui/window.py",
          old="                note_marks.apply(self)                     # the notes may have changed (package 38)",
          new="                pass", suites=UI4, rule="decision 8: a new note shows at once"),
+    # ------------------------------------------------------------ P5 the effect editor
+    dict(id="p38-eff-formula", file="wp/model/effect_form.py", old="        fm.validate(v)", new="        pass",
+         suites=M5 + UI5, rule="decision 9: a bad formula is refused by the formula checker"),
+    dict(id="p38-eff-target", file="wp/model/effect_form.py",
+         old="    if not target_ok(target):\n        raise EffectFormError(\"unknown_effect_target\", (target,))",
+         new="    if False:\n        raise EffectFormError(\"unknown_effect_target\", (target,))", suites=M5,
+         rule="decision 9: only the targets of the view effect_targets"),
+    dict(id="p38-eff-replace", file="wp/model/effect_form.py",
+         old="    return Effect(target, value, btype, note=REPLACE if mode == REPLACE else \"\", condition=cond,",
+         new="    return Effect(target, value, btype, note=\"\", condition=cond,", suites=M5,
+         rule="decision 9: add or replace (a rule constant)"),
+    dict(id="p38-eff-replace-only", file="wp/model/effect_form.py",
+         old="    if mode == REPLACE and not target.startswith(CONST):", new="    if False:", suites=M5,
+         rule="decision 9: replace only where the target is a rule constant"),
+    dict(id="p38-eff-scope", file="wp/model/effect_form.py",
+         old="    if scope not in SCOPES or (scope and target not in SCOPED_TARGETS):", new="    if scope not in SCOPES:",
+         suites=M5, rule="decision 9: a scope only where the target allows"),
+    dict(id="p38-eff-condition", file="wp/model/effect_form.py", old="        if idp is None or not part[len(idp):].strip():",
+         new="        if False:", suites=M5, rule="decision 9: only the existing condition kinds"),
+    dict(id="p38-eff-core-targets", file="wp/model/effect_form.py",
+         old="    return tuple(sorted(set(CORE_TARGETS + sheet))) + consts", new="    return tuple(sorted(set(sheet))) + consts",
+         suites=M5 + UI5, rule="decision 9: the core roll targets (attack) are offered"),
+    dict(id="p38-eff-remove", file="wp/commands/effect_cmds.py", old="    del have[i]", new="    pass",
+         suites=M5 + UI5, rule="decision 9: an effect can be removed"),
+    dict(id="p38-eff-field", file="wp/commands/effect_cmds.py",
+         old="    allowed = ITEM_FIELDS if collection == \"items\" else (\"effects\",)",
+         new="    allowed = (\"effects_off\",) if collection == \"items\" else (\"effects\",)", suites=M5,
+         rule="D17: an item effect goes to the chosen tab"),
+    dict(id="p38-eff-catalog-check", file="wp/app/effect_editor.py",
+         old="            have.append(ef.build(form))", new="            have.append(ef.Effect(str(dict(form)[\"target\"]), dict(form)[\"value\"]))",
+         suites=M5, rule="decision 9: an invalid catalog effect is never saved"),
+    dict(id="p38-eff-catalog-save", file="wp/app/session.py", old="            cs.save(result.state.user)",
+         new="            pass", suites=M5 + UI5, rule="decision 9: a catalog entry is saved to its data file"),
+    dict(id="p38-eff-dialog-keep", file="wp/ui/effect_dialog.py",
+         old="            self.list.setCurrentRow(keep)          # the edited row stays selected (its form stays as typed)",
+         new="            pass", suites=UI5, rule="decision 9: the edited effect stays selected"),
 ]

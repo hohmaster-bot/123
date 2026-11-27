@@ -97,6 +97,12 @@ class Page(QWidget):
     def run(self, command, **params):
         return self.block.run(command, **params)
 
+    def open_effects(self, collection="", oid="", catalog=None):
+        """Package 38 P5: the effect editor for one carrier (or one catalog entry)."""
+        from wp.ui.effect_dialog import open_effects
+        win = self.block.win
+        return None if win is None else open_effects(win, catalog, collection, oid)
+
     def fill(self, rows, texts):
         self.rows = rows
         self.table.setRowCount(len(rows))
@@ -132,7 +138,7 @@ def yes(tr, v):
 class InjuriesPage(Page):
     TAB = "injuries"
     COLS = ("name", "severity", "heal_rating", "permanent", "charges")
-    ACTIONS = ("take",)
+    ACTIONS = ("take", "effects")
     NEEDS_ROW = False
 
     def __init__(self, block):
@@ -153,6 +159,9 @@ class InjuriesPage(Page):
                           charges) for _jid, name, sev, heal, perm, charges in rows])
 
     def act(self, key):
+        if key == "effects":
+            row = self.selected()
+            return self.open_effects("injuries", row[0] if row else "")
         return self.run("add_injury", severity=self.severity.currentData())
 
 

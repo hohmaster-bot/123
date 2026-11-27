@@ -16,7 +16,7 @@ from wp.ui.tab_pages import Page, yes
 class InventoryPage(Page):
     TAB = "inventory"
     COLS = ("name", "weight", "quantity", "worn", "in_hands", "state")
-    ACTIONS = ("equip", "unequip")
+    ACTIONS = ("equip", "unequip", "effects")
 
     def show_data(self, tr, s):
         v = s.view("items")
@@ -37,6 +37,8 @@ class InventoryPage(Page):
         row = self.selected()
         if row is None:
             return None
+        if key == "effects":
+            return self.open_effects("items", row[0])
         return self.run("equip_item" if key == "equip" else "unequip_item", iid=row[0])
 
 
@@ -58,7 +60,7 @@ class SkillsPage(Page):
 class FeatsPage(Page):
     TAB = "feats"
     COLS = ("name", "charges", "cooldown")
-    ACTIONS = ("favorite", "fire", "link")
+    ACTIONS = ("favorite", "fire", "link", "effects")
     INDENT = "    "                    # a dependent ability under its holder (package 37)
 
     def __init__(self, block):
@@ -108,6 +110,8 @@ class FeatsPage(Page):
         row = self.selected()
         if row is None:
             return None
+        if key == "effects":               # package 38 P5: the effect editor of the ability
+            return self.open_effects("feats", row[0])
         if key == "link":                  # package 37: link the selected ability to the chosen holder ("" = none)
             return self.run("set_held_by", collection="feats", oid=row[0], holder=self.holder.currentData() or "")
         if key == "fire":                  # package 36: the manual triggers of the ability (a button on its card)
@@ -122,7 +126,7 @@ class FeatsPage(Page):
 class CatalogsPage(Page):
     TAB = "catalogs"
     COLS = ("id", "name", "layer")
-    ACTIONS = ()
+    ACTIONS = ("effects",)
 
     def __init__(self, block):
         super().__init__(block)
@@ -142,4 +146,8 @@ class CatalogsPage(Page):
         self.fill(rows, [(eid, name, tr("tabs_page.layer." + layer)) for eid, name, layer in rows])
 
     def act(self, key):
-        return None
+        row = self.selected()
+        kind = self.kind.currentData()
+        if row is None or kind not in ui_data.effect_catalog_kinds():
+            return None
+        return self.open_effects(catalog=(kind, row[0]))

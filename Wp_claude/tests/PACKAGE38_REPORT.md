@@ -29,6 +29,23 @@ package text are written as open questions (Q289 and later).
     every changing command in combat by dispatch), constants comfort.fight_cap / fight_minus / fight_max (const
     targets); the combat end leaves a reminder with the button "Take +N comfort" (run_command gain_fight_comfort,
     journal, undo); never silent. The reminders block translates note texts and names command buttons.
+- P3 (rerolls; decisions 6, 7): wp/core/rerolls.py (Reroll: name, charges, recharge from the usage list) as a field
+  rerolls on every carrier (feats, items, statuses, quirks, injuries, trainings) and in the catalog data (race
+  abilities / statuses / quirks, feats, items, statuses); view rerolls (ref, source, name, left / max, rule); commands
+  spend_reroll / restore_reroll (journal "charges", undo); usage.recharge refills them with the rests and the combat
+  events; the Rerolls block (panels.json, default profile: right column under the combat tab); Mordon type 5 got its
+  own reroll (1, long rest), separate from the -4 counter.
+- P4 ("!" notes; decision 8): Qt-free wp/settings/notes.py (targets = the profile blocks and tab:<id>; add / edit /
+  move / remove), settings commands note_add / note_edit / note_move / note_remove (classic profile field notes,
+  saved with the UI settings, typed in the profile schema), profile_reset keeps the notes; the window draws a "!"
+  mark (theme tokens warning / accent_text) with the text as tooltip and in an info box on click; a tab note shows
+  while its tab is open; the layout editor has a notes part (wp/ui/notes_panel.py).
+- P5 (the effect editor; decision 9, D37, closes Q276): Qt-free form wp/model/effect_form.py (targets of the view
+  effect_targets, now with the core roll targets; value or formula; add / replace; condition kinds; scope; situational;
+  bonus type); character commands effect_add / effect_change / effect_remove; wp/app/effect_editor.py (carriers,
+  catalog edits through the new Session.catalog_command, saved into the user layer with the module tag); the dialog
+  wp/ui/effect_dialog.py, opened by Effects in the Feats, Inventory, Injuries tabs (any carrier through its chooser)
+  and in the catalog window.
 
 ## Tests and breaks
 - P1: run_all: suites 100, passed 100, failed 0. break_check (full run, no code changed): entries 527, caught 527, missed 0.
@@ -36,6 +53,13 @@ package text are written as open questions (Q289 and later).
   break_check (full run): entries 545, caught 545, missed 0. New suite model/test_pkg38a.py (16 cases); 18 breaks
   in tests/breaks/pkg38.py. Updated old expectations (owner change): test_races37 northerner (real feats) and
   wall-of-bones (the purchase passes the Toughness entry).
+- P3: run_all: suites 103, passed 103, failed 0. break_check (full run on the P3 tree): BREAK_P3. New suites
+  model/test_pkg38b.py (10), ui/test_p38a.py (4, shots rerolls_*); 12 breaks. Old expectation updated: test_shell
+  s-regions (the right column has the Rerolls block).
+- P4: run_all: suites 105, passed 105, failed 0. break_check (full run on the P4 tree): BREAK_P4. New suites
+  app/test_notes38.py (8), ui/test_p38b.py (4, shots notes_*); 9 breaks.
+- P5 (final): run_all: suites 107, passed 107, failed 0. break_check (full run): BREAK_P5. New suites
+  model/test_pkg38c.py (9), ui/test_p38c.py (4, shots effect_editor_*); 12 breaks.
 
 ## Changes to old rules
 - P1: none (docs and settings only).
@@ -43,13 +67,21 @@ package text are written as open questions (Q289 and later).
   buffs.md "Reminders from effects". New stored fields: Status.tags, Character.combat_morale_peak. New targets
   reminder:, check:; new condition status_tag:<tag>; constants comfort.fight_*; run_command allowlist +
   gain_fight_comfort. The P37 placeholders Endurance / Toughness are replaced.
+- P3 (owner consent): RULES/buffs.md "Rerolls". New stored field rerolls on Feat, Item, Status, Quirk, Injury,
+  TrainingTaken; the default classic profile has the Rerolls block.
+- P4: none in RULES (UI_WISHES.md 13a, ARCH/settings.md). New profile field notes.
+- P5: none in RULES (ARCH/decisions.md D37). The view effect_targets also lists the core roll and defence targets.
 
 ## Assumptions
 - P1: "closed / answered / superseded" = an entry the owner answered or a later entry fully replaced; an "as is"
   assumption without the owner's answer is still open.
 - P2: Q289 Hit Dice = level; Q290 Endurance targets; Q291 price 200, module core; Q292 the bleeding status;
   Q293 how the peak is counted, no cut at the comfort max; Q295 Toughness taken before.
+- P3: Q296 the reroll carriers and refs; Q297 old profiles get the block by "Restore the default profile".
+- P4: Q298 a note sits on a block or a tab page.
+- P5: Q299 the editor is open in play, race catalog abilities are edited on the character; Q300 the form rules.
 
 ## Open questions (ids)
 - P1: none new.
 - P2: new Q289-Q295 (Q294 proposal: Banner of Blood "1 comfort less for fights"); closed Q280, Q287.
+- P3: new Q296, Q297; closed Q283. P4: new Q298. P5: new Q299, Q300; closed Q276.

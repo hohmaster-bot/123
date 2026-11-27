@@ -1,25 +1,22 @@
 # Status (update at the end of every package; at most 40 lines)
 
 Branch: `Rework`. Phase: 5 (UI) Classic steps 1-8 DONE; races DONE (packages 36, 37); Lite not started.
-Last finished package: 37 (universal mechanisms D36: const:<id> targets, catalog trainings, links both
-ways; the 12 races done properly). Last report: `Wp_claude/tests/PACKAGE37_REPORT.md`.
+Last finished package: 38 (token rules; Toughness / Endurance, Wall of Bones, comfort per fight; rerolls;
+"!" notes; the effect editor D37). Last report: `Wp_claude/tests/PACKAGE38_REPORT.md`.
 
-## Tests (last run in package 37)
-- `python Wp_claude/tests/run_all.py`: suites 100, passed 100, failed 0.
-- `python Wp_claude/tests/break_check.py`: entries 527, caught 527, missed 0.
+## Tests (last run in package 38)
+- `python Wp_claude/tests/run_all.py`: suites 107, passed 107, failed 0.
+- `python Wp_claude/tests/break_check.py`: BREAK_FINAL.
 - UI suites tests/ui/*.py run headless inside run_all (skipped without PySide6); screenshots tests/ui_shots/.
 - Legacy baseline (separate): 105 examples, 69 pass, 17 fail, 19 not built (BASELINE_REPORT.md).
 
-## Open questions (OPEN_QUESTIONS.md)
+## Open questions (OPEN_QUESTIONS.md; closed ones word for word: ARCH/questions_archive.md)
 - Waiting for the owner: the overlay spike test; nothing blocking. Russian texts to fill: Wp_claude/TRANSLATION_TODO.md.
-- Assumptions to confirm: Q23, Q96, Q98-Q102, Q105, Q106, Q112, Q114, Q116-Q121, Q123, Q124, Q126-Q129, Q131,
-  Q132, Q134-Q144, Q146, Q148-Q150, Q152, Q153, Q160-Q187, Q189-Q196, Q199-Q215, Q217-Q223, Q225-Q228,
-  Q230-Q244, Q246-Q270, Q273, Q275-Q279, Q281, Q282, Q284-Q286, Q288; proposals for the owner: Q280
-  (Mordon bleeding / comfort per fight), Q283 (Mordon reroll counter), Q287 (Endurance / Toughness text).
+- Assumptions to confirm: every "assumption" entry (Q23 ... Q300); proposal for the owner: Q294 (Banner of Blood
+  "1 comfort less for fights").
 
 ## Next (ROADMAP.md)
-1. The owner: the Training tab (Ragmal mana), the links in the Feats tab, the race coverage table in
-   PACKAGE37_REPORT.md; Q280, Q283, Q287.
+1. The owner: look at the shots rerolls_*, notes_*, effect_editor_*; Q289-Q300.
 2. Then Lite (Phase 5) or the classes / weapon groups data of the two game modules (owner).
 
 ## Known gaps (rule exists, no code)

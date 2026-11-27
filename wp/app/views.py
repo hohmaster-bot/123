@@ -206,11 +206,11 @@ def links(ch, session=None):
 
 
 def effect_targets(ch, session=None):
-    """Every effect target an editor may offer (package 37): the sheet targets (prefix targets end with ':') and
-    const:<id> for every numeric rule constant (generated from the rule data, no hand-kept list)."""
-    from wp.model import sheet_targets as stg
-    from wp.rules_data import rules as rd
-    return tuple(sorted(t for t in stg.TARGETS if t != "const:")) + tuple("const:" + cid for cid in sorted(rd.numeric_ids()))
+    """Every effect target an editor may offer (package 37; package 38 P5 adds the core roll and defence targets):
+    the core targets, the sheet targets (prefix targets end with ':') and const:<id> for every numeric rule constant
+    (generated from the rule data, no hand-kept list; wp/model/effect_form.py)."""
+    from wp.model import effect_form as efm
+    return efm.targets()
 
 
 def rerolls(ch, session=None):

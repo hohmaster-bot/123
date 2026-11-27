@@ -144,6 +144,24 @@ class Session(object):
             self._catalogs[kind] = cs.load_layers(kind, os.path.join(self.user_dir, "catalogs"))
         return self._catalogs[kind]
 
+    CATALOG_TOPICS = ("catalogs",)
+
+    def catalog_command(self, kind, command, **params):
+        """A catalog command (wp/catalog/catalog_cmds.py) on the layers of a kind (package 38 P5): the user layer is
+        saved to the user folder at once (the shipped file is never written); a refusal is a result like dispatch;
+        subscribers get the topic "catalogs"."""
+        from wp.catalog.catalog_cmds import catalog_dispatch
+        try:
+            result = catalog_dispatch(self.catalog(kind), command, **params)
+            cs.save(result.state.user)
+        except (CommandError, cs.CatalogError) as e:
+            return DispatchResult(False, reason=getattr(e, "reason", "catalog_error"),
+                                  params=dict(getattr(e, "params", {})), info={"text": str(e)})
+        self._catalogs[kind] = result.state
+        for fn in self._subscribers:
+            fn(self.CATALOG_TOPICS)
+        return DispatchResult(True, topics=self.CATALOG_TOPICS, info=dict(result.info))
+
     def theme(self, system_dark=None):
         return themes.active(self.app, self.themes, system_dark)
 
