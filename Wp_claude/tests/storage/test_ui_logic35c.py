@@ -48,8 +48,8 @@ def _catalogs():
         ui_data.profile_field_range("classic", "quick_cells"), ui_data.background_path(s)
 
 
-S.case("r-ui-data", "D25: the catalog browser reads the data (3 shipped feats); setting ranges 6-48, quick cells "
-       "4-16; no background picture by default", (True, 3, "shipped", (6, 48), (4, 16), ""))(_catalogs)
+S.case("r-ui-data", "D25: the catalog browser reads the data (5 shipped feats, pkg 37); setting ranges 6-48, quick cells "
+       "4-16; no background picture by default", (True, 5, "shipped", (6, 48), (4, 16), ""))(_catalogs)
 
 if __name__ == "__main__":
     try:

@@ -162,8 +162,8 @@ def _feats():
     return p.empty.text(), p.summary.text(), shot(w, "feats")
 
 
-S.case("t-feats", "pkg 35: no feats -> the empty state; the feat catalog count comes from the catalog data (3 samples)",
-       ("No feats yet", "Feats 0; in the catalog 3", True))(_feats)
+S.case("t-feats", "pkg 35: no feats -> the empty state; the feat catalog count comes from the catalog data (5, pkg 37)",
+       ("No feats yet", "Feats 0; in the catalog 5", True))(_feats)
 
 
 def _catalogs():

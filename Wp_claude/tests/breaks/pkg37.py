@@ -1,6 +1,9 @@
 """Break registry: package 37 (P1 universal mechanisms; later parts add their entries below)."""
 M = ("model/test_pkg37a.py",)
 UI = ("ui/test_p37a.py",)
+R = ("model/test_races37.py",)
+RAN = "wp/catalog/data/races/ranniag.json"
+GOD = "wp/catalog/data/races/godbound.json"
 
 ENTRIES = [
     dict(id="p37-const-apply", file="wp/rules_data/rules.py",
@@ -50,4 +53,36 @@ ENTRIES = [
          old="               for tid, name, module, price, units, limit, ok, why in s.view(\"trainings\") if ok or show]",
          new="               for tid, name, module, price, units, limit, ok, why in s.view(\"trainings\")]", suites=UI,
          rule="decision 2: locked trainings are hidden until 'show locked'"),
+    # ---------------------------------------------------------------- P2: the 12 races done properly
+    dict(id="p37-race-usage", file="wp/model/races.py", old='held_by=a.get("held_by", ""), usage=_usage(a))',
+         new='held_by=a.get("held_by", ""), usage=None)', suites=R, rule="P2.1: a race ability carries its recharge rule"),
+    dict(id="p37-race-source-ref", file="wp/model/races.py", old='"full_ticks", "source_ref", "temp_hp_stacks")',
+         new='"full_ticks", "temp_hp_stacks")', suites=R, rule="P2.1: a racial status follows its race ability"),
+    dict(id="p37-race-one-shot", file="wp/model/races.py",
+         old='        extra["one_shot"] = tuple(OneShot(o["resource"], int(o["amount"])) for o in d["one_shot"])',
+         new='        extra["one_shot"] = ()', suites=R, rule="P2.2: Heavy swing gives 2 temporary HP"),
+    dict(id="p37-stacks", file="wp/core/effects.py", old="            ctx = _Stacks(context, max(1, s.stacks))",
+         new="            ctx = _Stacks(context, 1)", suites=R, rule="P2.2: Hunt is cumulative (stacks)"),
+    dict(id="p37-add-stack", file="wp/commands/trigger_cmds.py", old="replace(s, stacks=max(1, s.stacks) + 1)",
+         new="replace(s, stacks=max(1, s.stacks))", suites=R, rule="P2.2: every Hunt use adds a stack"),
+    dict(id="p37-uses-stacks", file="wp/commands/trigger_cmds.py", old="        if st is not None and st.active and ef.uses_stacks(st):",
+         new="        if st is not None and st.active:", suites=R, rule="P2.2: only a cumulative status stacks"),
+    dict(id="p37-charges-left", file="wp/model/formula_vars.py", old="    return c is not None and c[0] > 0",
+         new="    return c is not None", suites=R, rule="P2.2: the Mordon -4 counts while a charge is left"),
+    dict(id="p37-data-dance", file=RAN, old='"source_ref": "feat:dance_with_blades_moon"', new='"source_ref": ""',
+         suites=R, rule="P2.1: Dance with blades comes back at the combat start"),
+    dict(id="p37-data-counter", file=RAN, old='"charges": 5,', new='"charges": 0,', suites=R,
+         rule="P2.2: Mordon type 5: 5 charges = the first five attacks"),
+    dict(id="p37-data-swing", file=RAN, old='"amount": 2', new='"amount": 0', suites=R,
+         rule="P2.2: Heavy swing = 2 temporary HP"),
+    dict(id="p37-data-hunt", file=RAN, old='"value": "stacks",', new='"value": 1,', suites=R,
+         rule="P2.2: Hunt +1 damage per stack"),
+    dict(id="p37-data-tail", file=RAN, old='"target": "dragon_tail"', new='"target": "nothing"', suites=R,
+         rule="P2.2: the Rahim tail button turns the -2 AC on"),
+    dict(id="p37-data-adrenaline", file=GOD, old='"restore_only": "long_rest"', new='"restore_only": ""', suites=R,
+         rule="P2: Adrenaline BP come back only by the long rest"),
+    dict(id="p37-data-rage", file=GOD, old='"scope": "melee"', new='"scope": "ranged"', suites=R,
+         rule="P2: Ulstanger Rage on melee attacks"),
+    dict(id="p37-data-lomit", file=GOD, old='"const:attention.level_offset"', new='"const:attention.level_offse"',
+         suites=R, rule="P2: Lomit Adaptation: Attention one level higher"),
 ]

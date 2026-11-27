@@ -55,8 +55,8 @@ def _menus():
 
 
 S.case("m-menus", "owner P1.3: Settings and Catalog are top menus next to View and Help; their tabs are gone; the "
-       "Settings window changes a setting (font 13); the Catalog window lists the 3 shipped feats",
-       ((False, False), ["Character", "View", "Settings", "Catalog", "Help"], 13, 3))(_menus)
+       "Settings window changes a setting (font 13); the Catalog window lists the 5 shipped feats",
+       ((False, False), ["Character", "View", "Settings", "Catalog", "Help"], 13, 5))(_menus)
 
 
 def _narrative():
