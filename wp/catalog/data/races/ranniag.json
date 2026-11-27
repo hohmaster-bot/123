@@ -576,7 +576,7 @@
      "id": "goddess_of_humanity",
      "name": "Богиня человечности",
      "name_en": "Type 5 Goddess of Humanity",
-     "text": "+2 Wis; allies may reroll one d20 once (back after the long rest); out of combat once per short rest 10 HP to each ally; +2 caster level for divine magic; drawback: -4 on the first five attacks of each combat: 5 charges, spend one per attack; the -4 counts in combat while a charge is left; the charges come back at the start of every combat.",
+     "text": "+2 Wis; allies may reroll one d20 once (its own charge: 1, back after the long rest; the Rerolls block); out of combat once per short rest 10 HP to each ally; +2 caster level for divine magic; drawback: -4 on the first five attacks of each combat: 5 charges, spend one per attack; the -4 counts in combat while a charge is left; the charges come back at the start of every combat.",
      "usage": {
       "charges": 5,
       "recharge": "combat_start"
@@ -592,7 +592,15 @@
        "condition": "in_combat&charges_left:feat:goddess_of_humanity"
       }
      ],
-     "auto": false
+     "auto": false,
+     "rerolls": [
+      {
+       "id": "ally_reroll",
+       "name": "Переброс d20 союзнику",
+       "charges": 1,
+       "recharge": "long_rest"
+      }
+     ]
     },
     {
      "id": "goddess_of_humanity_buyout",

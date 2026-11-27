@@ -409,6 +409,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `restore_mana(amount=0)` reasons: amount_must_0, restoring_blocked
   - `restore_pool(pid='')` reasons: restoring_blocked
   - `restore_reactions()`
+  - `restore_reroll(ref='')`
   - `return_action(n=1)`
   - `return_reaction(n=1)` reasons: nothing_spent
   - `set_attack_source(kind='', source='')` reasons: no_attack_record, not_allowed
@@ -444,6 +445,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `spend_ov(n=1)` reasons: not_enough_ov_need
   - `spend_pool(pid='', n=1)` reasons: cannot_spend_negative_amount, not_enough_need_have
   - `spend_reaction(n=1)`
+  - `spend_reroll(ref='')` reasons: no_reroll_left
   - `sprout_seed(seed_id='', source='training')` reasons: no_seed, seed_has_already_sprouted
   - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0
   - `use_attack(rid='')` reasons: attack_not_available, no_attack_record

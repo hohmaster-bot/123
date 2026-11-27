@@ -2,9 +2,9 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (877)
+## Нет в ru.json (879)
 
-### catalog (107)
+### catalog (108)
 - `catalog.field.ac_bonus`
 - `catalog.field.access_class`
 - `catalog.field.activation_day`
@@ -76,6 +76,7 @@
 - `catalog.field.qualification_n`
 - `catalog.field.quantity`
 - `catalog.field.range_ft`
+- `catalog.field.rerolls`
 - `catalog.field.sample`
 - `catalog.field.saves`
 - `catalog.field.scale`
@@ -162,7 +163,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (225)
+### reason (226)
 - `reason.action_needed`
 - `reason.activates_status_which_not`
 - `reason.already_activated`
@@ -274,6 +275,7 @@
 - `reason.no_override`
 - `reason.no_pool`
 - `reason.no_record`
+- `reason.no_reroll_left`
 - `reason.no_seed`
 - `reason.no_skill`
 - `reason.no_skill_catalog_given`
@@ -905,9 +907,9 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (677)
+## Нет в en.json (678)
 
-### catalog (107)
+### catalog (108)
 - `catalog.field.ac_bonus`
 - `catalog.field.access_class`
 - `catalog.field.activation_day`
@@ -979,6 +981,7 @@
 - `catalog.field.qualification_n`
 - `catalog.field.quantity`
 - `catalog.field.range_ft`
+- `catalog.field.rerolls`
 - `catalog.field.sample`
 - `catalog.field.saves`
 - `catalog.field.scale`
@@ -1604,7 +1607,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (533)
+## Лишние ключи (нигде не нужны) (542)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1831,6 +1834,15 @@
 - `reminder.not_backed`
 - `reminders.dismiss`
 - `reminders.empty`
+- `rerolls.empty`
+- `rerolls.restore`
+- `rerolls.row`
+- `rerolls.rule.combat_end`
+- `rerolls.rule.combat_start`
+- `rerolls.rule.long_rest`
+- `rerolls.rule.manual`
+- `rerolls.rule.short_rest`
+- `rerolls.use`
 - `resources.amount`
 - `resources.bad_edit`
 - `resources.button.damage_to_balance`

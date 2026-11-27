@@ -74,7 +74,8 @@
    {"name": "qualification_n", "type": "int"},
    {"name": "base_slot_cost", "type": "int"},
    {"name": "hp", "type": "int"},
-   {"name": "durability", "type": "int"}
+   {"name": "durability", "type": "int"},
+   {"name": "rerolls", "type": "list"}
   ],
   "spells": [
    {"name": "circle", "type": "int", "required": true, "allowed": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]},
@@ -96,6 +97,7 @@
    {"name": "ignores_iterative", "type": "bool"},
    {"name": "tags", "type": "list"},
    {"name": "module", "type": "str"},
+   {"name": "rerolls", "type": "list"},
    {"name": "description", "type": "str"}
   ],
   "skills": [
@@ -120,7 +122,8 @@
    {"name": "effects", "type": "list"},
    {"name": "is_stance", "type": "bool"},
    {"name": "granted_maneuvers", "type": "list"},
-   {"name": "module", "type": "str"}
+   {"name": "module", "type": "str"},
+   {"name": "rerolls", "type": "list"}
   ],
   "drive_types": [
    {"name": "description", "type": "str"}

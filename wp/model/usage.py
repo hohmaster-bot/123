@@ -117,7 +117,8 @@ def recharge(ch, *rules):
         for oid, _, p in _picks(ch):
             if p.used:
                 ch = put(ch, PICK, replace(p, used=0), oid)
-    return ch
+    from wp.model import reroll_view as rv
+    return rv.refill(ch, rules)        # package 38: reroll grants follow the same rules
 
 
 # ------------------------------------------------ status charges follow their source (Q108, package 16 G3)

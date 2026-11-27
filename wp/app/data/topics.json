@@ -803,6 +803,14 @@
    "resources",
    "statuses",
    "log"
+  ],
+  "spend_reroll": [
+   "rerolls",
+   "log"
+  ],
+  "restore_reroll": [
+   "rerolls",
+   "log"
   ]
  }
 }

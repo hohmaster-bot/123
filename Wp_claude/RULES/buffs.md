@@ -83,6 +83,15 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   without a source is NOT refilled by rests. The short rest option "restore charges" (2 BP) stays a choice of the
   player (Q121). Item usage charges follow the item's recharge rule (gear.md "Charges and cooldown").
 
+## Rerolls [OWNER, package 38, decisions 6, 7]
+- Rerolls are a resource-like list: any source (race ability, feat, item, status, quirk, injury, training; classes
+  later) may grant reroll charges with a recharge rule of the existing list (short_rest, long_rest, combat_start,
+  combat_end, manual). The player sees each reroll (name, source, left / max) and spends one by a button (command,
+  journal, undo); rests and the combat events refill by the rule like usage charges; manual only by hand. The program
+  never rolls, it only counts.
+- Mordon type 5: the reroll once per long rest is its own charge (1, long rest), separate from the -4 counter (5).
+  Tests: spend -> 0 left, the -4 counter stays 5; the short rest keeps 0; the long rest -> 1.
+
 ## Stacking (see defense.md)
 - Same type: the value with the larger absolute value wins, equal absolute values give 0; only flat stacks
   (on AC dodge also stacks; weapon proficiency stacks with itself). Details: defense.md "Stacking".

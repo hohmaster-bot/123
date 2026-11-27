@@ -76,9 +76,10 @@ def _regions():
 
 
 S.case("s-regions", "Classic v2: experience strip on top, left = identity + resources, middle = AC and parameters on one "
-       "row then statuses / favourites / reminders, right = tabs + combat, bottom strip",
+       "row then statuses / favourites / reminders, right = tabs + combat (+ rerolls, package 38), bottom strip",
        ({"top": ["experience_strip"], "left": ["identity", "resources"],
-         "center": ["ac_block", "favorites", "parameters", "reminders", "statuses"], "right": ["combat", "tabs"],
+         "center": ["ac_block", "favorites", "parameters", "reminders", "statuses"],
+         "right": ["combat", "rerolls", "tabs"],
          "bottom": ["bottom_strip"]}, ["ac_block", "parameters"], ["center", "left", "right"]))(_regions)
 
 

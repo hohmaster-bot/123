@@ -12,6 +12,7 @@ import json
 from dataclasses import replace
 
 from wp.catalog import convert
+from wp.core import rerolls as rr
 from wp.core.damage import Pool
 from wp.core.effects import OneShot, Status
 from wp.core.triggers import Trigger
@@ -61,7 +62,7 @@ def _usage(a):
 def ability_feat(rid, a):
     return Feat(fid=a["id"], title=a.get("name", a["id"]), source=source_of(rid), cost=int(a.get("price", 0)),
                 effects=_effects(a), triggers=_triggers(a), text=a.get("text", ""), needs=a.get("needs", ""),
-                held_by=a.get("held_by", ""), usage=_usage(a))
+                held_by=a.get("held_by", ""), usage=_usage(a), rerolls=rr.from_data(a.get("rerolls")))
 
 
 def _status(rid, d):
@@ -71,7 +72,8 @@ def _status(rid, d):
         extra["one_shot"] = tuple(OneShot(o["resource"], int(o["amount"])) for o in d["one_shot"])
     return Status(name=d.get("name", d["id"]), sid=d["id"], effects=_effects(d), active=False, source=source_of(rid),
                   duration=d.get("duration", "infinite"), note=d.get("text", ""), triggers=_triggers(d),
-                  charges=Pool(int(charges), int(charges)) if charges else None, **extra)
+                  charges=Pool(int(charges), int(charges)) if charges else None,
+                  rerolls=rr.from_data(d.get("rerolls")), **extra)
 
 
 def copies(entry, ch):
@@ -84,7 +86,8 @@ def copies(entry, ch):
     pools = tuple(ResourcePool(p["id"], p.get("name", p["id"]), p.get("max", 0), int(p.get("current", 0)),
                                p.get("restore", "manual"), source_of(rid)) for p in entry.get("pools", ()))
     quirks = tuple(Quirk(q["id"], q.get("name", q["id"]), text=q.get("text", ""), effects=_effects(q),
-                         source=source_of(rid)) for q in entry.get("quirks", ()))
+                         source=source_of(rid), rerolls=rr.from_data(q.get("rerolls")))
+                   for q in entry.get("quirks", ()))
     langs = rl.languages(entry.get("languages", ()), ch.languages)
     return {"feats": feats, "statuses": statuses, "pools": pools, "quirks": quirks, "languages": langs,
             "base_speed": entry.get("speed")}

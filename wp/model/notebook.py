@@ -11,6 +11,7 @@ Ids are made by the program (D7).
 from dataclasses import dataclass, field
 from typing import Dict, Tuple
 
+from wp.core.rerolls import Reroll
 from wp.core.triggers import Trigger
 from wp.core.effects import Effect
 from wp.core.frozen import freeze_fields
@@ -65,6 +66,7 @@ class Quirk:
     effects: Tuple[Effect, ...] = ()   # like a feat: active while the quirk is not burned
     burned: bool = False               # "burn": grey, status destroyed, reversible by hand
     triggers: Tuple[Trigger, ...] = ()   # package 36 (decision 6)
+    rerolls: Tuple[Reroll, ...] = ()   # package 38 (decision 7): reroll charges this carrier grants
     held_by: str = ""                  # package 36 (decision 14)
     held_kept: bool = True
     source: str = ""                   # package 36: "race:<id>" when a race gave it

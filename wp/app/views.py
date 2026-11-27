@@ -213,6 +213,12 @@ def effect_targets(ch, session=None):
     return tuple(sorted(t for t in stg.TARGETS if t != "const:")) + tuple("const:" + cid for cid in sorted(rd.numeric_ids()))
 
 
+def rerolls(ch, session=None):
+    """The reroll grants (package 38, decision 7): ((ref, source ref, source name, name, left, max, recharge), ...)."""
+    from wp.model import reroll_view as rv
+    return rv.rows(ch)
+
+
 def race(ch, session=None):
     """The race of the character (package 36 P3, model/races.py view)."""
     from wp.model import races
@@ -266,5 +272,5 @@ VIEWS = {"resources": resources, "combat": combat, "defense": defense, "attacks"
          "training": training, "settings": settings, "catalogs": catalogs, "sheet": sheet, "spells": spells,
          "injuries": injuries, "editor": editor, "sources": sources_view,
          "situational": situational, "race": race, "effect_targets": effect_targets,
-         "trainings": trainings, "links": links}
+         "trainings": trainings, "links": links, "rerolls": rerolls}
 PARAMS = {"log": ("tail",), "items": ("doll_view",), "sources": ("number",)}

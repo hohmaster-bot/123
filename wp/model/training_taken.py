@@ -8,6 +8,7 @@ from dataclasses import dataclass, replace
 from typing import Tuple
 
 from wp.core.effects import Effect
+from wp.core.rerolls import Reroll
 
 
 @dataclass(frozen=True)
@@ -19,6 +20,7 @@ class TrainingTaken:
     module: str = ""
     held_by: str = ""                  # package 37 (decision 5): a training may be held by a holder too
     held_kept: bool = True
+    rerolls: Tuple[Reroll, ...] = ()   # package 38 (decision 7): reroll charges this carrier grants
 
 
 def scaled(e, units):

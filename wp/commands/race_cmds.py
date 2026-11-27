@@ -65,6 +65,7 @@ def _granted(ch, a, entries):
         t = fcat.from_entries([e]).templates[0]
         out.append(Feat(fid=fid, title=t.name, flags=t.flags, source=races.source_of(ch.race_id), cost=0,
                         effects=t.effects, granted_maneuvers=t.granted_maneuvers, is_stance=t.is_stance,
+                        rerolls=t.rerolls,
                         held_by="feat:" + a["id"]))
     return tuple(out)
 

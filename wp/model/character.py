@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, Optional, Tuple
 
 from wp.core.damage import Pool
+from wp.core.rerolls import Reroll
 from wp.core.triggers import Trigger, TriggerNote
 from wp.core.effects import Effect, Status
 from wp.core.frozen import freeze_fields
@@ -137,6 +138,7 @@ class Item:
     source: str = ""                   # where it came from (loot, shop, template:<id>...), a label
     tags: Tuple[str, ...] = ()         # free tags ("trophy"; package 36, decision 13): tagged_base_slots:<tag>
     triggers: Tuple[Trigger, ...] = ()   # reminders on events or by hand (package 36, decision 6)
+    rerolls: Tuple[Reroll, ...] = ()   # package 38 (decision 7): reroll charges this carrier grants
 
 
 @dataclass(frozen=True)
@@ -279,6 +281,7 @@ class Feat:
     condition_tag: str = "none"        # display only: none / combat_only / out_of_combat_only
     effects: Tuple[Effect, ...] = ()   # permanent while the feat is owned (same structure as statuses)
     triggers: Tuple[Trigger, ...] = ()   # package 36 (decision 6)
+    rerolls: Tuple[Reroll, ...] = ()   # package 38 (decision 7): reroll charges this carrier grants
     held_by: str = ""                  # package 36 (decision 14): feat:<id> / item:<id> / quirk:<id> / status:<id> /
                                        # text:<what>; "" = nothing holds it
     held_kept: bool = True             # a text holder: kept (the manual checkbox)

@@ -1,5 +1,6 @@
 """Catalog entry -> sheet record (package 18): items and statuses (weapons, armor, feats, skills have their own modules).
 Fields kept only in the catalog (no sheet field): items ignore_bag_weight (a character flag). ilvl -> Item.ilvl (Q133)."""
+from wp.core import rerolls as rr
 from wp.core.damage import Pool
 from wp.core.effects import Effect, Status
 from wp.model.character import Item
@@ -16,7 +17,7 @@ def item_from_entry(entry, iid):
     fields = {k: entry[k] for k in ITEM_FIELDS if k in entry}
     return Item(iid=iid, name=entry["name"], effects_off=tuple(effect(e) for e in entry.get("effects_off", ())),
                 effects_on=tuple(effect(e) for e in entry.get("effects_on", ())), source="catalog:" + entry["id"],
-                **fields)
+                rerolls=rr.from_data(entry.get("rerolls")), **fields)
 
 
 def status_from_entry(entry, sid=""):
@@ -28,5 +29,5 @@ def status_from_entry(entry, sid=""):
                   cooldown_rounds=int(entry.get("cooldown_rounds", 0)), per_tick_hp=int(entry.get("per_tick_hp", 0)),
                   temp_hp_stacks=bool(entry.get("temp_hp_stacks", False)),
                   ignores_iterative=bool(entry.get("ignores_iterative", False)), active=False,
-                  tags=tuple(str(t) for t in entry.get("tags", ())),
+                  tags=tuple(str(t) for t in entry.get("tags", ())), rerolls=rr.from_data(entry.get("rerolls")),
                   source="catalog:" + entry["id"])

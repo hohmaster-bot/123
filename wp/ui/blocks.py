@@ -235,6 +235,9 @@ def make(pid, item, shell):
         from wp.ui import status_blocks as stb               # package 34 part 2
         return {"statuses": stb.StatusesBlock, "favorites": stb.FavoritesBlock,
                 "reminders": stb.RemindersBlock}[pid](pid, item, shell)
+    if pid == "rerolls":
+        from wp.ui.reroll_block import RerollsBlock           # package 38
+        return RerollsBlock(pid, item, shell)
     if pid in ("tabs", "combat"):
         from wp.ui import combat_tab as ct
         return (ct.TabsBlock if pid == "tabs" else ct.CombatBlock)(pid, item, shell)

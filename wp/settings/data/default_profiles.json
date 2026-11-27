@@ -161,6 +161,21 @@
      "tab_order": 9
     },
     {
+     "id": "rerolls",
+     "panel": "rerolls",
+     "visible": true,
+     "dock": "right",
+     "position": [
+      0,
+      570
+     ],
+     "size": [
+      300,
+      90
+     ],
+     "tab_order": 10
+    },
+    {
      "id": "bottom_strip",
      "panel": "bottom_strip",
      "visible": true,
@@ -173,7 +188,7 @@
       1240,
       56
      ],
-     "tab_order": 10
+     "tab_order": 11
     }
    ],
    "cells": [],

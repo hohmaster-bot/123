@@ -24,6 +24,7 @@ from wp.core import bonuses as bo
 from wp.core import formula as fm
 from wp.core.frozen import freeze_fields
 from wp.core.damage import Pool
+from wp.core.rerolls import Reroll  # noqa: F401 (a Status field type)
 from wp.core.triggers import Trigger  # noqa: F401 (a Status field type)
 
 TICKS = "ticks"
@@ -147,6 +148,7 @@ class Status:
     note: str = ""                     # the player's note shown on the chip (package 30)
     stacks: int = 0                    # package 37: a cumulative status turned on again adds a stack (formula "stacks")
     triggers: Tuple[Trigger, ...] = ()   # package 36 (decision 6)
+    rerolls: Tuple[Reroll, ...] = ()   # package 38 (decision 7): reroll charges this carrier grants
     held_by: str = ""                  # package 36 (decision 14)
     held_kept: bool = True
     tags: Tuple[str, ...] = ()         # package 38: free tags ("bleeding"): the condition status_tag:<tag>

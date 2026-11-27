@@ -37,7 +37,7 @@ def add_feat(ch, catalog=None, fid="", source="training"):
     except ValueError as e:
         raise CommandError(str(e), "rule_refused")
     feat = Feat(fid=fid, title=t.name, flags=t.flags, source=source, cost=price, effects=t.effects,
-                granted_maneuvers=t.granted_maneuvers, is_stance=t.is_stance)
+                granted_maneuvers=t.granted_maneuvers, is_stance=t.is_stance, rerolls=t.rerolls)
     new = replace(ch, feats=ch.feats + (feat,), training=left)
     return commit(new, "add_feat", "feat %s (%s, %d)" % (fid, source, price), {"cost": price})
 

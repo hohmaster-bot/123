@@ -12,7 +12,9 @@ from dataclasses import dataclass, replace
 from typing import Tuple
 
 from wp.catalog import store as cs
+from wp.core import rerolls as rr
 from wp.core.effects import Effect
+from wp.core.rerolls import Reroll
 from wp.core.formula import validate as validate_formula
 from wp.rules_data import rules as rd
 
@@ -33,6 +35,7 @@ class FeatTemplate:
     effects: Tuple[Effect, ...] = ()   # copied to the sheet feat (package 11 D)
     granted_maneuvers: Tuple[str, ...] = ()
     is_stance: bool = False
+    rerolls: Tuple[Reroll, ...] = ()   # package 38: reroll charges the feat grants
 
 
 @dataclass(frozen=True)
@@ -69,7 +72,8 @@ def from_entries(entries):
                              flags=tuple(f.get("flags", ())),
                              effects=tuple(_effect(e) for e in f.get("effects", ())),
                              granted_maneuvers=tuple(f.get("granted_maneuvers", ())),
-                             is_stance=bool(f.get("is_stance", False))) for f in entries)
+                             is_stance=bool(f.get("is_stance", False)),
+                             rerolls=rr.from_data(f.get("rerolls"))) for f in entries)
     ids = [t.fid for t in out]
     if len(ids) != len(set(ids)):
         raise ValueError("duplicate feat ids in the catalog file")

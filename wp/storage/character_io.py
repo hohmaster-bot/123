@@ -23,6 +23,7 @@ from wp.core.effects import Effect, OneShot, Status
 from wp.core.injuries import Injury
 from wp.core.pain import PainEntry, PainProfile
 from wp.core.rest import Charge
+from wp.core.rerolls import Reroll
 from wp.core.skills import Skill
 from wp.core.statuses import NegativeTraits
 from wp.core.weapons import Pick, Weapon
@@ -62,7 +63,7 @@ _TYPES = {cls.__name__: cls for cls in (
     NegativeTraits, Pick, Weapon, Ability, AttackRecord, Character, Feat, Item, Language, LogEntry, Maneuver,
     ResourcePool, RulesSettings, Seed, Spell, SpellUpgrade, Usage, WeaponEntry,
     Court, Drive, Lens, Quest, Quirk, Story, Template, ClassInfo, HiddenProperty, SpellDamage, XpEntry, LevelRecord, SourceRow,
-    Trigger, TriggerNote, TrainingTaken)}
+    Trigger, TriggerNote, TrainingTaken, Reroll)}
 
 
 class StorageError(Exception):

@@ -1,5 +1,7 @@
-"""Break registry: package 38 (P2 Mordon / feats / comfort per fight; later parts add their entries below)."""
+"""Break registry: package 38 (P2 Mordon / feats / comfort per fight; P3 rerolls; later parts add their entries below)."""
 M = ("model/test_pkg38a.py",)
+M3 = ("model/test_pkg38b.py",)
+UI3 = ("ui/test_p38a.py",)
 R = ("model/test_races37.py",)
 FEATS = "wp/catalog/data/feats.json"
 RAN = "wp/catalog/data/races/ranniag.json"
@@ -58,4 +60,38 @@ ENTRIES = [
          rule="decision 5: Mordon comfort per fight 1 less"),
     dict(id="p38-data-cap", file=CONST, old='{"id": "comfort.fight_cap", "value": 5,',
          new='{"id": "comfort.fight_cap", "value": 4,', suites=M, rule="decision 5: the cap 5 is rule data"),
+    # ------------------------------------------------------------ P3 rerolls
+    dict(id="p38-reroll-spend", file="wp/commands/reroll_cmds.py",
+         old="    new = rv.put(ch, ref, replace(r, charges_current=r.charges_current - 1))", new="    new = ch",
+         suites=M3 + UI3, rule="decision 7: spend_reroll uses one"),
+    dict(id="p38-reroll-none-left", file="wp/commands/reroll_cmds.py", old="    if r.charges_current < 1:",
+         new="    if False:", suites=M3, rule="decision 7: no reroll left -> refused"),
+    dict(id="p38-reroll-refill", file="wp/model/usage.py", old="    return rv.refill(ch, rules)",
+         new="    return ch", suites=M3, rule="decision 6: the long rest refills the reroll"),
+    dict(id="p38-reroll-rule", file="wp/core/rerolls.py",
+         old="    return tuple(replace(r, charges_current=max(r.charges_current, r.charges_max)) if r.recharge in rules else r",
+         new="    return tuple(replace(r, charges_current=max(r.charges_current, r.charges_max)) if True else r",
+         suites=M3, rule="decision 7: only the grant's own recharge rule refills it"),
+    dict(id="p38-reroll-active", file="wp/model/reroll_view.py", old="        return is_effective(x)",
+         new="        return True", suites=M3, rule="decision 7: an inactive status grants no reroll"),
+    dict(id="p38-reroll-source", file="wp/model/reroll_view.py",
+         old='            out.append(("%s:%s:%s" % (kind, oid, r.rrid), "%s:%s" % (kind, oid), _name(x), r.name or _name(x),',
+         new='            out.append(("%s:%s:%s" % (kind, oid, r.rrid), "%s:%s" % (kind, oid), "", r.name or _name(x),',
+         suites=M3 + UI3, rule="decision 7: the player sees the source of a reroll"),
+    dict(id="p38-reroll-race", file="wp/model/races.py",
+         old="usage=_usage(a), rerolls=rr.from_data(a.get(\"rerolls\")))", new="usage=_usage(a))",
+         suites=M3 + UI3, rule="decision 6: the Mordon type 5 ability grants its reroll"),
+    dict(id="p38-reroll-item", file="wp/catalog/convert.py",
+         old='                rerolls=rr.from_data(entry.get("rerolls")), **fields)', new="                **fields)",
+         suites=M3, rule="decision 7: an item grants rerolls"),
+    dict(id="p38-reroll-store", file="wp/storage/character_io.py", old="    Trigger, TriggerNote, TrainingTaken, Reroll)}",
+         new="    Trigger, TriggerNote, TrainingTaken)}", suites=M3, rule="decision 7: the count left is stored"),
+    dict(id="p38-reroll-block", file="wp/ui/reroll_block.py", old="            use.setEnabled(left > 0)",
+         new="            use.setEnabled(True)", suites=UI3, rule="decision 7: no reroll left -> the button is off"),
+    dict(id="p38-ui-command-label", file="wp/ui/status_blocks.py", old="        if own != key:\n            return own",
+         new="        if False:\n            return own", suites=UI3,
+         rule="decision 5: the comfort button names the comfort it gives"),
+    dict(id="p38-data-m5-reroll", file=RAN, old='"recharge": "long_rest"\n      }\n     ]',
+         new='"recharge": "combat_start"\n      }\n     ]', suites=M3,
+         rule="decision 6: the Mordon reroll comes back with the long rest"),
 ]
