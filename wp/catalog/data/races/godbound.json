@@ -5,7 +5,7 @@
  "counter": 0,
  "retired": [],
  "meta": {
-  "note": "Package 36 P4: the races of the game module godbound (Wp_claude/RACES_SOURCE.md); only what affects the character; texts of narrative abilities in English (the owner's source)."
+  "note": "Package 36 P4, package 37 P2: the races of the game module godbound (Wp_claude/RACES_SOURCE.md); only what affects the character; texts of narrative abilities in English (the owner's source)."
  },
  "entries": [
   {
@@ -45,7 +45,7 @@
      "id": "universality",
      "name": "Универсальность",
      "name_en": "Universality",
-     "text": "Common to humanity: get a feat whose prerequisites you meet (prerequisites are not checked)."
+     "text": "Common to humanity: get a feat whose prerequisites you meet (prerequisites are not checked). No effects of its own: take the feat from the catalog and link the taken feat here (held by)."
     },
     {
      "id": "shadow_of_the_crown",
@@ -77,7 +77,7 @@
      "id": "adrenaline",
      "name": "Адреналин",
      "name_en": "Adrenaline",
-     "text": "Spend 2 BP: +2 to all rolls for an hour (turn the status on), then fatigue until rested. These BP come back only by a full rest.",
+     "text": "Spend 2 BP: +2 to all rolls for an hour (turn the status on), then fatigue until rested. These BP come back only by the long rest (the short rest does not bring them back).",
      "triggers": [
       {
        "tid": "adrenaline",
@@ -87,7 +87,8 @@
        "target": "spend_bp",
        "amount": 0,
        "params": {
-        "n": 2
+        "n": 2,
+        "restore_only": "long_rest"
        }
       }
      ]
@@ -102,6 +103,7 @@
    "languages": [
     "Kerez"
    ],
+   "text": "Extra languages: Ancient Akeh, Stagnir.",
    "statuses": [
     {
      "id": "adrenaline",
@@ -145,13 +147,23 @@
      "id": "universality",
      "name": "Универсальность",
      "name_en": "Universality",
-     "text": "Common to humanity: get a feat whose prerequisites you meet (prerequisites are not checked)."
+     "text": "Common to humanity: get a feat whose prerequisites you meet (prerequisites are not checked). No effects of its own: take the feat from the catalog and link the taken feat here (held by)."
     },
     {
      "id": "adaptation",
      "name": "Адаптация",
      "name_en": "Adaptation",
-     "text": "Counts as one level higher for exchanging comfort for training and for getting Attention (set by hand)."
+     "text": "Counts as one level higher for exchanging comfort for training and for getting Attention.",
+     "effects": [
+      {
+       "target": "const:training.comfort_exchange_level_offset",
+       "value": 1
+      },
+      {
+       "target": "const:attention.level_offset",
+       "value": 1
+      }
+     ]
     },
     {
      "id": "flexible_mind",
@@ -182,7 +194,8 @@
    ],
    "languages": [
     "Stagnir"
-   ]
+   ],
+   "text": "Extra languages: Kerez."
   },
   {
    "id": "ulstanger_fugitive",
@@ -213,13 +226,13 @@
      "id": "universality",
      "name": "Универсальность",
      "name_en": "Universality",
-     "text": "Common to humanity: get a feat whose prerequisites you meet (prerequisites are not checked)."
+     "text": "Common to humanity: get a feat whose prerequisites you meet (prerequisites are not checked). No effects of its own: take the feat from the catalog and link the taken feat here (held by)."
     },
     {
      "id": "northerner",
      "name": "Северянин",
      "name_en": "Northerner",
-     "text": "Gets the feats Endurance and Toughness (add them from the feat catalog by hand when it has them)."
+     "text": "Gets the feats Endurance and Toughness: take them from the feat catalog (price 0; placeholders, the owner's text is needed) and link the taken feats here (held by)."
     },
     {
      "id": "rage",
@@ -230,7 +243,7 @@
       {
        "target": "damage_per_pain",
        "value": 1,
-       "note": "melee weapons"
+       "scope": "melee"
       }
      ]
     },
@@ -258,7 +271,8 @@
    ],
    "languages": [
     "Stagnir"
-   ]
+   ],
+   "text": "Extra languages: none."
   }
  ]
 }

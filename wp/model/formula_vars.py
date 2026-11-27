@@ -79,7 +79,21 @@ def condition(ch, cid):
     if cid.startswith("pain_ge:"):
         n = _number_after(cid, "pain_ge:")
         return n is not None and guarded(ch, "pain", _sheet("pain")) >= n
+    if cid.startswith(CHARGES_LEFT):       # package 37: "charges_left:feat:<id>" (the Mordon -4 counter)
+        return _charges_left(ch, cid[len(CHARGES_LEFT):])
     return False
+
+
+CHARGES_LEFT = "charges_left:"
+
+
+def _charges_left(ch, ref):
+    """True while the owner ("kind:id": feat / item / status / attack / maneuver) has a charge left."""
+    from wp.model import usage as us
+    kind, _, oid = ref.partition(":")
+    owner = us.find(ch, kind, oid) if kind in us.KINDS and oid else None
+    c = us.charges(kind, owner) if owner is not None else None
+    return c is not None and c[0] > 0
 
 
 def guarded(ch, key, fn):

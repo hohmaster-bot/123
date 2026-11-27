@@ -39,6 +39,7 @@ STAT_MOD = "stat_mod:"     # context key prefix: "stat_mod:str" = the CURRENT St
 ALL = "all"                # value "all": unlimited (e.g. ignore the armor slowdown completely, gear.md)
 ALL_VALUE = 10 ** 6        # what "all" resolves to: more than any real number on the sheet
 COND = "cond:"             # context key prefix of a condition (wp/model/formula_vars.py, package 36)
+STACKS = "stacks"          # formula variable: the stacks of the status the effect belongs to (package 37)
 
 
 def stat_mod_key(stat):
@@ -67,7 +68,8 @@ class Effect:
                                        # targets parry_cells / shield_cells / dex_loss_cells: the cells added (value >= 0)
                                        # or removed (value < 0); () = every cell
     condition: str = ""                # package 36 (decision 7): "" = always; an automatic id (hp_full, bp_full,
-                                       # in_combat, pressure_eq:N / pressure_ge:N / pressure_le:N, pain_ge:N) or
+                                       # in_combat, pressure_eq:N / pressure_ge:N / pressure_le:N, pain_ge:N,
+                                       # charges_left:<kind>:<id> (package 37)) or
                                        # "manual:<text>" (a checkbox); the effect counts only while it holds
     situational: str = ""              # package 36 (decision 8): "vs magic" ... never in a total, listed on hover
     scope: str = ""                    # package 37: damage_per_pain only for "melee" / "ranged" attacks ("" = all)
@@ -142,6 +144,7 @@ class Status:
     hidden: bool = False               # DISPLAY ONLY: hidden on the panel, still active / ticking
     favorite: bool = False             # pinned for the panel / screen
     note: str = ""                     # the player's note shown on the chip (package 30)
+    stacks: int = 0                    # package 37: a cumulative status turned on again adds a stack (formula "stacks")
     triggers: Tuple[Trigger, ...] = ()   # package 36 (decision 6)
     held_by: str = ""                  # package 36 (decision 14)
     held_kept: bool = True
@@ -151,6 +154,11 @@ class Status:
 
 
 # ------------------------------------------------------------- reading
+
+def uses_stacks(status):
+    """A cumulative status: one of its effects reads the formula variable "stacks" (package 37, Hunt)."""
+    return any(isinstance(e.value, str) and STACKS in fm.variables(e.value) for e in status.effects)
+
 
 def is_effective(status):
     """Active and not expired."""
@@ -167,8 +175,29 @@ def bonuses_from(statuses, context=None):
     out = []
     for s in statuses:
         if is_effective(s):
-            out.extend(e.as_bonus(s.name, context) for e in s.effects)
+            ctx = _Stacks(context, max(1, s.stacks))
+            out.extend(e.as_bonus(s.name, ctx) for e in s.effects)
     return tuple(out)
+
+
+class _Stacks(dict):
+    """The context of one status: the variable "stacks" (package 37) + every value of the character context."""
+
+    def __init__(self, base, stacks):
+        super().__init__()
+        self.base, self.stacks = (base if base is not None else {}), stacks
+
+    def get(self, key, default=None):
+        return self.stacks if key == STACKS else self.base.get(key, default)
+
+    def __getitem__(self, key):
+        return self.stacks if key == STACKS else self.base[key]
+
+    def __contains__(self, key):
+        return key == STACKS or key in self.base
+
+    def __bool__(self):
+        return True
 
 
 def ignores_iterative(statuses):
@@ -199,7 +228,7 @@ def activate(status, ticks=None, cost=1):
 
 def deactivate(status):
     """End the status now: inactive, no time left, its temp HP gone; the entry stays."""
-    return replace(status, active=False, remaining=0, temp_hp_left=0)
+    return replace(status, active=False, remaining=0, temp_hp_left=0, stacks=0)
 
 
 def set_active(status, on):

@@ -16,7 +16,8 @@ from fractions import Fraction
 
 SHEET_VARIABLES = ("hp_max", "mana_max", "base_slots", "pain", "morale", "balance_max", "spirit_max", "bp_max",
                    "comfort_max")
-VARIABLES = ("level", "lvl", "str_mod", "dex_mod", "con_mod", "int_mod", "wis_mod", "cha_mod", "bab") + SHEET_VARIABLES
+VARIABLES = ("level", "lvl", "str_mod", "dex_mod", "con_mod", "int_mod", "wis_mod", "cha_mod", "bab", "stacks") + \
+    SHEET_VARIABLES
 TAGGED = "tagged_base_slots"           # "tagged_base_slots:trophy" (package 36, decision 13)
 FUNCTIONS = ("min", "max", "floor")
 MAX_LENGTH = 200

@@ -5,7 +5,7 @@
  "counter": 0,
  "retired": [],
  "meta": {
-  "note": "Package 36 P4: the races of the game module ranniag (Wp_claude/RACES_SOURCE.md); only what affects the character; texts of narrative abilities in English (the owner's source)."
+  "note": "Package 36 P4, package 37 P2: the races of the game module ranniag (Wp_claude/RACES_SOURCE.md); only what affects the character; texts of narrative abilities in English (the owner's source)."
  },
  "entries": [
   {
@@ -113,6 +113,7 @@
     }
    ],
    "languages": [],
+   "text": "Languages: choose two languages of the region (add them by hand).",
    "statuses": [
     {
      "id": "confused",
@@ -171,7 +172,7 @@
      "id": "copying",
      "name": "Копирование",
      "name_en": "Copying",
-     "text": "Gets one feat and one racial ability of the body she parasitizes (add them by hand)."
+     "text": "Gets one feat and one racial ability of the body she parasitizes. No effects of its own: take them from the catalog and link the taken feat / ability here (held by)."
     },
     {
      "id": "puppet",
@@ -213,6 +214,7 @@
     }
    ],
    "languages": [],
+   "text": "Languages: choose two languages of the region (add them by hand).",
    "quirks": [
     {
      "id": "maiden_principle",
@@ -285,29 +287,38 @@
      "id": "dance_with_blades_moon",
      "name": "Танец с клинками",
      "name_en": "Dance with blades",
-     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand)."
+     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand). The charge comes back at the start of every combat.",
+     "usage": {
+      "recharge": "combat_start"
+     }
     },
     {
      "id": "shadow_of_santerra",
      "name": "Тень Сантерры",
      "name_en": "Shadow of Santerra",
-     "text": "Twice per full rest, 3 actions: walk up to four times the speed, invisible d4 rounds; notices incorporeal enemies within 60 ft and may hit them for double damage without breaking invisibility."
+     "text": "Twice per full rest, 3 actions: walk up to four times the speed, invisible d4 rounds; notices incorporeal enemies within 60 ft and may hit them for double damage without breaking invisibility.",
+     "usage": {
+      "recharge": "long_rest"
+     }
     }
    ],
    "languages": [],
+   "text": "Languages: choose two languages of the region (add them by hand).",
    "statuses": [
     {
      "id": "dance_with_blades",
      "name": "Танец с клинками",
      "duration": "end_of_combat",
      "charges": 1,
-     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand)."
+     "source_ref": "feat:dance_with_blades_moon",
+     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand). The charge comes back at the start of every combat."
     },
     {
      "id": "shadow_of_santerra",
      "name": "Тень Сантерры",
      "charges": 2,
      "duration": "ticks",
+     "source_ref": "feat:shadow_of_santerra",
      "text": "Invisible d4 rounds (type the rounds)."
     }
    ]
@@ -440,7 +451,7 @@
      "id": "wall_of_bones",
      "name": "Стена костей",
      "name_en": "Type 2 Wall of Bones",
-     "text": "+2 Con, the feat Toughness (by hand), no wound penalty; drawbacks: -4 CMD and double HP loss from bleeding.",
+     "text": "+2 Con, the feat Toughness (take it and link it here), no wound penalty; drawbacks: -4 CMD and double HP loss from bleeding (text: no bleeding rule yet).",
      "effects": [
       {
        "target": "stat:con",
@@ -449,6 +460,10 @@
       {
        "target": "cmd",
        "value": -4
+      },
+      {
+       "target": "pain_penalty_per_pain",
+       "value": -1
       }
      ],
      "auto": false
@@ -533,11 +548,20 @@
      "id": "goddess_of_humanity",
      "name": "Богиня человечности",
      "name_en": "Type 5 Goddess of Humanity",
-     "text": "+2 Wis; allies may reroll one d20 once (back after the long rest); out of combat once per short rest 10 HP to each ally; +2 caster level for divine magic; drawback: -4 on the first five attacks of each combat.",
+     "text": "+2 Wis; allies may reroll one d20 once (back after the long rest); out of combat once per short rest 10 HP to each ally; +2 caster level for divine magic; drawback: -4 on the first five attacks of each combat: 5 charges, spend one per attack; the -4 counts in combat while a charge is left; the charges come back at the start of every combat.",
+     "usage": {
+      "charges": 5,
+      "recharge": "combat_start"
+     },
      "effects": [
       {
        "target": "stat:wis",
        "value": 2
+      },
+      {
+       "target": "attack",
+       "value": -4,
+       "condition": "in_combat&charges_left:feat:goddess_of_humanity"
       }
      ],
      "auto": false
@@ -547,6 +571,13 @@
      "name": "Выкуп: Богиня человечности",
      "name_en": "Buy-out: Goddess of Humanity",
      "text": "The drawback is bought out.",
+     "effects": [
+      {
+       "target": "attack",
+       "value": 4,
+       "condition": "in_combat&charges_left:feat:goddess_of_humanity"
+      }
+     ],
      "price": 500,
      "needs": "goddess_of_humanity"
     },
@@ -554,7 +585,11 @@
      "id": "return_to_zero",
      "name": "Возврат к нулю",
      "name_en": "Type 6 Return to zero",
-     "text": "+2 Cha; once per adventure restore all spirit; once per six sessions at the first death 6d6 HP and half spirit; no effects of the evil gods' pressure in Santerra; drawback: -5 base points.",
+     "text": "+2 Cha; once per adventure restore all spirit; once per six sessions at the first death 6d6 HP and half spirit; no effects of the evil gods' pressure in Santerra; drawback: -5 base points. The charge (once per adventure) is restored by hand.",
+     "usage": {
+      "charges": 1,
+      "recharge": "manual"
+     },
      "effects": [
       {
        "target": "stat:cha",
@@ -588,7 +623,8 @@
      "text": "Up to 5000 MZ on jewellery worn constantly: per 1000 MZ an extra history roll (duplicates ignored). Take the extra history and set its 'held by' to the jewellery item: if the jewellery is lost the history is 'not backed'; paid-off drawbacks are remembered."
     }
    ],
-   "languages": []
+   "languages": [],
+   "text": "Languages: choose two languages of the region (add them by hand)."
   },
   {
    "id": "reflected",
@@ -688,7 +724,8 @@
      ]
     }
    ],
-   "languages": []
+   "languages": [],
+   "text": "Languages: choose two languages of the region (add them by hand)."
   },
   {
    "id": "rahim",
@@ -776,12 +813,15 @@
      "id": "dragon_tail",
      "name": "Драконий хвост",
      "name_en": "Dragon tail",
-     "text": "With a melee attack: -2 AC until the start of the next turn and a tail hit: a natural attack 1d8, no extra attack penalty, the iterative penalty applies, no multi-attack penalty.",
+     "text": "With a melee attack: -2 AC until the next zero-initiative tick (the button turns the status on) and a tail hit: a natural attack 1d8, no extra attack penalty, the iterative penalty applies, no multi-attack penalty (the natural attack itself is parked).",
      "triggers": [
       {
        "tid": "tail",
        "event": "manual",
-       "text": "Dragon tail: -2 AC until your next turn; tail 1d8"
+       "text": "Dragon tail: -2 AC until the next tick; tail 1d8",
+       "action": "add_status",
+       "target": "dragon_tail",
+       "amount": 0
       }
      ]
     },
@@ -837,6 +877,22 @@
    ],
    "languages": [
     "Draconic"
+   ],
+   "text": "Languages: choose two languages of the region (add them by hand).",
+   "statuses": [
+    {
+     "id": "dragon_tail",
+     "name": "Драконий хвост",
+     "duration": "ticks",
+     "full_ticks": 1,
+     "effects": [
+      {
+       "target": "ac",
+       "value": -2
+      }
+     ],
+     "text": "-2 AC until the next zero-initiative tick."
+    }
    ]
   },
   {
@@ -931,28 +987,37 @@
      "id": "dance_with_blades_silver",
      "name": "Танец с клинками",
      "name_en": "Dance with blades",
-     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand)."
+     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand). The charge comes back at the start of every combat.",
+     "usage": {
+      "recharge": "combat_start"
+     }
     },
     {
      "id": "eradication_of_filth",
      "name": "Искоренение скверны",
      "name_en": "Eradication of filth",
-     "text": "Twice per full rest, 1 action: a humanoid within 30 ft is a heretic: Will DC 14 + level / 2 or for three minutes his characteristics cannot exceed 10 and racial features do not work (a magical effect)."
+     "text": "Twice per full rest, 1 action: a humanoid within 30 ft is a heretic: Will DC 14 + level / 2 or for three minutes his characteristics cannot exceed 10 and racial features do not work (a magical effect).",
+     "usage": {
+      "recharge": "long_rest"
+     }
     }
    ],
    "languages": [],
+   "text": "Languages: choose two languages of the region (add them by hand).",
    "statuses": [
     {
      "id": "dance_with_blades",
      "name": "Танец с клинками",
      "duration": "end_of_combat",
      "charges": 1,
-     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand)."
+     "source_ref": "feat:dance_with_blades_silver",
+     "text": "The first attack against the elf in a combat may be declared a miss before the roll. +3 spirit: the attack makes the enemy vulnerable; +5 spirit: the charge is not spent (spend the spirit by hand). The charge comes back at the start of every combat."
     },
     {
      "id": "eradication",
      "name": "Искоренение скверны",
      "charges": 2,
+     "source_ref": "feat:eradication_of_filth",
      "text": "Heretic: Will DC 14 + level / 2 (the GM rolls)."
     }
    ]
@@ -1053,7 +1118,8 @@
      "text": "Maximum damage in a grapple; breaking free restores the actions spent on it (by hand)."
     }
    ],
-   "languages": []
+   "languages": [],
+   "text": "Languages: choose two languages of the region (add them by hand)."
   },
   {
    "id": "ragmal",
@@ -1090,7 +1156,7 @@
      "id": "magic_body",
      "name": "Магическое тело",
      "name_en": "Magic body",
-     "text": "+6 mana at level 1 (in the race effects) even without a class. Mana is used before HP when taking damage. Trains mana at 200 training per unit (by hand). +1 Str per 10 maximum mana.",
+     "text": "+6 mana at level 1 (in the race effects) even without a class. Mana is used before HP when taking damage. Trains mana at 200 training per unit: the catalog training 'Mana training' (Training tab). +1 Str per 10 maximum mana.",
      "effects": [
       {
        "target": "absorber:mana",
@@ -1137,18 +1203,15 @@
      "id": "heavy_swing",
      "name": "Тяжёлый замах",
      "name_en": "Heavy swing",
-     "text": "Hitting with a two-handed weapon or a natural attack: 2 temporary HP until the start of the next turn.",
+     "text": "Hitting with a two-handed weapon or a natural attack: 2 temporary HP until the next zero-initiative tick (the button turns the status on).",
      "triggers": [
       {
        "tid": "swing",
        "event": "manual",
-       "text": "Heavy swing: 2 temporary HP",
-       "action": "run_command",
-       "target": "set_temp_hp",
-       "amount": 0,
-       "params": {
-        "value": 2
-       }
+       "text": "Heavy swing: 2 temporary HP until the next tick",
+       "action": "add_status",
+       "target": "heavy_swing",
+       "amount": 0
       }
      ]
     },
@@ -1156,20 +1219,57 @@
      "id": "hunt_for_incarnations",
      "name": "Охота на воплощения",
      "name_en": "Hunt for incarnations",
-     "text": "At the start of combat, an instant action: spend 4 mana for +1 fire or acid damage on all attacks and spells until the end of combat; cumulative.",
+     "text": "At the start of combat, an instant action: spend 4 mana for +1 fire or acid damage on all attacks and spells until the end of combat; cumulative (every use adds one stack). Press 'spend 4 mana', then '+1 stack'.",
      "triggers": [
       {
-       "tid": "hunt",
-       "event": "combat_start",
-       "text": "Hunt for incarnations: spend 4 mana for +1 fire / acid damage",
+       "tid": "hunt_pay",
+       "event": "manual",
+       "text": "Hunt for incarnations: spend 4 mana",
        "action": "change_resource",
        "target": "mana",
        "amount": -4
+      },
+      {
+       "tid": "hunt",
+       "event": "manual",
+       "text": "Hunt for incarnations: +1 fire / acid damage until the end of combat",
+       "action": "add_status",
+       "target": "hunt_for_incarnations",
+       "amount": 0
       }
      ]
     }
    ],
-   "languages": []
+   "languages": [],
+   "text": "Languages: choose two languages of the region (add them by hand).",
+   "statuses": [
+    {
+     "id": "heavy_swing",
+     "name": "Тяжёлый замах",
+     "duration": "ticks",
+     "full_ticks": 1,
+     "one_shot": [
+      {
+       "resource": "temp_hp",
+       "amount": 2
+      }
+     ],
+     "text": "2 temporary HP until the next zero-initiative tick."
+    },
+    {
+     "id": "hunt_for_incarnations",
+     "name": "Охота на воплощения",
+     "duration": "end_of_combat",
+     "effects": [
+      {
+       "target": "damage",
+       "value": "stacks",
+       "note": "fire or acid"
+      }
+     ],
+     "text": "+1 fire or acid damage per stack on all attacks and spells until the end of combat."
+    }
+   ]
   }
  ]
 }

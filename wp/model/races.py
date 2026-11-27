@@ -13,10 +13,10 @@ from dataclasses import replace
 
 from wp.catalog import convert
 from wp.core.damage import Pool
-from wp.core.effects import Status
+from wp.core.effects import OneShot, Status
 from wp.core.triggers import Trigger
 from wp.model import race_languages as rl
-from wp.model.character import Feat, ResourcePool
+from wp.model.character import Feat, ResourcePool, Usage
 from wp.model.notebook import Quirk
 
 SOURCE = "race:"
@@ -46,18 +46,29 @@ def auto(a):
     return bool(a.get("auto", not int(a.get("price", 0))))
 
 
-STATUS_FIELDS = ("per_tick_hp", "charge_source", "charge_per_round", "full_ticks")
+STATUS_FIELDS = ("per_tick_hp", "charge_source", "charge_per_round", "full_ticks", "source_ref", "temp_hp_stacks")
+
+
+def _usage(a):
+    """The charges of an ability and their recharge rule (package 37 P2.1): {"charges": N, "recharge": rule}."""
+    u = a.get("usage")
+    if not u:
+        return None
+    n = int(u.get("charges", 0))
+    return Usage(charges_max=n, charges_current=n, recharge=u.get("recharge", "manual"))
 
 
 def ability_feat(rid, a):
     return Feat(fid=a["id"], title=a.get("name", a["id"]), source=source_of(rid), cost=int(a.get("price", 0)),
                 effects=_effects(a), triggers=_triggers(a), text=a.get("text", ""), needs=a.get("needs", ""),
-                held_by=a.get("held_by", ""))
+                held_by=a.get("held_by", ""), usage=_usage(a))
 
 
 def _status(rid, d):
     charges = d.get("charges")
     extra = {k: d[k] for k in STATUS_FIELDS if k in d}
+    if "one_shot" in d:                # e.g. 2 temp HP for one tick (Heavy swing, package 37)
+        extra["one_shot"] = tuple(OneShot(o["resource"], int(o["amount"])) for o in d["one_shot"])
     return Status(name=d.get("name", d["id"]), sid=d["id"], effects=_effects(d), active=False, source=source_of(rid),
                   duration=d.get("duration", "infinite"), note=d.get("text", ""), triggers=_triggers(d),
                   charges=Pool(int(charges), int(charges)) if charges else None, **extra)

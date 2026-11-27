@@ -10,6 +10,7 @@ The events fire by themselves in dispatch (commands/base.py: end_cycle -> cycle_
 from dataclasses import replace
 
 from wp.commands.base import REGISTRY, CommandError, command, commit
+from wp.core import effects as ef
 from wp.core import pain as pn
 from wp.core import triggers as tg
 from wp.model import trigger_view as tv
@@ -39,7 +40,11 @@ def _mark(ch, nid, handled):
 
 def _run(ch, n):
     a = n.action
-    if a == "add_status":
+    if a == "add_status":              # package 37: an active cumulative status gets one more stack
+        st = next((s for s in ch.statuses if s.sid == n.target), None)
+        if st is not None and st.active and ef.uses_stacks(st):
+            return replace(ch, statuses=tuple(replace(s, stacks=max(1, s.stacks) + 1) if s.sid == n.target else s
+                                              for s in ch.statuses))
         return REGISTRY["activate_status"](ch, sid=n.target).state
     if a == "change_resource":
         return REGISTRY["adjust_value"](ch, resource=n.target, delta=int(n.amount)).state

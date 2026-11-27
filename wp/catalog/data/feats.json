@@ -47,6 +47,22 @@
      "target": "cannot_be_flanked"
     }
    ]
+  },
+  {
+   "id": "endurance",
+   "name": "Выносливость",
+   "sample": true,
+   "name_en": "Endurance",
+   "cost": 0,
+   "desc": "Placeholder (package 37): the owner's text is needed. The Ulstanger Northerner gets it; link it to the Northerner ability (held by)."
+  },
+  {
+   "id": "toughness",
+   "name": "Живучесть",
+   "sample": true,
+   "name_en": "Toughness",
+   "cost": 0,
+   "desc": "Placeholder (package 37): the owner's text is needed. The Ulstanger Northerner gets it; link it to the Northerner ability (held by)."
   }
  ]
 }
