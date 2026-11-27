@@ -2,7 +2,7 @@
 
 The UI talks only to `wp.app.session.Session` (D25): `session.view(panel id, **params)` gives the data of a panel, `session.dispatch(command, **params)` changes the character and returns the topics (panel ids) to refresh. Fields below are read from a sample character (tests/perf/heavy.py).
 
-Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `add_hidden_property`, `add_injury`, `add_template`, `burn_quirk`, `buy_ability`, `buy_race_ability`, `change_race`, `deactivate_item`, `edit_ability`, `edit_entry`, `edit_rules`, `edit_sheet`, `end_combat`, `equip_hands`, `equip_item`, `equip_to_slot`, `level_up`, `long_rest`, `long_rest_end_combat`, `move_hand_item`, `remove_entry`, `remove_feat`, `remove_hidden_property`, `remove_injury`, `remove_item`, `remove_template`, `reset_rule_setting`, `reset_settings_group`, `run_trigger_action`, `set_active_stance`, `set_bab_override`, `set_class`, `set_manual_condition`, `set_rule_setting`, `set_save_override`, `set_size`, `short_rest`, `source_add`, `source_edit`, `source_remove`, `source_toggle`, `start_combat`, `swap_slots`, `take_race`, `tick`, `unequip_hands`, `unequip_item`, `unequip_slot`
+Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `add_hidden_property`, `add_injury`, `add_template`, `burn_quirk`, `buy_ability`, `buy_race_ability`, `buy_training`, `change_race`, `deactivate_item`, `edit_ability`, `edit_entry`, `edit_rules`, `edit_sheet`, `end_combat`, `equip_hands`, `equip_item`, `equip_to_slot`, `level_up`, `long_rest`, `long_rest_end_combat`, `move_hand_item`, `remove_entry`, `remove_feat`, `remove_hidden_property`, `remove_injury`, `remove_item`, `remove_template`, `reset_rule_setting`, `reset_settings_group`, `run_trigger_action`, `set_active_stance`, `set_bab_override`, `set_class`, `set_held_by`, `set_manual_condition`, `set_rule_setting`, `set_save_override`, `set_size`, `short_rest`, `source_add`, `source_edit`, `source_remove`, `source_toggle`, `start_combat`, `swap_slots`, `take_race`, `tick`, `unequip_hands`, `unequip_item`, `unequip_slot`
 
 ## attacks
 
@@ -438,7 +438,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_actions(n=1)` reasons: cannot_spend_negative_amount
   - `spend_balance(n=0)` reasons: not_enough_balance_need
-  - `spend_bp(n=1)` reasons: not_enough_bp
+  - `spend_bp(n=1, restore_only='')` reasons: not_allowed, not_enough_bp
   - `spend_charge(owner_kind='item', owner_id='', n=1)` reasons: cooldown_rounds_left, not_enough_charges_have, spend_least_1
   - `spend_ov(n=1)` reasons: not_enough_ov_need
   - `spend_pool(pid='', n=1)` reasons: cannot_spend_negative_amount, not_enough_need_have
@@ -612,7 +612,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `set_value(resource='hp', value=0)` reasons: out_of_range
   - `spend_actions(n=1)` reasons: cannot_spend_negative_amount
   - `spend_balance(n=0)` reasons: not_enough_balance_need
-  - `spend_bp(n=1)` reasons: not_enough_bp
+  - `spend_bp(n=1, restore_only='')` reasons: not_allowed, not_enough_bp
   - `spend_pool(pid='', n=1)` reasons: cannot_spend_negative_amount, not_enough_need_have
   - `spend_reaction(n=1)`
   - `take_damage(amount=0, dtype='physical', parts=None, reductions=None, skip=())` reasons: damage_must_0

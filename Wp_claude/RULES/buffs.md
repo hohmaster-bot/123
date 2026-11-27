@@ -225,3 +225,11 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
 - Any ability / bonus may be held by another ability, an item or a quirk (or a text holder with a manual kept / lost
   checkbox). If the holder disappears the dependent gets a "not backed" mark and a reminder; nothing is removed
   automatically.
+
+## Rule constants as targets, links shown both ways [OWNER, package 37, decisions 1, 5]
+- Every rule number that lives in data (wp/rules_data/constants.json) is also an effect target const:<id>: a source adds
+  to it, or replaces it (the note "replace"). The Sources dialog lists such sources like any other. Test: the comfort
+  rate base 5 + 50 -> a level-1 exchange gives 60 training instead of 10.
+- Links are shown both ways: on hover "held by: X" and "holds: A, B"; a lost holder in red ("not backed"); the
+  Feats tab lists a dependent under its parent ability; the link is set or removed by a command (journal, undo).
+- damage_per_pain may be scoped to melee or ranged attacks (Ulstanger Rage: melee).

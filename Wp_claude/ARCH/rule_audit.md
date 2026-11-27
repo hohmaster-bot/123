@@ -26,3 +26,12 @@ audit below lists BEHAVIOURS written in code that a race / feat / item may reaso
 
 Not opened (no owner wish yet; a later package can add a switch the same way): the iterative step (a rules setting
 already), the dying tick damage (constant dying.*), the balance cap homerule (one hit lowers the cap by 1).
+
+## Package 37
+- Every numeric constant is now an effect target const:<id> (decision 1): "a source may change any rule number" holds
+  for all of them without a new target per case.
+- New constants: attention.level_offset, training.comfort_exchange_level_offset (Lomit Adaptation).
+- Not in data because no rule exists for them (no number to move): the bleeding loss and the comfort per fight
+  (Mordon drawbacks stay text until the owner writes the rule). The wound penalty = the pain penalty
+  (pain_penalty_per_pain already a target).
+- damage_per_pain got a scope (melee / ranged); BP spent with restore_only long_rest (bp_long_rest_only).

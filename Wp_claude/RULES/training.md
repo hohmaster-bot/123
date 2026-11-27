@@ -180,3 +180,14 @@ and never refunds. Prices are the constants of wp/core/training.py (data, not sc
 - [package 25 D, closes Q109] Qualification unlocks the hidden properties of the item: each property has a
   minimum qualification level; below it the item shows "???", at or above it the text and its effects act (in the
   tab it belongs to: base = not activated, or activated). The purchase stays 50 * N for qualification N at once.
+
+## Catalog trainings [OWNER, package 37, decision 2]
+- New kinds of training are catalog entries (kind trainings): name, module, price per unit in training points (a
+  number or a formula), repeatable, limit (optional), the effect of one unit (N units = N times, one source row), and
+  what unlocks it (an ability, a race, a quirk, an item tag, or nothing = everyone).
+- The Training tab lists the built-in trainings and the catalog ones the character can use; locked ones only with
+  "show locked", with the reason. Buying spends training points; no refund. First user: Ragmal mana, 200 per unit:
+  3 units = 600 training, mana +3.
+- Level offsets: a source may count the character one level higher for the comfort exchange or for Attention only
+  (const:training.comfort_exchange_level_offset, const:attention.level_offset). Lomit Adaptation: at level 2 the
+  exchange gives 5 + 5 x 3 = 20 instead of 15; Attention 1 + 3 / 3 = 2 instead of 1.

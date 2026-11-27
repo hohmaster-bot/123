@@ -729,6 +729,14 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   checkbox). If the holder disappears the dependent gets a "not backed" mark and a reminder; nothing is removed
   automatically.
 
+#### Rule constants as targets, links shown both ways [OWNER, package 37, decisions 1, 5]
+- Every rule number that lives in data (wp/rules_data/constants.json) is also an effect target const:<id>: a source adds
+  to it, or replaces it (the note "replace"). The Sources dialog lists such sources like any other. Test: the comfort
+  rate base 5 + 50 -> a level-1 exchange gives 60 training instead of 10.
+- Links are shown both ways: on hover "held by: X" and "holds: A, B"; a lost holder in red ("not backed"); the
+  Feats tab lists a dependent under its parent ability; the link is set or removed by a command (journal, undo).
+- damage_per_pain may be scoped to melee or ranged attacks (Ulstanger Rage: melee).
+
 ## File: rest.md
 
 ### Rest
@@ -2030,6 +2038,17 @@ and never refunds. Prices are the constants of wp/core/training.py (data, not sc
   minimum qualification level; below it the item shows "???", at or above it the text and its effects act (in the
   tab it belongs to: base = not activated, or activated). The purchase stays 50 * N for qualification N at once.
 
+#### Catalog trainings [OWNER, package 37, decision 2]
+- New kinds of training are catalog entries (kind trainings): name, module, price per unit in training points (a
+  number or a formula), repeatable, limit (optional), the effect of one unit (N units = N times, one source row), and
+  what unlocks it (an ability, a race, a quirk, an item tag, or nothing = everyone).
+- The Training tab lists the built-in trainings and the catalog ones the character can use; locked ones only with
+  "show locked", with the reason. Buying spends training points; no refund. First user: Ragmal mana, 200 per unit:
+  3 units = 600 training, mana +3.
+- Level offsets: a source may count the character one level higher for the comfort exchange or for Attention only
+  (const:training.comfort_exchange_level_offset, const:attention.level_offset). Lomit Adaptation: at level 2 the
+  exchange gives 5 + 5 x 3 = 20 instead of 15; Attention 1 + 3 / 3 = 2 instead of 1.
+
 ## File: crafting.md
 
 ### Recipes and crafting [OWNER]
@@ -2127,6 +2146,13 @@ weapon group or module is written in code: a race is catalog data (kind races), 
 #### Tests
 - Every race of RACES_SOURCE.md: a character with the race, hand numbers of the stats, HP at level 1, speed and two or
   three key effects (tests/model/test_races36.py).
+
+#### Package 37 [OWNER, decisions 2-6]
+- Narrative abilities (resurrect, prophecy, possession ...) are only text on the ability.
+- Copying (White maiden) and Universality (humans) are abilities WITHOUT effects: the player takes any feat / racial
+  ability from the catalog as usual and links it to them with "held by".
+- BP spent by an ability with "restore only by the long rest" (Ankalian Adrenaline) stay missing after a short rest.
+- Ragmal mana training is a catalog training (see training.md).
 
 ## Appendix: ac_zones.md (DRAFT, not built; review optional)
 
@@ -2322,6 +2348,8 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | spirit.per_cha | 5 | spirit | spirit per Cha modifier |
 | attention.drive_level | 4 | level | a drive at this level or above gives +1 attention |
 | items.broken_defense_divisor | 2 |  | a broken armor / shield bonus is divided by this |
+| attention.level_offset | 0 | levels | levels added for the Attention per cycle only (package 37: a source changes it through const:attention.level_offset) |
+| training.comfort_exchange_level_offset | 0 | levels | levels added for the comfort exchange rate only (package 37: const:training.comfort_exchange_level_offset) |
 | attention.level_step | 3 | levels | attention per cycle +1 per this many levels |
 | items.broken_weapon_penalty | -2 | to-hit | a broken weapon: attack and damage |
 | items.masterwork_attack | 1 | to-hit | masterwork weapon attack bonus |
@@ -2450,6 +2478,7 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | bp_max | max BP |
 | comfort_max | max comfort |
 | comfort_rate_bonus | training per comfort point in exchange_comfort |
+| const: | any numeric rule constant (const:<id> of wp/rules_data/constants.json): the value is added, or replaces it with the note 'replace' (package 37, owner decision 1) |
 | crit_mult | crit multiplier (weapon id = that weapon only) |
 | damage_per_pain | damage bonus per pain point (race rule) |
 | dex_loss_cells | AC cells losing Dex and dodge: cells added (value >= 0) or removed (value < 0) (package 24 B2) |

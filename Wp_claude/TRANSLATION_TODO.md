@@ -2,9 +2,9 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (870)
+## Нет в ru.json (869)
 
-### catalog (107)
+### catalog (106)
 - `catalog.field.ac_bonus`
 - `catalog.field.access_class`
 - `catalog.field.activation_day`
@@ -71,7 +71,6 @@
 - `catalog.field.parents`
 - `catalog.field.per_tick_hp`
 - `catalog.field.physical`
-- `catalog.field.price`
 - `catalog.field.price_sp`
 - `catalog.field.qualification`
 - `catalog.field.qualification_n`
@@ -898,9 +897,9 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (673)
+## Нет в en.json (672)
 
-### catalog (107)
+### catalog (106)
 - `catalog.field.ac_bonus`
 - `catalog.field.access_class`
 - `catalog.field.activation_day`
@@ -967,7 +966,6 @@
 - `catalog.field.parents`
 - `catalog.field.per_tick_hp`
 - `catalog.field.physical`
-- `catalog.field.price`
 - `catalog.field.price_sp`
 - `catalog.field.qualification`
 - `catalog.field.qualification_n`
@@ -1591,7 +1589,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (505)
+## Лишние ключи (нигде не нужны) (530)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1748,6 +1746,15 @@
 - `levelup.done`
 - `levelup.roll`
 - `levelup.title`
+- `links.held_by`
+- `links.holds`
+- `links.kind.feats`
+- `links.kind.items`
+- `links.kind.quirks`
+- `links.kind.statuses`
+- `links.kind.trainings`
+- `links.none`
+- `links.not_backed`
 - `load.heavy`
 - `load.light`
 - `load.limits`
@@ -1868,6 +1875,8 @@
 - `source.base_speed`
 - `source.bp_current`
 - `source.combat_cap`
+- `source.const_default`
+- `source.const_override`
 - `source.floor`
 - `source.hit_dice`
 - `source.hp_bonus`
@@ -1920,6 +1929,7 @@
 - `sources.situational`
 - `sources.title`
 - `sources.total`
+- `sources.unknown_constant`
 - `statuses.end`
 - `statuses.end_of_combat`
 - `statuses.filter.active`
@@ -1964,6 +1974,7 @@
 - `tabs_page.catalog_kind.skills`
 - `tabs_page.catalog_kind.spells`
 - `tabs_page.catalog_kind.statuses`
+- `tabs_page.catalog_kind.trainings`
 - `tabs_page.catalog_kind.weapon_groups`
 - `tabs_page.catalog_kind.weapons`
 - `tabs_page.catalogs.empty`
@@ -1979,6 +1990,8 @@
 - `tabs_page.col.in_hands`
 - `tabs_page.col.layer`
 - `tabs_page.col.level`
+- `tabs_page.col.limit`
+- `tabs_page.col.module`
 - `tabs_page.col.name`
 - `tabs_page.col.needs`
 - `tabs_page.col.option`
@@ -1995,6 +2008,7 @@
 - `tabs_page.col.text`
 - `tabs_page.col.tier`
 - `tabs_page.col.type`
+- `tabs_page.col.units`
 - `tabs_page.col.weight`
 - `tabs_page.col.worn`
 - `tabs_page.collapse`
@@ -2009,6 +2023,7 @@
 - `tabs_page.feats.empty`
 - `tabs_page.feats.favorite`
 - `tabs_page.feats.fire`
+- `tabs_page.feats.link`
 - `tabs_page.feats.summary`
 - `tabs_page.injuries.empty`
 - `tabs_page.injuries.summary`
@@ -2063,8 +2078,12 @@
 - `tabs_page.skills.empty`
 - `tabs_page.skills.rank_up`
 - `tabs_page.skills.summary`
+- `tabs_page.training.buy`
+- `tabs_page.training.catalog`
 - `tabs_page.training.empty`
+- `tabs_page.training.open`
 - `tabs_page.training.qualify`
+- `tabs_page.training.show_locked`
 - `tabs_page.training.summary`
 - `tabs_page.yes`
 - `theme_editor.add_image`
@@ -2082,6 +2101,10 @@
 - `theme_editor.shipped`
 - `theme_editor.title`
 - `theme_editor.token`
+- `training.locked.feat`
+- `training.locked.quirk`
+- `training.locked.race`
+- `training.locked.tag`
 - `trigger.action.add_pain`
 - `trigger.action.add_reminder`
 - `trigger.action.add_status`

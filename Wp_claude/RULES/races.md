@@ -38,3 +38,10 @@ weapon group or module is written in code: a race is catalog data (kind races), 
 ## Tests
 - Every race of RACES_SOURCE.md: a character with the race, hand numbers of the stats, HP at level 1, speed and two or
   three key effects (tests/model/test_races36.py).
+
+## Package 37 [OWNER, decisions 2-6]
+- Narrative abilities (resurrect, prophecy, possession ...) are only text on the ability.
+- Copying (White maiden) and Universality (humans) are abilities WITHOUT effects: the player takes any feat / racial
+  ability from the catalog as usual and links it to them with "held by".
+- BP spent by an ability with "restore only by the long rest" (Ankalian Adrenaline) stay missing after a short rest.
+- Ragmal mana training is a catalog training (see training.md).
