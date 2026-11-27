@@ -36,6 +36,37 @@ P2 (finished; the 12 races done properly, decisions 2-6):
   flight stay race abilities bought once with training (no units, a needs chain: good flight needs flight), so a
   catalog training would add nothing (Q288).
 
+P3 (finished; re-acceptance):
+- The race tests: test_races36 (14, unchanged numbers) + test_races37 (15 new rows: the elf charge refill, the Heavy
+  swing tick, the -4 counter, Ragmal 3 units, Lomit, Rage melee, Adrenaline and the rest of P2).
+- Screenshots tests/ui_shots/tab_training_<theme>.png and links_<theme>.png (dark, light, grey-blue; test_p37a).
+- Docs: STATUS, ROADMAP, ARCH/history.md, ARCH/decision_log.md (Q271, Q272, Q274 closed by the package text),
+  OPEN_QUESTIONS (Q275-Q288), TRANSLATION_TODO and the view contract regenerated.
+
+Race coverage (package 37 P3):
+Legend: core = counted by the program (effects, conditions, triggers, charges, statuses, pools, trainings, links);
+button = a trigger button does it (the player presses it); text = narrative only (decision 3) or the GM's call;
+CANNOT YET = needs a mechanism the core does not have.
+
+| Race | Core | Button | Text | CANNOT YET |
+|---|---|---|---|---|
+| Ankalian survivor | stats, HP, +2 diplomacy / empathy, Adrenaline status +2 rolls; its BP back only by the long rest | rear +2 comfort (cycle end); Adrenaline spends 2 BP | Life among horrors (morale: GM), Universality (link the feat), extra languages | - |
+| Lomit renegade | stats, HP, Adaptation (const level offsets: exchange, Attention), +2 vs magic (situational) | Flexible mind (cycle reminder) | Universality, extra languages | - |
+| Ulstanger fugitive | stats, HP, Rage +1 / pain melee only, heal -50 %, death at 12 pain, +6 vs death (situational) | - | Northerner: placeholder feats Endurance / Toughness (owner text, Q287), Universality | - |
+| Azana | stats, HP, all-fours speed 30 (box), static pool 10 x level absorbing lightning, confused at negative HP | regeneration status (HP < 1), end of session OT - 4 | sight, Hungry monster (comfort by hand) | - |
+| White maiden | stats, HP, pain - 2, heal -50 %, temp HP 2 x level in combat, acts at negative HP, principle quirk | - | Copying (link the taken feat / ability), Possession, sight | the smoke form (parked) |
+| Moon elf | stats, HP, speed 25, -4 vs blinding (situational), Dance 1 charge (combat start), Shadow 2 charges (long rest) | - | Vanguard, State keeping, Meditation | - |
+| Mordon | stats, HP, speed 25, +2 any (six boxes), back cells keep Dex, histories 1-6 with buy-outs (Dex / speed, Con / CMD / no pain penalty, Str / DR mounted, Int / mana / xp, Wis / the -4 counter of 5 charges, Cha / base slots / one manual charge), Golden grandeur (held by jewellery) | Feast of Ravens flee reminder | Blood cleansing, the reroll once per long rest (Q283), bleeding x2 and comfort per fight (no rule, Q280) | - |
+| Reflected | stats, HP, Chameleon skills, +4 rolls in combat at pressure 0 | Rebirth reminder | Prophecy, sight | - |
+| Rahim | stats, HP, wings skills, flight 20 average / good (bought), SR 12 + level, resist fire / electricity 5, Intent skills, tail -2 AC one tick | tail turns the -2 AC on | sight, the broken word (100 training by hand) | the natural tail attack 1d8 (parked) |
+| Silver elf | stats, HP, speed 25, Integrity at full HP, Will +2 at full BP, Dance (combat start), Eradication 2 charges (long rest) | - | Vanguard, Pure mind | - |
+| Skerde | stats, HP min(base slots, 4 x level), swim 15 (bought), hold breath (bought), trophies by tag | - | Sense of the swell, Sea predator | - |
+| Ragmal | stats, HP, mana 6, mana before HP, Str + mana / 10, Mana training (catalog, 200 per unit), balance + 3, Fort + 2, load + 3, regen x2, Heavy swing 2 temp HP one tick, Hunt + 1 damage per stack until the end of combat | Heavy swing, Hunt: spend 4 mana, + 1 stack | Burning gaze, Bottomless belly (training by hand) | - |
+
+"Cannot yet": only the natural tail attack and the smoke form (both parked by the package). Justified text items:
+the Mordon bleeding / comfort per fight have no rule to count (Q280); the Mordon type 5 reroll shares the ability with
+the -4 counter (Q283).
+
 ## Tests and breaks
 - P1: run_all: suites 99, passed 99, failed 0. break_check: entries 512, caught 510, missed 2; the two missed
   entries had a target that P1 really changed (p33-d-attention: Attention now reads attention_level(ch);
@@ -53,6 +84,8 @@ P2 (finished; the 12 races done properly, decisions 2-6):
   stacks, only a cumulative status stacks, the Mordon -4 counter, effect-less Copying / Universality, the placeholder feats, the language texts,
   Ragmal 3 units, Lomit, Rage melee, Adrenaline, Wall of Bones). The catalog feat count 3 -> 5 in test_ui_logic35c,
   test_p36a, test_tabs35 (the two placeholders).
+
+- P3 (final, full runs): run_all: suites 100, passed 100, failed 0. break_check: entries 527, caught 527, missed 0.
 
 ## Changes to old rules
 - P1 (owner consent in the package text): RULES/buffs.md "Rule constants as targets, links shown both ways",
