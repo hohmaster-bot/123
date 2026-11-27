@@ -39,6 +39,15 @@ def catalog_entry(session, kind, eid):
     return None
 
 
+def race_grants(session, aid):
+    """The catalog entries of the feats a race ability grants for free (package 38: Wall of Bones -> Toughness)."""
+    from wp.model import races
+    ch = session.character
+    a = races.ability(ch, aid) if ch is not None else None
+    found = [catalog_entry(session, "feats", fid) for fid in (a.get("grants_feats", ()) if a else ())]
+    return [e for e in found if e]
+
+
 def setting_range(key):
     k = sch.KEYS[key]
     return int(k["min"]), int(k["max"])

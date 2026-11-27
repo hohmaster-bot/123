@@ -69,4 +69,6 @@ class RacePage(Page):
                 return None
             return self.run("change_race", race=self.entry(), confirm=True)
         row = self.selected()
-        return None if row is None else self.run("buy_race_ability", aid=row[0])
+        if row is None:
+            return None
+        return self.run("buy_race_ability", aid=row[0], feats=ui_data.race_grants(self.session, row[0]))

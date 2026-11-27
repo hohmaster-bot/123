@@ -47,7 +47,8 @@ class FeatCatalog:
 
 
 EFFECT_KEYS = ("target", "value", "btype", "weapon", "dice", "note", "stat_mod", "multiplier", "block_type",
-               "block_scope", "block_stats", "block_actions", "block_resources", "stacks")
+               "block_scope", "block_stats", "block_actions", "block_resources", "stacks",
+               "condition", "situational", "scope", "cells")      # package 38: Endurance is situational
 
 
 def _effect(d):

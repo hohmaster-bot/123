@@ -383,6 +383,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `end_cycle()`
   - `exchange_comfort(n=1)` reasons: exchange_least_1_comfort, not_enough_comfort_have
   - `fire_trigger(source='', tid='')` reasons: not_found
+  - `gain_fight_comfort()` reasons: combat_still_active, no_fight_comfort
   - `hit_item(iid='', damage=0)` reasons: damage_cannot_negative, item_destroyed
   - `journal_note(text='')` reasons: note_needs_text
   - `learn_spell(name='', circle=1, discount=None, source='training')` reasons: circle_must_0_9, spell_needs_name
@@ -591,6 +592,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `edit_pool(pid='', **fields)` reasons: unknown_pool_fields
   - `end_cycle()`
   - `exchange_comfort(n=1)` reasons: exchange_least_1_comfort, not_enough_comfort_have
+  - `gain_fight_comfort()` reasons: combat_still_active, no_fight_comfort
   - `pay_hp_cost(amount=0)`
   - `remove_ot_attention(n=1)` reasons: no_ot_remove, not_enough_attention_have, spend_least_1_attention
   - `remove_ot_comfort(n=1)` reasons: no_ot_remove, not_enough_comfort_have, spend_least_1_comfort
@@ -827,6 +829,7 @@ Commands that refresh EVERY panel: `activate_item`, `add_entry`, `add_feat`, `ad
   - `edit_drive(did='', **fields)` reasons: unknown_field
   - `end_cycle()`
   - `fire_trigger(source='', tid='')` reasons: not_found
+  - `gain_fight_comfort()` reasons: combat_still_active, no_fight_comfort
   - `pay_hp_cost(amount=0)`
   - `remove_attack(rid='')` reasons: no_attack_record
   - `remove_drive(did='')`

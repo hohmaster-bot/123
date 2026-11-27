@@ -2,9 +2,9 @@
 
 Сделано инструментом Wp_claude/tools/i18n_report.py. Впишите текст в wp/i18n/ru.json (и en.json) по ключу и запустите инструмент снова.
 
-## Нет в ru.json (869)
+## Нет в ru.json (877)
 
-### catalog (106)
+### catalog (107)
 - `catalog.field.ac_bonus`
 - `catalog.field.access_class`
 - `catalog.field.activation_day`
@@ -93,6 +93,7 @@
 - `catalog.field.spell_penalty_mana`
 - `catalog.field.spellbook`
 - `catalog.field.stat`
+- `catalog.field.tags`
 - `catalog.field.temp_hp_stacks`
 - `catalog.field.touch_bonus`
 - `catalog.field.variable`
@@ -161,7 +162,7 @@
 - `panel.training`
 - `panel.training.desc`
 
-### reason (222)
+### reason (225)
 - `reason.action_needed`
 - `reason.activates_status_which_not`
 - `reason.already_activated`
@@ -208,6 +209,7 @@
 - `reason.class_own_professionalism`
 - `reason.combat_active`
 - `reason.combat_already_active`
+- `reason.combat_still_active`
 - `reason.condition_tag_must_one`
 - `reason.cooldown_rounds_left`
 - `reason.court_negative`
@@ -225,6 +227,7 @@
 - `reason.file_corrupt`
 - `reason.file_not_found`
 - `reason.finesse_weapon_held_one`
+- `reason.grant_entry_needed`
 - `reason.grip_must_one_off`
 - `reason.group_basic_simple_cannot`
 - `reason.hand_occupied`
@@ -262,6 +265,7 @@
 - `reason.no_combat_active`
 - `reason.no_feat_catalog_given`
 - `reason.no_feat_sheet`
+- `reason.no_fight_comfort`
 - `reason.no_hit_die_roll`
 - `reason.no_injury_id`
 - `reason.no_language`
@@ -390,7 +394,7 @@
 - `resource.ov`
 - `resource.training`
 
-### rules (320)
+### rules (323)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -449,6 +453,9 @@
 - `rules.class.save_poor_divisor.desc`
 - `rules.cmd.base`
 - `rules.cmd.base.desc`
+- `rules.comfort.fight_cap.desc`
+- `rules.comfort.fight_max.desc`
+- `rules.comfort.fight_minus.desc`
 - `rules.dice.d20_faces`
 - `rules.dice.d20_faces.desc`
 - `rules.drives.buy_down_cost`
@@ -877,7 +884,8 @@
 ### slot (1)
 - `slot.hands`
 
-### status (3)
+### status (4)
+- `status.bleeding`
 - `status.cursed_darkness`
 - `status.ki_aura`
 - `status.rage`
@@ -897,9 +905,9 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Нет в en.json (672)
+## Нет в en.json (677)
 
-### catalog (106)
+### catalog (107)
 - `catalog.field.ac_bonus`
 - `catalog.field.access_class`
 - `catalog.field.activation_day`
@@ -988,6 +996,7 @@
 - `catalog.field.spell_penalty_mana`
 - `catalog.field.spellbook`
 - `catalog.field.stat`
+- `catalog.field.tags`
 - `catalog.field.temp_hp_stacks`
 - `catalog.field.touch_bonus`
 - `catalog.field.variable`
@@ -1045,7 +1054,7 @@
 ### reason (1)
 - `reason.not_enough_comfort`
 
-### rules (320)
+### rules (323)
 - `rules.ability.mod_base`
 - `rules.ability.mod_base.desc`
 - `rules.ability.mod_divisor`
@@ -1104,6 +1113,9 @@
 - `rules.class.save_poor_divisor.desc`
 - `rules.cmd.base`
 - `rules.cmd.base.desc`
+- `rules.comfort.fight_cap.desc`
+- `rules.comfort.fight_max.desc`
+- `rules.comfort.fight_minus.desc`
 - `rules.dice.d20_faces`
 - `rules.dice.d20_faces.desc`
 - `rules.drives.buy_down_cost`
@@ -1576,6 +1588,9 @@
 - `skill.survival`
 - `skill.weapon_tricks`
 
+### status (1)
+- `status.bleeding`
+
 ### theme (3)
 - `theme.dark`
 - `theme.grey_blue`
@@ -1589,7 +1604,7 @@
 - `warning.no_image`
 - `warning.unknown_source`
 
-## Лишние ключи (нигде не нужны) (530)
+## Лишние ключи (нигде не нужны) (533)
 - `ac.modes`
 - `ac.shield_mark`
 - `ac.shield_side.left`
@@ -1812,6 +1827,7 @@
 - `param.ref`
 - `param.will`
 - `reason.editor_mode_needed`
+- `reminder.bleeding_x2`
 - `reminder.not_backed`
 - `reminders.dismiss`
 - `reminders.empty`
@@ -2111,6 +2127,8 @@
 - `trigger.action.change_resource`
 - `trigger.action.reduce_injury_points`
 - `trigger.action.run_command`
+- `trigger.command.gain_fight_comfort`
+- `trigger.fight_comfort`
 - `trigger.handled`
 - `warning.block_outside_window`
 - `warning.block_under_minimum`

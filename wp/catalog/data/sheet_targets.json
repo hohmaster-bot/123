@@ -54,6 +54,8 @@
     "switch:": "a choice rule switch (switch:at_negative_hp): the effect note is the value (package 36, switches.json)",
     "move:": "a movement mode (move:fly, move:swim, move:climb): value in feet, note = the quality text (package 36)",
     "absorber:": "a damage absorber (absorber:mana, absorber:pool:<id>): note = the damage types it takes, comma list ('' = all); after temp HP, before HP (package 36)",
+    "reminder:": "a standing reminder (reminder:<key>, text reminder.<key>): shown while the sum of its effects is above 0 (package 38: the Mordon bleeding x2, removed by the buy-out -1)",
+    "check:": "an ability check (check:con): situational texts only, the sheet has no check number (package 38, Endurance)",
     "const:": "any numeric rule constant (const:<id> of wp/rules_data/constants.json): the value is added, or replaces it with the note 'replace' (package 37, owner decision 1)"
   }
 }

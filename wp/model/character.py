@@ -363,6 +363,7 @@ class Character:
     traits: NegativeTraits = NegativeTraits()
     in_combat: bool = False
     morale_scale: int = 0
+    combat_morale_peak: int = 0        # package 38: the largest |morale| of this combat (comfort per fight); 0 at start
     # gear, mastery, skills, training
     items: Tuple[Item, ...] = ()
     weapons: Tuple[WeaponEntry, ...] = ()

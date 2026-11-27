@@ -51,18 +51,63 @@
   {
    "id": "endurance",
    "name": "Выносливость",
-   "sample": true,
+   "sample": false,
    "name_en": "Endurance",
-   "cost": 0,
-   "desc": "Placeholder (package 37): the owner's text is needed. The Ulstanger Northerner gets it; link it to the Northerner ability (held by)."
+   "cost": 200,
+   "module": "core",
+   "desc": "+4 on: Swim checks vs nonlethal damage from exhaustion; Con checks to continue running, vs nonlethal damage from a forced march, to hold breath, vs nonlethal damage from starvation or thirst; Fort saves vs nonlethal damage from hot or cold environments and vs suffocation damage (situational, never in a total). May sleep in light or medium armor without becoming fatigued (text).",
+   "effects": [
+    {
+     "target": "skill:athletics",
+     "value": 4,
+     "situational": "Swim checks vs nonlethal damage from exhaustion"
+    },
+    {
+     "target": "check:con",
+     "value": 4,
+     "situational": "Con checks to continue running"
+    },
+    {
+     "target": "check:con",
+     "value": 4,
+     "situational": "Con checks vs nonlethal damage from a forced march"
+    },
+    {
+     "target": "check:con",
+     "value": 4,
+     "situational": "Con checks to hold breath"
+    },
+    {
+     "target": "check:con",
+     "value": 4,
+     "situational": "Con checks vs nonlethal damage from starvation or thirst"
+    },
+    {
+     "target": "save:fort",
+     "value": 4,
+     "situational": "vs nonlethal damage from hot or cold environments"
+    },
+    {
+     "target": "save:fort",
+     "value": 4,
+     "situational": "vs suffocation damage"
+    }
+   ]
   },
   {
    "id": "toughness",
    "name": "Живучесть",
-   "sample": true,
+   "sample": false,
    "name_en": "Toughness",
-   "cost": 0,
-   "desc": "Placeholder (package 37): the owner's text is needed. The Ulstanger Northerner gets it; link it to the Northerner ability (held by)."
+   "cost": 200,
+   "module": "core",
+   "desc": "+3 HP; for every Hit Die beyond 3, +1 HP: HP bonus = max(3, Hit Dice); Hit Dice = the character level.",
+   "effects": [
+    {
+     "target": "hp_max",
+     "value": "max(3, level)"
+    }
+   ]
   }
  ]
 }

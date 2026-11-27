@@ -232,7 +232,7 @@
      "id": "northerner",
      "name": "Северянин",
      "name_en": "Northerner",
-     "text": "Gets the feats Endurance and Toughness: take them from the feat catalog (price 0; placeholders, the owner's text is needed) and link the taken feats here (held by)."
+     "text": "Gets the feats Endurance and Toughness: take them from the feat catalog without paying (source race) and link the taken feats here (held by)."
     },
     {
      "id": "rage",

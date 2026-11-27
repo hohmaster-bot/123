@@ -228,6 +228,16 @@ class FavoritesBlock(_Scroll):
         self.list.addStretch(1)
 
 
+def action_label(tr, action, target, amount):
+    """The button text of a trigger action; a run_command with its own text key trigger.command.<name> uses it."""
+    if action == "run_command":
+        key = "trigger.command." + str(target)
+        own = tr(key, amount=amount, target=target)
+        if own != key:
+            return own
+    return tr("trigger.action." + action, target=target, amount=amount)
+
+
 class RemindersBlock(_Scroll):
     def __init__(self, pid, item, shell):
         super().__init__(pid, item, shell, inline=True)
@@ -267,12 +277,12 @@ class RemindersBlock(_Scroll):
             row = QWidget()                    # a trigger reminder: text, the optional action button, Handled
             hl = QHBoxLayout(row)
             hl.setContentsMargins(0, 0, 0, 0)
-            lab = QLabel(text)
+            lab = QLabel(tr(text, amount=amount, target=target))    # a text key (package 38) or a plain text
             lab.setWordWrap(True)
             hl.addWidget(lab, 1)
             widgets = {"text": lab}
             if action:
-                b = QPushButton(tr("trigger.action." + action, target=target, amount=amount))
+                b = QPushButton(action_label(tr, action, target, amount))
                 b.setObjectName("small")
                 b.clicked.connect(lambda _=False, n=nid: self.run("run_trigger_action", nid=n))
                 hl.addWidget(b)

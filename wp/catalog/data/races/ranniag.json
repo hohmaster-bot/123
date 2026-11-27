@@ -451,7 +451,7 @@
      "id": "wall_of_bones",
      "name": "Стена костей",
      "name_en": "Type 2 Wall of Bones",
-     "text": "+2 Con, the feat Toughness (take it and link it here), no wound penalty; drawbacks: -4 CMD and double HP loss from bleeding (text: no bleeding rule yet).",
+     "text": "+2 Con, the feat Toughness for free (added and linked here), no wound penalty (no pain penalty; pain and OT still accrue); drawbacks: -4 CMD, bleeding hits x2 (a reminder while a bleeding status is on: the player sets the bleeding himself), comfort per fight 1 less and at most 3.",
      "effects": [
       {
        "target": "stat:con",
@@ -464,19 +464,47 @@
       {
        "target": "pain_penalty_per_pain",
        "value": -1
+      },
+      {
+       "target": "reminder:bleeding_x2",
+       "value": 1,
+       "condition": "status_tag:bleeding"
+      },
+      {
+       "target": "const:comfort.fight_minus",
+       "value": 1
+      },
+      {
+       "target": "const:comfort.fight_max",
+       "value": -1
       }
      ],
-     "auto": false
+     "auto": false,
+     "grants_feats": [
+      "toughness"
+     ]
     },
     {
      "id": "wall_of_bones_buyout",
      "name": "Выкуп: Стена костей",
      "name_en": "Buy-out: Wall of Bones",
-     "text": "The drawbacks are bought out.",
+     "text": "The drawbacks are bought out: CMD back, no bleeding x2 reminder, the normal comfort per fight.",
      "effects": [
       {
        "target": "cmd",
        "value": 4
+      },
+      {
+       "target": "reminder:bleeding_x2",
+       "value": -1
+      },
+      {
+       "target": "const:comfort.fight_minus",
+       "value": -1
+      },
+      {
+       "target": "const:comfort.fight_max",
+       "value": 1
       }
      ],
      "price": 300,

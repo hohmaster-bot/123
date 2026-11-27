@@ -28,6 +28,14 @@
   only copies an item from the catalog.
   Old characters are not migrated (D1).
 
+## Feats [OWNER, package 38, decisions 2, 3]
+- Toughness: +3 HP; for every Hit Die beyond 3, +1 HP: HP bonus = max(3, Hit Dice); Hit Dice = the character level.
+  Tests: level 1 -> +3, level 3 -> +3, level 7 -> +7.
+- Endurance: +4 situational (with a note each, never in a total) on Swim checks vs nonlethal damage from exhaustion;
+  Con checks to continue running, vs nonlethal damage from a forced march, to hold breath, vs nonlethal damage from
+  starvation or thirst; Fort saves vs nonlethal damage from hot or cold environments and vs suffocation damage.
+  "May sleep in light or medium armor without becoming fatigued" is text only.
+
 ## Two names [OWNER]
 - Everything can store two names: the list name and a short name (used on chips and buttons).
 - Plan (not rule): button label may be replaced by an image.

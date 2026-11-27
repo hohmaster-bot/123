@@ -724,6 +724,13 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   reduce_injury_points(n) (= OT, never below 0), run_command(name, params) from an allowlist (data).
 - Test: cycle_end reminder "+2 comfort" with its button; unhandled stays visible.
 
+#### Reminders from effects [OWNER, package 38, decision 4]
+- A carrier may hold a standing reminder (effect target reminder:<key>, its text in the locale files): it stands
+  while its effects add up above 0; a condition makes it count only while it holds; a source that removes it adds -1
+  (a buy-out). The automatic condition status_tag:<tag> holds while an active status carries that tag (the catalog
+  status Bleeding has the tag bleeding). Test: Mordon Wall of Bones + Bleeding -> "bleeding x2"; bleeding off or
+  the buy-out -> no reminder.
+
 #### Held by [OWNER, package 36, decision 14]
 - Any ability / bonus may be held by another ability, an item or a quirk (or a text holder with a manual kept / lost
   checkbox). If the holder disappears the dependent gets a "not backed" mark and a reminder; nothing is removed
@@ -1092,6 +1099,15 @@ After everyone acted, in this order [OWNER]:
 #### Comfort [OWNER]
 - Resource burned during play or exchanged for training. Max formula 5 + 5*level, modifiable by class/race/items.
 - Chip goes red when current > max; player spends it down by the next session (see Over max).
+
+#### Comfort per fight [OWNER, package 38, decision 5; closes Q280]
+- A general rule for every character: during a combat the program keeps the largest absolute morale (combat
+  pressure) reached; above 5 counts as 5. At the combat end: comfort = max(0, that value - 1), at most 4
+  (|morale| 1 -> 0, 2 -> 1, 5 -> 4, 8 -> 4). The numbers (cap 5, minus 1, at most 4) are rule data
+  (comfort.fight_cap / fight_minus / fight_max), so they are const: targets.
+- The comfort is never added silently: the combat end leaves a reminder with a button "take +N comfort"; the
+  button is a command (journal, undo); the next combat start forgets an unaccepted gain.
+- Mordon Wall of Bones: 1 more off and at most 3 (2 -> 0, 5 -> 3); the buy-out brings the normal rule back.
 
 #### Over max [OWNER, confirmed]
 - ANY resource (HP, mana, spirit, comfort, ...) may exceed max: usually consumable effects, sometimes narrative (rare).
@@ -1715,6 +1731,14 @@ Tests: after 3 specialist picks all different, expert picks open; at level 9, pi
   only copies an item from the catalog.
   Old characters are not migrated (D1).
 
+#### Feats [OWNER, package 38, decisions 2, 3]
+- Toughness: +3 HP; for every Hit Die beyond 3, +1 HP: HP bonus = max(3, Hit Dice); Hit Dice = the character level.
+  Tests: level 1 -> +3, level 3 -> +3, level 7 -> +7.
+- Endurance: +4 situational (with a note each, never in a total) on Swim checks vs nonlethal damage from exhaustion;
+  Con checks to continue running, vs nonlethal damage from a forced march, to hold breath, vs nonlethal damage from
+  starvation or thirst; Fort saves vs nonlethal damage from hot or cold environments and vs suffocation damage.
+  "May sleep in light or medium armor without becoming fatigued" is text only.
+
 #### Two names [OWNER]
 - Everything can store two names: the list name and a short name (used on chips and buttons).
 - Plan (not rule): button label may be replaced by an image.
@@ -2165,8 +2189,17 @@ weapon group or module is written in code: a race is catalog data (kind races), 
     refilled at the combat start; the buy-out removes the -4. Type 2: no wound penalty = no pain penalty.
   - Lomit Adaptation: one level higher for the comfort exchange and Attention (level 2: 20 instead of 15, Attention 2).
   - Ulstanger Rage: +1 damage per pain on melee attacks only. Northerner: Endurance and Toughness are placeholder
-    feats (the owner's text is needed).
+    feats (the owner's text is needed) - replaced by "Package 38": real feats.
   - Races with "two city languages": the text "choose two languages of the region" (added by hand).
+
+#### Package 38 [OWNER, decisions 1-6]
+- Mordon type 2 Wall of Bones: "no wound penalty" = no penalty from pain (pain and OT still accrue). It gets the feat
+  Toughness for free, held by the ability. Drawbacks, bought out for 300 training: -4 CMD; bleeding hits x2 (NOT
+  computed: the player sets the bleeding; the program shows the reminder "bleeding x2" while a bleeding status is
+  active); comfort per fight 1 less and at most 3 (resources.md "Comfort per fight").
+- Ulstanger Northerner: takes the real feats Endurance and Toughness (catalog.md "Feats") and links them (held by).
+- Mordon type 5: the reroll once per long rest is its own charge (1, refilled by the long rest), separate from the
+  -4 counter of 5 charges (buffs.md "Rerolls").
 
 ## Appendix: ac_zones.md (DRAFT, not built; review optional)
 
@@ -2287,6 +2320,9 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | training.comfort_rate_base | 5 | training | 1 comfort = base + per_level * level training |
 | training.comfort_rate_per_level | 5 | training | comfort rate per level |
 | training.attention_comfort_min | 1.0 | comfort | attention option 2: at least this |
+| comfort.fight_cap | 5 | scale | comfort per fight: the largest absolute morale of a combat counts at most this (package 38) |
+| comfort.fight_minus | 1 | comfort | comfort per fight = that morale minus this, never below 0 (package 38) |
+| comfort.fight_max | 4 | comfort | comfort per fight at most this (package 38) |
 | training.attention_comfort_divisor | 2.0 |  | attention option 2: Dex mod divided by |
 | training.tenths_per_point | 10 | tenths | tenths in one base point |
 | weapons.max_level | 12 | grade | highest weapon proficiency grade |
@@ -2490,6 +2526,7 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | balance_regen | balance regen per tick |
 | base_slots | base slots |
 | bp_max | max BP |
+| check: | an ability check (check:con): situational texts only, the sheet has no check number (package 38, Endurance) |
 | comfort_max | max comfort |
 | comfort_rate_bonus | training per comfort point in exchange_comfort |
 | const: | any numeric rule constant (const:<id> of wp/rules_data/constants.json): the value is added, or replaces it with the note 'replace' (package 37, owner decision 1) |
@@ -2520,6 +2557,7 @@ Every number can be changed per character (rules_settings). Values as shipped.
 | percent: | signed percent damage modifier of one type (percent:fire 50 = 50% more, -100 = immune) |
 | pool_max: | max of one resource pool (pool_max:<pool id>) |
 | reactions | reactions per round |
+| reminder: | a standing reminder (reminder:<key>, text reminder.<key>): shown while the sum of its effects is above 0 (package 38: the Mordon bleeding x2, removed by the buy-out -1) |
 | resist: | flat resistance to one damage type (resist:fire ...); never stacks, the larger wins |
 | shield_cells | AC cells a held shield covers: cells added (value >= 0) or removed (value < 0) (package 24 B2) |
 | short_rest_bp | extra BP gained by the short rest |

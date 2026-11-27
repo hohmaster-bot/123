@@ -187,8 +187,9 @@ def _northerner():
             for f in ("endurance", "toughness")]
 
 
-S.case("northerner", "P2: Endurance and Toughness are placeholder feats (sample, price 0, owner text needed)",
-       [(True, 0, True), (True, 0, True)])(_northerner)
+# package 38 (owner decisions 2, 3): the two feats are real catalog feats (no sample flag, the default feat price 200)
+S.case("northerner", "P2 / package 38: Endurance and Toughness are real feats (not samples, price 200, no placeholder "
+       "text)", [(False, 200, False), (False, 200, False)])(_northerner)
 
 
 S.case("languages", "P2: races with 'two city languages' say 'choose two languages of the region' (9 of 12)",
@@ -245,7 +246,8 @@ S.case("adrenaline", "P3: Ankalian Adrenaline: its button spends 2 BP (5 -> 3); 
 
 
 def _wall():
-    c = run(took("mordon", pain=(PainEntry(2, "wound"),)), ("buy_race_ability", {"aid": "wall_of_bones"}))
+    c = run(took("mordon", pain=(PainEntry(2, "wound"),)),
+            ("buy_race_ability", {"aid": "wall_of_bones", "feats": [json.loads(json.dumps(FEATS["toughness"]))]}))
     return dv.pain_profile(took("mordon")).penalty_per_pain, dv.pain_profile(c).penalty_per_pain
 
 

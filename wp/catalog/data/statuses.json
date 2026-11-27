@@ -46,6 +46,19 @@
    "charge_source": "own",
    "charge_per_round": 3,
    "effects": []
+  },
+  {
+   "id": "bleeding",
+   "name": "Кровотечение",
+   "name_en": "Bleeding",
+   "sample": true,
+   "module": "core",
+   "duration": "infinite",
+   "per_tick_hp": 0,
+   "tags": [
+    "bleeding"
+   ],
+   "description": "Bleeding: the player sets the HP lost per tick himself (per_tick_hp below 0). The tag bleeding turns on the reminders of the carriers that react to bleeding (package 38)."
   }
  ]
 }

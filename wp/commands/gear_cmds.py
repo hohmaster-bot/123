@@ -126,7 +126,8 @@ def start_combat(ch):
     cap = dv.balance_max_base(ch)          # snapshot of the balance cap (package 9 C)
     ch = rst.guard(ch, pool_cmds.restore_by(ch, pool_cmds.COMBAT_START))   # "combat_start" pools; restore blocks
     ch = us.status_recharge(ch, us.recharge(ch, us.COMBAT_START), (us.COMBAT_START,))   # usage charges, statuses (Q108)
-    return commit(replace(ch, in_combat=True, balance_cap_hits=0, balance_cap_start=cap, combat_round=1), "start_combat",
+    return commit(replace(ch, in_combat=True, balance_cap_hits=0, balance_cap_start=cap, combat_round=1,
+                          combat_morale_peak=0), "start_combat",
                   "combat started, balance cap %d" % cap)
 
 
@@ -142,7 +143,10 @@ def end_combat(ch):
 
 
 def end_combat_state(ch):
-    """The state after the end of combat (end_combat, long_rest_end_combat). Iterative series cleared (package 16 C)."""
+    """The state after the end of combat (end_combat, long_rest_end_combat). Iterative series cleared (package 16 C).
+    Package 38: the largest |morale| stays stored and its comfort is offered as a reminder with a button."""
+    from wp.model import fight_comfort as fc
+    ch = fc.offer(replace(ch, combat_morale_peak=fc.peak(ch)))
     new = replace(ch, in_combat=False, combat_round=0, overload=0, morale_scale=0, balance_cap_hits=0, balance_cap_start=None,
                   statuses=ef.end_combat(ch.statuses), iterative_count=0, reactions_current=None,
                   actions_current=None)

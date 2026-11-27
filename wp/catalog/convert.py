@@ -28,4 +28,5 @@ def status_from_entry(entry, sid=""):
                   cooldown_rounds=int(entry.get("cooldown_rounds", 0)), per_tick_hp=int(entry.get("per_tick_hp", 0)),
                   temp_hp_stacks=bool(entry.get("temp_hp_stacks", False)),
                   ignores_iterative=bool(entry.get("ignores_iterative", False)), active=False,
+                  tags=tuple(str(t) for t in entry.get("tags", ())),
                   source="catalog:" + entry["id"])

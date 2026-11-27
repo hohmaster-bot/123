@@ -160,6 +160,15 @@ After everyone acted, in this order [OWNER]:
 - Resource burned during play or exchanged for training. Max formula 5 + 5*level, modifiable by class/race/items.
 - Chip goes red when current > max; player spends it down by the next session (see Over max).
 
+## Comfort per fight [OWNER, package 38, decision 5; closes Q280]
+- A general rule for every character: during a combat the program keeps the largest absolute morale (combat
+  pressure) reached; above 5 counts as 5. At the combat end: comfort = max(0, that value - 1), at most 4
+  (|morale| 1 -> 0, 2 -> 1, 5 -> 4, 8 -> 4). The numbers (cap 5, minus 1, at most 4) are rule data
+  (comfort.fight_cap / fight_minus / fight_max), so they are const: targets.
+- The comfort is never added silently: the combat end leaves a reminder with a button "take +N comfort"; the
+  button is a command (journal, undo); the next combat start forgets an unaccepted gain.
+- Mordon Wall of Bones: 1 more off and at most 3 (2 -> 0, 5 -> 3); the buy-out brings the normal rule back.
+
 ## Over max [OWNER, confirmed]
 - ANY resource (HP, mana, spirit, comfort, ...) may exceed max: usually consumable effects, sometimes narrative (rare).
 - Normal gameplay (regen, healing, rest, tick) never raises above max: clamp.

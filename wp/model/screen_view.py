@@ -101,8 +101,10 @@ def reminders(ch):
     """Standing reminders ((text key, values), ...): the drive reminders (principle missing, quest missing) and the
     open drive quests (their penalty text). One-shot reminders (level_up) stay in the command result."""
     from wp.commands import drive_cmds
+    from wp.model import effect_reminders as er
     from wp.model import links
-    return drive_cmds.reminders(ch) + drive_cmds.open_quests(ch) + links.reminders(ch)   # + not backed (pkg 36)
+    return (drive_cmds.reminders(ch) + drive_cmds.open_quests(ch) + links.reminders(ch)   # + not backed (pkg 36)
+            + er.reminders(ch))                                     # + reminder:<key> effects (package 38)
 
 
 def favorites(ch):

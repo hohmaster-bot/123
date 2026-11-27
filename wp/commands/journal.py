@@ -30,7 +30,7 @@ KIND = {
                  "buy_attention_course", "buy_reaction", "buy_seed", "sprout_seed", "make_language_native",
                  "promote_skill", "buy_professionalism", "learn_spell", "buy_spell_upgrade", "add_feat",
                  "attention_to_training", "attention_to_base_points"),
-    "progression": ("level_up", "exchange_comfort", "set_hp_roll"),
+    "progression": ("level_up", "exchange_comfort", "set_hp_roll", "gain_fight_comfort"),
     "ot": ("remove_ot_comfort", "remove_ot_attention", "raise_heal_rating"),
     "edit": ("edit_sheet", "edit_ability", "edit_rules", "add_entry", "edit_entry", "remove_entry"),
     "notebook": ("add_note", "change_lens", "set_drive_level", "burn_quirk"),

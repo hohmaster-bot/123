@@ -7,7 +7,8 @@ the stat modifiers given by the caller) it computes on first use:
   trophies of 2 + 3 + 2 slots = 7);
 - the stat modifiers when the caller left them lazy (stat_mod:<s> / <s>_mod);
 - the conditions "cond:<id>" (decision 7): hp_full, bp_full, in_combat, pressure_eq:N, pressure_ge:N, pressure_le:N,
-  pain_ge:N (automatic) and manual:<text> (a checkbox: Character.manual_conditions).
+  pain_ge:N, charges_left:<kind>:<id>, status_tag:<tag> (automatic) and manual:<text> (a checkbox:
+  Character.manual_conditions).
 Cycles are NOT blocked (decision 12): a value that is being computed reads 0 while it is computed again (one pass, no
 infinite loop); cycles(ch) finds the effect targets on a cycle so the Sources dialog can warn "cycle in formulas".
 """
@@ -81,10 +82,14 @@ def condition(ch, cid):
         return n is not None and guarded(ch, "pain", _sheet("pain")) >= n
     if cid.startswith(CHARGES_LEFT):       # package 37: "charges_left:feat:<id>" (the Mordon -4 counter)
         return _charges_left(ch, cid[len(CHARGES_LEFT):])
+    if cid.startswith(STATUS_TAG):         # package 38: an active status with this tag (bleeding -> the x2 reminder)
+        tag = cid[len(STATUS_TAG):]
+        return any(tag in tuple(s.tags) for s in ch.statuses if ef.is_effective(s))
     return False
 
 
 CHARGES_LEFT = "charges_left:"
+STATUS_TAG = "status_tag:"
 
 
 def _charges_left(ch, ref):

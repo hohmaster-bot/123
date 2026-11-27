@@ -798,6 +798,11 @@
    "resources",
    "statuses",
    "log"
+  ],
+  "gain_fight_comfort": [
+   "resources",
+   "statuses",
+   "log"
   ]
  }
 }

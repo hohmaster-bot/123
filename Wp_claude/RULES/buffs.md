@@ -221,6 +221,13 @@ Several at once or separately. May give penalties (e.g. -2 AC). May give a one-s
   reduce_injury_points(n) (= OT, never below 0), run_command(name, params) from an allowlist (data).
 - Test: cycle_end reminder "+2 comfort" with its button; unhandled stays visible.
 
+## Reminders from effects [OWNER, package 38, decision 4]
+- A carrier may hold a standing reminder (effect target reminder:<key>, its text in the locale files): it stands
+  while its effects add up above 0; a condition makes it count only while it holds; a source that removes it adds -1
+  (a buy-out). The automatic condition status_tag:<tag> holds while an active status carries that tag (the catalog
+  status Bleeding has the tag bleeding). Test: Mordon Wall of Bones + Bleeding -> "bleeding x2"; bleeding off or
+  the buy-out -> no reminder.
+
 ## Held by [OWNER, package 36, decision 14]
 - Any ability / bonus may be held by another ability, an item or a quirk (or a text holder with a manual kept / lost
   checkbox). If the holder disappears the dependent gets a "not backed" mark and a reminder; nothing is removed

@@ -1,0 +1,61 @@
+"""Break registry: package 38 (P2 Mordon / feats / comfort per fight; later parts add their entries below)."""
+M = ("model/test_pkg38a.py",)
+R = ("model/test_races37.py",)
+FEATS = "wp/catalog/data/feats.json"
+RAN = "wp/catalog/data/races/ranniag.json"
+CONST = "wp/rules_data/constants.json"
+
+ENTRIES = [
+    # ------------------------------------------------------------ P2 code
+    dict(id="p38-grant", file="wp/commands/race_cmds.py",
+         old="    return commit(replace(ch, feats=ch.feats + (feat,) + granted, training=left), \"buy_race_ability\",",
+         new="    return commit(replace(ch, feats=ch.feats + (feat,), training=left), \"buy_race_ability\",", suites=M + R,
+         rule="decision 1: Wall of Bones adds Toughness for free"),
+    dict(id="p38-grant-link", file="wp/commands/race_cmds.py", old='                        held_by="feat:" + a["id"]))',
+         new='                        held_by=""))', suites=M, rule="decision 1: the free Toughness is held by the ability"),
+    dict(id="p38-status-tag", file="wp/model/formula_vars.py",
+         old="        return any(tag in tuple(s.tags) for s in ch.statuses if ef.is_effective(s))",
+         new="        return any(tag in tuple(s.tags) for s in ch.statuses)", suites=M,
+         rule="decision 4: the reminder only while the bleeding status is active"),
+    dict(id="p38-reminder-sum", file="wp/model/effect_reminders.py",
+         old="    return tuple((TEXT + key, ()) for key, n in sorted(totals(ch).items()) if n > 0)",
+         new="    return tuple((TEXT + key, ()) for key, n in sorted(totals(ch).items()) if n != 0)", suites=M,
+         rule="decision 4: the buy-out takes the reminder away (sum 0)"),
+    dict(id="p38-reminder-shown", file="wp/model/screen_view.py", old="            + er.reminders(ch))",
+         new="            + ())", suites=M, rule="decision 4: the reminder is a standing reminder"),
+    dict(id="p38-comfort-cap", file="wp/model/fight_comfort.py", old="    v = min(v, int(rd.const(CAP, ch)))",
+         new="    v = v", suites=M, rule="decision 5: |morale| above 5 counts as 5"),
+    dict(id="p38-comfort-minus", file="wp/model/fight_comfort.py",
+         old="    return max(0, min(int(rd.const(MAX, ch)), v - int(rd.const(MINUS, ch))))",
+         new="    return max(0, min(int(rd.const(MAX, ch)), v))", suites=M, rule="decision 5: comfort = morale - 1"),
+    dict(id="p38-comfort-max", file="wp/model/fight_comfort.py",
+         old="    return max(0, min(int(rd.const(MAX, ch)), v - int(rd.const(MINUS, ch))))",
+         new="    return max(0, v - int(rd.const(MINUS, ch)))", suites=M, rule="decision 5: at most 4"),
+    dict(id="p38-comfort-track", file="wp/model/fight_comfort.py",
+         old="    return replace(ch, combat_morale_peak=p) if p > ch.combat_morale_peak else ch",
+         new="    return replace(ch, combat_morale_peak=p)", suites=M,
+         rule="decision 5: the LARGEST |morale| of the combat is kept"),
+    dict(id="p38-comfort-hook", file="wp/commands/base.py", old="    result = _track_morale(result)",
+         new="    result = result", suites=M, rule="decision 5: the peak follows every command in combat"),
+    dict(id="p38-comfort-clear", file="wp/commands/gear_cmds.py", old="                          combat_morale_peak=0), \"start_combat\",",
+         new="                          ), \"start_combat\",", suites=M, rule="decision 5: the combat start clears the peak"),
+    dict(id="p38-comfort-offer", file="wp/commands/gear_cmds.py",
+         old="    ch = fc.offer(replace(ch, combat_morale_peak=fc.peak(ch)))", new="    ch = ch", suites=M,
+         rule="decision 5: the combat end offers the comfort as a button"),
+    dict(id="p38-comfort-once", file="wp/commands/comfort_cmds.py",
+         old="    new = replace(ch, comfort_current=ch.comfort_current + n, combat_morale_peak=0)",
+         new="    new = replace(ch, comfort_current=ch.comfort_current + n)", suites=M,
+         rule="decision 5: the comfort of a combat is taken once"),
+    # ------------------------------------------------------------ P2 data
+    dict(id="p38-data-toughness", file=FEATS, old='"value": "max(3, level)"', new='"value": "level"', suites=M,
+         rule="decision 2: Toughness = max(3, Hit Dice)"),
+    dict(id="p38-data-endurance", file=FEATS, old='"situational": "vs suffocation damage"', new='"note": "x"',
+         suites=M, rule="decision 3: Endurance is situational on Fort (never in the total)"),
+    dict(id="p38-data-wall-grant", file=RAN, old='"grants_feats": [\n      "toughness"\n     ]', new='"grants_feats": []', suites=M,
+         rule="decision 1: Wall of Bones grants Toughness"),
+    dict(id="p38-data-wall-minus", file=RAN, old='"target": "const:comfort.fight_minus",\n       "value": 1',
+         new='"target": "const:comfort.fight_minus",\n       "value": 0', suites=M,
+         rule="decision 5: Mordon comfort per fight 1 less"),
+    dict(id="p38-data-cap", file=CONST, old='{"id": "comfort.fight_cap", "value": 5,',
+         new='{"id": "comfort.fight_cap", "value": 4,', suites=M, rule="decision 5: the cap 5 is rule data"),
+]

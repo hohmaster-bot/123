@@ -57,5 +57,14 @@ weapon group or module is written in code: a race is catalog data (kind races), 
     refilled at the combat start; the buy-out removes the -4. Type 2: no wound penalty = no pain penalty.
   - Lomit Adaptation: one level higher for the comfort exchange and Attention (level 2: 20 instead of 15, Attention 2).
   - Ulstanger Rage: +1 damage per pain on melee attacks only. Northerner: Endurance and Toughness are placeholder
-    feats (the owner's text is needed).
+    feats (the owner's text is needed) - replaced by "Package 38": real feats.
   - Races with "two city languages": the text "choose two languages of the region" (added by hand).
+
+## Package 38 [OWNER, decisions 1-6]
+- Mordon type 2 Wall of Bones: "no wound penalty" = no penalty from pain (pain and OT still accrue). It gets the feat
+  Toughness for free, held by the ability. Drawbacks, bought out for 300 training: -4 CMD; bleeding hits x2 (NOT
+  computed: the player sets the bleeding; the program shows the reminder "bleeding x2" while a bleeding status is
+  active); comfort per fight 1 less and at most 3 (resources.md "Comfort per fight").
+- Ulstanger Northerner: takes the real feats Endurance and Toughness (catalog.md "Feats") and links them (held by).
+- Mordon type 5: the reroll once per long rest is its own charge (1, refilled by the long rest), separate from the
+  -4 counter of 5 charges (buffs.md "Rerolls").

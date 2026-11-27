@@ -69,7 +69,8 @@ class Effect:
                                        # or removed (value < 0); () = every cell
     condition: str = ""                # package 36 (decision 7): "" = always; an automatic id (hp_full, bp_full,
                                        # in_combat, pressure_eq:N / pressure_ge:N / pressure_le:N, pain_ge:N,
-                                       # charges_left:<kind>:<id> (package 37)) or
+                                       # charges_left:<kind>:<id> (package 37), status_tag:<tag>
+                                       # (package 38)) or
                                        # "manual:<text>" (a checkbox); the effect counts only while it holds
     situational: str = ""              # package 36 (decision 8): "vs magic" ... never in a total, listed on hover
     scope: str = ""                    # package 37: damage_per_pain only for "melee" / "ranged" attacks ("" = all)
@@ -148,6 +149,7 @@ class Status:
     triggers: Tuple[Trigger, ...] = ()   # package 36 (decision 6)
     held_by: str = ""                  # package 36 (decision 14)
     held_kept: bool = True
+    tags: Tuple[str, ...] = ()         # package 38: free tags ("bleeding"): the condition status_tag:<tag>
 
     def __post_init__(self):
         freeze_fields(self, ("per_tick_restore",))     # read-only (package 16 A7)

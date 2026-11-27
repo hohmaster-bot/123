@@ -94,6 +94,8 @@
    {"name": "cooldown_rounds", "type": "int"},
    {"name": "temp_hp_stacks", "type": "bool"},
    {"name": "ignores_iterative", "type": "bool"},
+   {"name": "tags", "type": "list"},
+   {"name": "module", "type": "str"},
    {"name": "description", "type": "str"}
   ],
   "skills": [
@@ -117,7 +119,8 @@
    {"name": "desc", "type": "str"},
    {"name": "effects", "type": "list"},
    {"name": "is_stance", "type": "bool"},
-   {"name": "granted_maneuvers", "type": "list"}
+   {"name": "granted_maneuvers", "type": "list"},
+   {"name": "module", "type": "str"}
   ],
   "drive_types": [
    {"name": "description", "type": "str"}
