@@ -54,8 +54,8 @@ ENTRIES = [
          new="               for tid, name, module, price, units, limit, ok, why in s.view(\"trainings\")]", suites=UI,
          rule="decision 2: locked trainings are hidden until 'show locked'"),
     # ---------------------------------------------------------------- P2: the 12 races done properly
-    dict(id="p37-race-usage", file="wp/model/races.py", old='held_by=a.get("held_by", ""), usage=_usage(a))',
-         new='held_by=a.get("held_by", ""), usage=None)', suites=R, rule="P2.1: a race ability carries its recharge rule"),
+    dict(id="p37-race-usage", file="wp/model/races.py", old='held_by=a.get("held_by", ""), usage=_usage(a), rerolls',
+         new='held_by=a.get("held_by", ""), usage=None, rerolls', suites=R, rule="P2.1: a race ability carries its recharge rule"),
     dict(id="p37-race-source-ref", file="wp/model/races.py", old='"full_ticks", "source_ref", "temp_hp_stacks")',
          new='"full_ticks", "temp_hp_stacks")', suites=R, rule="P2.1: a racial status follows its race ability"),
     dict(id="p37-race-one-shot", file="wp/model/races.py",

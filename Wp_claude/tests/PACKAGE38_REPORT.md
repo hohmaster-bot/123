@@ -53,12 +53,14 @@ package text are written as open questions (Q289 and later).
   break_check (full run): entries 545, caught 545, missed 0. New suite model/test_pkg38a.py (16 cases); 18 breaks
   in tests/breaks/pkg38.py. Updated old expectations (owner change): test_races37 northerner (real feats) and
   wall-of-bones (the purchase passes the Toughness entry).
-- P3: run_all: suites 103, passed 103, failed 0. break_check (full run on the P3 tree): BREAK_P3. New suites
+- P3: run_all: suites 103, passed 103, failed 0. break_check (full run on the P3 tree): entries 557, caught 556, missed 1: p37-race-usage did not apply because P3 really changed
+  its target line (wp/model/races.py ability_feat got rerolls=); the entry was updated, rerun: entries 1, caught 1. New suites
   model/test_pkg38b.py (10), ui/test_p38a.py (4, shots rerolls_*); 12 breaks. Old expectation updated: test_shell
   s-regions (the right column has the Rerolls block).
-- P4: run_all: suites 105, passed 105, failed 0. break_check (full run on the P4 tree): BREAK_P4. New suites
+- P4: run_all: suites 105, passed 105, failed 0. break_check (full run on the P4 tree): entries 566, caught 565, missed 1: the same p37-race-usage entry (the frozen P4 tree was copied
+  before its fix); every P4 entry caught. New suites
   app/test_notes38.py (8), ui/test_p38b.py (4, shots notes_*); 9 breaks.
-- P5 (final): run_all: suites 107, passed 107, failed 0. break_check (full run): BREAK_P5. New suites
+- P5 (final): run_all: suites 107, passed 107, failed 0. break_check (full run): entries 578, caught 578, missed 0. New suites
   model/test_pkg38c.py (9), ui/test_p38c.py (4, shots effect_editor_*); 12 breaks.
 
 ## Changes to old rules

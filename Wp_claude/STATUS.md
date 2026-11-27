@@ -6,7 +6,7 @@ Last finished package: 38 (token rules; Toughness / Endurance, Wall of Bones, co
 
 ## Tests (last run in package 38)
 - `python Wp_claude/tests/run_all.py`: suites 107, passed 107, failed 0.
-- `python Wp_claude/tests/break_check.py`: BREAK_FINAL.
+- `python Wp_claude/tests/break_check.py`: entries 578, caught 578, missed 0.
 - UI suites tests/ui/*.py run headless inside run_all (skipped without PySide6); screenshots tests/ui_shots/.
 - Legacy baseline (separate): 105 examples, 69 pass, 17 fail, 19 not built (BASELINE_REPORT.md).
 
